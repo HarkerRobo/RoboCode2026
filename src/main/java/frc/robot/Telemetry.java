@@ -27,6 +27,10 @@ public class Telemetry
     public DoubleEntry turretYawRawSubscriber = turretYawRaw.getEntry(0.0);
     private DoublePublisher turretYawRawPublisher = turretYawRaw.publish();
 
+    private NetworkTable sysid = table.getSubTable("[sysid]");
+    private StringPublisher turretYawSysId = sysid.getStringTopic("Turret Yaw SysId Command").publish();
+    private StringPublisher turretPitchSysId = sysid.getStringTopic("Turret Pitch SysId Command").publish();
+
     private Telemetry ()
     {
         turretYawRaw.setPersistent(true);
@@ -43,6 +47,9 @@ public class Telemetry
         turretPitch.set(Turret.getInstance().getPitch());
 
         turretYawRawPublisher.set(Turret.getInstance().getRawYaw());
+
+        turretYawSysId.set(Turret.getInstance().yawSysIdCommand);
+        turretPitchSysId.set(Turret.getInstance().pitchSysIdCommand);
     }
 
     public static Telemetry getInstance ()

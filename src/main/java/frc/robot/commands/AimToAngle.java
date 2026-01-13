@@ -27,6 +27,7 @@ public class AimToAngle extends Command
     {
         Turret.getInstance().setTargetYaw(yaw);
         Turret.getInstance().setTargetPitch(pitch);
+        System.out.println("Aiming: (" + yaw + "°, " + pitch + "°)");
     }
 
     @Override

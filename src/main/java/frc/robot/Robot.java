@@ -16,6 +16,7 @@ public class Robot extends TimedRobot
    public Robot() 
    {
       Telemetry.getInstance();
+      RobotContainer.getInstance();
    }
 
    @Override
@@ -72,8 +73,6 @@ public class Robot extends TimedRobot
    public void testInit() 
    {
       CommandScheduler.getInstance().cancelAll();
-
-      CommandScheduler.getInstance().schedule(new AimToAngle(29.5, 5.0));
    }
 
    @Override

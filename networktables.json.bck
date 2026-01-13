@@ -2,7 +2,7 @@
   {
     "name": "/1072/[persistent variables]/yaw",
     "type": "double",
-    "value": 0.081298828125,
+    "value": -0.601318359375,
     "properties": {
       "persistent": true
     }

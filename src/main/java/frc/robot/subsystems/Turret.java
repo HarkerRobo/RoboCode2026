@@ -2,6 +2,9 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.*;
 
+import java.util.function.Consumer;
+import java.util.function.Function;
+
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
@@ -10,7 +13,9 @@ import edu.wpi.first.units.measure.*;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -19,11 +24,15 @@ import com.ctre.phoenix6.sim.ChassisReference;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj.DutyCycle;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj.simulation.EncoderSim;
 import edu.wpi.first.wpilibj.simulation.SimDeviceSim;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.Telemetry;
@@ -36,13 +45,44 @@ public class Turret extends SubsystemBase
 
     private TalonFX pitchMotor; // for the hood
 
-    DCMotorSim yawSim = new DCMotorSim(
+    private DCMotorSim yawSim = new DCMotorSim(
         LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 0.001, Constants.Turret.YAW_GEAR_RATIO),
         DCMotor.getKrakenX60Foc(1));
     
-    DCMotorSim pitchSim = new DCMotorSim(
+    private DCMotorSim pitchSim = new DCMotorSim(
         LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 0.001, Constants.Turret.PITCH_GEAR_RATIO),
         DCMotor.getKrakenX60Foc(1));
+    
+    private SysIdRoutine yawRoutine = new SysIdRoutine(new SysIdRoutine.Config(), new SysIdRoutine.Mechanism(((Voltage v) -> driveYaw(v)), null, this));
+
+    public String yawSysIdCommand = "none";
+    private Function<String, Runnable> yawSysIdCommandSetterFactory = (String s) -> (()->{yawSysIdCommand=s;});
+    
+    public Command yawQuasistaticForward = yawRoutine.quasistatic(SysIdRoutine.Direction.kForward)
+        .beforeStarting(yawSysIdCommandSetterFactory.apply("quasistatic-forward")).finallyDo(yawSysIdCommandSetterFactory.apply("none")).withName("SysId QF");
+    public Command yawQuasistaticReverse = yawRoutine.quasistatic(SysIdRoutine.Direction.kReverse)
+        .beforeStarting(yawSysIdCommandSetterFactory.apply("quasistatic-reverse")).finallyDo(yawSysIdCommandSetterFactory.apply("none")).withName("SysId QR");
+    public Command yawDynamicForward = yawRoutine.dynamic(SysIdRoutine.Direction.kForward)
+        .beforeStarting(yawSysIdCommandSetterFactory.apply("dynamic-forward")).finallyDo(yawSysIdCommandSetterFactory.apply("none")).withName("SysId DF");
+    public Command yawDynamicReverse = yawRoutine.dynamic(SysIdRoutine.Direction.kReverse)
+        .beforeStarting(yawSysIdCommandSetterFactory.apply("dynamic-reverse")).finallyDo(yawSysIdCommandSetterFactory.apply("none")).withName("SysId DR");
+
+    
+    
+    private SysIdRoutine pitchRoutine = new SysIdRoutine(new SysIdRoutine.Config(), new SysIdRoutine.Mechanism(((Voltage v) -> drivePitch(v)), null, this));
+    
+    private Function<String, Runnable> pitchSysIdCommandSetterFactory = (String s) -> (()->{pitchSysIdCommand=s;});
+    
+    public String pitchSysIdCommand = "none";
+    
+    public Command pitchQuasistaticForward = pitchRoutine.quasistatic(SysIdRoutine.Direction.kForward)
+        .beforeStarting(pitchSysIdCommandSetterFactory.apply("quasistatic-forward")).finallyDo(pitchSysIdCommandSetterFactory.apply("none")).withName("SysId QF");
+    public Command pitchQuasistaticReverse = pitchRoutine.quasistatic(SysIdRoutine.Direction.kReverse)
+        .beforeStarting(pitchSysIdCommandSetterFactory.apply("quasistatic-reverse")).finallyDo(pitchSysIdCommandSetterFactory.apply("none")).withName("SysIr QR");
+    public Command pitchDynamicForward = pitchRoutine.dynamic(SysIdRoutine.Direction.kForward)
+        .beforeStarting(pitchSysIdCommandSetterFactory.apply("dynamic-forward")).finallyDo(pitchSysIdCommandSetterFactory.apply("none")).withName("SysId DF");
+    public Command pitchDynamicReverse = pitchRoutine.dynamic(SysIdRoutine.Direction.kReverse)
+        .beforeStarting(pitchSysIdCommandSetterFactory.apply("dynamic-reverse")).finallyDo(pitchSysIdCommandSetterFactory.apply("none")).withName("SysId DR");
 
     private Turret ()
     {
@@ -137,9 +177,6 @@ public class Turret extends SubsystemBase
     @Override
     public void periodic ()
     {
-        double yaw = yawMotor.getPosition().getValueAsDouble();
-        if (yaw > Math.PI * 2.0) yawMotor.setPosition(yaw - Math.PI * 2.0);
-        else if (yaw < 0.0) yawMotor.setPosition(yaw + Math.PI * 2.0);
     }
 
 
@@ -159,9 +196,32 @@ public class Turret extends SubsystemBase
         return pitchMotor.getPosition().getValue().in(Degrees);
     }
 
+    /**
+     * For saving the value of the yaw position in nonvolatile memory
+     */
     public double getRawYaw ()
     {
         return yawMotor.getPosition().getValueAsDouble();
+    }
+
+    public void driveYaw (Voltage voltage)
+    {
+        yawMotor.setControl(new VoltageOut(voltage));
+    }
+    
+    public void drivePitch (Voltage voltage)
+    {
+        pitchMotor.setControl(new VoltageOut(voltage));
+    }
+    
+    public void driveYaw (double dutyCycle)
+    {
+        yawMotor.setControl(new DutyCycleOut(dutyCycle));
+    }
+    
+    public void drivePitch (double dutyCycle)
+    {
+        pitchMotor.setControl(new DutyCycleOut(dutyCycle));
     }
 
     /**
@@ -169,9 +229,14 @@ public class Turret extends SubsystemBase
      */
     public void setTargetYaw (double targetYaw)
     {
+        double currentPosition = yawMotor.getPosition().getValue().in(Rotations);
         double targetYawRotations = Units.degreesToRotations(targetYaw);
-        targetYawRotations %= 1;
-        yawMotor.setControl(new MotionMagicVoltage(targetYawRotations));
+        double rawDifference = targetYawRotations - currentPosition;
+        rawDifference %= 1;
+        if (rawDifference > 0.5) rawDifference -= 1.0;
+        else if (rawDifference < -0.5) rawDifference += 1.0;
+        System.out.printf("%f - %f = %f -> %f\n", targetYawRotations, yawMotor.getPosition().getValue().in(Rotations), targetYawRotations - yawMotor.getPosition().getValue().in(Rotations), rawDifference);
+        yawMotor.setControl(new MotionMagicVoltage(currentPosition + rawDifference));
     }
     
     /**

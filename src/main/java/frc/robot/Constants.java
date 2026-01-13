@@ -22,7 +22,7 @@ public class Constants
 		public static final double MM_YAW_JERK = 240.0;
 		public static final InvertedValue YAW_INVERTED = InvertedValue.CounterClockwise_Positive;
         
-        public static final double YAW_GEAR_RATIO = 100.0; // TODO
+        public static final double YAW_GEAR_RATIO = 1.0; // TODO
 
 		public static final double YAW_KP = 1.0; // TODO
 		public static final double YAW_KI = 0.1; // TODO
@@ -40,7 +40,7 @@ public class Constants
 		public static final double MM_PITCH_JERK = 240.0;
 		public static final InvertedValue PITCH_INVERTED = InvertedValue.CounterClockwise_Positive;
         
-        public static final double PITCH_GEAR_RATIO = 100.0; // TODO
+        public static final double PITCH_GEAR_RATIO = 1.0; // TODO
 
 		public static final double PITCH_KP = 1.0; // TODO
 		public static final double PITCH_KI = 0.1; // TODO
