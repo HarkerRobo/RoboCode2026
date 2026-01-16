@@ -52,7 +52,8 @@ public class Constants
 		public static final double PITCH_FORWARD_SOFTWARE_LIMIT_THRESHOLD = 4.82; // TODO
 		public static final double PITCH_REVERSE_SOFTWARE_LIMIT_THRESHOLD = -0.01; // TODO
 
+        // these should be the angles at which the hood's further motion would break the turret
         public static final double MAX_PITCH = 90.0; // TODO degrees
-
+        public static final double MIN_PITCH = 0.0; // TODO degrees
     }
 }

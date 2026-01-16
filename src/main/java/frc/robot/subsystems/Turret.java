@@ -53,7 +53,10 @@ public class Turret extends SubsystemBase
         LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 0.001, Constants.Turret.PITCH_GEAR_RATIO),
         DCMotor.getKrakenX60Foc(1));
     
-    private SysIdRoutine yawRoutine = new SysIdRoutine(new SysIdRoutine.Config(), new SysIdRoutine.Mechanism(((Voltage v) -> driveYaw(v)), null, this));
+    
+    private SysIdRoutine yawRoutine = new SysIdRoutine(
+        new SysIdRoutine.Config(Volts.of(0.1).div(Seconds.of(1.0)), Volts.of(1.0), Seconds.of(10.0), null),
+        new SysIdRoutine.Mechanism(((Voltage v) -> driveYaw(v)), null, this));
 
     public String yawSysIdCommand = "none";
     private Function<String, Runnable> yawSysIdCommandSetterFactory = (String s) -> (()->{yawSysIdCommand=s;});
@@ -69,7 +72,9 @@ public class Turret extends SubsystemBase
 
     
     
-    private SysIdRoutine pitchRoutine = new SysIdRoutine(new SysIdRoutine.Config(), new SysIdRoutine.Mechanism(((Voltage v) -> drivePitch(v)), null, this));
+    private SysIdRoutine pitchRoutine = new SysIdRoutine(
+        new SysIdRoutine.Config(Volts.of(0.01).div(Seconds.of(1)), Volts.of(0.1), Seconds.of(10.0), null),
+        new SysIdRoutine.Mechanism(((Voltage v) -> drivePitch(v)), null, this));
     
     private Function<String, Runnable> pitchSysIdCommandSetterFactory = (String s) -> (()->{pitchSysIdCommand=s;});
     
@@ -177,6 +182,19 @@ public class Turret extends SubsystemBase
     @Override
     public void periodic ()
     {
+        /*
+        if (pitchMotor.getMotorVoltage().getValue().in(Volts) > 0 && pitchMotor.getPosition().getValue().in(Degrees) > Constants.Turret.MAX_PITCH)
+        {
+            System.out.println("Pitch motor position above " + Constants.Turret.MAX_PITCH + " causing pitch motor to be disabled");
+            pitchMotor.disable();
+        }
+
+        if (pitchMotor.getMotorVoltage().getValue().in(Volts) < 0 && pitchMotor.getPosition().getValue().in(Degrees) < Constants.Turret.MIN_PITCH)
+        {
+            System.out.println("Pitch motor position below " + Constants.Turret.MIN_PITCH + " causing pitch motor to be disabled");
+            pitchMotor.disable();
+        }
+        */
     }
 
 
