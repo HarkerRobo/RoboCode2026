@@ -1,7 +1,13 @@
 package frc.robot.commands;
 
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.*;
+import edu.wpi.first.units.measure.*;
+import static edu.wpi.first.units.Units.*;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
+import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Turret;
 
 public class AimToAngle extends Command
@@ -20,13 +26,14 @@ public class AimToAngle extends Command
         this.pitch = pitch;
 
         addRequirements(Turret.getInstance());
+        addRequirements(Hood.getInstance());
     }
 
     @Override
     public void initialize ()
     {
-        Turret.getInstance().setTargetYaw(yaw);
-        Turret.getInstance().setTargetPitch(pitch);
+        Turret.getInstance().setDesiredPosition(Degrees.of(yaw));
+        Hood.getInstance().moveToPosition(Degrees.of(pitch));
         System.out.println("Aiming: (" + yaw + "°, " + pitch + "°)");
     }
 
@@ -38,13 +45,12 @@ public class AimToAngle extends Command
     @Override
     public boolean isFinished ()
     {
-        return Math.abs(Turret.getInstance().getYaw() - yaw) <= Constants.Turret.ERROR_THRESHOLD &&
-            Math.abs(Turret.getInstance().getPitch() - pitch) <= Constants.Turret.ERROR_THRESHOLD;
+        return Turret.getInstance().readyToShoot() && Hood.getInstance().readyToShoot();
     }
 
     @Override
     public void end (boolean interrupted)
     {
-        Turret.getInstance().maintainPitch();
+        Hood.getInstance().moveToPosition(Hood.getInstance().getPosition());
     }
 }

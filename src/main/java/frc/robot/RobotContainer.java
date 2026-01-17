@@ -30,15 +30,6 @@ public class RobotContainer
       driver.button(4).onTrue(new AimToAngle(330.0, 15.0));
       driver.button(5).onTrue(new AimToAngle(750.0, 15.0));
       */
-      driver.button(1).whileTrue(Turret.getInstance().yawQuasistaticForward);
-      driver.button(2).whileTrue(Turret.getInstance().yawQuasistaticReverse);
-      driver.button(3).whileTrue(Turret.getInstance().yawDynamicForward);
-      driver.button(4).whileTrue(Turret.getInstance().yawDynamicReverse);
-      
-      driver.button(5).whileTrue(Turret.getInstance().pitchQuasistaticForward);
-      driver.button(6).whileTrue(Turret.getInstance().pitchQuasistaticReverse);
-      driver.button(7).whileTrue(Turret.getInstance().pitchDynamicForward);
-      driver.button(8).whileTrue(Turret.getInstance().pitchDynamicReverse);
    }
 
    public Command getAutonomousCommand() 

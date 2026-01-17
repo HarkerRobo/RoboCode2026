@@ -1,5 +1,11 @@
 package frc.robot;
 
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.*;
+import edu.wpi.first.units.measure.*;
+import static edu.wpi.first.units.Units.*;
+
+import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.DoubleTopic;
@@ -7,6 +13,8 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StringPublisher;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.Hood;
+import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
 
 public class Telemetry 
@@ -18,8 +26,26 @@ public class Telemetry
 
     private NetworkTable turret = table.getSubTable("Turret");
     private StringPublisher turretCommand = turret.getStringTopic("command").publish();
-    private DoublePublisher turretYaw = turret.getDoubleTopic("yaw °").publish();
-    private DoublePublisher turretPitch = turret.getDoubleTopic("pitch °").publish();
+    private DoublePublisher turretPosition = turret.getDoubleTopic("position (°)").publish();
+    private DoublePublisher turretTargetPosition = turret.getDoubleTopic("target position (°)").publish();
+    private DoublePublisher turretVelocity = turret.getDoubleTopic("velocity (°/s)").publish();
+    private DoublePublisher turretVoltage = turret.getDoubleTopic("voltage (V)").publish();
+    private BooleanPublisher turretReadyToShoot = turret.getBooleanTopic("ready to shoot?").publish();
+
+    private NetworkTable hood = table.getSubTable("Hood");
+    private StringPublisher hoodCommand = turret.getStringTopic("command").publish();
+    private DoublePublisher hoodPosition = turret.getDoubleTopic("position (°)").publish();
+    private DoublePublisher hoodTargetPosition = turret.getDoubleTopic("target position (°)").publish();
+    private DoublePublisher hoodVelocity = turret.getDoubleTopic("velocity (°/s)").publish();
+    private DoublePublisher hoodVoltage = turret.getDoubleTopic("voltage (V)").publish();
+    private BooleanPublisher hoodReadyToShoot = turret.getBooleanTopic("ready to shoot?").publish();
+    
+    private NetworkTable shooter = table.getSubTable("Hood");
+    private StringPublisher shooterCommand = turret.getStringTopic("command").publish();
+    private DoublePublisher shooterVelocity = turret.getDoubleTopic("velocity (rot/s)").publish();
+    private DoublePublisher shooterVoltage = turret.getDoubleTopic("voltage (V)").publish();
+    private BooleanPublisher shooterReadyToShoot = turret.getBooleanTopic("ready to shoot?").publish();
+
 
     private NetworkTable persistent = table.getSubTable("[persistent variables]");
     // yaw is recorded so that we can record the position of the turret through power cycles without having to use a hard stop or otherwise zeroing
@@ -42,14 +68,28 @@ public class Telemetry
 
         Command turretCommand = Turret.getInstance().getCurrentCommand();
         this.turretCommand.set(turretCommand == null ? "" : turretCommand.getName());
+        turretPosition.set(Turret.getInstance().getPosition().in(Degrees));
+        turretTargetPosition.set(Turret.getInstance().getDesiredPosition().in(Degrees));
+        turretVelocity.set(Turret.getInstance().getVelocity().in(DegreesPerSecond));
+        turretVoltage.set(Turret.getInstance().getVoltage().in(Volts));
+        turretReadyToShoot.set(Turret.getInstance().readyToShoot());
+        
+        Command hoodCommand = Hood.getInstance().getCurrentCommand();
+        this.hoodCommand.set(hoodCommand == null ? "" : hoodCommand.getName());
+        hoodPosition.set(Hood.getInstance().getPosition().in(Degrees));
+        hoodTargetPosition.set(Hood.getInstance().getDesiredPosition().in(Degrees));
+        hoodVelocity.set(Hood.getInstance().getVelocity().in(DegreesPerSecond));
+        hoodVoltage.set(Hood.getInstance().getVoltage().in(Volts));
+        hoodReadyToShoot.set(Hood.getInstance().readyToShoot());
 
-        turretYaw.set(Turret.getInstance().getYaw());
-        turretPitch.set(Turret.getInstance().getPitch());
+        Command shooterCommand = Shooter.getInstance().getCurrentCommand();
+        this.shooterCommand.set(shooterCommand == null ? "" : shooterCommand.getName());
+        shooterVelocity.set(Shooter.getInstance().getVelocity().in(RotationsPerSecond));
+        shooterVoltage.set(Shooter.getInstance().getVoltage().in(Volts));
+        shooterReadyToShoot.set(Shooter.getInstance().readyToShoot());
 
-        turretYawRawPublisher.set(Turret.getInstance().getRawYaw());
+        turretYawRawPublisher.set(Turret.getInstance().getPosition().in(Rotations));
 
-        turretYawSysId.set(Turret.getInstance().yawSysIdCommand);
-        turretPitchSysId.set(Turret.getInstance().pitchSysIdCommand);
     }
 
     public static Telemetry getInstance ()
