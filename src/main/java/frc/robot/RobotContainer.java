@@ -28,11 +28,13 @@ public class RobotContainer
 
    private void configureBindings() 
    {
+      /*
       driver.button(1).onTrue(Commands.runOnce(()->SimulationState.getInstance().testPlop(FieldLocation.BlueHub)));
       driver.button(2).onTrue(Commands.runOnce(()->SimulationState.getInstance().testPlop(FieldLocation.RedHub)));
       driver.button(3).onTrue(Commands.runOnce(()->SimulationState.getInstance().spawnFromOutpost(Alliance.Blue)));
       driver.button(4).onTrue(Commands.runOnce(()->SimulationState.getInstance().spawnFromOutpost(Alliance.Red)));
       driver.button(5).onTrue(Commands.runOnce(()->SimulationState.getInstance().testDrop()));
+      */
       /*
       driver.button(1).onTrue(new AimToAngle(60.0, 10.0));
       driver.button(2).onTrue(new AimToAngle(120.0, 5.0));

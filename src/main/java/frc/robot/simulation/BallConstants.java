@@ -1,5 +1,8 @@
 package frc.robot.simulation;
 
+/**
+ * FRC 868 Code
+ */
 public class BallConstants 
 {
     public final double mass;

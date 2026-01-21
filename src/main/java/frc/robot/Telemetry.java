@@ -10,6 +10,7 @@ import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.DoubleTopic;
+import edu.wpi.first.networktables.IntegerPublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StringPublisher;
@@ -60,11 +61,11 @@ public class Telemetry
 
     private NetworkTable simulation = table.getSubTable("Simulation");
     private StructArrayPublisher<Translation3d> fuels = simulation.getStructArrayTopic("FuelPosition", Translation3d.struct).publish();
-    private DoublePublisher fuelsInRobot = simulation.getDoubleTopic("Fuels in Robot").publish();
-    private DoublePublisher fuelsInBlueHub = simulation.getDoubleTopic("Fuels in BlueHub").publish();
-    private DoublePublisher fuelsInRedHub = simulation.getDoubleTopic("Fuels in RedHub").publish();
-    private DoublePublisher fuelsInBlueOutpost = simulation.getDoubleTopic("Fuels in BlueOutpost").publish();
-    private DoublePublisher fuelsInRedOutpost = simulation.getDoubleTopic("Fuels in RedOutpost").publish();
+    private IntegerPublisher fuelsInRobot = simulation.getIntegerTopic("Fuels in Robot").publish();
+    private IntegerPublisher fuelsInBlueHub = simulation.getIntegerTopic("Fuels in BlueHub").publish();
+    private IntegerPublisher fuelsInRedHub = simulation.getIntegerTopic("Fuels in RedHub").publish();
+    private IntegerPublisher fuelsInBlueOutpost = simulation.getIntegerTopic("Fuels in BlueOutpost").publish();
+    private IntegerPublisher fuelsInRedOutpost = simulation.getIntegerTopic("Fuels in RedOutpost").publish();
     private StructArrayPublisher<Translation3d> test = simulation.getStructArrayTopic("TEST", Translation3d.struct).publish();
 
     private Telemetry ()

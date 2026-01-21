@@ -23,8 +23,11 @@ public class Robot extends TimedRobot
       RobotContainer.getInstance();
 
       // automatically saves log data for telemetry, driver station controls, and joystick presses
-      DataLogManager.start();
-      DriverStation.startDataLog(DataLogManager.getLog());
+      if (isReal())
+      {
+         DataLogManager.start();
+         DriverStation.startDataLog(DataLogManager.getLog());
+      }
    }
 
    @Override

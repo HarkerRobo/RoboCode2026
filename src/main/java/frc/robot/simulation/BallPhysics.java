@@ -6,6 +6,10 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import frc.robot.Constants;
 
+
+/**
+ * Modified FRC 868 Code
+ */
 public final class BallPhysics {
     public static final double GRAVITY = 9.81;
 
