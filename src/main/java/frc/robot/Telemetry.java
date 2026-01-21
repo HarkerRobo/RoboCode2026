@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.*;
 import edu.wpi.first.units.measure.*;
@@ -12,7 +13,11 @@ import edu.wpi.first.networktables.DoubleTopic;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StringPublisher;
+import edu.wpi.first.networktables.StructArrayPublisher;
+import edu.wpi.first.networktables.StructArrayTopic;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.Simulation;
+import frc.robot.simulation.SimulationState;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
@@ -28,7 +33,7 @@ public class Telemetry
     private StringPublisher turretCommand = turret.getStringTopic("command").publish();
     private DoublePublisher turretPosition = turret.getDoubleTopic("position (°)").publish();
     private DoublePublisher turretTargetPosition = turret.getDoubleTopic("target position (°)").publish();
-    private DoublePublisher turretVelocity = turret.getDoubleTopic("velocity (°/s)").publish();
+    private DoublePublisher turretVelocity = turret.getDoubleTopic("velocity (° per s)").publish();
     private DoublePublisher turretVoltage = turret.getDoubleTopic("voltage (V)").publish();
     private BooleanPublisher turretReadyToShoot = turret.getBooleanTopic("ready to shoot?").publish();
 
@@ -36,13 +41,13 @@ public class Telemetry
     private StringPublisher hoodCommand = turret.getStringTopic("command").publish();
     private DoublePublisher hoodPosition = turret.getDoubleTopic("position (°)").publish();
     private DoublePublisher hoodTargetPosition = turret.getDoubleTopic("target position (°)").publish();
-    private DoublePublisher hoodVelocity = turret.getDoubleTopic("velocity (°/s)").publish();
+    private DoublePublisher hoodVelocity = turret.getDoubleTopic("velocity (° per s)").publish();
     private DoublePublisher hoodVoltage = turret.getDoubleTopic("voltage (V)").publish();
     private BooleanPublisher hoodReadyToShoot = turret.getBooleanTopic("ready to shoot?").publish();
     
     private NetworkTable shooter = table.getSubTable("Hood");
     private StringPublisher shooterCommand = turret.getStringTopic("command").publish();
-    private DoublePublisher shooterVelocity = turret.getDoubleTopic("velocity (rot/s)").publish();
+    private DoublePublisher shooterVelocity = turret.getDoubleTopic("velocity (rot per s)").publish();
     private DoublePublisher shooterVoltage = turret.getDoubleTopic("voltage (V)").publish();
     private BooleanPublisher shooterReadyToShoot = turret.getBooleanTopic("ready to shoot?").publish();
 
@@ -53,9 +58,14 @@ public class Telemetry
     public DoubleEntry turretYawRawSubscriber = turretYawRaw.getEntry(0.0);
     private DoublePublisher turretYawRawPublisher = turretYawRaw.publish();
 
-    private NetworkTable sysid = table.getSubTable("[sysid]");
-    private StringPublisher turretYawSysId = sysid.getStringTopic("Turret Yaw SysId Command").publish();
-    private StringPublisher turretPitchSysId = sysid.getStringTopic("Turret Pitch SysId Command").publish();
+    private NetworkTable simulation = table.getSubTable("Simulation");
+    private StructArrayPublisher<Translation3d> fuels = simulation.getStructArrayTopic("FuelPosition", Translation3d.struct).publish();
+    private DoublePublisher fuelsInRobot = simulation.getDoubleTopic("Fuels in Robot").publish();
+    private DoublePublisher fuelsInBlueHub = simulation.getDoubleTopic("Fuels in BlueHub").publish();
+    private DoublePublisher fuelsInRedHub = simulation.getDoubleTopic("Fuels in RedHub").publish();
+    private DoublePublisher fuelsInBlueOutpost = simulation.getDoubleTopic("Fuels in BlueOutpost").publish();
+    private DoublePublisher fuelsInRedOutpost = simulation.getDoubleTopic("Fuels in RedOutpost").publish();
+    private StructArrayPublisher<Translation3d> test = simulation.getStructArrayTopic("TEST", Translation3d.struct).publish();
 
     private Telemetry ()
     {
@@ -90,6 +100,33 @@ public class Telemetry
 
         turretYawRawPublisher.set(Turret.getInstance().getPosition().in(Rotations));
 
+        fuels.set(SimulationState.getInstance().fuelPositionsRaw);
+
+        fuelsInRobot.set(SimulationState.getInstance().fuelsInRobot);
+        fuelsInBlueHub.set(SimulationState.getInstance().fuelsInBlueHub);
+        fuelsInRedHub.set(SimulationState.getInstance().fuelsInRedHub);
+        fuelsInBlueOutpost.set(SimulationState.getInstance().fuelsInBlueOutpost);
+        fuelsInRedOutpost.set(SimulationState.getInstance().fuelsInRedOutpost);
+
+        /*
+        test.set(new Translation3d[] 
+        {
+            new Translation3d(Constants.Simulation.HUB_CONTENTS.getCenter().getX() - 0.5 * Constants.Simulation.HUB_CONTENTS.getXWidth(), 
+                              Constants.Simulation.HUB_CONTENTS.getCenter().getY() - 0.5 * Constants.Simulation.HUB_CONTENTS.getYWidth(), 0.0),
+            new Translation3d(Constants.Simulation.HUB_CONTENTS.getCenter().getX() + 0.5 * Constants.Simulation.HUB_CONTENTS.getXWidth(), 
+                              Constants.Simulation.HUB_CONTENTS.getCenter().getY() + 0.5 * Constants.Simulation.HUB_CONTENTS.getYWidth(), 0.0),
+            new Translation3d(Constants.Simulation.HUB_CONTENTS.getCenter().getX() - 0.5 * Constants.Simulation.HUB_CONTENTS.getXWidth(), 
+                              Constants.Simulation.HUB_CONTENTS.getCenter().getY() + 0.5 * Constants.Simulation.HUB_CONTENTS.getYWidth(), 0.0),
+            new Translation3d(Constants.Simulation.HUB_CONTENTS.getCenter().getX() + 0.5 * Constants.Simulation.HUB_CONTENTS.getXWidth(), 
+                              Constants.Simulation.HUB_CONTENTS.getCenter().getY() - 0.5 * Constants.Simulation.HUB_CONTENTS.getYWidth(), 0.0)
+        }
+                              */
+        test.set(new Translation3d[] 
+        {
+            new Translation3d(-0.84, 0.331, 0.075),
+            new Translation3d(-0.0708, 1.008, 0.075)
+        }
+            );
     }
 
     public static Telemetry getInstance ()

@@ -4,10 +4,14 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.Constants.Simulation;
 import frc.robot.commands.AimToAngle;
+import frc.robot.simulation.SimulationState;
 
 public class Robot extends TimedRobot 
 {
@@ -17,13 +21,16 @@ public class Robot extends TimedRobot
    {
       Telemetry.getInstance();
       RobotContainer.getInstance();
+
+      // automatically saves log data for telemetry, driver station controls, and joystick presses
+      DataLogManager.start();
+      DriverStation.startDataLog(DataLogManager.getLog());
    }
 
    @Override
    public void robotPeriodic() 
    {
       CommandScheduler.getInstance().run();
-
 
       Telemetry.getInstance().update();
    }
@@ -82,5 +89,16 @@ public class Robot extends TimedRobot
    public void testExit() 
    {
       CommandScheduler.getInstance().cancelAll();
+   }
+
+   @Override
+   public void simulationInit()
+   {
+   }
+
+   @Override
+   public void simulationPeriodic()
+   {
+      SimulationState.getInstance().update();
    }
 }

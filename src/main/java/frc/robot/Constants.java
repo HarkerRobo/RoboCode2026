@@ -1,8 +1,16 @@
 package frc.robot;
 
+import java.util.function.Function;
+
 import com.ctre.phoenix6.signals.InvertedValue;
 
+import edu.wpi.first.math.geometry.Rectangle2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
+import frc.robot.simulation.BallConstants;
 
 public class Constants 
 {
@@ -85,5 +93,46 @@ public class Constants
 
         public static final double FORWARD_SOFTWARE_LIMIT_THRESHOLD = 4.82; // TODO
 		public static final double REVERSE_SOFTWARE_LIMIT_THRESHOLD = -0.01; // TODO
+    }
+
+    public class Simulation
+    {
+        public static final double FIELD_HEIGHT = 8.069326;
+        public static final double FIELD_WIDTH = 16.540988;
+
+        // excluding steel barrier
+        public static final Rectangle2d DEPOT = new Rectangle2d(
+            new Translation2d(0.0, FIELD_HEIGHT - 1.570736 - 0.0762),
+            new Translation2d(0.6858 - 0.0762, FIELD_HEIGHT - 1.570736 - 1.0668 + 0.0762));
+        
+        public static final Translation2d FIELD_CENTER = new Translation2d(FIELD_WIDTH / 2.0, FIELD_HEIGHT / 2.0);
+
+        public static final Function<Double, Double> ROTATE_X = (Double x) -> x + 2 * (FIELD_CENTER.getX() - x);
+        public static final Function<Double, Double> ROTATE_Y = (Double y) -> y + 2 * (FIELD_CENTER.getY() - y);
+
+        public static final Translation2d CENTER_UPPER_REFERENCE = new Translation2d(FIELD_CENTER.getX(), FIELD_CENTER.getY() + 0.0254);
+        public static final Translation2d CENTER_LOWER_REFERENCE = new Translation2d(FIELD_CENTER.getX(), FIELD_CENTER.getY() - 0.0254);
+
+        public static final double FUEL_DIAMETER = 0.15;
+        public static final double MIN_FUEL_MASS = 0.203;
+        public static final double MAX_FUEL_MASS = 0.227;
+
+        public static final int TOTAL_FUEL = 504;
+        public static final int FUELS_TAKEN_BY_OTHER_ROBOTS = 0;
+
+        public static final Rectangle2d HUB_CONTENTS = new Rectangle2d(new Pose2d(new Translation2d(4.574794, 4.059936), new Rotation2d()), 1.1938, 1.1938);
+
+        public static final Rectangle2d OUTPOST = new Rectangle2d(
+            new Translation2d(-0.84 - 0.5 * FUEL_DIAMETER, 0.331 - 0.5 * FUEL_DIAMETER), 
+            new Translation2d(-0.0708 + 0.5 * FUEL_DIAMETER, 1.008 + 0.5 * FUEL_DIAMETER));
+
+        public static final Translation3d OUTPOST_SPAWN_LOCATION_LOWER = new Translation3d(0.5 * FUEL_DIAMETER, 0.2655, 0.714);
+        public static final Translation3d OUTPOST_SPAWN_LOCATION_UPPER = new Translation3d(0.5 * FUEL_DIAMETER, 1.0735, 0.714);
+
+        public static final BallConstants BALL_CONSTANTS = new BallConstants(
+            (MAX_FUEL_MASS + MIN_FUEL_MASS) / 2.0,
+            FUEL_DIAMETER / 2.0, 1.2, 0.30, 1.2, 0.35, 9.81, 20);
+
+        public static final double HUB_INTAKE_HEIGHT = 1.8288;
     }
 }

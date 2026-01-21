@@ -5,6 +5,7 @@ import java.nio.file.attribute.PosixFileAttributeView;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -12,9 +13,13 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.*;
 import edu.wpi.first.units.measure.*;
+import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
+
 import static edu.wpi.first.units.Units.*;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Robot;
 
@@ -28,6 +33,8 @@ public class Hood extends SubsystemBase
     private static TalonFX motor;
 
     private double desiredPosition; // rotations
+
+
 
     private Hood()
     {
@@ -100,6 +107,27 @@ public class Hood extends SubsystemBase
     public Angle getDesiredPosition()
     {
         return Rotations.of(desiredPosition);
+    }
+    
+    private SysIdRoutine sysId = new SysIdRoutine(
+        new SysIdRoutine.Config(), 
+        new SysIdRoutine.Mechanism((Voltage v)->motor.setControl(new VoltageOut(v)),
+            (SysIdRoutineLog l)->l
+                .motor("Hood")
+                .voltage(getVoltage())
+                .angularPosition(getPosition())
+                .angularVelocity(getVelocity()),
+        this)
+    );
+
+    public Command sysIdQuasistatic (SysIdRoutine.Direction direction)
+    {
+        return sysId.quasistatic(direction).withName("SysId Q" + (direction == SysIdRoutine.Direction.kForward ? "F" : "R"));
+    }
+    
+    public Command sysIdDynamic (SysIdRoutine.Direction direction)
+    {
+        return sysId.dynamic(direction).withName("SysId Q" + (direction == SysIdRoutine.Direction.kForward ? "F" : "R"));
     }
     
 
