@@ -12,29 +12,24 @@ import frc.robot.subsystems.Turret;
 
 public class AimToAngle extends Command
 {
-    private double yaw; // degrees
     private double pitch; // degrees
 
     /**
      * 
-     * @param yaw degrees
      * @param pitch degrees
     */
-    public AimToAngle (double yaw, double pitch)
+    public AimToAngle (double pitch)
     {
-        this.yaw = yaw;
         this.pitch = pitch;
 
-        addRequirements(Turret.getInstance());
         addRequirements(Hood.getInstance());
     }
 
     @Override
     public void initialize ()
     {
-        Turret.getInstance().setDesiredPosition(Degrees.of(yaw));
         Hood.getInstance().moveToPosition(Degrees.of(pitch));
-        System.out.println("Aiming: (" + yaw + "°, " + pitch + "°)");
+        System.out.println("Aiming: " + pitch + "°");
     }
 
     @Override
@@ -45,12 +40,18 @@ public class AimToAngle extends Command
     @Override
     public boolean isFinished ()
     {
-        return Turret.getInstance().readyToShoot() && Hood.getInstance().readyToShoot();
+        return Hood.getInstance().readyToShoot();
     }
 
     @Override
     public void end (boolean interrupted)
     {
         Hood.getInstance().moveToPosition(Hood.getInstance().getPosition());
+    }
+
+    @Override
+    public String getName()
+    {
+        return "AimToAngle (" + pitch + "°)";
     }
 }

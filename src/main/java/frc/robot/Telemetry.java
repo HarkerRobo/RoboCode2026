@@ -39,18 +39,18 @@ public class Telemetry
     private BooleanPublisher turretReadyToShoot = turret.getBooleanTopic("ready to shoot?").publish();
 
     private NetworkTable hood = table.getSubTable("Hood");
-    private StringPublisher hoodCommand = turret.getStringTopic("command").publish();
-    private DoublePublisher hoodPosition = turret.getDoubleTopic("position (°)").publish();
-    private DoublePublisher hoodTargetPosition = turret.getDoubleTopic("target position (°)").publish();
-    private DoublePublisher hoodVelocity = turret.getDoubleTopic("velocity (° per s)").publish();
-    private DoublePublisher hoodVoltage = turret.getDoubleTopic("voltage (V)").publish();
-    private BooleanPublisher hoodReadyToShoot = turret.getBooleanTopic("ready to shoot?").publish();
+    private StringPublisher hoodCommand = hood.getStringTopic("command").publish();
+    private DoublePublisher hoodPosition = hood.getDoubleTopic("position (°)").publish();
+    private DoublePublisher hoodTargetPosition = hood.getDoubleTopic("target position (°)").publish();
+    private DoublePublisher hoodVelocity = hood.getDoubleTopic("velocity (° per s)").publish();
+    private DoublePublisher hoodVoltage = hood.getDoubleTopic("voltage (V)").publish();
+    private BooleanPublisher hoodReadyToShoot = hood.getBooleanTopic("ready to shoot?").publish();
     
     private NetworkTable shooter = table.getSubTable("Hood");
-    private StringPublisher shooterCommand = turret.getStringTopic("command").publish();
-    private DoublePublisher shooterVelocity = turret.getDoubleTopic("velocity (rot per s)").publish();
-    private DoublePublisher shooterVoltage = turret.getDoubleTopic("voltage (V)").publish();
-    private BooleanPublisher shooterReadyToShoot = turret.getBooleanTopic("ready to shoot?").publish();
+    private StringPublisher shooterCommand = shooter.getStringTopic("command").publish();
+    private DoublePublisher shooterVelocity = shooter.getDoubleTopic("velocity (rot per s)").publish();
+    private DoublePublisher shooterVoltage = shooter.getDoubleTopic("voltage (V)").publish();
+    private BooleanPublisher shooterReadyToShoot = shooter.getBooleanTopic("ready to shoot?").publish();
 
 
     private NetworkTable persistent = table.getSubTable("[persistent variables]");

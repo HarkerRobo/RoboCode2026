@@ -3,6 +3,7 @@ package frc.robot;
 import java.util.function.Function;
 
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.sim.ChassisReference;
 
 import edu.wpi.first.math.geometry.Rectangle2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -55,17 +56,27 @@ public class Constants
 		public static final double MM_JERK = 10.0; // TODO
 		public static final InvertedValue INVERTED = InvertedValue.CounterClockwise_Positive;
         
-        public static final double GEAR_RATIO = 1.0; // TODO
+        public static final double GEAR_RATIO = 100.0; // TODO
 
-		public static final double KP = 1.0; // TODO
-		public static final double KI = 0.1; // TODO
-		public static final double KD = 0.0; // TODO
+		public static final double KP = 26.41; // TODO
+		public static final double KI = 0.0; // TODO
+		public static final double KD = 0.89216; // TODO
 		
-        public static final double KV = 0.0; // TODO
-		public static final double KG = 0.0; // TODO
+        public static final double KS = 0.081286; // TODO
+        public static final double KV = 11.462; // TODO
+        public static final double KA = 0.23849; // TODO
+		public static final double KG = 0.012971; // TODO
 
         public static final double FORWARD_SOFTWARE_LIMIT_THRESHOLD = 4.82; // TODO
 		public static final double REVERSE_SOFTWARE_LIMIT_THRESHOLD = -0.01; // TODO
+        
+        public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
+
+        public static final double MOMENT_OF_INERTIA = 0.001; // TODO (kg m^2)
+
+        public static final double HOOD_LENGTH = 0.5; // TODO meters
+        public static final double HOOD_MIN_ANGLE = 5.0; // TODO degrees
+        public static final double HOOD_MAX_ANGLE = 70.0; // TODO degrees
     }
 
     public class Turret

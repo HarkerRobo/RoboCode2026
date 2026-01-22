@@ -22,12 +22,15 @@ public class Robot extends TimedRobot
       Telemetry.getInstance();
       RobotContainer.getInstance();
 
+      boolean logSimulation = false;
+
       // automatically saves log data for telemetry, driver station controls, and joystick presses
-      if (isReal())
+      if (isReal() || logSimulation)
       {
          DataLogManager.start();
          DriverStation.startDataLog(DataLogManager.getLog());
       }
+
    }
 
    @Override
