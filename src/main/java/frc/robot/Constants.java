@@ -146,4 +146,21 @@ public class Constants
 
         public static final double HUB_INTAKE_HEIGHT = 1.8288;
     }
+
+    public class Indexer {
+
+        public static final int MOTOR_ID = 0; //TODO
+
+        public static final double kS = 0.5; //TODO
+        public static final double kV = 0.0; //TODO
+        public static final double kA = 0.0; //TODO
+        public static final double kP = 0.0; //TODO
+        public static final double kI = 0.0; //TODO
+        public static final double kD = 0.0; //TODO
+
+        public static final double mmCruiseVelocity = 0.0;  
+        public static final double mmAcceleration = 0.0;
+        public static final double mmJerk = 0.0;
+
+    }
 }
