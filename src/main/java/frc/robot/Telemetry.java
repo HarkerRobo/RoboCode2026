@@ -22,6 +22,7 @@ import frc.robot.simulation.SimulationState;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.Climb;
 
 public class Telemetry 
 {
@@ -52,6 +53,15 @@ public class Telemetry
     private DoublePublisher shooterVoltage = shooter.getDoubleTopic("voltage (V)").publish();
     private BooleanPublisher shooterReadyToShoot = shooter.getBooleanTopic("ready to shoot?").publish();
 
+    private NetworkTable climb = table.getSubTable("Climb");
+    private StringPublisher climbCommand = shooter.getStringTopic("command").publish();
+    private DoublePublisher climbElevatorVelocity = climb.getDoubleTopic("velocity (rot per s)").publish();
+    private DoublePublisher climbElevatorVoltage = climb.getDoubleTopic("voltage (V)").publish();
+    private DoublePublisher climbElevatorPosition = climb.getDoubleTopic("position (rot)").publish();
+    private DoublePublisher climbElevatorTarget = climb.getDoubleTopic("target (rot)").publish();
+    private DoublePublisher climbClimbVelocity = climb.getDoubleTopic("velocity (rot per s)").publish();
+    private DoublePublisher climbClimbVoltage = climb.getDoubleTopic("voltage (V)").publish();
+    private DoublePublisher climbClimbPosition = climb.getDoubleTopic("position (rot)").publish();
 
     private NetworkTable persistent = table.getSubTable("[persistent variables]");
     // yaw is recorded so that we can record the position of the turret through power cycles without having to use a hard stop or otherwise zeroing
@@ -98,6 +108,17 @@ public class Telemetry
         shooterVelocity.set(Shooter.getInstance().getVelocity().in(RotationsPerSecond));
         shooterVoltage.set(Shooter.getInstance().getVoltage().in(Volts));
         shooterReadyToShoot.set(Shooter.getInstance().readyToShoot());
+
+        Command climbCommand = Climb.getInstance().getCurrentCommand();
+        this.climbCommand.set(climbCommand == null ? "" : climbCommand.getName());
+        climbElevatorVelocity.set(Climb.getInstance().getElevatorVelocity().in(RotationsPerSecond));
+        climbElevatorVoltage.set(Climb.getInstance().getElevatorVoltage().in(Volts));
+        climbElevatorPosition.set(Climb.getInstance().getElevatorPosition().in(Rotations));
+        climbElevatorTarget.set(Climb.getInstance().getElevatorTargetPosition().in(Rotations));
+        climbClimbVelocity.set(Climb.getInstance().getClimbVelocity().in(RotationsPerSecond));
+        climbClimbVoltage.set(Climb.getInstance().getClimbVoltage().in(Volts));
+        climbClimbPosition.set(Climb.getInstance().getClimbPosition().in(Rotations));
+
 
         turretYawRawPublisher.set(Turret.getInstance().getPosition().in(Rotations));
 
