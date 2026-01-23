@@ -1,4 +1,3 @@
-
 package frc.robot.subsystems;
 
 import java.nio.file.attribute.PosixFileAttributeView;
@@ -163,7 +162,6 @@ public class Hood extends SubsystemBase
         simState.setRawRotorPosition(Units.radiansToRotations(motorSimModel.getAngleRads()) * Constants.Hood.GEAR_RATIO);
         simState.setRotorVelocity(Units.radiansToRotations(motorSimModel.getVelocityRadPerSec()) * Constants.Hood.GEAR_RATIO);
     }
-
 
     
     private SysIdRoutine sysId = new SysIdRoutine(
