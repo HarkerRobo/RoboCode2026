@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.Simulation;
 import frc.robot.simulation.SimulationState;
 import frc.robot.subsystems.Hood;
+import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
 
@@ -68,6 +69,13 @@ public class Telemetry
     private IntegerPublisher fuelsInRedOutpost = simulation.getIntegerTopic("Fuels in RedOutpost").publish();
     private StructArrayPublisher<Translation3d> test = simulation.getStructArrayTopic("TEST", Translation3d.struct).publish();
 
+    //velocity, voltage, position, target 
+    private NetworkTable hopper = table.getSubTable("Hopper");
+    private DoublePublisher hopperVelocity = hopper.getDoubleTopic("velocity (rot per s)").publish();
+    private DoublePublisher hopperVoltage = hopper.getDoubleTopic("voltage (V)").publish();
+    private DoublePublisher hopperPosition = hopper.getDoubleTopic("current position (rotations)").publish();
+    private DoublePublisher hopperTarget = hopper.getDoubleTopic("target position (rotations)").publish();
+
     private Telemetry ()
     {
         turretYawRaw.setPersistent(true);
@@ -108,6 +116,11 @@ public class Telemetry
         fuelsInRedHub.set(SimulationState.getInstance().fuelsInRedHub);
         fuelsInBlueOutpost.set(SimulationState.getInstance().fuelsInBlueOutpost);
         fuelsInRedOutpost.set(SimulationState.getInstance().fuelsInRedOutpost);
+
+        hopperPosition.set(Hopper.getInstance().getPosition());
+        hopperVelocity.set(Hopper.getInstance().getVelocity());
+        hopperVoltage.set(Hopper.getInstance().getVoltage());
+        hopperTarget.set(Hopper.getInstance().getDesiredPosition());
 
         /*
         test.set(new Translation3d[] 
