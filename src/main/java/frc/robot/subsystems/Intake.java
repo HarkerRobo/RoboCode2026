@@ -1,12 +1,14 @@
 package frc.robot.subsystems;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -61,9 +63,9 @@ public class Intake extends SubsystemBase {
         motor.setControl(new VoltageOut(voltage));
     }
 
-    public void setPosition (Angle position)
+    public void setVelocity (double velocity)
     {
-        motor.setPosition(position);
+        motor.setControl(new VelocityVoltage(velocity));
     }
 
     public void setDutyCycle(double velocity) {

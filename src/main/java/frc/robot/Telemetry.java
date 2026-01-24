@@ -22,6 +22,7 @@ import frc.robot.simulation.SimulationState;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.Intake;
 
 public class Telemetry 
 {
@@ -29,6 +30,11 @@ public class Telemetry
 
     private NetworkTableInstance tableInstance = NetworkTableInstance.getDefault();
     private NetworkTable table = tableInstance.getTable("1072");
+
+    private NetworkTable intake = table.getSubTable("Intake");
+    private StringPublisher intakeCommand = intake.getStringTopic("command").publish();
+    private DoublePublisher intakeVelocity = intake.getDoubleTopic("velocity (° per s)").publish();
+    private DoublePublisher intakeVoltage = intake.getDoubleTopic("voltage (V)").publish();
 
     private NetworkTable turret = table.getSubTable("Turret");
     private StringPublisher turretCommand = turret.getStringTopic("command").publish();
@@ -76,6 +82,12 @@ public class Telemetry
     public void update ()
     {
         turretYawRaw.setPersistent(true);
+
+
+        Command intakeCommand = Intake.getInstance().getCurrentCommand();
+        this.intakeCommand.set(intakeCommand == null ? "" : intakeCommand.getName());
+        intakeVelocity.set(Intake.getInstance().getVelocity().in(DegreesPerSecond));
+        intakeVoltage.set(Intake.getInstance().getVoltage().in(Volts));
 
         Command turretCommand = Turret.getInstance().getCurrentCommand();
         this.turretCommand.set(turretCommand == null ? "" : turretCommand.getName());
