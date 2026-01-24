@@ -10,12 +10,13 @@ import static edu.wpi.first.units.Units.*;
 import frc.robot.Constants;
 
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 
-public class Indexer {
+public class Indexer extends SubsystemBase{
     
     private static Indexer instance;
 
@@ -40,9 +41,9 @@ public class Indexer {
 
         // set Motion Magic settings
         var motionMagicConfigs = talonFXConfigs.MotionMagic;
-        motionMagicConfigs.MotionMagicCruiseVelocity = Constants.Indexer.mmCruiseVelocity;
-        motionMagicConfigs.MotionMagicAcceleration = Constants.Indexer.mmAcceleration;
-        motionMagicConfigs.MotionMagicJerk = Constants.Indexer.mmJerk;
+        motionMagicConfigs.MotionMagicCruiseVelocity = Constants.Indexer.MM_CRUISE_VELOCITY;
+        motionMagicConfigs.MotionMagicAcceleration = Constants.Indexer.MM_ACCELERATION;
+        motionMagicConfigs.MotionMagicJerk = Constants.Indexer.MM_JERK;
 
         motor.getConfigurator().apply(talonFXConfigs);
     }
