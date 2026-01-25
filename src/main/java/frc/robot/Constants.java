@@ -43,6 +43,29 @@ public class Constants
         public static final double DEFAULT_VELOCITY = 0.1; // TODO rotations per second (nonzero to decrease startup time)
         public static final double SHOOT_VELOCITY = 10.0; // TODO rotations per second
     }
+
+    public class Intake
+    {
+        public static int MOTOR_ID = 5;
+
+        public static final double STATOR_CURRENT_LIMIT = 90.0;
+        public static final double SUPPLY_CURRENT_LIMIT = 90.0;
+
+        public static final double INTAKE_VELOCITY = 10.0; //TODO
+        public static final double DEFAULT_INTAKE_VELOCITY = 0.0; //TODO
+
+        public static final double KP = 1.0; // TODO
+		public static final double KI = 0.1; // TODO
+		public static final double KD = 0.0; // TODO
+		
+        public static final double KV = 0.0; // TODO
+		public static final double KG = 0.0; // TODO
+        public static final InvertedValue INVERTED = InvertedValue.CounterClockwise_Positive;
+
+        
+        public static final double GEAR_RATIO = 1.0; //TODO
+
+    }
     
     public class Hood
     {
