@@ -33,7 +33,7 @@ public class Telemetry
 
     private NetworkTable intake = table.getSubTable("Intake");
     private StringPublisher intakeCommand = intake.getStringTopic("command").publish();
-    private DoublePublisher intakeVelocity = intake.getDoubleTopic("velocity (° per s)").publish();
+    private DoublePublisher intakeVelocity = intake.getDoubleTopic("velocity (rot per s)").publish();
     private DoublePublisher intakeVoltage = intake.getDoubleTopic("voltage (V)").publish();
 
     private NetworkTable turret = table.getSubTable("Turret");
@@ -52,7 +52,7 @@ public class Telemetry
     private DoublePublisher hoodVoltage = hood.getDoubleTopic("voltage (V)").publish();
     private BooleanPublisher hoodReadyToShoot = hood.getBooleanTopic("ready to shoot?").publish();
     
-    private NetworkTable shooter = table.getSubTable("Hood");
+    private NetworkTable shooter = table.getSubTable("Shooter");
     private StringPublisher shooterCommand = shooter.getStringTopic("command").publish();
     private DoublePublisher shooterVelocity = shooter.getDoubleTopic("velocity (rot per s)").publish();
     private DoublePublisher shooterVoltage = shooter.getDoubleTopic("voltage (V)").publish();
@@ -86,7 +86,7 @@ public class Telemetry
 
         Command intakeCommand = Intake.getInstance().getCurrentCommand();
         this.intakeCommand.set(intakeCommand == null ? "" : intakeCommand.getName());
-        intakeVelocity.set(Intake.getInstance().getVelocity().in(DegreesPerSecond));
+        intakeVelocity.set(Intake.getInstance().getVelocity().in(RotationsPerSecond));
         intakeVoltage.set(Intake.getInstance().getVoltage().in(Volts));
 
         Command turretCommand = Turret.getInstance().getCurrentCommand();
@@ -109,7 +109,6 @@ public class Telemetry
         this.shooterCommand.set(shooterCommand == null ? "" : shooterCommand.getName());
         shooterVelocity.set(Shooter.getInstance().getVelocity().in(RotationsPerSecond));
         shooterVoltage.set(Shooter.getInstance().getVoltage().in(Volts));
-        shooterReadyToShoot.set(Shooter.getInstance().readyToShoot());
 
         turretYawRawPublisher.set(Turret.getInstance().getPosition().in(Rotations));
 
