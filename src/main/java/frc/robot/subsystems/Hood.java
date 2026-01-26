@@ -1,10 +1,11 @@
-
 package frc.robot.subsystems;
 
 import java.nio.file.attribute.PosixFileAttributeView;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
@@ -115,7 +116,7 @@ public class Hood extends SubsystemBase
         this.desiredPosition = desiredPosition.in(Rotations);
         motor.setControl(new MotionMagicVoltage(desiredPosition));
     }
-
+    
     public Angle getPosition()
     {
         return motor.getPosition().getValue();
@@ -130,6 +131,27 @@ public class Hood extends SubsystemBase
     {
         return motor.getVelocity().getValue();
     }
+
+    public void setPosition(Angle position)
+    {
+        motor.setPosition(position);
+    }
+
+    public void setVelocity(AngularVelocity velocity)
+    {
+        motor.setControl(new VelocityVoltage(velocity));
+    }
+
+    public void setDutyCycle(double dutyCycle)
+    {
+        motor.setControl(new DutyCycleOut(dutyCycle));
+    }
+
+    public void setVoltage(Voltage voltage)
+    {
+        motor.setVoltage(voltage.in(Volts));
+    }
+
     
     public boolean readyToShoot ()
     {
@@ -139,6 +161,11 @@ public class Hood extends SubsystemBase
     public Angle getDesiredPosition()
     {
         return Rotations.of(desiredPosition);
+    }
+    
+    public boolean isStalling ()
+    {
+        return motor.getSupplyCurrent().getValueAsDouble() >= Constants.Hood.STALLING_CURRENT;
     }
 
     @Override
@@ -163,7 +190,6 @@ public class Hood extends SubsystemBase
         simState.setRawRotorPosition(Units.radiansToRotations(motorSimModel.getAngleRads()) * Constants.Hood.GEAR_RATIO);
         simState.setRotorVelocity(Units.radiansToRotations(motorSimModel.getVelocityRadPerSec()) * Constants.Hood.GEAR_RATIO);
     }
-
 
     
     private SysIdRoutine sysId = new SysIdRoutine(

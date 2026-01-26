@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.Simulation;
-import frc.robot.commands.AimToAngle;
 import frc.robot.simulation.SimulationState;
 
 public class Robot extends TimedRobot 
@@ -57,7 +56,7 @@ public class Robot extends TimedRobot
 
       if (autonomousCommand != null) 
       {
-         autonomousCommand.schedule();
+         CommandScheduler.getInstance().schedule(autonomousCommand);
       }
    }
 

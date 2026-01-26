@@ -15,29 +15,56 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.Simulation;
-import frc.robot.commands.AimToAngle;
+import frc.robot.commands.hood.AimToAngle;
+import frc.robot.commands.intake.DefaultIntake;
+import frc.robot.commands.intake.RunIntake;
+import frc.robot.commands.shooter.RampUpShooter;
+import frc.robot.commands.shooter.ResetShooter;
 import frc.robot.simulation.SimulationState;
 import frc.robot.simulation.SimulationState.FieldLocation;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Hood;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
 
 public class RobotContainer 
 {
    private static RobotContainer instance;
+   private final Intake intake = Intake.getInstance();
 
 
    private CommandXboxController driver = new CommandXboxController(0);
 
    private RobotContainer() 
    {
+      intake.setDefaultCommand(new DefaultIntake());
+
       configureBindings();
    }
 
    private void configureBindings() 
    {
+      /*
+      driver.button(1).onTrue(Shooter.getInstance().sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+      driver.button(2).onTrue(Shooter.getInstance().sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+      driver.button(3).onTrue(Shooter.getInstance().sysIdDynamic(SysIdRoutine.Direction.kForward));
+      driver.button(4).onTrue(Shooter.getInstance().sysIdDynamic(SysIdRoutine.Direction.kReverse));
+      */
+      driver.button(1).whileTrue(new RampUpShooter());
+      driver.button(2).whileTrue(new ResetShooter());
+      /*
+      driver.button(1).onTrue(Intake.getInstance().sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+      driver.button(2).onTrue(Intake.getInstance().sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+      driver.button(3).onTrue(Intake.getInstance().sysIdDynamic(SysIdRoutine.Direction.kForward));
+      driver.button(4).onTrue(Intake.getInstance().sysIdDynamic(SysIdRoutine.Direction.kReverse));
+      */
+
+ 
+      /*
       driver.button(1).onTrue(new AimToAngle(30.0));
       driver.button(2).onTrue(new AimToAngle(60.0));
       driver.button(3).onTrue(new AimToAngle(0.0));
+      */
       /*
       driver.button(1).onTrue(Hood.getInstance().sysIdQuasistatic(SysIdRoutine.Direction.kForward));
       driver.button(2).onTrue(Hood.getInstance().sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
