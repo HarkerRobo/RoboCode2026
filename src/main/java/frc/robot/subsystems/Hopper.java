@@ -8,12 +8,13 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj.DutyCycle;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 /**
  * controls the balls from intake to indexer
  */
-public class Hopper 
+public class Hopper extends SubsystemBase
 {
     private static Hopper instance;
     private TalonFX master;
@@ -95,6 +96,11 @@ public class Hopper
         return master.getStatorCurrent().getValueAsDouble() >= Constants.Hopper.HOPPER_STALLING_CURRENT;
     }
 
+    public boolean atPosition()
+    {
+        return Math.abs(this.desiredPosition - getPosition()) <= Constants.EPSILON;
+    }
+
     /**
      * @param power variable between [-1, 1]
      */
@@ -103,6 +109,7 @@ public class Hopper
         master.setControl(new DutyCycleOut(power));
     }
 
+    //sets the target & moves there
     public void setDesiredPosition(double target)
     {
         this.desiredPosition = target;
