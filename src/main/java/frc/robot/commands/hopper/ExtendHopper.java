@@ -1,24 +1,21 @@
-package frc.robot.commands;
+package frc.robot.commands.hopper;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
 import frc.robot.subsystems.Hopper;
 
 public class ExtendHopper extends Command
 {
-    private double target; //rotations
-
-    public ExtendHopper(double target)
+    public ExtendHopper()
     {
-        this.target = target;
-
         addRequirements(Hopper.getInstance());
     }
 
     @Override
     public void initialize ()
     {
-        Hopper.getInstance().setDesiredPosition(target);
-        System.out.println("moving: " + target + "°");
+        Hopper.getInstance().setDesiredPosition(Constants.Hopper.MAX_POSITION);
+        // System.out.println("moving: " + Constants.Hopper.MAX_POSITION + " rotations");
     }
 
     @Override
@@ -42,6 +39,6 @@ public class ExtendHopper extends Command
     @Override
     public String getName()
     {
-        return "Extend Hopper (" + target + ")";
+        return "Extend Hopper (" + Constants.Hopper.MAX_POSITION + ")";
     }
 }

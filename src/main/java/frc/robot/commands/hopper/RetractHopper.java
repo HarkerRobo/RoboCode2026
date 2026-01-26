@@ -1,30 +1,27 @@
-package frc.robot.commands;
+package frc.robot.commands.hopper;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
 import frc.robot.subsystems.Hopper;
 
 public class RetractHopper extends Command
 {
-    private double target; //rotations
-
-    public RetractHopper(double target)
+    public RetractHopper()
     {
-        this.target = target;
-
         addRequirements(Hopper.getInstance());
     }
 
     @Override
     public void initialize ()
     {
-        Hopper.getInstance().setDesiredPosition(target);
-        System.out.println("moving: " + target + "°");
+        Hopper.getInstance().setDesiredPosition(Constants.Hopper.MIN_POSITION);
+        // System.out.println("moving: " + Constants.Hopper.MIN_POSITION + " rotations");
     }
 
     @Override
     public void execute ()
     {
-        
+
     }
 
     @Override
@@ -42,6 +39,6 @@ public class RetractHopper extends Command
     @Override
     public String getName()
     {
-        return "Retract Hopper (" + target + ")";
+        return "Retract Hopper (" + Constants.Hopper.MIN_POSITION + ")";
     }
 }

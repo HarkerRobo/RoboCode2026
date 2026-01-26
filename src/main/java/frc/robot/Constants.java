@@ -17,7 +17,7 @@ public class Constants
 {
     public static final double MAX_VOLTAGE = 12.0;
     
-    public static final double EPSILON = 0.001;
+    public static final double EPSILON = 0.1;
 
     public class Shooter
     {
@@ -62,13 +62,15 @@ public class Constants
 		public static final double KI = 0.1; // TODO
 		public static final double KD = 0.0; // TODO
 		
-        public static final double KV = 0.0; // TODO
+        public static final double KS = 0.0; // TODO
 		public static final double KG = 0.0; // TODO
+        public static final double KV = 1.0; // TODO
+        public static final double KA = 0.1; // TODO
 
         public static final double MIN_POSITION = 0.1; // TODO min hopper position (rotations)
         public static final double MAX_POSITION = 10.0; // TODO max hopper position (rotations)
 
-        public static final double HOPPER_STALLING_CURRENT = 0.1; //TODO 
+        public static final double HOPPER_STALLING_CURRENT = 50; //TODO 
     }
     
     public class Hood
