@@ -57,6 +57,7 @@ public class Shooter extends SubsystemBase
 
     private void config()
     {
+        motor.clearStickyFaults();
         TalonFXConfiguration config = new TalonFXConfiguration();
 
         if (Robot.isReal())

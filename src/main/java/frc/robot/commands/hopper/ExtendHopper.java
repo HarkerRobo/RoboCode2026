@@ -1,5 +1,10 @@
 package frc.robot.commands.hopper;
 
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.*;
+import edu.wpi.first.units.measure.*;
+import static edu.wpi.first.units.Units.*;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.Hopper;
@@ -14,8 +19,8 @@ public class ExtendHopper extends Command
     @Override
     public void initialize ()
     {
-        Hopper.getInstance().setDesiredPosition(Constants.Hopper.MAX_POSITION);
-        // System.out.println("moving: " + Constants.Hopper.MAX_POSITION + " rotations");
+        Hopper.getInstance().setDesiredPosition(Rotations.of(Constants.Hopper.EXTEND_POSITION));
+        // System.out.println("moving: " + Constants.Hopper.EXTEND_POSITION + " rotations");
     }
 
     @Override
@@ -39,6 +44,6 @@ public class ExtendHopper extends Command
     @Override
     public String getName()
     {
-        return "Extend Hopper (" + Constants.Hopper.MAX_POSITION + ")";
+        return "Extend Hopper (" + Constants.Hopper.EXTEND_POSITION + ")";
     }
 }

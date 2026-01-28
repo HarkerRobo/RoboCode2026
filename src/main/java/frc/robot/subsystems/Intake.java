@@ -52,6 +52,7 @@ public class Intake extends SubsystemBase
 
     private void config()
     {
+        motor.clearStickyFaults();
         TalonFXConfiguration config = new TalonFXConfiguration();
 
         config.Feedback.SensorToMechanismRatio = Constants.Intake.GEAR_RATIO;
@@ -59,12 +60,12 @@ public class Intake extends SubsystemBase
         config.MotorOutput.Inverted = Constants.Intake.INVERTED;
         config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
-        config.Slot0.kP = Constants.Hood.KP;
-        config.Slot0.kI = Constants.Hood.KI;
-        config.Slot0.kD = Constants.Hood.KD;
-        config.Slot0.kS = Constants.Hood.KS;
-        config.Slot0.kV = Constants.Hood.KV;
-        config.Slot0.kA = Constants.Hood.KA;
+        config.Slot0.kP = Constants.Intake.KP;
+        config.Slot0.kI = Constants.Intake.KI;
+        config.Slot0.kD = Constants.Intake.KD;
+        config.Slot0.kS = Constants.Intake.KS;
+        config.Slot0.kV = Constants.Intake.KV;
+        config.Slot0.kA = Constants.Intake.KA;
 
         config.Voltage.PeakForwardVoltage = Constants.MAX_VOLTAGE;
         config.Voltage.PeakReverseVoltage = -Constants.MAX_VOLTAGE;

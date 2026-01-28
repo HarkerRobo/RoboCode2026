@@ -6,10 +6,24 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.sim.TalonFXSimState;
+
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.*;
+import edu.wpi.first.units.measure.*;
+import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.wpilibj.DutyCycle;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.simulation.ElevatorSim;
+import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
+import frc.robot.Robot;
 
 /**
  * controls the balls from intake to indexer
@@ -20,9 +34,30 @@ public class Hopper extends SubsystemBase
     private TalonFX master;
     private double desiredPosition; // rotations
 
+    private ElevatorSim sim = new ElevatorSim(
+        LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60(1), 0.001, Constants.Hopper.GEAR_RATIO),
+        DCMotor.getKrakenX60(1), 
+        Constants.Hopper.MIN_POSITION, 
+        Constants.Hopper.MAX_POSITION, 
+        false, 
+        Constants.Hopper.MIN_POSITION);
+
     private Hopper()
     {
         master = new TalonFX(Constants.Hopper.MOTOR_ID);
+        
+        if (Robot.isSimulation())
+        {
+            TalonFXSimState simState = master.getSimState();
+            simState.Orientation = Constants.Hopper.MECHANICAL_ORIENTATION;
+            simState.setMotorType(TalonFXSimState.MotorType.KrakenX60);
+        }
+
+        config();
+    }
+
+    private void config()
+    {
         master.clearStickyFaults();
         TalonFXConfiguration masterConfig = new TalonFXConfiguration();
 
@@ -33,6 +68,7 @@ public class Hopper extends SubsystemBase
 
         masterConfig.CurrentLimits.SupplyCurrentLimit = Constants.Hopper.SUPPLY_CURRENT_LIMIT;
         masterConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+
 
         masterConfig.MotionMagic.MotionMagicCruiseVelocity = Constants.Hopper.MM_CRUISE_VELOCITY;
         masterConfig.MotionMagic.MotionMagicAcceleration = Constants.Hopper.MM_ACCELERATION;
@@ -49,6 +85,9 @@ public class Hopper extends SubsystemBase
         masterConfig.Slot0.kV = Constants.Hopper.KA;
 
         masterConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        
+        masterConfig.Voltage.PeakForwardVoltage = Constants.MAX_VOLTAGE;
+        masterConfig.Voltage.PeakReverseVoltage = -Constants.MAX_VOLTAGE;
 
         master.getConfigurator().apply(masterConfig);
     }
@@ -57,50 +96,41 @@ public class Hopper extends SubsystemBase
     /**
      * @return rotations
      */
-    public double getPosition() 
+    public Angle getPosition() 
     {
-        return master.getPosition().getValueAsDouble();
+        return master.getPosition().getValue();
     }
     
     /**
      * @return rotations per second
      */
-    public double getVelocity()
+    public AngularVelocity getVelocity()
     {
-        return master.getVelocity().getValueAsDouble();
+        return master.getVelocity().getValue();
     }
 
     /**
      * @return voltage
      */
-    public double getVoltage()
+    public Voltage getVoltage()
     {
-        return master.getMotorVoltage().getValueAsDouble();
+        return master.getMotorVoltage().getValue();
     }
 
-    public double getDesiredPosition()
+    public Angle getDesiredPosition()
     {
-        return this.desiredPosition;
+        return Rotations.of(this.desiredPosition);
     }
 
-    public void setVelocity(double velocity)
-    {
-        master.setControl(new VelocityVoltage(velocity));
-    }
-
-    public void setPosition(double position)
+    
+    public void setPosition(Angle position)
     {
         master.setPosition(position);
     }
 
-    public boolean isStalling()
+    public void setVelocity(AngularVelocity velocity)
     {
-        return master.getStatorCurrent().getValueAsDouble() >= Constants.Hopper.HOPPER_STALLING_CURRENT;
-    }
-
-    public boolean atPosition()
-    {
-        return Math.abs(this.desiredPosition - getPosition()) <= Constants.EPSILON;
+        master.setControl(new VelocityVoltage(velocity));
     }
 
     /**
@@ -112,10 +142,72 @@ public class Hopper extends SubsystemBase
     }
 
     //sets the target & moves there
-    public void setDesiredPosition(double target)
+    public void setDesiredPosition(Angle target)
     {
-        this.desiredPosition = target;
+        this.desiredPosition = target.in(Rotations);
         master.setControl(new MotionMagicVoltage(target));
+    }
+
+    public void setVoltage(Voltage voltage)
+    {
+        master.setVoltage(voltage.in(Volts));
+    }
+
+
+
+    public boolean isStalling()
+    {
+        return master.getStatorCurrent().getValueAsDouble() >= Constants.Hopper.HOPPER_STALLING_CURRENT;
+    }
+
+    public boolean atPosition()
+    {
+        return Math.abs(this.desiredPosition - getPosition().in(Rotations)) <= Constants.EPSILON;
+    }
+
+    
+    @Override
+    public void simulationPeriodic()
+    {
+        TalonFXSimState simState = master.getSimState();
+
+        // set the supply voltage of the TalonFX
+        simState.setSupplyVoltage(RobotController.getBatteryVoltage());
+
+        // get the motor voltage of the TalonFX
+        Voltage motorVoltage = simState.getMotorVoltageMeasure();
+
+        // use the motor voltage to calculate new position and velocity
+        // using WPILib's DCMotorSim class for physics simulation
+        sim.setInputVoltage(motorVoltage.in(Volts));
+        sim.update(0.020); // assume 20 ms loop time
+
+        // apply the new rotor position and velocity to the TalonFX;
+        // note that this is rotor position/velocity (before gear ratio), but
+        // DCMotorSim returns mechanism position/velocity (after gear ratio)
+        simState.setRawRotorPosition(sim.getPositionMeters() * Constants.Hopper.GEAR_RATIO);
+        simState.setRotorVelocity(sim.getVelocityMetersPerSecond() * Constants.Hopper.GEAR_RATIO);
+    }
+    
+    private SysIdRoutine sysId = new SysIdRoutine(
+        new SysIdRoutine.Config(), 
+        new SysIdRoutine.Mechanism((Voltage v)->setVoltage(v),
+            (SysIdRoutineLog l)->l
+                .motor("Shooter")
+                .voltage(getVoltage())
+                .angularPosition(master.getPosition().getValue())
+                .angularVelocity(getVelocity()),
+        this)
+    );
+
+    public Command sysIdQuasistatic (SysIdRoutine.Direction direction)
+    {
+        return sysId.quasistatic(direction).withName("SysId Q" + (direction == SysIdRoutine.Direction.kForward ? "F" : "R"));
+    }
+    
+    public Command sysIdDynamic (SysIdRoutine.Direction direction)
+    {
+        return sysId.dynamic(direction).withName("SysId Q" + (direction == SysIdRoutine.Direction.kForward ? "F" : "R"));
     }
 
 

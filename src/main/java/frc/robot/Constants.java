@@ -84,19 +84,24 @@ public class Constants
         
         public static final double GEAR_RATIO = 1.0; // TODO
 
-		public static final double KP = 1.0; // TODO
-		public static final double KI = 0.1; // TODO
-		public static final double KD = 0.0; // TODO
+		public static final double KP = 0.24194; // TODO
+		public static final double KI = 0.0; // TODO
+		public static final double KD = 0.0022479; // TODO
 		
-        public static final double KS = 0.0; // TODO
-		public static final double KG = 0.0; // TODO
-        public static final double KV = 1.0; // TODO
-        public static final double KA = 0.1; // TODO
+        public static final double KS = 0.0041693; // TODO
+		public static final double KG = 0.054566; // TODO
+        public static final double KV = 0.019146; // TODO
+        public static final double KA = 0.0018688; // TODO
 
         public static final double MIN_POSITION = 0.1; // TODO min hopper position (rotations)
         public static final double MAX_POSITION = 10.0; // TODO max hopper position (rotations)
+        
+        public static final double EXTEND_POSITION = 0.5; // TODO (rotations)
+        public static final double RETRACT_POSITION = 8.0; // TODO (rotations)
 
         public static final double HOPPER_STALLING_CURRENT = 50; //TODO 
+
+        public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
     }
     
     public class Hood

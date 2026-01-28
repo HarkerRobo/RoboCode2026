@@ -1,5 +1,10 @@
 package frc.robot.commands.hopper;
 
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.*;
+import edu.wpi.first.units.measure.*;
+import static edu.wpi.first.units.Units.*;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.Hopper;
@@ -14,7 +19,7 @@ public class RetractHopper extends Command
     @Override
     public void initialize ()
     {
-        Hopper.getInstance().setDesiredPosition(Constants.Hopper.MIN_POSITION);
+        Hopper.getInstance().setDesiredPosition(Rotations.of(Constants.Hopper.RETRACT_POSITION));
         // System.out.println("moving: " + Constants.Hopper.MIN_POSITION + " rotations");
     }
 

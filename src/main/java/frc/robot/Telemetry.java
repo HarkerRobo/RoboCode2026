@@ -77,6 +77,7 @@ public class Telemetry
 
     //velocity, voltage, position, target 
     private NetworkTable hopper = table.getSubTable("Hopper");
+    private StringPublisher hopperCommand = hopper.getStringTopic("command").publish();
     private DoublePublisher hopperVelocity = hopper.getDoubleTopic("velocity (rot per s)").publish();
     private DoublePublisher hopperVoltage = hopper.getDoubleTopic("voltage (V)").publish();
     private DoublePublisher hopperPosition = hopper.getDoubleTopic("current position (rotations)").publish();
@@ -117,6 +118,13 @@ public class Telemetry
         this.shooterCommand.set(shooterCommand == null ? "" : shooterCommand.getName());
         shooterVelocity.set(Shooter.getInstance().getVelocity().in(RotationsPerSecond));
         shooterVoltage.set(Shooter.getInstance().getVoltage().in(Volts));
+        
+        Command hopperCommand = Hopper.getInstance().getCurrentCommand();
+        this.hopperCommand.set(hopperCommand == null ? "" : hopperCommand.getName());
+        hopperPosition.set(Hopper.getInstance().getPosition().in(Rotations));
+        hopperVelocity.set(Hopper.getInstance().getVelocity().in(RotationsPerSecond));
+        hopperVoltage.set(Hopper.getInstance().getVoltage().in(Volts));
+        hopperTarget.set(Hopper.getInstance().getDesiredPosition().in(Rotations));
 
         turretYawRawPublisher.set(Turret.getInstance().getPosition().in(Rotations));
 
@@ -128,10 +136,6 @@ public class Telemetry
         fuelsInBlueOutpost.set(SimulationState.getInstance().fuelsInBlueOutpost);
         fuelsInRedOutpost.set(SimulationState.getInstance().fuelsInRedOutpost);
 
-        hopperPosition.set(Hopper.getInstance().getPosition());
-        hopperVelocity.set(Hopper.getInstance().getVelocity());
-        hopperVoltage.set(Hopper.getInstance().getVoltage());
-        hopperTarget.set(Hopper.getInstance().getDesiredPosition());
 
         /*
         test.set(new Translation3d[] 
