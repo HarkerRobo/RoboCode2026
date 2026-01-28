@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.Simulation;
 import frc.robot.simulation.SimulationState;
 import frc.robot.subsystems.Hood;
+import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
@@ -75,6 +76,10 @@ public class Telemetry
     private IntegerPublisher fuelsInRedOutpost = simulation.getIntegerTopic("Fuels in RedOutpost").publish();
     private StructArrayPublisher<Translation3d> test = simulation.getStructArrayTopic("TEST", Translation3d.struct).publish();
 
+    private NetworkTable indexer = table.getSubTable("indexer");
+    private StringPublisher indexerCommand = indexer.getStringTopic("command").publish();
+    private DoublePublisher indexerVelocity = indexer.getDoubleTopic("velocity (rps)").publish();
+    private DoublePublisher indexerVoltage = indexer.getDoubleTopic("indexer voltage").publish();
     //velocity, voltage, position, target 
     private NetworkTable hopper = table.getSubTable("Hopper");
     private StringPublisher hopperCommand = hopper.getStringTopic("command").publish();
@@ -136,6 +141,10 @@ public class Telemetry
         fuelsInBlueOutpost.set(SimulationState.getInstance().fuelsInBlueOutpost);
         fuelsInRedOutpost.set(SimulationState.getInstance().fuelsInRedOutpost);
 
+        Command indexerCommand = Indexer.getInstance().getCurrentCommand();
+        this.indexerCommand.set(indexerCommand == null ? "" : indexerCommand.getName());
+        indexerVelocity.set(Indexer.getInstance().getVelocity().in(RotationsPerSecond));
+        indexerVoltage.set(Indexer.getInstance().getVoltage().in(Volts));
 
         /*
         test.set(new Translation3d[] 
