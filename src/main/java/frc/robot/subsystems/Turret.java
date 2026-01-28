@@ -72,6 +72,7 @@ public class Turret extends SubsystemBase
 
     private void config ()
     {
+        motor.clearStickyFaults();
         TalonFXConfiguration config = new TalonFXConfiguration();
         config.CurrentLimits.StatorCurrentLimit = Constants.Turret.STATOR_CURRENT_LIMIT;
         config.CurrentLimits.StatorCurrentLimitEnable = true;

@@ -21,8 +21,10 @@ import frc.robot.Constants.Simulation;
 import frc.robot.simulation.SimulationState;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Indexer;
+import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.Intake;
 
 public class Telemetry 
 {
@@ -30,6 +32,11 @@ public class Telemetry
 
     private NetworkTableInstance tableInstance = NetworkTableInstance.getDefault();
     private NetworkTable table = tableInstance.getTable("1072");
+
+    private NetworkTable intake = table.getSubTable("Intake");
+    private StringPublisher intakeCommand = intake.getStringTopic("command").publish();
+    private DoublePublisher intakeVelocity = intake.getDoubleTopic("velocity (rot per s)").publish();
+    private DoublePublisher intakeVoltage = intake.getDoubleTopic("voltage (V)").publish();
 
     private NetworkTable turret = table.getSubTable("Turret");
     private StringPublisher turretCommand = turret.getStringTopic("command").publish();
@@ -47,7 +54,7 @@ public class Telemetry
     private DoublePublisher hoodVoltage = hood.getDoubleTopic("voltage (V)").publish();
     private BooleanPublisher hoodReadyToShoot = hood.getBooleanTopic("ready to shoot?").publish();
     
-    private NetworkTable shooter = table.getSubTable("Hood");
+    private NetworkTable shooter = table.getSubTable("Shooter");
     private StringPublisher shooterCommand = shooter.getStringTopic("command").publish();
     private DoublePublisher shooterVelocity = shooter.getDoubleTopic("velocity (rot per s)").publish();
     private DoublePublisher shooterVoltage = shooter.getDoubleTopic("voltage (V)").publish();
@@ -73,6 +80,13 @@ public class Telemetry
     private StringPublisher indexerCommand = indexer.getStringTopic("command").publish();
     private DoublePublisher indexerVelocity = indexer.getDoubleTopic("velocity (rps)").publish();
     private DoublePublisher indexerVoltage = indexer.getDoubleTopic("indexer voltage").publish();
+    //velocity, voltage, position, target 
+    private NetworkTable hopper = table.getSubTable("Hopper");
+    private StringPublisher hopperCommand = hopper.getStringTopic("command").publish();
+    private DoublePublisher hopperVelocity = hopper.getDoubleTopic("velocity (rot per s)").publish();
+    private DoublePublisher hopperVoltage = hopper.getDoubleTopic("voltage (V)").publish();
+    private DoublePublisher hopperPosition = hopper.getDoubleTopic("current position (rotations)").publish();
+    private DoublePublisher hopperTarget = hopper.getDoubleTopic("target position (rotations)").publish();
 
     private Telemetry ()
     {
@@ -82,6 +96,12 @@ public class Telemetry
     public void update ()
     {
         turretYawRaw.setPersistent(true);
+
+
+        Command intakeCommand = Intake.getInstance().getCurrentCommand();
+        this.intakeCommand.set(intakeCommand == null ? "" : intakeCommand.getName());
+        intakeVelocity.set(Intake.getInstance().getVelocity().in(RotationsPerSecond));
+        intakeVoltage.set(Intake.getInstance().getVoltage().in(Volts));
 
         Command turretCommand = Turret.getInstance().getCurrentCommand();
         this.turretCommand.set(turretCommand == null ? "" : turretCommand.getName());
@@ -103,7 +123,13 @@ public class Telemetry
         this.shooterCommand.set(shooterCommand == null ? "" : shooterCommand.getName());
         shooterVelocity.set(Shooter.getInstance().getVelocity().in(RotationsPerSecond));
         shooterVoltage.set(Shooter.getInstance().getVoltage().in(Volts));
-        shooterReadyToShoot.set(Shooter.getInstance().readyToShoot());
+        
+        Command hopperCommand = Hopper.getInstance().getCurrentCommand();
+        this.hopperCommand.set(hopperCommand == null ? "" : hopperCommand.getName());
+        hopperPosition.set(Hopper.getInstance().getPosition().in(Rotations));
+        hopperVelocity.set(Hopper.getInstance().getVelocity().in(RotationsPerSecond));
+        hopperVoltage.set(Hopper.getInstance().getVoltage().in(Volts));
+        hopperTarget.set(Hopper.getInstance().getDesiredPosition().in(Rotations));
 
         turretYawRawPublisher.set(Turret.getInstance().getPosition().in(Rotations));
 

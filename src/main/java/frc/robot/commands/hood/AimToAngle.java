@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.hood;
 
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.*;
