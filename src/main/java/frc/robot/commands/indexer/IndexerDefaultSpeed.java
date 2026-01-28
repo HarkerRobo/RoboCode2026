@@ -9,16 +9,20 @@ import edu.wpi.first.units.*;
 import edu.wpi.first.units.measure.*;
 import static edu.wpi.first.units.Units.*;
 
-public class IndexerFullSpeed extends Command{
+public class IndexerDefaultSpeed extends Command{
     
-    public IndexerFullSpeed() {
+    public IndexerDefaultSpeed() 
+    {
         addRequirements(Indexer.getInstance());
     }
 
-    public void initialize() {
-        Indexer.getInstance().setVelocity(RotationsPerSecond.of(Constants.Indexer.MAX_VELOCITY));
+    @Override
+    public void initialize() 
+    {
+        Indexer.getInstance().setVelocity(RotationsPerSecond.of(Constants.Indexer.DEFAULT_VELOCITY));
     }
 
+    @Override
     public boolean isFinished() 
     {
         return true;

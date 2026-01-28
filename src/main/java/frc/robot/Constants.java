@@ -149,12 +149,13 @@ public class Constants
 
     public class Indexer {
 
-        public static final int MOTOR_ID = 0; //TODO
+        public static final int MOTOR_ID = 7; //TODO
 
-        public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive; 
-        public static final double STATOR_CURRENT_LIMIT = 0.0;
-        public static final double SUPPLY_CURRENT_LIMIT = 0.0;
+        public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive; // TODO
+        public static final double STATOR_CURRENT_LIMIT = 80.0;
+        public static final double SUPPLY_CURRENT_LIMIT = 80.0;
 
+        public static final double kG = 0.0; //TODO
         public static final double kS = 0.5; //TODO
         public static final double kV = 0.0; //TODO
         public static final double kA = 0.0; //TODO
@@ -162,12 +163,16 @@ public class Constants
         public static final double kI = 0.0; //TODO
         public static final double kD = 0.0; //TODO
 
+        /*
         public static final double MM_CRUISE_VELOCITY = 0.0;  
         public static final double MM_ACCELERATION = 0.0;
         public static final double MM_JERK = 0.0;
+        */
 
-        public static final double MAX_VELOCITY = 0.0;
-        public static final double DEFAULT_VELOCITY = 0.0;
+        public static final double MAX_VELOCITY = 1.0; // TODO rotations per second
+        public static final double DEFAULT_VELOCITY = 0.0; // TODO rotations per second
+
+        public static final double GEAR_RATIO = 1.0; // TODO
 
     }
 }
