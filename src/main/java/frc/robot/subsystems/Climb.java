@@ -28,6 +28,7 @@ public class Climb extends SubsystemBase {
 
     //configurates the subsystem
     private void config() {
+        targetPosition = Rotations.of(0);
         elevator = new TalonFX(Constants.Climb.ID);
         climb = new TalonFX(Constants.Climb.ID);
 
