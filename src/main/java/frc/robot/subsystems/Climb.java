@@ -32,6 +32,7 @@ public class Climb extends SubsystemBase {
         climb = new TalonFX(Constants.Climb.ID);
 
         elevator.clearStickyFaults();
+        climb.clearStickyFaults();
 
         TalonFXConfiguration elevatorConfig = new TalonFXConfiguration();
 
@@ -47,7 +48,9 @@ public class Climb extends SubsystemBase {
         
         elevatorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-        elevatorConfig.Slot0.kP = Constants.Climb.kP.in(Volts.per(Rotations));
+        elevatorConfig.Slot0.kP = Constants.Climb.KP_ELEVATOR.in(Volts.per(Rotations));
+        elevatorConfig.Slot0.kI = Constants.Climb.KI_ELEVATOR;
+        elevatorConfig.Slot0.kD = Constants.Climb.KD_ELEVATOR;
 
         elevator.getConfigurator().apply(elevatorConfig);
 
@@ -65,9 +68,11 @@ public class Climb extends SubsystemBase {
         
         climbConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-        climbConfig.Slot0.kP = Constants.Climb.kP.in(Volts.per(Rotations));
+        climbConfig.Slot0.kP = Constants.Climb.KP_CLIMB;
+        climbConfig.Slot0.kI = Constants.Climb.KI_CLIMB;
+        climbConfig.Slot0.kD = Constants.Climb.KD_CLIMB;
 
-        elevator.getConfigurator().apply(elevatorConfig);
+        climb.getConfigurator().apply(climbConfig);
     }
 
     //self explanatory
@@ -111,6 +116,11 @@ public class Climb extends SubsystemBase {
     public void setElevatorTargetPosition(Angle tPosition) {
         targetPosition = tPosition;
         elevator.setControl(new MotionMagicVoltage(tPosition));
+    }
+
+    public boolean isElevatorStalling()
+    {
+        return elevator.getStatorCurrent().getValueAsDouble() >= Constants.Climb.ELEVATOR_STALLING_CURRENT.in(Amps);
     }
 
     //se
