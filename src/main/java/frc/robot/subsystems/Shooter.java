@@ -49,7 +49,7 @@ public class Shooter extends SubsystemBase
         
         if (Robot.isSimulation())
         {
-            motor.getSimState().Orientation = ChassisReference.CounterClockwise_Positive;
+            motor.getSimState().Orientation = Constants.Shooter.MECHANICAL_ORIENTATION;
             motor.getSimState().setMotorType(TalonFXSimState.MotorType.KrakenX60);
         }
         

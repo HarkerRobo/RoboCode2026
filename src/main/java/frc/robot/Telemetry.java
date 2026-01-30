@@ -86,7 +86,7 @@ public class Telemetry
     private DoublePublisher hopperVelocity = hopper.getDoubleTopic("velocity (rot per s)").publish();
     private DoublePublisher hopperVoltage = hopper.getDoubleTopic("voltage (V)").publish();
     private DoublePublisher hopperPosition = hopper.getDoubleTopic("current position (rotations)").publish();
-    private DoublePublisher hopperTarget = hopper.getDoubleTopic("target position (rotations)").publish();
+    // private DoublePublisher hopperTarget = hopper.getDoubleTopic("target position (rotations)").publish();
 
     private Telemetry ()
     {
@@ -129,7 +129,7 @@ public class Telemetry
         hopperPosition.set(Hopper.getInstance().getPosition().in(Rotations));
         hopperVelocity.set(Hopper.getInstance().getVelocity().in(RotationsPerSecond));
         hopperVoltage.set(Hopper.getInstance().getVoltage().in(Volts));
-        hopperTarget.set(Hopper.getInstance().getDesiredPosition().in(Rotations));
+        // hopperTarget.set(Hopper.getInstance().getDesiredPosition().in(Rotations));
 
         turretYawRawPublisher.set(Turret.getInstance().getPosition().in(Rotations));
 

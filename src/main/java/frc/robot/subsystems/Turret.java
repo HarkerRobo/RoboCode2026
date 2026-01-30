@@ -62,7 +62,7 @@ public class Turret extends SubsystemBase
 
         if (Robot.isSimulation())
         {
-            motor.getSimState().Orientation = ChassisReference.CounterClockwise_Positive;
+            motor.getSimState().Orientation = Constants.Turret.MECHANICAL_ORIENTATION;
             motor.getSimState().setMotorType(TalonFXSimState.MotorType.KrakenX60);
         }
 

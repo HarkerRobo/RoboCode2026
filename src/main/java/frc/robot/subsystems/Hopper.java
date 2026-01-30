@@ -32,7 +32,9 @@ public class Hopper extends SubsystemBase
 {
     private static Hopper instance;
     private TalonFX master;
+    /*
     private double desiredPosition; // rotations
+    */
 
     private ElevatorSim sim = new ElevatorSim(
         LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60(1), 0.001, Constants.Hopper.GEAR_RATIO),
@@ -70,9 +72,11 @@ public class Hopper extends SubsystemBase
         masterConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
 
+        /*
         masterConfig.MotionMagic.MotionMagicCruiseVelocity = Constants.Hopper.MM_CRUISE_VELOCITY;
         masterConfig.MotionMagic.MotionMagicAcceleration = Constants.Hopper.MM_ACCELERATION;
         masterConfig.MotionMagic.MotionMagicJerk = Constants.Hopper.MM_JERK;
+        */
         masterConfig.MotorOutput.Inverted = Constants.Hopper.INVERTED;
 
         masterConfig.Slot0.kP = Constants.Hopper.KP;
@@ -117,16 +121,20 @@ public class Hopper extends SubsystemBase
         return master.getMotorVoltage().getValue();
     }
 
+    /*
     public Angle getDesiredPosition()
     {
         return Rotations.of(this.desiredPosition);
     }
+    */
 
     
+    /*
     public void setPosition(Angle position)
     {
         master.setPosition(position);
     }
+    */
 
     public void setVelocity(AngularVelocity velocity)
     {
@@ -141,12 +149,14 @@ public class Hopper extends SubsystemBase
         master.setControl(new DutyCycleOut(power));
     }
 
+    /*
     //sets the target & moves there
     public void setDesiredPosition(Angle target)
     {
         this.desiredPosition = target.in(Rotations);
         master.setControl(new MotionMagicVoltage(target));
     }
+    */
 
     public void setVoltage(Voltage voltage)
     {
@@ -160,10 +170,12 @@ public class Hopper extends SubsystemBase
         return master.getStatorCurrent().getValueAsDouble() >= Constants.Hopper.HOPPER_STALLING_CURRENT;
     }
 
+    /*
     public boolean atPosition()
     {
         return Math.abs(this.desiredPosition - getPosition().in(Rotations)) <= Constants.EPSILON;
     }
+    */
 
     
     @Override
@@ -189,6 +201,7 @@ public class Hopper extends SubsystemBase
         simState.setRotorVelocity(sim.getVelocityMetersPerSecond() * Constants.Hopper.GEAR_RATIO);
     }
     
+    /*
     private SysIdRoutine sysId = new SysIdRoutine(
         new SysIdRoutine.Config(), 
         new SysIdRoutine.Mechanism((Voltage v)->setVoltage(v),
@@ -209,6 +222,7 @@ public class Hopper extends SubsystemBase
     {
         return sysId.dynamic(direction).withName("SysId Q" + (direction == SysIdRoutine.Direction.kForward ? "F" : "R"));
     }
+        */
 
 
     public static Hopper getInstance() 

@@ -19,8 +19,7 @@ public class RetractHopper extends Command
     @Override
     public void initialize ()
     {
-        Hopper.getInstance().setDesiredPosition(Rotations.of(Constants.Hopper.RETRACT_POSITION));
-        // System.out.println("moving: " + Constants.Hopper.MIN_POSITION + " rotations");
+        Hopper.getInstance().setVoltage(Volts.of(Constants.Hopper.BACKWARD_VOLTAGE));
     }
 
     @Override
@@ -32,7 +31,7 @@ public class RetractHopper extends Command
     @Override
     public boolean isFinished ()
     {
-        return Hopper.getInstance().isStalling() || Hopper.getInstance().atPosition();
+        return Hopper.getInstance().isStalling();
     }
 
     @Override
@@ -44,6 +43,6 @@ public class RetractHopper extends Command
     @Override
     public String getName()
     {
-        return "Retract Hopper (" + Constants.Hopper.MIN_POSITION + ")";
+        return "Retract Hopper";
     }
 }

@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.Simulation;
 import frc.robot.commands.hood.AimToAngle;
 import frc.robot.commands.hood.ZeroHood;
+import frc.robot.commands.hood.ZeroHoodSoft;
 import frc.robot.commands.hopper.ExtendHopper;
 import frc.robot.commands.hopper.RetractHopper;
 import frc.robot.commands.intake.DefaultIntake;
@@ -28,6 +29,7 @@ import frc.robot.simulation.SimulationState.FieldLocation;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Hopper;
+import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 
@@ -48,14 +50,29 @@ public class RobotContainer
 
    private void configureBindings() 
    {
+      driver.button(1).onTrue(new ZeroHood());
+      driver.button(2).onTrue(new ZeroHoodSoft());
+      driver.button(3).onTrue(new AimToAngle(60.0));
+      /*
+      driver.button(1).onTrue(new ExtendHopper());
+      driver.button(2).onTrue(new RetractHopper());
+      */
+      /*
+      driver.button(1).onTrue(Indexer.getInstance().sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+      driver.button(2).onTrue(Indexer.getInstance().sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+      driver.button(3).onTrue(Indexer.getInstance().sysIdDynamic(SysIdRoutine.Direction.kForward));
+      driver.button(4).onTrue(Indexer.getInstance().sysIdDynamic(SysIdRoutine.Direction.kReverse));
+      */
       /*
       driver.button(1).onTrue(Hopper.getInstance().sysIdQuasistatic(SysIdRoutine.Direction.kForward));
       driver.button(2).onTrue(Hopper.getInstance().sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
       driver.button(3).onTrue(Hopper.getInstance().sysIdDynamic(SysIdRoutine.Direction.kForward));
       driver.button(4).onTrue(Hopper.getInstance().sysIdDynamic(SysIdRoutine.Direction.kReverse));
       */
+      /*
       driver.button(1).onTrue(new ExtendHopper());
       driver.button(2).onTrue(new RetractHopper());
+      */
       /*
       driver.button(1).onTrue(Shooter.getInstance().sysIdQuasistatic(SysIdRoutine.Direction.kForward));
       driver.button(2).onTrue(Shooter.getInstance().sysIdQuasistatic(SysIdRoutine.Direction.kReverse));

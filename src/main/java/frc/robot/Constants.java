@@ -44,6 +44,8 @@ public class Constants
 
         public static final double DEFAULT_VELOCITY = 0.1; // TODO rotations per second (nonzero to decrease startup time)
         public static final double SHOOT_VELOCITY = 10.0; // TODO rotations per second 
+        
+        public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
     }
 
     public class Intake
@@ -67,6 +69,8 @@ public class Constants
 
         
         public static final double GEAR_RATIO = 1.0; //TODO
+        
+        public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
 
     }
 
@@ -77,9 +81,11 @@ public class Constants
         public static final double STATOR_CURRENT_LIMIT = 90.0;
         public static final double SUPPLY_CURRENT_LIMIT = 90.0;
 
+        /*
         public static final double MM_CRUISE_VELOCITY = 60.0;
 		public static final double MM_ACCELERATION = 60.0;
 		public static final double MM_JERK = 240.0;
+        */
 		public static final InvertedValue INVERTED = InvertedValue.CounterClockwise_Positive;
         
         public static final double GEAR_RATIO = 1.0; // TODO
@@ -93,11 +99,11 @@ public class Constants
         public static final double KV = 0.019146; // TODO
         public static final double KA = 0.0018688; // TODO
 
-        public static final double MIN_POSITION = 0.1; // TODO min hopper position (rotations)
-        public static final double MAX_POSITION = 10.0; // TODO max hopper position (rotations)
-        
-        public static final double EXTEND_POSITION = 0.5; // TODO (rotations)
-        public static final double RETRACT_POSITION = 8.0; // TODO (rotations)
+        public static final double MIN_POSITION = 0.1; // TODO min hopper position (rotations) for simulation
+        public static final double MAX_POSITION = 10.0; // TODO max hopper position (rotations) for simulation
+ 
+        public static final double FORWARD_VOLTAGE = 1.0; // TODO
+        public static final double BACKWARD_VOLTAGE = -1.0; // TODO
 
         public static final double HOPPER_STALLING_CURRENT = 50; //TODO 
 
@@ -139,6 +145,8 @@ public class Constants
         public static final double HOOD_MAX_ANGLE = 70.0; // TODO degrees
     
         public static final double STALLING_CURRENT = 50.0;
+
+        public static final double ZEROING_VOLTAGE = -1.0; // TODO
     }
 
     public class Turret
@@ -166,6 +174,8 @@ public class Constants
 
         public static final double FORWARD_SOFTWARE_LIMIT_THRESHOLD = 4.82; // TODO
 		public static final double REVERSE_SOFTWARE_LIMIT_THRESHOLD = -0.01; // TODO
+        
+        public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
     }
 
     public class Simulation
@@ -236,5 +246,6 @@ public class Constants
 
         public static final double GEAR_RATIO = 1.0; // TODO
 
+        public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
     }
 }
