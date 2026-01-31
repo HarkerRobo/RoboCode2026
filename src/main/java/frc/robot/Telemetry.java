@@ -56,9 +56,10 @@ public class Telemetry
     
     private NetworkTable shooter = table.getSubTable("Shooter");
     private StringPublisher shooterCommand = shooter.getStringTopic("command").publish();
-    private DoublePublisher shooterVelocity = shooter.getDoubleTopic("velocity (rot per s)").publish();
-    private DoublePublisher shooterVoltage = shooter.getDoubleTopic("voltage (V)").publish();
-    private BooleanPublisher shooterReadyToShoot = shooter.getBooleanTopic("ready to shoot?").publish();
+    private DoublePublisher shooterLeftVelocity = shooter.getDoubleTopic("left velocity (rot per s)").publish();
+    private DoublePublisher shooterLeftVoltage = shooter.getDoubleTopic("left voltage (V)").publish();
+    private DoublePublisher shooterRightVelocity = shooter.getDoubleTopic("right velocity (rot per s)").publish();
+    private DoublePublisher shooterRightVoltage = shooter.getDoubleTopic("right voltage (V)").publish();
 
 
     private NetworkTable persistent = table.getSubTable("[persistent variables]");
@@ -121,8 +122,10 @@ public class Telemetry
 
         Command shooterCommand = Shooter.getInstance().getCurrentCommand();
         this.shooterCommand.set(shooterCommand == null ? "" : shooterCommand.getName());
-        shooterVelocity.set(Shooter.getInstance().getVelocity().in(RotationsPerSecond));
-        shooterVoltage.set(Shooter.getInstance().getVoltage().in(Volts));
+        shooterLeftVelocity.set(Shooter.getInstance().getLeftVelocity().in(RotationsPerSecond));
+        shooterLeftVoltage.set(Shooter.getInstance().getLeftVoltage().in(Volts));
+        shooterRightVelocity.set(Shooter.getInstance().getRightVelocity().in(RotationsPerSecond));
+        shooterRightVoltage.set(Shooter.getInstance().getRightVoltage().in(Volts));
         
         Command hopperCommand = Hopper.getInstance().getCurrentCommand();
         this.hopperCommand.set(hopperCommand == null ? "" : hopperCommand.getName());

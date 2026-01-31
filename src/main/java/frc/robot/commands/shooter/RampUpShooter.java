@@ -27,7 +27,7 @@ public class RampUpShooter extends Command
     @Override
     public boolean isFinished()
     {
-        return Shooter.getInstance().getVelocity().in(RotationsPerSecond) >= Constants.Shooter.SHOOT_VELOCITY;
+        return Shooter.getInstance().getLeftVelocity().in(RotationsPerSecond) >= Constants.Shooter.SHOOT_VELOCITY;
     }
 
     @Override
