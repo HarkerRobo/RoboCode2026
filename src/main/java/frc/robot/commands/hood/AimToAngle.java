@@ -46,7 +46,6 @@ public class AimToAngle extends Command
     @Override
     public void end (boolean interrupted)
     {
-        Hood.getInstance().moveToPosition(Hood.getInstance().getPosition());
     }
 
     @Override

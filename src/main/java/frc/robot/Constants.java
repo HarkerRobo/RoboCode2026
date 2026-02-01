@@ -49,7 +49,10 @@ public class Constants
 
     public class Shooter
     {
-        public static final int MOTOR_ID = 3;
+        public static final int LEFT_MASTER_ID = 3; // TODO
+        public static final int LEFT_FOLLOWER_ID = 8; // TODO
+        public static final int RIGHT_MASTER_ID = 9; // TODO
+        public static final int RIGHT_FOLLOWER_ID = 10; // TODO
         
         public static final double STATOR_CURRENT_LIMIT = 90.0;
         public static final double SUPPLY_CURRENT_LIMIT = 90.0;
@@ -140,26 +143,27 @@ public class Constants
     
     public class Hood
     {
-        public static final int MOTOR_ID = 4;
+        public static final int MASTER_ID = 4;
+        public static final int FOLLOWER_ID = 5;
         
         public static final double STATOR_CURRENT_LIMIT = 90.0;
         public static final double SUPPLY_CURRENT_LIMIT = 90.0;
 
         public static final double MM_CRUISE_VELOCITY = 1.0; // TODO
-		public static final double MM_ACCELERATION = 5.0;  // TODO
-		public static final double MM_JERK = 10.0; // TODO
+		public static final double MM_ACCELERATION = 4.0;  // TODO
+		public static final double MM_JERK = 8.0; // TODO
 		public static final InvertedValue INVERTED = InvertedValue.CounterClockwise_Positive;
         
-        public static final double GEAR_RATIO = 100.0; // TODO
+        public static final double GEAR_RATIO = 1.0; // TODO
 
-		public static final double KP = 26.41; // TODO
-		public static final double KI = 0.0; // TODO
-		public static final double KD = 0.89216; // TODO
+		public static final double KP = 1.0; // TODO
+		public static final double KI = 0.7; // TODO
+		public static final double KD = 0.1; // TODO
 		
-        public static final double KS = 0.081286; // TODO
-        public static final double KV = 11.462; // TODO
-        public static final double KA = 0.23849; // TODO
-		public static final double KG = 0.012971; // TODO
+        public static final double KS = 0.0055451; // TODO
+        public static final double KV = 0.1138; // TODO
+        public static final double KA = 0.0049434; // TODO
+		public static final double KG = 0.0143; // TODO
 
         public static final double FORWARD_SOFTWARE_LIMIT_THRESHOLD = 4.82; // TODO
 		public static final double REVERSE_SOFTWARE_LIMIT_THRESHOLD = -0.01; // TODO

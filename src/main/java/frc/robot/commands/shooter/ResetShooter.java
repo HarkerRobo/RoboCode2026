@@ -27,7 +27,7 @@ public class ResetShooter extends Command
     @Override
     public boolean isFinished()
     {
-        return Math.abs(Shooter.getInstance().getVelocity().in(RotationsPerSecond) - Constants.Shooter.DEFAULT_VELOCITY) < 0.1;
+        return Math.abs(Shooter.getInstance().getLeftVelocity().in(RotationsPerSecond) - Constants.Shooter.DEFAULT_VELOCITY) < 0.1;
     }
 
     @Override
