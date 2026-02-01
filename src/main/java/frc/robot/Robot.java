@@ -20,6 +20,7 @@ public class Robot extends TimedRobot
    {
       Telemetry.getInstance();
       RobotContainer.getInstance();
+      
 
       boolean logSimulation = false;
 

@@ -1,14 +1,21 @@
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.*;
 import edu.wpi.first.units.measure.*;
 import static edu.wpi.first.units.Units.*;
 
+import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
+
 import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.networktables.DoubleTopic;
 import edu.wpi.first.networktables.IntegerPublisher;
 import edu.wpi.first.networktables.NetworkTable;
@@ -88,6 +95,12 @@ public class Telemetry
     private DoublePublisher hopperPosition = hopper.getDoubleTopic("current position (rotations)").publish();
     // private DoublePublisher hopperTarget = hopper.getDoubleTopic("target position (rotations)").publish();
 
+    private NetworkTable drivetrain = table.getSubTable("Drivetrain");
+    private StructPublisher<Pose2d> drivePose = drivetrain.getStructTopic("pose", Pose2d.struct).publish();
+    private StructPublisher<ChassisSpeeds> driveSpeeds = drivetrain.getStructTopic("speed", ChassisSpeeds.struct).publish();
+    private StructArrayPublisher<SwerveModuleState> driveModuleStates = drivetrain.getStructArrayTopic("module states", SwerveModuleState.struct).publish();
+    private StructArrayPublisher<SwerveModulePosition> driveModulePositions = drivetrain.getStructArrayTopic("module position", SwerveModulePosition.struct).publish();
+
     private Telemetry ()
     {
         turretYawRaw.setPersistent(true);
@@ -145,6 +158,12 @@ public class Telemetry
         this.indexerCommand.set(indexerCommand == null ? "" : indexerCommand.getName());
         indexerVelocity.set(Indexer.getInstance().getVelocity().in(RotationsPerSecond));
         indexerVoltage.set(Indexer.getInstance().getVoltage().in(Volts));
+
+        SwerveDriveState swerveState =  RobotContainer.getDrivetrain().getState();
+        drivePose.set(swerveState.Pose);
+        driveSpeeds.set(swerveState.Speeds);
+        driveModuleStates.set(swerveState.ModuleStates);
+        driveModulePositions.set(swerveState.ModulePositions);
 
         /*
         test.set(new Translation3d[] 
