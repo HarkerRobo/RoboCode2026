@@ -59,10 +59,16 @@ public class RobotContainer
 
    private void configureBindings() 
    {
+      drivetrain.setDefaultCommand(
+            drivetrain.applyRequest(() ->
+            m_driveRequest.withVelocityX(-driver.getLeftY() * MaxSpeed)
+                  .withVelocityY(-driver.getLeftX() * MaxSpeed)
+                  .withRotationalRate(-driver.getRightX() * MaxAngularRate)
+            ));
       /*
-      driver.button(1).onTrue(new RampUpShooter());
-      driver.button(2).onTrue(new ResetShooter());
-      */
+       * driver.button(1).onTrue(new RampUpShooter());
+       * driver.button(2).onTrue(new ResetShooter());
+       */
       driver.button(1).onTrue(new ZeroHood());
       driver.button(2).onTrue(new ZeroHoodSoft());
       driver.button(3).onTrue(new AimToAngle(60.0));
