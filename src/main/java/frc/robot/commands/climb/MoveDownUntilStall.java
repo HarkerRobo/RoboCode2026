@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.climb;
 
 import static edu.wpi.first.units.Units.*;
 
@@ -8,7 +8,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.Climb;
 
-public class MoveDownUntilStall extends Command{
+public class MoveDownUntilStall extends Command
+{
     public MoveDownUntilStall (int level)
     {
         addRequirements(Climb.getInstance());

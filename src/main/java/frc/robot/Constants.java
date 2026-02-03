@@ -152,7 +152,8 @@ public class Constants
         public static final double HUB_INTAKE_HEIGHT = 1.8288;
     }
     public static final class Climb {
-        public static final int ID = 17;
+        public static final int ELEVATOR_ID = 17;
+        public static final int HINGE_ID = 17;
 
         public static final InvertedValue ELEVATOR_INVERTED = InvertedValue.Clockwise_Positive; // TODO
         public static final InvertedValue CLIMB_INVERTED = InvertedValue.Clockwise_Positive; // TODO
@@ -160,7 +161,7 @@ public class Constants
         public static final double ELEVATOR_GEAR_RATIO = 23.7;
         public static final double CLIMB_GEAR_RATIO = 23.7;
 
-        public static final Per<VoltageUnit,AngleUnit> KP_ELEVATOR = Volts.of(5).per(Rotation); // TODO
+        public static final double KP_ELEVATOR = 5.0; // TODO
         public static final double KP_CLIMB = 26.41; // TODO
         public static final double KI_ELEVATOR = 0.0; //TODO
         public static final double KI_CLIMB = 0.0; // TODO
@@ -181,7 +182,7 @@ public class Constants
 		public static final double KG = 0.012971; // TODO
         public static final Angle MAX_ERROR = Rotations.of(0.1);
 
-        public static final Voltage ELEVATOR_STAY_VOLTAGE = Volts.of(1.0); //TODO
+        public static final Voltage ELEVATOR_STAY_VOLTAGE = Volts.of(0.0); //TODO
         public static final Voltage ELEVATOR_GO_DOWN_VOLTAGE = Volts.of(-5.0); //TODO
     }
 }

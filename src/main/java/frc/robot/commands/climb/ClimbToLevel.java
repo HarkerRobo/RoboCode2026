@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.climb;
 
 import static edu.wpi.first.units.Units.*;
 
@@ -8,10 +8,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.Climb;
 
-public class ClimbToLevel extends Command{
+public class ClimbToLevel extends Command
+{
     int level;
     Angle[] levelHeights;
-    int direction;
     public ClimbToLevel (int level)
     {
         addRequirements(Climb.getInstance());
@@ -22,13 +22,12 @@ public class ClimbToLevel extends Command{
     @Override
     public void initialize ()
     {
-        
+        Climb.getInstance().setElevatorTargetPosition(levelHeights[level]);
     }
 
     @Override
     public void execute ()
     {
-        Climb.getInstance().setElevatorTargetPosition(levelHeights[level]);
         //Climb.getInstance().setElevatorVoltage(Volts.of(
             //Math.min(1.0,Math.abs((levelHeights[level].minus(Climb.getInstance().getElevatorPosition())).times(5.0).in(Rotations)))
             //* Math.signum(levelHeights[level].minus(Climb.getInstance().getElevatorPosition()).in(Rotations))));
@@ -37,7 +36,7 @@ public class ClimbToLevel extends Command{
     @Override
     public boolean isFinished ()
     {
-        return false;
+        return Climb.getInstance().getElevatorPosition().isNear(levelHeights[level], Rotations.of(Constants.EPSILON));
     }
 
     @Override

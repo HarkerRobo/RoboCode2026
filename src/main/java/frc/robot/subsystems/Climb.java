@@ -22,15 +22,17 @@ public class Climb extends SubsystemBase {
     private TalonFX elevator;
     private TalonFX climb;
 
-    private Climb() {
+    private Climb() 
+    {
         config();
     }
 
     //configurates the subsystem
-    private void config() {
+    private void config() 
+    {
         targetPosition = Rotations.of(0);
-        elevator = new TalonFX(Constants.Climb.ID);
-        climb = new TalonFX(Constants.Climb.ID);
+        elevator = new TalonFX(Constants.Climb.ELEVATOR_ID);
+        climb = new TalonFX(Constants.Climb.HINGE_ID);
 
         elevator.clearStickyFaults();
         climb.clearStickyFaults();
@@ -49,9 +51,14 @@ public class Climb extends SubsystemBase {
         
         elevatorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-        elevatorConfig.Slot0.kP = Constants.Climb.KP_ELEVATOR.in(Volts.per(Rotations));
+        elevatorConfig.Slot0.kP = Constants.Climb.KP_ELEVATOR;
         elevatorConfig.Slot0.kI = Constants.Climb.KI_ELEVATOR;
         elevatorConfig.Slot0.kD = Constants.Climb.KD_ELEVATOR;
+
+        elevatorConfig.Slot0.kG = Constants.Climb.KG;
+        elevatorConfig.Slot0.kS = Constants.Climb.KS;
+        elevatorConfig.Slot0.kV = Constants.Climb.KV;
+        elevatorConfig.Slot0.kA = Constants.Climb.KA;
 
         elevator.getConfigurator().apply(elevatorConfig);
 
@@ -76,18 +83,18 @@ public class Climb extends SubsystemBase {
         climb.getConfigurator().apply(climbConfig);
     }
 
-    //self explanatory
-    public void setElevatorDutyCycle(double velocity) {
+    public void setElevatorDutyCycle(double velocity) 
+    {
         elevator.setControl(new DutyCycleOut(velocity));
     }
 
-    //se (self explanatory)
-    public void setElevatorVelocity(AngularVelocity velocity) {
+    public void setElevatorVelocity(AngularVelocity velocity) 
+    {
         elevator.setControl(new VelocityVoltage(velocity));
     }
 
-    //se
-    public AngularVelocity getElevatorVelocity() {
+    public AngularVelocity getElevatorVelocity() 
+    {
         return elevator.getVelocity().getValue();
     }
 
@@ -96,25 +103,23 @@ public class Climb extends SubsystemBase {
         return elevator.getPosition().getValue();
     }
 
-    //se
-    public Angle getElevatorTargetPosition() {
+    public Angle getElevatorTargetPosition() 
+    {
         return targetPosition;
     }
 
-    //se
     public Voltage getElevatorVoltage()
     {
         return elevator.getMotorVoltage().getValue();
     }
 
-    //se
     public void setElevatorVoltage(Voltage v)
     {
         elevator.setControl(new VoltageOut(v));
     }
 
-    //se
-    public void setElevatorTargetPosition(Angle tPosition) {
+    public void setElevatorTargetPosition(Angle tPosition) 
+    {
         targetPosition = tPosition;
         elevator.setControl(new MotionMagicVoltage(tPosition));
     }
@@ -124,40 +129,26 @@ public class Climb extends SubsystemBase {
         return elevator.getStatorCurrent().getValueAsDouble() >= Constants.Climb.ELEVATOR_STALLING_CURRENT.in(Amps);
     }
 
-    //se
-    public void setClimbDutyCycle(double velocity) {
+    public void setClimbDutyCycle(double velocity) 
+    {
         climb.setControl(new DutyCycleOut(velocity));
     }
 
-    //se
-    public void setClimbVelocity(AngularVelocity velocity) {
-        climb.setControl(new VelocityVoltage(velocity));
-    }
-
-    //se
-    public AngularVelocity getClimbVelocity() {
-        return climb.getVelocity().getValue();
-    }
-    
-    public Angle getClimbPosition() {
-        return climb.getPosition().getValue();
-    }
-
-    //se
     public Voltage getClimbVoltage()
     {
         return climb.getMotorVoltage().getValue();
     }
 
-    //se
     public void setClimbVoltage(Voltage v)
     {
         climb.setControl(new VoltageOut(v));
     }
     
     //returns the instance of the subsystem
-    public static Climb getInstance() {
-        if (instance == null) {
+    public static Climb getInstance() 
+    {
+        if (instance == null) 
+        {
             instance = new Climb();
         }
         return instance;
