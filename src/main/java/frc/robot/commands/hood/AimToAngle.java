@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.hood;
 
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.*;
@@ -46,7 +46,6 @@ public class AimToAngle extends Command
     @Override
     public void end (boolean interrupted)
     {
-        Hood.getInstance().moveToPosition(Hood.getInstance().getPosition());
     }
 
     @Override

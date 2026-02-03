@@ -1,18 +1,33 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.*;
 import edu.wpi.first.units.measure.*;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
+
 import static edu.wpi.first.units.Units.*;
 
+import org.ejml.dense.row.factory.LinearSolverFactory_MT_DDRM;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.sim.ChassisReference;
+import com.ctre.phoenix6.sim.TalonFXSimState;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
@@ -24,19 +39,44 @@ public class Shooter extends SubsystemBase
 {
     private static Shooter instance;
 
-    private TalonFX motor;
+    private TalonFX leftMaster;
+    private TalonFX leftFollower;
+    
+    private TalonFX rightMaster;
+    private TalonFX rightFollower;
+    
+    private DCMotorSim leftSim = new DCMotorSim(
+        LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60(2), 0.001, Constants.Shooter.GEAR_RATIO),
+        DCMotor.getKrakenX60(2));
+    
+    private DCMotorSim rightSim = new DCMotorSim(
+        LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60(2), 0.001, Constants.Shooter.GEAR_RATIO),
+        DCMotor.getKrakenX60(2));
 
     private Shooter()
     {
-        motor = new TalonFX(Constants.Shooter.MOTOR_ID);
+        leftMaster = new TalonFX(Constants.Shooter.LEFT_MASTER_ID);
+        leftFollower = new TalonFX(Constants.Shooter.LEFT_FOLLOWER_ID);
+        rightMaster = new TalonFX(Constants.Shooter.RIGHT_MASTER_ID);
+        rightFollower = new TalonFX(Constants.Shooter.RIGHT_FOLLOWER_ID);
 
         config();
         
-        setDefaultCommand(runOnce(()->setVelocity(RotationsPerSecond.of(Constants.Shooter.DEFAULT_VELOCITY))));
+        if (Robot.isSimulation())
+        {
+            leftMaster.getSimState().Orientation = Constants.Shooter.MECHANICAL_ORIENTATION;
+            leftMaster.getSimState().setMotorType(TalonFXSimState.MotorType.KrakenX60);
+        }
+        
     }
 
     private void config()
     {
+        leftMaster.clearStickyFaults();
+        leftFollower.clearStickyFaults();
+        rightMaster.clearStickyFaults();
+        rightFollower.clearStickyFaults();
+
         TalonFXConfiguration config = new TalonFXConfiguration();
 
         if (Robot.isReal())
@@ -60,54 +100,140 @@ public class Shooter extends SubsystemBase
         config.Slot0.kP = Constants.Shooter.KP;
         config.Slot0.kI = Constants.Shooter.KI;
         config.Slot0.kD = Constants.Shooter.KD;
+        config.Slot0.kS = Constants.Shooter.KS;
         config.Slot0.kG = Constants.Shooter.KG;
         config.Slot0.kV = Constants.Shooter.KV;
+        config.Slot0.kA = Constants.Shooter.KA;
 
         config.Voltage.PeakForwardVoltage = Constants.MAX_VOLTAGE;
         config.Voltage.PeakReverseVoltage = -Constants.MAX_VOLTAGE;
 
-        motor.getConfigurator().apply(config);
+        leftMaster.getConfigurator().apply(config);
+        leftFollower.getConfigurator().apply(config);
+        rightMaster.getConfigurator().apply(config);
+        rightFollower.getConfigurator().apply(config);
+
+        leftFollower.setControl(new Follower(Constants.Shooter.LEFT_MASTER_ID, MotorAlignmentValue.Aligned));
+        rightFollower.setControl(new Follower(Constants.Shooter.RIGHT_MASTER_ID, MotorAlignmentValue.Aligned));
+    }
+    
+    public Voltage getLeftVoltage()
+    {
+        return leftMaster.getMotorVoltage().getValue();
+    }
+    
+    public Voltage getRightVoltage()
+    {
+        return rightMaster.getMotorVoltage().getValue();
+    }
+    
+    public AngularVelocity getLeftVelocity()
+    {
+        return leftMaster.getVelocity().getValue();
+    }
+    
+    public AngularVelocity getRightVelocity()
+    {
+        return rightMaster.getVelocity().getValue();
     }
 
     public void setVelocity (AngularVelocity velocity)
     {
-        motor.setControl(new VelocityVoltage(velocity));
+        leftMaster.setControl(new VelocityVoltage(velocity));
+        rightMaster.setControl(new VelocityVoltage(velocity));
     }
 
     public void setVoltage (Voltage voltage)
     {
-        motor.setControl(new VoltageOut(voltage));
+        leftMaster.setControl(new VoltageOut(voltage));
+        rightMaster.setControl(new VoltageOut(voltage));
     }
 
-    public void setPosition (Angle position)
+    public void setDutyCycle (double dutyCycle)
     {
-        motor.setPosition(position);
+        leftMaster.setControl(new DutyCycleOut(dutyCycle));
+        rightMaster.setControl(new DutyCycleOut(dutyCycle));
     }
     
-    public Angle getPosition()
+    @Override
+    public void simulationPeriodic ()
     {
-        return motor.getPosition().getValue();
-    }
-    
-    public Voltage getVoltage()
-    {
-        return motor.getMotorVoltage().getValue();
-    }
-    
-    /**
-     * 
-     * @return rotations per second
-     */
-    public AngularVelocity getVelocity()
-    {
-        return motor.getVelocity().getValue();
-    }
+        TalonFXSimState leftSimState = leftMaster.getSimState();
 
-    public boolean readyToShoot ()
-    {
-        return Math.abs(motor.getVelocity().getValue().in(RotationsPerSecond) - Constants.Shooter.SHOOT_VELOCITY) < Constants.EPSILON;
-    }
+        // set the supply voltage of the TalonFX
+        leftSimState.setSupplyVoltage(RobotController.getBatteryVoltage());
 
+        // use the motor voltage to calculate new position and velocity
+        // using WPILib's DCMotorSim class for physics simulation
+        leftSim.setInputVoltage(leftSimState.getMotorVoltageMeasure().in(Volts));
+        leftSim.update(0.020); // assume 20 ms loop time
+
+        // apply the new rotor position and velocity to the TalonFX;
+        // note that this is rotor position/velocity (before gear ratio), but
+        // DCMotorSim returns mechanism position/velocity (after gear ratio)
+        leftSimState.setRawRotorPosition(leftSim.getAngularPosition().times(Constants.Shooter.GEAR_RATIO));
+        leftSimState.setRotorVelocity(leftSim.getAngularVelocity().times(Constants.Shooter.GEAR_RATIO));
+
+
+        TalonFXSimState rightSimState = rightMaster.getSimState();
+
+        // set the supply voltage of the TalonFX
+        rightSimState.setSupplyVoltage(RobotController.getBatteryVoltage());
+
+        // use the motor voltage to calculate new position and velocity
+        // using WPILib's DCMotorSim class for physics simulation
+        rightSim.setInputVoltage(rightSimState.getMotorVoltageMeasure().in(Volts));
+        rightSim.update(0.020); // assume 20 ms loop time
+
+        // apply the new rotor position and velocity to the TalonFX;
+        // note that this is rotor position/velocity (before gear ratio), but
+        // DCMotorSim returns mechanism position/velocity (after gear ratio)
+        rightSimState.setRawRotorPosition(rightSim.getAngularPosition().times(Constants.Shooter.GEAR_RATIO));
+        rightSimState.setRotorVelocity(rightSim.getAngularVelocity().times(Constants.Shooter.GEAR_RATIO));
+    }
+    
+    private SysIdRoutine leftSysId = new SysIdRoutine(
+        new SysIdRoutine.Config(), 
+        new SysIdRoutine.Mechanism((Voltage v)->leftMaster.setControl(new VoltageOut(v)),
+            (SysIdRoutineLog l)->l
+                .motor("Shooter")
+                .voltage(getLeftVoltage())
+                .angularPosition(leftMaster.getPosition().getValue())
+                .angularVelocity(getLeftVelocity()),
+        this)
+    );
+
+    public Command leftSysIdQuasistatic (SysIdRoutine.Direction direction)
+    {
+        return leftSysId.quasistatic(direction).withName("SysId Q" + (direction == SysIdRoutine.Direction.kForward ? "F" : "R"));
+    }
+    
+    public Command leftSysIdDynamic (SysIdRoutine.Direction direction)
+    {
+        return leftSysId.dynamic(direction).withName("SysId Q" + (direction == SysIdRoutine.Direction.kForward ? "F" : "R"));
+    }
+    
+    private SysIdRoutine rightSysId = new SysIdRoutine(
+        new SysIdRoutine.Config(), 
+        new SysIdRoutine.Mechanism((Voltage v)->rightMaster.setControl(new VoltageOut(v)),
+            (SysIdRoutineLog l)->l
+                .motor("Shooter")
+                .voltage(getRightVoltage())
+                .angularPosition(rightMaster.getPosition().getValue())
+                .angularVelocity(getRightVelocity()),
+        this)
+    );
+
+    public Command rightSysIdQuasistatic (SysIdRoutine.Direction direction)
+    {
+        return rightSysId.quasistatic(direction).withName("SysId Q" + (direction == SysIdRoutine.Direction.kForward ? "F" : "R"));
+    }
+    
+    public Command rightSysIdDynamic (SysIdRoutine.Direction direction)
+    {
+        return rightSysId.dynamic(direction).withName("SysId Q" + (direction == SysIdRoutine.Direction.kForward ? "F" : "R"));
+    }
+    
     public static Shooter getInstance()
     {
         if (instance == null) instance = new Shooter();

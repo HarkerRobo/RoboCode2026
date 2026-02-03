@@ -1,14 +1,28 @@
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.*;
 import edu.wpi.first.units.measure.*;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj.util.Color8Bit;
+
 import static edu.wpi.first.units.Units.*;
 
+import com.ctre.phoenix6.SignalLogger;
+import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
+
 import edu.wpi.first.networktables.BooleanPublisher;
+import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.networktables.DoubleTopic;
 import edu.wpi.first.networktables.IntegerPublisher;
 import edu.wpi.first.networktables.NetworkTable;
@@ -20,9 +34,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.Simulation;
 import frc.robot.simulation.SimulationState;
 import frc.robot.subsystems.Hood;
+import frc.robot.subsystems.Indexer;
+import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Climb;
+import frc.robot.subsystems.Intake;
 
 public class Telemetry 
 {
@@ -30,6 +47,11 @@ public class Telemetry
 
     private NetworkTableInstance tableInstance = NetworkTableInstance.getDefault();
     private NetworkTable table = tableInstance.getTable("1072");
+
+    private NetworkTable intake = table.getSubTable("Intake");
+    private StringPublisher intakeCommand = intake.getStringTopic("command").publish();
+    private DoublePublisher intakeVelocity = intake.getDoubleTopic("velocity (rot per s)").publish();
+    private DoublePublisher intakeVoltage = intake.getDoubleTopic("voltage (V)").publish();
 
     private NetworkTable turret = table.getSubTable("Turret");
     private StringPublisher turretCommand = turret.getStringTopic("command").publish();
@@ -47,11 +69,12 @@ public class Telemetry
     private DoublePublisher hoodVoltage = hood.getDoubleTopic("voltage (V)").publish();
     private BooleanPublisher hoodReadyToShoot = hood.getBooleanTopic("ready to shoot?").publish();
     
-    private NetworkTable shooter = table.getSubTable("Hood");
+    private NetworkTable shooter = table.getSubTable("Shooter");
     private StringPublisher shooterCommand = shooter.getStringTopic("command").publish();
-    private DoublePublisher shooterVelocity = shooter.getDoubleTopic("velocity (rot per s)").publish();
-    private DoublePublisher shooterVoltage = shooter.getDoubleTopic("voltage (V)").publish();
-    private BooleanPublisher shooterReadyToShoot = shooter.getBooleanTopic("ready to shoot?").publish();
+    private DoublePublisher shooterLeftVelocity = shooter.getDoubleTopic("left velocity (rot per s)").publish();
+    private DoublePublisher shooterLeftVoltage = shooter.getDoubleTopic("left voltage (V)").publish();
+    private DoublePublisher shooterRightVelocity = shooter.getDoubleTopic("right velocity (rot per s)").publish();
+    private DoublePublisher shooterRightVoltage = shooter.getDoubleTopic("right voltage (V)").publish();
 
     private NetworkTable climb = table.getSubTable("Climb");
     private StringPublisher climbCommand = shooter.getStringTopic("command").publish();
@@ -76,6 +99,64 @@ public class Telemetry
     private IntegerPublisher fuelsInRedOutpost = simulation.getIntegerTopic("Fuels in RedOutpost").publish();
     private StructArrayPublisher<Translation3d> test = simulation.getStructArrayTopic("TEST", Translation3d.struct).publish();
 
+    private NetworkTable indexer = table.getSubTable("indexer");
+    private StringPublisher indexerCommand = indexer.getStringTopic("command").publish();
+    private DoublePublisher indexerVelocity = indexer.getDoubleTopic("velocity (rps)").publish();
+    private DoublePublisher indexerVoltage = indexer.getDoubleTopic("indexer voltage").publish();
+    //velocity, voltage, position, target 
+    private NetworkTable hopper = table.getSubTable("Hopper");
+    private StringPublisher hopperCommand = hopper.getStringTopic("command").publish();
+    private DoublePublisher hopperVelocity = hopper.getDoubleTopic("velocity (rot per s)").publish();
+    private DoublePublisher hopperVoltage = hopper.getDoubleTopic("voltage (V)").publish();
+    private DoublePublisher hopperPosition = hopper.getDoubleTopic("current position (rotations)").publish();
+    // private DoublePublisher hopperTarget = hopper.getDoubleTopic("target position (rotations)").publish();
+
+    
+
+    /* Robot swerve drive state */
+    private final NetworkTable driveStateTable = tableInstance.getTable("DriveState");
+    private final StructPublisher<Pose2d> drivePose = driveStateTable.getStructTopic("Pose", Pose2d.struct).publish();
+    private final StructPublisher<ChassisSpeeds> driveSpeeds = driveStateTable.getStructTopic("Speeds", ChassisSpeeds.struct).publish();
+    private final StructArrayPublisher<SwerveModuleState> driveModuleStates = driveStateTable.getStructArrayTopic("ModuleStates", SwerveModuleState.struct).publish();
+    private final StructArrayPublisher<SwerveModuleState> driveModuleTargets = driveStateTable.getStructArrayTopic("ModuleTargets", SwerveModuleState.struct).publish();
+    private final StructArrayPublisher<SwerveModulePosition> driveModulePositions = driveStateTable.getStructArrayTopic("ModulePositions", SwerveModulePosition.struct).publish();
+    private final DoublePublisher driveTimestamp = driveStateTable.getDoubleTopic("Timestamp").publish();
+    private final DoublePublisher driveOdometryFrequency = driveStateTable.getDoubleTopic("OdometryFrequency").publish();
+
+    /* Robot pose for field positioning */
+    private final NetworkTable poses = tableInstance.getTable("Pose");
+    private DoubleArrayPublisher fieldPub = poses.getDoubleArrayTopic("robotPose").publish();
+    private final StringPublisher fieldTypePub = poses.getStringTopic(".type").publish();
+
+    /* Mechanisms to represent the swerve module states */
+    private final Mechanism2d[] m_moduleMechanisms = new Mechanism2d[] {
+        new Mechanism2d(1, 1),
+        new Mechanism2d(1, 1),
+        new Mechanism2d(1, 1),
+        new Mechanism2d(1, 1),
+    };
+    /* A direction and length changing ligament for speed representation */
+    private final MechanismLigament2d[] m_moduleSpeeds = new MechanismLigament2d[] {
+        m_moduleMechanisms[0].getRoot("RootSpeed", 0.5, 0.5).append(new MechanismLigament2d("Speed", 0.5, 0)),
+        m_moduleMechanisms[1].getRoot("RootSpeed", 0.5, 0.5).append(new MechanismLigament2d("Speed", 0.5, 0)),
+        m_moduleMechanisms[2].getRoot("RootSpeed", 0.5, 0.5).append(new MechanismLigament2d("Speed", 0.5, 0)),
+        m_moduleMechanisms[3].getRoot("RootSpeed", 0.5, 0.5).append(new MechanismLigament2d("Speed", 0.5, 0)),
+    };
+    /* A direction changing and length constant ligament for module direction */
+    private final MechanismLigament2d[] m_moduleDirections = new MechanismLigament2d[] {
+        m_moduleMechanisms[0].getRoot("RootDirection", 0.5, 0.5)
+            .append(new MechanismLigament2d("Direction", 0.1, 0, 0, new Color8Bit(Color.kWhite))),
+        m_moduleMechanisms[1].getRoot("RootDirection", 0.5, 0.5)
+            .append(new MechanismLigament2d("Direction", 0.1, 0, 0, new Color8Bit(Color.kWhite))),
+        m_moduleMechanisms[2].getRoot("RootDirection", 0.5, 0.5)
+            .append(new MechanismLigament2d("Direction", 0.1, 0, 0, new Color8Bit(Color.kWhite))),
+        m_moduleMechanisms[3].getRoot("RootDirection", 0.5, 0.5)
+            .append(new MechanismLigament2d("Direction", 0.1, 0, 0, new Color8Bit(Color.kWhite))),
+    };
+
+    private static final double[] m_poseArray = new double[3];
+
+
     private Telemetry ()
     {
         turretYawRaw.setPersistent(true);
@@ -84,6 +165,12 @@ public class Telemetry
     public void update ()
     {
         turretYawRaw.setPersistent(true);
+
+
+        Command intakeCommand = Intake.getInstance().getCurrentCommand();
+        this.intakeCommand.set(intakeCommand == null ? "" : intakeCommand.getName());
+        intakeVelocity.set(Intake.getInstance().getVelocity().in(RotationsPerSecond));
+        intakeVoltage.set(Intake.getInstance().getVoltage().in(Volts));
 
         Command turretCommand = Turret.getInstance().getCurrentCommand();
         this.turretCommand.set(turretCommand == null ? "" : turretCommand.getName());
@@ -103,9 +190,17 @@ public class Telemetry
 
         Command shooterCommand = Shooter.getInstance().getCurrentCommand();
         this.shooterCommand.set(shooterCommand == null ? "" : shooterCommand.getName());
-        shooterVelocity.set(Shooter.getInstance().getVelocity().in(RotationsPerSecond));
-        shooterVoltage.set(Shooter.getInstance().getVoltage().in(Volts));
-        shooterReadyToShoot.set(Shooter.getInstance().readyToShoot());
+        shooterLeftVelocity.set(Shooter.getInstance().getLeftVelocity().in(RotationsPerSecond));
+        shooterLeftVoltage.set(Shooter.getInstance().getLeftVoltage().in(Volts));
+        shooterRightVelocity.set(Shooter.getInstance().getRightVelocity().in(RotationsPerSecond));
+        shooterRightVoltage.set(Shooter.getInstance().getRightVoltage().in(Volts));
+        
+        Command hopperCommand = Hopper.getInstance().getCurrentCommand();
+        this.hopperCommand.set(hopperCommand == null ? "" : hopperCommand.getName());
+        hopperPosition.set(Hopper.getInstance().getPosition().in(Rotations));
+        hopperVelocity.set(Hopper.getInstance().getVelocity().in(RotationsPerSecond));
+        hopperVoltage.set(Hopper.getInstance().getVoltage().in(Volts));
+        // hopperTarget.set(Hopper.getInstance().getDesiredPosition().in(Rotations));
 
         Command climbCommand = Climb.getInstance().getCurrentCommand();
         this.climbCommand.set(climbCommand == null ? "" : climbCommand.getName());
@@ -125,6 +220,12 @@ public class Telemetry
         fuelsInRedHub.set(SimulationState.getInstance().fuelsInRedHub);
         fuelsInBlueOutpost.set(SimulationState.getInstance().fuelsInBlueOutpost);
         fuelsInRedOutpost.set(SimulationState.getInstance().fuelsInRedOutpost);
+
+        Command indexerCommand = Indexer.getInstance().getCurrentCommand();
+        this.indexerCommand.set(indexerCommand == null ? "" : indexerCommand.getName());
+        indexerVelocity.set(Indexer.getInstance().getVelocity().in(RotationsPerSecond));
+        indexerVoltage.set(Indexer.getInstance().getVoltage().in(Volts));
+
 
         /*
         test.set(new Translation3d[] 
@@ -146,6 +247,41 @@ public class Telemetry
         }
             );
     }
+    /** Accept the swerve drive state and telemeterize it to SmartDashboard and SignalLogger. */
+    public void telemeterize(SwerveDriveState state) {
+        /* Telemeterize the swerve drive state */
+        drivePose.set(state.Pose);
+        driveSpeeds.set(state.Speeds);
+        driveModuleStates.set(state.ModuleStates);
+        driveModuleTargets.set(state.ModuleTargets);
+        driveModulePositions.set(state.ModulePositions);
+        driveTimestamp.set(state.Timestamp);
+        driveOdometryFrequency.set(1.0 / state.OdometryPeriod);
+
+        /* Also write to log file */
+        SignalLogger.writeStruct("DriveState/Pose", Pose2d.struct, state.Pose);
+        SignalLogger.writeStruct("DriveState/Speeds", ChassisSpeeds.struct, state.Speeds);
+        SignalLogger.writeStructArray("DriveState/ModuleStates", SwerveModuleState.struct, state.ModuleStates);
+        SignalLogger.writeStructArray("DriveState/ModuleTargets", SwerveModuleState.struct, state.ModuleTargets);
+        SignalLogger.writeStructArray("DriveState/ModulePositions", SwerveModulePosition.struct, state.ModulePositions);
+        SignalLogger.writeDouble("DriveState/OdometryPeriod", state.OdometryPeriod, "seconds");
+
+        /* Telemeterize the pose to a Field2d */
+        fieldTypePub.set("Field2d");
+
+        m_poseArray[0] = state.Pose.getX();
+        m_poseArray[1] = state.Pose.getY();
+        m_poseArray[2] = state.Pose.getRotation().getDegrees();
+        fieldPub.set(m_poseArray);
+
+        /* Telemeterize each module state to a Mechanism2d */
+        for (int i = 0; i < 4; ++i) {
+            m_moduleSpeeds[i].setAngle(state.ModuleStates[i].angle);
+            m_moduleDirections[i].setAngle(state.ModuleStates[i].angle);
+            m_moduleSpeeds[i].setLength(state.ModuleStates[i].speedMetersPerSecond / (2 * RobotContainer.getInstance().MaxSpeed));
+        }
+    }
+
 
     public static Telemetry getInstance ()
     {

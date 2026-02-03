@@ -1,18 +1,39 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.*;
+
 import java.util.function.Function;
 
+import com.ctre.phoenix6.CANBus;
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.Pigeon2Configuration;
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 import com.ctre.phoenix6.sim.ChassisReference;
+import com.ctre.phoenix6.swerve.SwerveDrivetrain;
+import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
+import com.ctre.phoenix6.swerve.SwerveModuleConstants;
+import com.ctre.phoenix6.swerve.SwerveModuleConstants.ClosedLoopOutputType;
+import com.ctre.phoenix6.swerve.SwerveModuleConstants.DriveMotorArrangement;
+import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerFeedbackType;
+import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
+import com.ctre.phoenix6.swerve.SwerveModuleConstantsFactory;
 
 import edu.wpi.first.math.geometry.Rectangle2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.AngleUnit;
-import edu.wpi.first.units.VoltageUnit;
+import edu.wpi.first.units.measure.*;
 import frc.robot.simulation.BallConstants;
 import static edu.wpi.first.units.Units.*;
 import edu.wpi.first.units.*;
@@ -22,11 +43,19 @@ public class Constants
 {
     public static final double MAX_VOLTAGE = 12.0;
     
-    public static final double EPSILON = 0.001;
+    public static final double EPSILON = 0.1;
+
+    public class Drivetrain 
+    {
+        public static final double MAX_VELOCITY = 1.0;
+    }
 
     public class Shooter
     {
-        public static final int MOTOR_ID = 3;
+        public static final int LEFT_MASTER_ID = 19; // TODO
+        public static final int LEFT_FOLLOWER_ID = 19; // TODO
+        public static final int RIGHT_MASTER_ID = 19; // TODO
+        public static final int RIGHT_FOLLOWER_ID = 19; // TODO
         
         public static final double STATOR_CURRENT_LIMIT = 90.0;
         public static final double SUPPLY_CURRENT_LIMIT = 90.0;
@@ -38,39 +67,106 @@ public class Constants
         
         public static final double GEAR_RATIO = 1.0; // TODO
 
-		public static final double KP = 1.0; // TODO
-		public static final double KI = 0.1; // TODO
+		public static final double KP = 0.0031416; // TODO
+		public static final double KI = 0.0; // TODO
 		public static final double KD = 0.0; // TODO
 		
-        public static final double KV = 0.0; // TODO
-		public static final double KG = 0.0; // TODO
+        public static final double KS = 0.0; // TODO
+		public static final double KG = 0.0832731; // TODO
+        public static final double KV = 0.11933; // TODO
+        public static final double KA = 0.11116; // TODO
 
         public static final double DEFAULT_VELOCITY = 0.1; // TODO rotations per second (nonzero to decrease startup time)
-        public static final double SHOOT_VELOCITY = 10.0; // TODO rotations per second
+        public static final double SHOOT_VELOCITY = 10.0; // TODO rotations per second 
+        
+        public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
+    }
+
+    public class Intake
+    {
+        public static int MOTOR_ID = 19;
+
+        public static final double STATOR_CURRENT_LIMIT = 90.0;
+        public static final double SUPPLY_CURRENT_LIMIT = 90.0;
+
+        public static final double INTAKE_VOLTAGE = 10.0; //TODO
+        public static final double DEFAULT_INTAKE_VOLTAGE = 0.0; //TODO
+
+        public static final double KP = 0.0023821; // TODO
+		public static final double KI = 0.0; // TODO
+		public static final double KD = 0.0; // TODO
+		
+        public static final double KS = 0.0017035; // TODO
+        public static final double KV = 0.12364; // TODO
+        public static final double KA = 0.0078492; // TODO
+        public static final InvertedValue INVERTED = InvertedValue.CounterClockwise_Positive;
+
+        
+        public static final double GEAR_RATIO = 1.0; //TODO
+        
+        public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
+
+    }
+
+    public class Hopper
+    {
+        public static final int MOTOR_ID = 19;
+        
+        public static final double STATOR_CURRENT_LIMIT = 90.0;
+        public static final double SUPPLY_CURRENT_LIMIT = 90.0;
+
+        /*
+        public static final double MM_CRUISE_VELOCITY = 60.0;
+		public static final double MM_ACCELERATION = 60.0;
+		public static final double MM_JERK = 240.0;
+        */
+		public static final InvertedValue INVERTED = InvertedValue.CounterClockwise_Positive;
+        
+        public static final double GEAR_RATIO = 1.0; // TODO
+
+		public static final double KP = 0.24194; // TODO
+		public static final double KI = 0.0; // TODO
+		public static final double KD = 0.0022479; // TODO
+		
+        public static final double KS = 0.0041693; // TODO
+		public static final double KG = 0.054566; // TODO
+        public static final double KV = 0.019146; // TODO
+        public static final double KA = 0.0018688; // TODO
+
+        public static final double MIN_POSITION = 0.1; // TODO min hopper position (rotations) for simulation
+        public static final double MAX_POSITION = 10.0; // TODO max hopper position (rotations) for simulation
+ 
+        public static final double FORWARD_VOLTAGE = 1.0; // TODO
+        public static final double BACKWARD_VOLTAGE = -1.0; // TODO
+
+        public static final double HOPPER_STALLING_CURRENT = 50; //TODO 
+
+        public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
     }
     
     public class Hood
     {
-        public static final int MOTOR_ID = 4;
+        public static final int MASTER_ID = 19;
+        public static final int FOLLOWER_ID = 19;
         
         public static final double STATOR_CURRENT_LIMIT = 90.0;
         public static final double SUPPLY_CURRENT_LIMIT = 90.0;
 
         public static final double MM_CRUISE_VELOCITY = 1.0; // TODO
-		public static final double MM_ACCELERATION = 5.0;  // TODO
-		public static final double MM_JERK = 10.0; // TODO
+		public static final double MM_ACCELERATION = 4.0;  // TODO
+		public static final double MM_JERK = 8.0; // TODO
 		public static final InvertedValue INVERTED = InvertedValue.CounterClockwise_Positive;
         
-        public static final double GEAR_RATIO = 100.0; // TODO
+        public static final double GEAR_RATIO = 1.0; // TODO
 
-		public static final double KP = 26.41; // TODO
-		public static final double KI = 0.0; // TODO
-		public static final double KD = 0.89216; // TODO
+		public static final double KP = 1.0; // TODO
+		public static final double KI = 0.7; // TODO
+		public static final double KD = 0.1; // TODO
 		
-        public static final double KS = 0.081286; // TODO
-        public static final double KV = 11.462; // TODO
-        public static final double KA = 0.23849; // TODO
-		public static final double KG = 0.012971; // TODO
+        public static final double KS = 0.0055451; // TODO
+        public static final double KV = 0.1138; // TODO
+        public static final double KA = 0.0049434; // TODO
+		public static final double KG = 0.0143; // TODO
 
         public static final double FORWARD_SOFTWARE_LIMIT_THRESHOLD = 4.82; // TODO
 		public static final double REVERSE_SOFTWARE_LIMIT_THRESHOLD = -0.01; // TODO
@@ -82,13 +178,17 @@ public class Constants
         public static final double HOOD_LENGTH = 0.5; // TODO meters
         public static final double HOOD_MIN_ANGLE = 5.0; // TODO degrees
         public static final double HOOD_MAX_ANGLE = 70.0; // TODO degrees
+    
+        public static final double STALLING_CURRENT = 50.0;
+
+        public static final double ZEROING_VOLTAGE = -1.0; // TODO
     }
 
     public class Turret
     {
         public static final double ERROR_THRESHOLD = 1.0; // TODO degrees
 
-        public static final int MOTOR_ID = 0; // TODO
+        public static final int MOTOR_ID = 19; // TODO
 
         public static final double STATOR_CURRENT_LIMIT = 90.0;
         public static final double SUPPLY_CURRENT_LIMIT = 90.0;
@@ -109,6 +209,8 @@ public class Constants
 
         public static final double FORWARD_SOFTWARE_LIMIT_THRESHOLD = 4.82; // TODO
 		public static final double REVERSE_SOFTWARE_LIMIT_THRESHOLD = -0.01; // TODO
+        
+        public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
     }
 
     public class Simulation
@@ -185,4 +287,36 @@ public class Constants
         public static final Voltage ELEVATOR_STAY_VOLTAGE = Volts.of(0.0); //TODO
         public static final Voltage ELEVATOR_GO_DOWN_VOLTAGE = Volts.of(-5.0); //TODO
     }
+
+    public class Indexer {
+
+        public static final int MOTOR_ID = 19; //TODO
+
+        public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive; // TODO
+        public static final double STATOR_CURRENT_LIMIT = 80.0;
+        public static final double SUPPLY_CURRENT_LIMIT = 80.0;
+
+        public static final double kG = 0.0; //TODO
+        public static final double kS = 0.5; //TODO
+        public static final double kV = 0.0; //TODO
+        public static final double kA = 0.0; //TODO
+        public static final double kP = 0.0; //TODO
+        public static final double kI = 0.0; //TODO
+        public static final double kD = 0.0; //TODO
+
+        
+        /*
+        public static final double MM_CRUISE_VELOCITY = 0.0;  
+        public static final double MM_ACCELERATION = 0.0;
+        public static final double MM_JERK = 0.0;
+        */
+
+        public static final double MAX_VELOCITY = 1.0; // TODO rotations per second
+        public static final double DEFAULT_VELOCITY = 0.0; // TODO rotations per second
+
+        public static final double GEAR_RATIO = 1.0; // TODO
+
+        public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
+    }
+
 }

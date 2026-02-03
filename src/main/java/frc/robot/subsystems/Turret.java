@@ -62,7 +62,7 @@ public class Turret extends SubsystemBase
 
         if (Robot.isSimulation())
         {
-            motor.getSimState().Orientation = ChassisReference.CounterClockwise_Positive;
+            motor.getSimState().Orientation = Constants.Turret.MECHANICAL_ORIENTATION;
             motor.getSimState().setMotorType(TalonFXSimState.MotorType.KrakenX60);
         }
 
@@ -72,6 +72,7 @@ public class Turret extends SubsystemBase
 
     private void config ()
     {
+        motor.clearStickyFaults();
         TalonFXConfiguration config = new TalonFXConfiguration();
         config.CurrentLimits.StatorCurrentLimit = Constants.Turret.STATOR_CURRENT_LIMIT;
         config.CurrentLimits.StatorCurrentLimitEnable = true;
