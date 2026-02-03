@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.*;
 import edu.wpi.first.units.measure.*;
@@ -16,9 +17,12 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.Constants.Drivetrain;
 import frc.robot.Constants.Simulation;
-import frc.robot.Constants.TunerConstants;
+import frc.robot.generated.TunerConstants;
 import frc.robot.commands.hood.AimToAngle;
 import frc.robot.commands.hood.ZeroHood;
 import frc.robot.commands.hood.ZeroHoodSoft;
@@ -38,9 +42,20 @@ public class RobotContainer
 {
    private static RobotContainer instance;
    private static final Intake intake = Intake.getInstance();
-   private static final Drivetrain drivetrain = Modules.createDrivetrain();
+   
+   public double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
+   private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
-   private CommandXboxController driver = new CommandXboxController(0);
+   /* Setting up bindings for necessary control of the swerve drive platform */
+   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
+            .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
+            .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
+   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
+   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
+
+   private final CommandXboxController joystick = new CommandXboxController(0);
+
+   public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
    private RobotContainer() 
    {
@@ -49,103 +64,63 @@ public class RobotContainer
       configureBindings();
    }
 
-   private final double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
-   private final double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
-
-   private final SwerveRequest.FieldCentric m_driveRequest = new SwerveRequest.FieldCentric()
-         .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
-         .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
-         .withSteerRequestType(SteerRequestType.Position);
 
    private void configureBindings() 
    {
-      drivetrain.setDefaultCommand(
+      // Note that X is defined as forward according to WPILib convention,
+        // and Y is defined as to the left according to WPILib convention.
+        drivetrain.setDefaultCommand(
+            // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
-            m_driveRequest.withVelocityX(-driver.getLeftY() * MaxSpeed)
-                  .withVelocityY(-driver.getLeftX() * MaxSpeed)
-                  .withRotationalRate(-driver.getRightX() * MaxAngularRate)
-            ));
-      /*
-       * driver.button(1).onTrue(new RampUpShooter());
-       * driver.button(2).onTrue(new ResetShooter());
-       */
-      driver.button(1).onTrue(new ZeroHood());
-      driver.button(2).onTrue(new ZeroHoodSoft());
-      driver.button(3).onTrue(new AimToAngle(60.0));
-      /*
-      driver.button(1).onTrue(new ExtendHopper());
-      driver.button(2).onTrue(new RetractHopper());
-      */
-      /*
-      driver.button(1).onTrue(Indexer.getInstance().sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-      driver.button(2).onTrue(Indexer.getInstance().sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-      driver.button(3).onTrue(Indexer.getInstance().sysIdDynamic(SysIdRoutine.Direction.kForward));
-      driver.button(4).onTrue(Indexer.getInstance().sysIdDynamic(SysIdRoutine.Direction.kReverse));
-      */
-      /*
-      driver.button(1).onTrue(Hopper.getInstance().sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-      driver.button(2).onTrue(Hopper.getInstance().sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-      driver.button(3).onTrue(Hopper.getInstance().sysIdDynamic(SysIdRoutine.Direction.kForward));
-      driver.button(4).onTrue(Hopper.getInstance().sysIdDynamic(SysIdRoutine.Direction.kReverse));
-      */
-      /*
-      driver.button(1).onTrue(new ExtendHopper());
-      driver.button(2).onTrue(new RetractHopper());
-      */
-      /*
-      driver.button(1).onTrue(Shooter.getInstance().sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-      driver.button(2).onTrue(Shooter.getInstance().sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-      driver.button(3).onTrue(Shooter.getInstance().sysIdDynamic(SysIdRoutine.Direction.kForward));
-      driver.button(4).onTrue(Shooter.getInstance().sysIdDynamic(SysIdRoutine.Direction.kReverse));
-      */
-      /*
-      driver.button(1).whileTrue(new RampUpShooter());
-      driver.button(2).whileTrue(new ResetShooter());
-      */
-      /*
-      driver.button(1).onTrue(Intake.getInstance().sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-      driver.button(2).onTrue(Intake.getInstance().sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-      driver.button(3).onTrue(Intake.getInstance().sysIdDynamic(SysIdRoutine.Direction.kForward));
-      driver.button(4).onTrue(Intake.getInstance().sysIdDynamic(SysIdRoutine.Direction.kReverse));
-      */
+                drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+                    .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                    .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+            )
+        );
 
- 
-      /*
-      driver.button(1).onTrue(new AimToAngle(30.0));
-      driver.button(2).onTrue(new AimToAngle(60.0));
-      driver.button(3).onTrue(new AimToAngle(0.0));
-      */
-      /*
-      driver.button(1).onTrue(Hood.getInstance().sysIdQpuasistatic(SysIdRoutine.Direction.kForward));
-      driver.button(2).onTrue(Hood.getInstance().sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-      driver.button(3).onTrue(Hood.getInstance().sysIdDynamic(SysIdRoutine.Direction.kForward));
-      driver.button(4).onTrue(Hood.getInstance().sysIdDynamic(SysIdRoutine.Direction.kReverse));
-      */
-      
-      /*
-      driver.button(1).onTrue(Commands.runOnce(()->SimulationState.getInstance().testPlop(FieldLocation.BlueHub)));
-      driver.button(2).onTrue(Commands.runOnce(()->SimulationState.getInstance().testPlop(FieldLocation.RedHub)));
-      driver.button(3).onTrue(Commands.runOnce(()->SimulationState.getInstance().spawnFromOutpost(Alliance.Blue)));
-      driver.button(4).onTrue(Commands.runOnce(()->SimulationState.getInstance().spawnFromOutpost(Alliance.Red)));
-      driver.button(5).onTrue(Commands.runOnce(()->SimulationState.getInstance().testDrop()));
-      */
-      /*
-      driver.button(1).onTrue(new AimToAngle(60.0, 10.0));
-      driver.button(2).onTrue(new AimToAngle(120.0, 5.0));
-      driver.button(3).onTrue(new AimToAngle(180.0, 20.0));
-      driver.button(4).onTrue(new AimToAngle(330.0, 15.0));
-      driver.button(5).onTrue(new AimToAngle(750.0, 15.0));
-      */
-   }
+        // Idle while the robot is disabled. This ensures the configured
+        // neutral mode is applied to the drive motors while disabled.
+        final var idle = new SwerveRequest.Idle();
+        RobotModeTriggers.disabled().whileTrue(
+            drivetrain.applyRequest(() -> idle).ignoringDisable(true)
+        );
 
-   public Command getAutonomousCommand() 
-   {
-      return Commands.print("No autonomous command configured");
-   }
+        joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
+        joystick.b().whileTrue(drivetrain.applyRequest(() ->
+            point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
+        ));
 
-   public static Drivetrain getDrivetrain() {
-      return drivetrain;
+        // Run SysId routines when holding back/start and X/Y.
+        // Note that each routine should be run exactly once in a single log.
+        joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+        joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+        joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+        joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+
+        // Reset the field-centric heading on left bumper press.
+        joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+              
+        drivetrain.registerTelemetry(Telemetry.getInstance()::telemeterize);
+
    }
+       public Command getAutonomousCommand() {
+        // Simple drive forward auton
+        final var idle = new SwerveRequest.Idle();
+        return Commands.sequence(
+            // Reset our field centric heading to match the robot
+            // facing away from our alliance station wall (0 deg).
+            drivetrain.runOnce(() -> drivetrain.seedFieldCentric(Rotation2d.kZero)),
+            // Then slowly drive forward (away from us) for 5 seconds.
+            drivetrain.applyRequest(() ->
+                drive.withVelocityX(0.5)
+                    .withVelocityY(0)
+                    .withRotationalRate(0)
+            )
+            .withTimeout(5.0),
+            // Finally idle for the rest of auton
+            drivetrain.applyRequest(() -> idle)
+        );
+    }
 
    public static RobotContainer getInstance ()
    {
