@@ -23,7 +23,7 @@ public class MoveDownUntilStall extends Command{
     @Override
     public void execute ()
     {
-        Climb.getInstance().setElevatorVoltage(Volts.of(-5.0));
+        Climb.getInstance().setElevatorVoltage(Constants.Climb.ELEVATOR_GO_DOWN_VOLTAGE);
     }
 
     @Override

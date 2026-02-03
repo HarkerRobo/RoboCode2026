@@ -13,9 +13,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.AngleUnit;
 import edu.wpi.first.units.VoltageUnit;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.Current;
-import edu.wpi.first.units.measure.Per;
 import frc.robot.simulation.BallConstants;
 import static edu.wpi.first.units.Units.*;
 import edu.wpi.first.units.*;
@@ -185,5 +182,6 @@ public class Constants
         public static final Angle MAX_ERROR = Rotations.of(0.1);
 
         public static final Voltage ELEVATOR_STAY_VOLTAGE = Volts.of(1.0); //TODO
+        public static final Voltage ELEVATOR_GO_DOWN_VOLTAGE = Volts.of(-5.0); //TODO
     }
 }

@@ -113,4 +113,4 @@ public class Shooter extends SubsystemBase
         if (instance == null) instance = new Shooter();
         return instance;
     }
-}
+}                 
