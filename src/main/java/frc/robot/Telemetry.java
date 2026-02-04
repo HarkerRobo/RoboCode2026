@@ -38,6 +38,7 @@ import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Intake;
 
 public class Telemetry 
@@ -75,6 +76,13 @@ public class Telemetry
     private DoublePublisher shooterRightVelocity = shooter.getDoubleTopic("right velocity (rot per s)").publish();
     private DoublePublisher shooterRightVoltage = shooter.getDoubleTopic("right voltage (V)").publish();
 
+    private NetworkTable climb = table.getSubTable("Climb");
+    private StringPublisher climbCommand = shooter.getStringTopic("command").publish();
+    private DoublePublisher climbElevatorVelocity = climb.getDoubleTopic("elevator velocity (rot per s)").publish();
+    private DoublePublisher climbElevatorVoltage = climb.getDoubleTopic("elevator voltage (V)").publish();
+    private DoublePublisher climbElevatorPosition = climb.getDoubleTopic("elevator position (rot)").publish();
+    private DoublePublisher climbElevatorTarget = climb.getDoubleTopic("elevator target (rot)").publish();
+    private DoublePublisher climbClimbVoltage = climb.getDoubleTopic("climb voltage (V)").publish();
 
     private NetworkTable persistent = table.getSubTable("[persistent variables]");
     // yaw is recorded so that we can record the position of the turret through power cycles without having to use a hard stop or otherwise zeroing
@@ -196,6 +204,15 @@ public class Telemetry
         hopperVelocity.set(Hopper.getInstance().getVelocity().in(RotationsPerSecond));
         hopperVoltage.set(Hopper.getInstance().getVoltage().in(Volts));
         // hopperTarget.set(Hopper.getInstance().getDesiredPosition().in(Rotations));
+
+        Command climbCommand = Climb.getInstance().getCurrentCommand();
+        this.climbCommand.set(climbCommand == null ? "" : climbCommand.getName());
+        climbElevatorVelocity.set(Climb.getInstance().getElevatorVelocity().in(RotationsPerSecond));
+        climbElevatorVoltage.set(Climb.getInstance().getElevatorVoltage().in(Volts));
+        climbElevatorPosition.set(Climb.getInstance().getElevatorPosition().in(Rotations));
+        climbElevatorTarget.set(Climb.getInstance().getElevatorTargetPosition().in(Rotations));
+        climbClimbVoltage.set(Climb.getInstance().getClimbVoltage().in(Volts));
+
 
         turretYawRawPublisher.set(Turret.getInstance().getPosition().in(Rotations));
 
