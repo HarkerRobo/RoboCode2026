@@ -23,6 +23,8 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.Drivetrain;
 import frc.robot.Constants.Simulation;
 import frc.robot.Constants.TunerConstants;
+import frc.robot.commands.climb.ClimbToLevel;
+import frc.robot.commands.climb.MoveDownUntilStall;
 import frc.robot.commands.hood.AimToAngle;
 import frc.robot.commands.hood.ZeroHood;
 import frc.robot.commands.hood.ZeroHoodSoft;
@@ -66,6 +68,13 @@ public class RobotContainer
 
    private void configureBindings() 
    {
+      /*
+      joystick.button(1).onTrue(new ClimbToLevel(0));
+      joystick.button(2).onTrue(new ClimbToLevel(1));
+      joystick.button(3).onTrue(new ClimbToLevel(2));
+      joystick.button(4).onTrue(new MoveDownUntilStall());
+      */
+
       // Note that X is defined as forward according to WPILib convention,
       // and Y is defined as to the left according to WPILib convention.
       drivetrain.setDefaultCommand(

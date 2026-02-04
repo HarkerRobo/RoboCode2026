@@ -77,7 +77,7 @@ public class Telemetry
     private DoublePublisher shooterRightVoltage = shooter.getDoubleTopic("right voltage (V)").publish();
 
     private NetworkTable climb = table.getSubTable("Climb");
-    private StringPublisher climbCommand = shooter.getStringTopic("command").publish();
+    private StringPublisher climbCommand = climb.getStringTopic("command").publish();
     private DoublePublisher climbElevatorVelocity = climb.getDoubleTopic("elevator velocity (rot per s)").publish();
     private DoublePublisher climbElevatorVoltage = climb.getDoubleTopic("elevator voltage (V)").publish();
     private DoublePublisher climbElevatorPosition = climb.getDoubleTopic("elevator position (rot)").publish();

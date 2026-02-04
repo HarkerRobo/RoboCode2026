@@ -7,14 +7,29 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.sim.TalonFXSimState;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
+import frc.robot.Robot;
+
 import static edu.wpi.first.units.Units.*;
+
+import edu.wpi.first.math.system.LinearSystem;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.units.*;
 import edu.wpi.first.units.measure.*;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.motorcontrol.Talon;
+import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+import edu.wpi.first.wpilibj.simulation.ElevatorSim;
+import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 
-public class Climb extends SubsystemBase {
+public class Climb extends SubsystemBase 
+{
     private static Climb instance;
 
     private Angle targetPosition;
@@ -22,9 +37,29 @@ public class Climb extends SubsystemBase {
     private TalonFX elevator;
     private TalonFX climb;
 
+    private ElevatorSim elevatorSim = new ElevatorSim(
+        LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60(1), 0.001, Constants.Climb.ELEVATOR_GEAR_RATIO),
+            DCMotor.getKrakenX60(1), Constants.Climb.ELEVATOR_MIN_HEIGHT, Constants.Climb.ELEVATOR_MAX_HEIGHT, false, Constants.Climb.ELEVATOR_MIN_HEIGHT);
+
+
+    private DCMotorSim climbSim = new DCMotorSim(
+        LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60(1),0.001, Constants.Climb.CLIMB_GEAR_RATIO),
+        DCMotor.getKrakenX60(1));
+
     private Climb() 
     {
         config();
+        
+        if (Robot.isSimulation())
+        {
+            TalonFXSimState elevatorSimState = elevator.getSimState();
+            elevatorSimState.Orientation = Constants.Hopper.MECHANICAL_ORIENTATION;
+            elevatorSimState.setMotorType(TalonFXSimState.MotorType.KrakenX60);
+            
+            TalonFXSimState climbSimState = climb.getSimState();
+            climbSimState.Orientation = Constants.Hopper.MECHANICAL_ORIENTATION;
+            climbSimState.setMotorType(TalonFXSimState.MotorType.KrakenX60);
+        }
     }
 
     //configurates the subsystem
@@ -59,6 +94,10 @@ public class Climb extends SubsystemBase {
         elevatorConfig.Slot0.kS = Constants.Climb.KS;
         elevatorConfig.Slot0.kV = Constants.Climb.KV;
         elevatorConfig.Slot0.kA = Constants.Climb.KA;
+
+        elevatorConfig.MotionMagic.MotionMagicCruiseVelocity = Constants.Climb.MM_CRUISE_VELOCITY;
+        elevatorConfig.MotionMagic.MotionMagicAcceleration = Constants.Climb.MM_ACCELERATION;
+        elevatorConfig.MotionMagic.MotionMagicJerk = Constants.Climb.MM_JERK;
 
         elevator.getConfigurator().apply(elevatorConfig);
 
@@ -121,6 +160,7 @@ public class Climb extends SubsystemBase {
     public void setElevatorTargetPosition(Angle tPosition) 
     {
         targetPosition = tPosition;
+        System.out.println("Aiming to " + tPosition.in(Rotations) + ".");
         elevator.setControl(new MotionMagicVoltage(tPosition));
     }
 
@@ -142,6 +182,71 @@ public class Climb extends SubsystemBase {
     public void setClimbVoltage(Voltage v)
     {
         climb.setControl(new VoltageOut(v));
+    }
+    
+    
+    @Override
+    public void simulationPeriodic()
+    {
+        TalonFXSimState elevatorSimState = elevator.getSimState();
+
+        // set the supply voltage of the TalonFX
+        elevatorSimState.setSupplyVoltage(RobotController.getBatteryVoltage());
+
+        // get the motor voltage of the TalonFX
+        Voltage elevatorMotorVoltage = elevatorSimState.getMotorVoltageMeasure();
+
+        // use the motor voltage to calculate new position and velocity
+        // using WPILib's DCMotorSim class for physics simulation
+        elevatorSim.setInputVoltage(elevatorMotorVoltage.in(Volts));
+        elevatorSim.update(0.020); // assume 20 ms loop time
+
+        // apply the new rotor position and velocity to the TalonFX;
+        // note that this is rotor position/velocity (before gear ratio), but
+        // DCMotorSim returns mechanism position/velocity (after gear ratio)
+        elevatorSimState.setRawRotorPosition(elevatorSim.getPositionMeters() * Constants.Hopper.GEAR_RATIO);
+        elevatorSimState.setRotorVelocity(elevatorSim.getVelocityMetersPerSecond() * Constants.Hopper.GEAR_RATIO);
+        
+
+        TalonFXSimState climbSimState = climb.getSimState();
+
+        // set the supply voltage of the TalonFX
+        climbSimState.setSupplyVoltage(RobotController.getBatteryVoltage());
+
+        // get the motor voltage of the TalonFX
+        Voltage climbMotorVoltage = climbSimState.getMotorVoltageMeasure();
+
+        // use the motor voltage to calculate new position and velocity
+        // using WPILib's DCMotorSim class for physics simulation
+        climbSim.setInputVoltage(climbMotorVoltage.in(Volts));
+        climbSim.update(0.020); // assume 20 ms loop time
+
+        // apply the new rotor position and velocity to the TalonFX;
+        // note that this is rotor position/velocity (before gear ratio), but
+        // DCMotorSim returns mechanism position/velocity (after gear ratio)
+        climbSimState.setRawRotorPosition(climbSim.getAngularPosition().in(Rotations) * Constants.Hopper.GEAR_RATIO);
+        climbSimState.setRotorVelocity(climbSim.getAngularVelocity().in(Rotations.per(Second)) * Constants.Hopper.GEAR_RATIO);
+    }
+    
+    private SysIdRoutine sysId = new SysIdRoutine(
+        new SysIdRoutine.Config(), 
+        new SysIdRoutine.Mechanism((Voltage v)->setElevatorVoltage(v),
+            (SysIdRoutineLog l)->l
+                .motor("Shooter")
+                .voltage(getElevatorVoltage())
+                .angularPosition(elevator.getPosition().getValue())
+                .angularVelocity(getElevatorVelocity()),
+        this)
+    );
+
+    public Command sysIdQuasistatic (SysIdRoutine.Direction direction)
+    {
+        return sysId.quasistatic(direction).withName("SysId Q" + (direction == SysIdRoutine.Direction.kForward ? "F" : "R"));
+    }
+    
+    public Command sysIdDynamic (SysIdRoutine.Direction direction)
+    {
+        return sysId.dynamic(direction).withName("SysId Q" + (direction == SysIdRoutine.Direction.kForward ? "F" : "R"));
     }
     
     //returns the instance of the subsystem

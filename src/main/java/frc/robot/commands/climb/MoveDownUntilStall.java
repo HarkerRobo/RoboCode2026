@@ -10,7 +10,7 @@ import frc.robot.subsystems.Climb;
 
 public class MoveDownUntilStall extends Command
 {
-    public MoveDownUntilStall (int level)
+    public MoveDownUntilStall ()
     {
         addRequirements(Climb.getInstance());
     }
