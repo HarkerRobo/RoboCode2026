@@ -26,7 +26,8 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 
-public class Indexer extends SubsystemBase{
+public class Indexer extends SubsystemBase
+{
     
     private static Indexer instance;
 
