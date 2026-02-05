@@ -159,6 +159,12 @@ public class Telemetry
 
     private static final double[] m_poseArray = new double[3];
 
+    private final NetworkTable sysId = table.getSubTable("TEST: SYSID");
+    public final StringPublisher sysIdState = sysId.getStringTopic("state").publish();
+    public final DoublePublisher sysIdVoltage = sysId.getDoubleTopic("voltage").publish();
+    public final DoublePublisher sysIdPosition = sysId.getDoubleTopic("position").publish();
+    public final DoublePublisher sysIdVelocity = sysId.getDoubleTopic("velocity").publish();
+
 
     private Telemetry ()
     {

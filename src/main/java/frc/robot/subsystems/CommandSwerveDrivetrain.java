@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Telemetry;
 import frc.robot.subsystems.Modules.TunerSwerveDrivetrain;
 
 /**
@@ -51,6 +52,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private final SwerveRequest.SysIdSwerveSteerGains m_steerCharacterization = new SwerveRequest.SysIdSwerveSteerGains();
     private final SwerveRequest.SysIdSwerveRotation m_rotationCharacterization = new SwerveRequest.SysIdSwerveRotation();
 
+    private double sysIdAppliedVoltage = 0.0;
+
     /* SysId routine for characterizing translation. This is used to find PID gains for the drive motors. */
     private final SysIdRoutine m_sysIdRoutineTranslation = new SysIdRoutine(
         new SysIdRoutine.Config(
@@ -58,11 +61,21 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             Volts.of(4), // Reduce dynamic step voltage to 4 V to prevent brownout
             null,        // Use default timeout (10 s)
             // Log state with SignalLogger class
-            state -> SignalLogger.writeString("SysIdTranslation_State", state.toString())
+            state -> {
+                SignalLogger.writeString("SysIdTranslation_State", state.toString());
+                Telemetry.getInstance().sysIdState.set(state.toString());
+            }
         ),
         new SysIdRoutine.Mechanism(
-            output -> setControl(m_translationCharacterization.withVolts(output)),
-            null,
+            output -> {
+                setControl(m_translationCharacterization.withVolts(output));
+                sysIdAppliedVoltage = output.in(Volts);
+            },
+            (l)->{
+                Telemetry.getInstance().sysIdVoltage.set(sysIdAppliedVoltage);
+                Telemetry.getInstance().sysIdPosition.set(getState().Pose.getX());
+                Telemetry.getInstance().sysIdVelocity.set(getState().Speeds.vxMetersPerSecond);
+            },
             this
         )
     );

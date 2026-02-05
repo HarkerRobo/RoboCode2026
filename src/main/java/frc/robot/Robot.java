@@ -57,7 +57,6 @@ public class Robot extends TimedRobot
    @Override
    public void disabledExit() 
    {
-      System.out.println("Starting SignalLogger...");
       if (isReal())
       {
          SignalLogger.start();
