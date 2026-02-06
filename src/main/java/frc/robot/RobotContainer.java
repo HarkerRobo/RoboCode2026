@@ -101,11 +101,6 @@ public class RobotContainer
       joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
       joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
       
-     joystick.button(1).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-     joystick.button(2).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-     joystick.button(3).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-     joystick.button(4).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
-
       // Reset the field-centric heading on left bumper press.
       joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
