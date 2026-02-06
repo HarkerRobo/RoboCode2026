@@ -49,6 +49,7 @@ public class Constants
     public class Drivetrain 
     {
         public static final double MAX_VELOCITY = 1.0;
+        public static final Translation2d HUB = new Translation2d(0, 0); //TODO 
     }
 
     public class Shooter
