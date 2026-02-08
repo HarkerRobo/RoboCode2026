@@ -32,96 +32,156 @@ import frc.robot.Robot;
 public class Intake extends SubsystemBase 
 {
     private static Intake instance;
-    private TalonFX motor;
+    private TalonFX main;
+    private TalonFX extension;
 
-    private DCMotorSim sim = new DCMotorSim(
-        LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 0.001, Constants.Intake.GEAR_RATIO),
+    private DCMotorSim mainSim = new DCMotorSim(
+        LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 0.001, Constants.Intake.MAIN_GEAR_RATIO),
         DCMotor.getKrakenX60Foc(1));
    
     private Intake()
     {
-        motor = new TalonFX(Constants.Intake.MOTOR_ID);
+        main = new TalonFX(Constants.Intake.MAIN_ID);
+        extension = new TalonFX(Constants.Intake.EXTENSION_ID);
         config();
         
         if (Robot.isSimulation())
         {
-            motor.getSimState().Orientation = Constants.Intake.MECHANICAL_ORIENTATION;
-            motor.getSimState().setMotorType(TalonFXSimState.MotorType.KrakenX60);
+            main.getSimState().Orientation = Constants.Intake.MAIN_MECHANICAL_ORIENTATION;
+            main.getSimState().setMotorType(TalonFXSimState.MotorType.KrakenX60);
+            
+            extension.getSimState().Orientation = Constants.Intake.EXTENSION_MECHANICAL_ORIENTATION;
+            extension.getSimState().setMotorType(TalonFXSimState.MotorType.KrakenX60);
         }
     }
 
     private void config()
     {
-        motor.clearStickyFaults();
-        TalonFXConfiguration config = new TalonFXConfiguration();
+        main.clearStickyFaults();
+        TalonFXConfiguration mainConfig = new TalonFXConfiguration();
 
-        config.Feedback.SensorToMechanismRatio = Constants.Intake.GEAR_RATIO;
+        mainConfig.Feedback.SensorToMechanismRatio = Constants.Intake.MAIN_GEAR_RATIO;
 
-        config.MotorOutput.Inverted = Constants.Intake.INVERTED;
-        config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+        mainConfig.MotorOutput.Inverted = Constants.Intake.MAIN_INVERTED;
+        mainConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
-        config.Slot0.kP = Constants.Intake.KP;
-        config.Slot0.kI = Constants.Intake.KI;
-        config.Slot0.kD = Constants.Intake.KD;
-        config.Slot0.kS = Constants.Intake.KS;
-        config.Slot0.kV = Constants.Intake.KV;
-        config.Slot0.kA = Constants.Intake.KA;
+        mainConfig.Slot0.kP = Constants.Intake.MAIN_KP;
+        mainConfig.Slot0.kI = Constants.Intake.MAIN_KI;
+        mainConfig.Slot0.kD = Constants.Intake.MAIN_KD;
+        mainConfig.Slot0.kS = Constants.Intake.MAIN_KS;
+        mainConfig.Slot0.kV = Constants.Intake.MAIN_KV;
+        mainConfig.Slot0.kA = Constants.Intake.MAIN_KA;
 
-        config.Voltage.PeakForwardVoltage = Constants.MAX_VOLTAGE;
-        config.Voltage.PeakReverseVoltage = -Constants.MAX_VOLTAGE;
+        mainConfig.Voltage.PeakForwardVoltage = Constants.MAX_VOLTAGE;
+        mainConfig.Voltage.PeakReverseVoltage = -Constants.MAX_VOLTAGE;
 
-        config.CurrentLimits.StatorCurrentLimit = Constants.Intake.STATOR_CURRENT_LIMIT;
-        config.CurrentLimits.StatorCurrentLimit = Constants.Intake.SUPPLY_CURRENT_LIMIT;
+        mainConfig.CurrentLimits.StatorCurrentLimit = Constants.Intake.MAIN_STATOR_CURRENT_LIMIT;
+        mainConfig.CurrentLimits.StatorCurrentLimit = Constants.Intake.MAIN_SUPPLY_CURRENT_LIMIT;
 
-        motor.getConfigurator().apply(config);
+        main.getConfigurator().apply(mainConfig);
+        
+        extension.clearStickyFaults();
+        TalonFXConfiguration extensionConfig = new TalonFXConfiguration();
+
+        extensionConfig.Feedback.SensorToMechanismRatio = Constants.Intake.EXTENSION_GEAR_RATIO;
+
+        extensionConfig.MotorOutput.Inverted = Constants.Intake.EXTENSION_INVERTED;
+        extensionConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+
+        extensionConfig.Slot0.kP = Constants.Intake.EXTENSION_KP;
+        extensionConfig.Slot0.kI = Constants.Intake.EXTENSION_KI;
+        extensionConfig.Slot0.kD = Constants.Intake.EXTENSION_KD;
+        extensionConfig.Slot0.kS = Constants.Intake.EXTENSION_KS;
+        extensionConfig.Slot0.kV = Constants.Intake.EXTENSION_KV;
+        extensionConfig.Slot0.kA = Constants.Intake.EXTENSION_KA;
+
+        extensionConfig.Voltage.PeakForwardVoltage = Constants.MAX_VOLTAGE;
+        extensionConfig.Voltage.PeakReverseVoltage = -Constants.MAX_VOLTAGE;
+
+        extensionConfig.CurrentLimits.StatorCurrentLimit = Constants.Intake.EXTENSION_STATOR_CURRENT_LIMIT;
+        extensionConfig.CurrentLimits.StatorCurrentLimit = Constants.Intake.EXTENSION_SUPPLY_CURRENT_LIMIT;
+
+        extension.getConfigurator().apply(extensionConfig);
     }
    
-    public Voltage getVoltage()
+    public Voltage getMainVoltage()
     {
-        return motor.getMotorVoltage().getValue();
+        return main.getMotorVoltage().getValue();
     }
     
-    public AngularVelocity getVelocity()
+    public AngularVelocity getMainVelocity()
     {
-        return motor.getVelocity().getValue();
+        return main.getVelocity().getValue();
     }
    
-    public void setVoltage (Voltage voltage)
+    public void setMainVoltage (Voltage voltage)
     {
-        motor.setControl(new VoltageOut(voltage));
+        main.setControl(new VoltageOut(voltage));
     }
 
-    public void setVelocity (AngularVelocity velocity)
+    public void setMainVelocity (AngularVelocity velocity)
     {
         System.out.println("Velocity set to " + velocity);
-        motor.setControl(new VelocityVoltage(velocity));
+        main.setControl(new VelocityVoltage(velocity));
     }
 
-    public void setDutyCycle(double velocity) 
+    public void setMainDutyCycle(double velocity) 
     {
-        motor.setControl(new DutyCycleOut(velocity));
+        main.setControl(new DutyCycleOut(velocity));
+    }
+    
+    public Voltage getExtensionVoltage()
+    {
+        return extension.getMotorVoltage().getValue();
+    }
+    
+    public AngularVelocity getExtensionVelocity()
+    {
+        return extension.getVelocity().getValue();
+    }
+   
+    public void setExtensionVoltage (Voltage voltage)
+    {
+        extension.setControl(new VoltageOut(voltage));
+    }
+
+    public void setExtensionVelocity (AngularVelocity velocity)
+    {
+        System.out.println("Velocity set to " + velocity);
+        extension.setControl(new VelocityVoltage(velocity));
+    }
+
+    public void setExtensionDutyCycle(double velocity) 
+    {
+        extension.setControl(new DutyCycleOut(velocity));
+    }
+
+    public boolean extensionIsStalling()
+    {
+        return extension.getSupplyCurrent().getValueAsDouble() >= Constants.Intake.INTAKE_STALLING_CURRENT;
     }
     
     @Override
     public void simulationPeriodic ()
     {
-        TalonFXSimState simState = motor.getSimState();
+        TalonFXSimState simState = main.getSimState();
 
         // set the supply voltage of the TalonFX
         simState.setSupplyVoltage(RobotController.getBatteryVoltage());
 
         // use the motor voltage to calculate new position and velocity
         // using WPILib's DCMotorSim class for physics simulation
-        sim.setInputVoltage(simState.getMotorVoltageMeasure().in(Volts));
-        sim.update(0.020); // assume 20 ms loop time
+        mainSim.setInputVoltage(simState.getMotorVoltageMeasure().in(Volts));
+        mainSim.update(0.020); // assume 20 ms loop time
 
         // apply the new rotor position and velocity to the TalonFX;
         // note that this is rotor position/velocity (before gear ratio), but
         // DCMotorSim returns mechanism position/velocity (after gear ratio)
-        simState.setRawRotorPosition(sim.getAngularPosition().times(Constants.Intake.GEAR_RATIO));
-        simState.setRotorVelocity(sim.getAngularVelocity().times(Constants.Intake.GEAR_RATIO));
+        simState.setRawRotorPosition(mainSim.getAngularPosition().times(Constants.Intake.MAIN_GEAR_RATIO));
+        simState.setRotorVelocity(mainSim.getAngularVelocity().times(Constants.Intake.MAIN_GEAR_RATIO));
     }
     
+    /*
     private SysIdRoutine sysId = new SysIdRoutine(
         new SysIdRoutine.Config(), 
         new SysIdRoutine.Mechanism((Voltage v)->motor.setControl(new VoltageOut(v)),
@@ -142,6 +202,7 @@ public class Intake extends SubsystemBase
     {
         return sysId.dynamic(direction).withName("SysId Q" + (direction == SysIdRoutine.Direction.kForward ? "F" : "R"));
     }
+        */
 
     public static Intake getInstance()
     {

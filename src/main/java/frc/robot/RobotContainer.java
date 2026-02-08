@@ -31,6 +31,8 @@ import frc.robot.commands.hood.ZeroHoodSoft;
 import frc.robot.commands.hopper.ExtendHopper;
 import frc.robot.commands.hopper.RetractHopper;
 import frc.robot.commands.intake.DefaultIntake;
+import frc.robot.commands.intake.ExtendIntake;
+import frc.robot.commands.intake.RetractIntake;
 import frc.robot.commands.intake.RunIntake;
 import frc.robot.commands.shooter.RampUpShooter;
 import frc.robot.commands.shooter.ResetShooter;
@@ -68,12 +70,10 @@ public class RobotContainer
 
    private void configureBindings() 
    {
-      /*
-      joystick.button(1).onTrue(new ClimbToLevel(0));
-      joystick.button(2).onTrue(new ClimbToLevel(1));
-      joystick.button(3).onTrue(new ClimbToLevel(2));
-      joystick.button(4).onTrue(new MoveDownUntilStall());
-      */
+      joystick.button(1).onTrue(new DefaultIntake());
+      joystick.button(2).onTrue(new RunIntake());
+      joystick.button(3).onTrue(new ExtendIntake());
+      joystick.button(4).onTrue(new RetractIntake());
 
       // Note that X is defined as forward according to WPILib convention,
       // and Y is defined as to the left according to WPILib convention.

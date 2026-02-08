@@ -19,7 +19,7 @@ public class DefaultIntake extends Command
     @Override
     public void initialize()
     {
-        Intake.getInstance().setVoltage(Volts.of(Constants.Intake.DEFAULT_INTAKE_VOLTAGE));
+        Intake.getInstance().setMainVoltage(Volts.of(Constants.Intake.MAIN_DEFAULT_INTAKE_VOLTAGE));
     }
 
     @Override
@@ -36,7 +36,7 @@ public class DefaultIntake extends Command
     @Override
     public void end (boolean interrupted) 
     {
-        Intake.getInstance().setVoltage(Volts.of(0.0));
+        Intake.getInstance().setMainVoltage(Volts.of(0.0));
     }
 
     @Override

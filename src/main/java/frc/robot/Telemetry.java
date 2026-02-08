@@ -50,8 +50,10 @@ public class Telemetry
 
     private NetworkTable intake = table.getSubTable("Intake");
     private StringPublisher intakeCommand = intake.getStringTopic("command").publish();
-    private DoublePublisher intakeVelocity = intake.getDoubleTopic("velocity (rot per s)").publish();
-    private DoublePublisher intakeVoltage = intake.getDoubleTopic("voltage (V)").publish();
+    private DoublePublisher intakeMainVelocity = intake.getDoubleTopic("main velocity (rot per s)").publish();
+    private DoublePublisher intakeMainVoltage = intake.getDoubleTopic("main voltage (V)").publish();
+    private DoublePublisher intakeExtensionVelocity = intake.getDoubleTopic("extension velocity (rot per s)").publish();
+    private DoublePublisher intakeExtensionVoltage = intake.getDoubleTopic("extension voltage (V)").publish();
 
     private NetworkTable turret = table.getSubTable("Turret");
     private StringPublisher turretCommand = turret.getStringTopic("command").publish();
@@ -171,8 +173,10 @@ public class Telemetry
 
         Command intakeCommand = Intake.getInstance().getCurrentCommand();
         this.intakeCommand.set(intakeCommand == null ? "" : intakeCommand.getName());
-        intakeVelocity.set(Intake.getInstance().getVelocity().in(RotationsPerSecond));
-        intakeVoltage.set(Intake.getInstance().getVoltage().in(Volts));
+        intakeMainVelocity.set(Intake.getInstance().getMainVelocity().in(RotationsPerSecond));
+        intakeMainVoltage.set(Intake.getInstance().getMainVoltage().in(Volts));
+        intakeExtensionVelocity.set(Intake.getInstance().getExtensionVelocity().in(RotationsPerSecond));
+        intakeExtensionVoltage.set(Intake.getInstance().getExtensionVoltage().in(Volts));
 
         Command turretCommand = Turret.getInstance().getCurrentCommand();
         this.turretCommand.set(turretCommand == null ? "" : turretCommand.getName());

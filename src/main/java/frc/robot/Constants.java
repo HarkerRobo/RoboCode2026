@@ -54,9 +54,9 @@ public class Constants
     public class Shooter
     {
         public static final int LEFT_MASTER_ID = 19; // TODO
-        public static final int LEFT_FOLLOWER_ID = 19; // TODO
-        public static final int RIGHT_MASTER_ID = 19; // TODO
-        public static final int RIGHT_FOLLOWER_ID = 19; // TODO
+        public static final int LEFT_FOLLOWER_ID = 20; // TODO
+        public static final int RIGHT_MASTER_ID = 21; // TODO
+        public static final int RIGHT_FOLLOWER_ID = 22; // TODO
         
         public static final double STATOR_CURRENT_LIMIT = 90.0;
         public static final double SUPPLY_CURRENT_LIMIT = 90.0;
@@ -85,33 +85,57 @@ public class Constants
 
     public class Intake
     {
-        public static int MOTOR_ID = 19;
 
-        public static final double STATOR_CURRENT_LIMIT = 90.0;
-        public static final double SUPPLY_CURRENT_LIMIT = 90.0;
+        public static int MAIN_ID = 23;
 
-        public static final double INTAKE_VOLTAGE = 10.0; //TODO
-        public static final double DEFAULT_INTAKE_VOLTAGE = 0.0; //TODO
+        public static final double MAIN_STATOR_CURRENT_LIMIT = 90.0;
+        public static final double MAIN_SUPPLY_CURRENT_LIMIT = 90.0;
 
-        public static final double KP = 0.0023821; // TODO
-		public static final double KI = 0.0; // TODO
-		public static final double KD = 0.0; // TODO
+        public static final double MAIN_INTAKE_VOLTAGE = 1.0; //TODO
+        public static final double MAIN_DEFAULT_INTAKE_VOLTAGE = 0.0; //TODO
+
+        public static final double MAIN_KP = 0.0023821; // TODO
+		public static final double MAIN_KI = 0.0; // TODO
+		public static final double MAIN_KD = 0.0; // TODO
 		
-        public static final double KS = 0.0017035; // TODO
-        public static final double KV = 0.12364; // TODO
-        public static final double KA = 0.0078492; // TODO
-        public static final InvertedValue INVERTED = InvertedValue.CounterClockwise_Positive;
+        public static final double MAIN_KS = 0.0017035; // TODO
+        public static final double MAIN_KV = 0.12364; // TODO
+        public static final double MAIN_KA = 0.0078492; // TODO
+        public static final InvertedValue MAIN_INVERTED = InvertedValue.CounterClockwise_Positive;
 
         
-        public static final double GEAR_RATIO = 1.0; //TODO
+        public static final double MAIN_GEAR_RATIO = 8.0/9.0; //TODO
         
-        public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
+        public static final ChassisReference MAIN_MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
 
+        public static int EXTENSION_ID = 24;
+
+        public static final double EXTENSION_STATOR_CURRENT_LIMIT = 90.0;
+        public static final double EXTENSION_SUPPLY_CURRENT_LIMIT = 90.0;
+
+        public static final double EXTENSION_EXTENDING_VOLTAGE = 1.0; //TODO
+        public static final double EXTENSION_RETRACTING_VOLTAGE = -1.0; //TODO
+
+        public static final double EXTENSION_KP = 0.0023821; // TODO
+		public static final double EXTENSION_KI = 0.0; // TODO
+		public static final double EXTENSION_KD = 0.0; // TODO
+		
+        public static final double EXTENSION_KS = 0.0017035; // TODO
+        public static final double EXTENSION_KV = 0.12364; // TODO
+        public static final double EXTENSION_KA = 0.0078492; // TODO
+        public static final InvertedValue EXTENSION_INVERTED = InvertedValue.CounterClockwise_Positive;
+
+        
+        public static final double EXTENSION_GEAR_RATIO = 6.25; //TODO
+        
+        public static final ChassisReference EXTENSION_MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
+
+        public static final double INTAKE_STALLING_CURRENT = 50;
     }
 
     public class Hopper
     {
-        public static final int MOTOR_ID = 19;
+        public static final int MOTOR_ID = 25;
         
         public static final double STATOR_CURRENT_LIMIT = 90.0;
         public static final double SUPPLY_CURRENT_LIMIT = 90.0;
@@ -140,15 +164,15 @@ public class Constants
         public static final double FORWARD_VOLTAGE = 1.0; // TODO
         public static final double BACKWARD_VOLTAGE = -1.0; // TODO
 
-        public static final double HOPPER_STALLING_CURRENT = 50; //TODO 
+        public static final double HOPPER_STALLING_CURRENT = 50;
 
         public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
     }
     
     public class Hood
     {
-        public static final int MASTER_ID = 19;
-        public static final int FOLLOWER_ID = 19;
+        public static final int MASTER_ID = 26;
+        public static final int FOLLOWER_ID = 27;
         
         public static final double STATOR_CURRENT_LIMIT = 90.0;
         public static final double SUPPLY_CURRENT_LIMIT = 90.0;
@@ -185,11 +209,11 @@ public class Constants
         public static final double ZEROING_VOLTAGE = -1.0; // TODO
     }
 
-    public class Turret
+    public class Turret // this can be ignored for the present
     {
         public static final double ERROR_THRESHOLD = 1.0; // TODO degrees
 
-        public static final int MOTOR_ID = 19; // TODO
+        public static final int MOTOR_ID = 28; // TODO
 
         public static final double STATOR_CURRENT_LIMIT = 90.0;
         public static final double SUPPLY_CURRENT_LIMIT = 90.0;
@@ -256,8 +280,8 @@ public class Constants
     }
     public static final class Climb 
     {
-        public static final int ELEVATOR_ID = 20;
-        public static final int HINGE_ID = 21;
+        public static final int ELEVATOR_ID = 29;
+        public static final int HINGE_ID = 30;
 
         public static final InvertedValue ELEVATOR_INVERTED = InvertedValue.Clockwise_Positive; // TODO
         public static final InvertedValue CLIMB_INVERTED = InvertedValue.Clockwise_Positive; // TODO
@@ -299,7 +323,7 @@ public class Constants
 
     public class Indexer {
 
-        public static final int MOTOR_ID = 19; //TODO
+        public static final int MOTOR_ID = 31; //TODO
 
         public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive; // TODO
         public static final double STATOR_CURRENT_LIMIT = 80.0;

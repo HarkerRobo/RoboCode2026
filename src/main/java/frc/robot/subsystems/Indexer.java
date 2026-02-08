@@ -34,7 +34,7 @@ public class Indexer extends SubsystemBase
     private static TalonFX motor;
     
     private DCMotorSim sim = new DCMotorSim(
-        LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 0.001, Constants.Intake.GEAR_RATIO),
+        LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 0.001, Constants.Indexer.GEAR_RATIO),
         DCMotor.getKrakenX60Foc(1));
 
     private Indexer() { 
@@ -126,8 +126,8 @@ public class Indexer extends SubsystemBase
         // apply the new rotor position and velocity to the TalonFX;
         // note that this is rotor position/velocity (before gear ratio), but
         // DCMotorSim returns mechanism position/velocity (after gear ratio)
-        simState.setRawRotorPosition(sim.getAngularPosition().times(Constants.Intake.GEAR_RATIO));
-        simState.setRotorVelocity(sim.getAngularVelocity().times(Constants.Intake.GEAR_RATIO));
+        simState.setRawRotorPosition(sim.getAngularPosition().times(Constants.Indexer.GEAR_RATIO));
+        simState.setRotorVelocity(sim.getAngularVelocity().times(Constants.Indexer.GEAR_RATIO));
     }
     
     private SysIdRoutine sysId = new SysIdRoutine(
