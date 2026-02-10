@@ -4,15 +4,22 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.*;
 import edu.wpi.first.units.measure.*;
 import static edu.wpi.first.units.Units.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.ctre.phoenix6.swerve.SwerveModule.*;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.pathplanner.lib.util.FlippingUtil;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -75,6 +82,8 @@ public class RobotContainer
       joystick.button(3).onTrue(new ExtendIntake());
       joystick.button(4).onTrue(new RetractIntake());
 
+      List<Integer> l = new ArrayList<>();
+
       // Note that X is defined as forward according to WPILib convention,
       // and Y is defined as to the left according to WPILib convention.
       drivetrain.setDefaultCommand(
@@ -103,7 +112,12 @@ public class RobotContainer
       
       // Reset the field-centric heading on left bumper press.
       joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
-
+      joystick.leftBumper().onTrue(
+            drivetrain.runOnce(() -> {System.out.println("Zeroing Drivetrain"); drivetrain.seedFieldCentric();})
+            .andThen(drivetrain.runOnce(() -> drivetrain.resetPose(
+                (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) ? 
+                FlippingUtil.flipFieldPose(Constants.ZEROING_POSE) : Constants.ZEROING_POSE)))
+            .withName("ZeroDrivetrain"));
       drivetrain.registerTelemetry(Telemetry.getInstance()::telemeterize);
 
    }

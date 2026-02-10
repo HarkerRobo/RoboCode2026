@@ -46,6 +46,8 @@ public class Constants
     
     public static final double EPSILON = 0.1;
 
+    public static final Pose2d ZEROING_POSE = new Pose2d(0.0, 0.0, new Rotation2d(0.0));
+
     public class Drivetrain 
     {
         public static final double MAX_VELOCITY = 1.0;
@@ -109,6 +111,8 @@ public class Constants
         public static final ChassisReference MAIN_MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
 
         public static int EXTENSION_ID = 24;
+
+
 
         public static final double EXTENSION_STATOR_CURRENT_LIMIT = 90.0;
         public static final double EXTENSION_SUPPLY_CURRENT_LIMIT = 90.0;
