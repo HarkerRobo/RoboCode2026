@@ -22,7 +22,7 @@ public class Robot extends TimedRobot
       RobotContainer.getInstance();
       
 
-      boolean logSimulation = true;
+      boolean logSimulation = false;
 
       // automatically saves log data for telemetry, driver station controls, and joystick presses
       if (isReal() || logSimulation)

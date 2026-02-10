@@ -7,12 +7,25 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.sim.TalonFXSSimState;
+import com.ctre.phoenix6.sim.TalonFXSimState;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
+import frc.robot.Robot;
+
 import static edu.wpi.first.units.Units.*;
+
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.units.*;
 import edu.wpi.first.units.measure.*;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+import edu.wpi.first.wpilibj.simulation.ElevatorSim;
+import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 
 public class Climb extends SubsystemBase {
     private static Climb instance;
@@ -22,11 +35,6 @@ public class Climb extends SubsystemBase {
     private TalonFX elevator;
     private TalonFX climb;
 
-<<<<<<< Updated upstream
-    private Climb() 
-    {
-        config();
-=======
     private ElevatorSim elevatorSim = new ElevatorSim(
         LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60(1), 0.001, Constants.Climb.ELEVATOR_GEAR_RATIO),
             DCMotor.getKrakenX60(1), Constants.Climb.ELEVATOR_MIN_HEIGHT, Constants.Climb.ELEVATOR_MAX_HEIGHT, true, Constants.Climb.ELEVATOR_MIN_HEIGHT);
@@ -50,7 +58,6 @@ public class Climb extends SubsystemBase {
             climbSimState.Orientation = Constants.Climb.CLIMB_MECHANICAL_ORIENTATION;
             climbSimState.setMotorType(TalonFXSimState.MotorType.KrakenX60);
         }
->>>>>>> Stashed changes
     }
 
     //configurates the subsystem
@@ -170,8 +177,6 @@ public class Climb extends SubsystemBase {
         climb.setControl(new VoltageOut(v));
     }
     
-<<<<<<< Updated upstream
-=======
     
     @Override
     public void simulationPeriodic()
@@ -237,7 +242,6 @@ public class Climb extends SubsystemBase {
         return sysId.dynamic(direction).withName("SysId Q" + (direction == SysIdRoutine.Direction.kForward ? "F" : "R"));
     }
     
->>>>>>> Stashed changes
     //returns the instance of the subsystem
     public static Climb getInstance() 
     {

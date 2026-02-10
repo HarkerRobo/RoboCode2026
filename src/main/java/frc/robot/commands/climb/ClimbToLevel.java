@@ -34,9 +34,8 @@ public class ClimbToLevel extends Command
     @Override
     public boolean isFinished ()
     {
-<<<<<<< Updated upstream
-        return Climb.getInstance().getElevatorPosition().isNear(levelHeights[level], Rotations.of(Constants.EPSILON));
-=======
+        //return false;
+        return Climb.getInstance().getElevatorPosition().isNear(levelHeights[level-1], Rotations.of(Constants.EPSILON));
     }
 
     @Override
