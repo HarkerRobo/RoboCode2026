@@ -257,13 +257,9 @@ public class Constants
         public static final int ELEVATOR_ID = 17;
         public static final int HINGE_ID = 17;
 
-        public static final InvertedValue ELEVATOR_INVERTED = InvertedValue.Clockwise_Positive; // TODO
-        public static final InvertedValue CLIMB_INVERTED = InvertedValue.Clockwise_Positive; // TODO
         public static final InvertedValue ELEVATOR_INVERTED = InvertedValue.CounterClockwise_Positive; // TODO
         public static final InvertedValue CLIMB_INVERTED = InvertedValue.CounterClockwise_Positive; // TODO
 
-        public static final double ELEVATOR_GEAR_RATIO = 23.7;
-        public static final double CLIMB_GEAR_RATIO = 23.7;
         public static final double ELEVATOR_GEAR_RATIO = 1.0; //TODO
         public static final double CLIMB_GEAR_RATIO = 1.0; //TODO
 
@@ -285,9 +281,6 @@ public class Constants
         public static final Current ELEVATOR_STALLING_CURRENT = Amps.of(50);
         public static final Current SUPPLY_CURRENT_LIMIT = Amps.of(100 + 20); // TODO
 
-        public static final Angle CLIMB_POSITION_LEVEL_1 = Rotations.of(1.0);  // rotations // TODO
-        public static final Angle CLIMB_POSITION_LEVEL_2 = Rotations.of(2.0);  // rotations // TODO
-        public static final Angle CLIMB_POSITION_LEVEL_3 = Rotations.of(3.0);  // rotations // TODO
         public static final Angle CLIMB_POSITION_LEVEL_1 = Rotations.of(2.0);  // rotations // TODO
         public static final Angle CLIMB_POSITION_LEVEL_2 = Rotations.of(4.0);  // rotations // TODO
         public static final Angle CLIMB_POSITION_LEVEL_3 = Rotations.of(6.0);  // rotations // TODO

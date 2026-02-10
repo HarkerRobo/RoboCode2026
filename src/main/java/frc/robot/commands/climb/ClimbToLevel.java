@@ -22,16 +22,12 @@ public class ClimbToLevel extends Command
     @Override
     public void initialize ()
     {
-        Climb.getInstance().setElevatorTargetPosition(levelHeights[level]);
         
     }
 
     @Override
     public void execute ()
     {
-        //Climb.getInstance().setElevatorVoltage(Volts.of(
-            //Math.min(1.0,Math.abs((levelHeights[level].minus(Climb.getInstance().getElevatorPosition())).times(5.0).in(Rotations)))
-            //* Math.signum(levelHeights[level].minus(Climb.getInstance().getElevatorPosition()).in(Rotations))));
         Climb.getInstance().setElevatorTargetPosition(levelHeights[level-1]);
     }
 
