@@ -167,7 +167,7 @@ public class Hopper extends SubsystemBase
 
     public boolean isStalling()
     {
-        return master.getStatorCurrent().getValueAsDouble() >= Constants.Hopper.HOPPER_STALLING_CURRENT;
+        return Math.abs(master.getStatorCurrent().getValueAsDouble()) >= Constants.Hopper.HOPPER_STALLING_CURRENT;
     }
 
     /*

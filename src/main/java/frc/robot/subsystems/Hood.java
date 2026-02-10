@@ -171,7 +171,7 @@ public class Hood extends SubsystemBase
     
     public boolean isStalling ()
     {
-        return master.getSupplyCurrent().getValueAsDouble() >= Constants.Hood.STALLING_CURRENT;
+        return Math.abs(master.getStatorCurrent().getValueAsDouble()) >= Constants.Hood.STALLING_CURRENT;
     }
 
     @Override

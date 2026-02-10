@@ -158,7 +158,7 @@ public class Intake extends SubsystemBase
 
     public boolean extensionIsStalling()
     {
-        return extension.getSupplyCurrent().getValueAsDouble() >= Constants.Intake.INTAKE_STALLING_CURRENT;
+        return Math.abs(extension.getStatorCurrent().getValueAsDouble()) >= Constants.Intake.INTAKE_STALLING_CURRENT;
     }
     
     @Override

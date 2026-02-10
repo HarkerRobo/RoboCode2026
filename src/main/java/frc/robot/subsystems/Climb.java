@@ -166,7 +166,7 @@ public class Climb extends SubsystemBase
 
     public boolean isElevatorStalling()
     {
-        return elevator.getStatorCurrent().getValueAsDouble() >= Constants.Climb.ELEVATOR_STALLING_CURRENT.in(Amps);
+        return Math.abs(elevator.getStatorCurrent().getValueAsDouble()) >= Constants.Climb.ELEVATOR_STALLING_CURRENT.in(Amps);
     }
 
     public void setClimbDutyCycle(double velocity) 
