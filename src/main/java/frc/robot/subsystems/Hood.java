@@ -52,9 +52,9 @@ public class Hood extends SubsystemBase
             DCMotor.getKrakenX60Foc(2)).getGearbox(),
         Constants.Hood.GEAR_RATIO,
         Constants.Hood.MOMENT_OF_INERTIA,
-        Constants.Hood.HOOD_LENGTH,
-        Units.degreesToRadians(Constants.Hood.HOOD_MIN_ANGLE),
-        Units.degreesToRadians(Constants.Hood.HOOD_MAX_ANGLE),
+        Constants.Hood.LENGTH,
+        Units.degreesToRadians(Constants.Hood.MIN_ANGLE),
+        Units.degreesToRadians(Constants.Hood.MAX_ANGLE),
         true,
         Units.degreesToRadians(10.0)
         // no std devs -> no noise simulated

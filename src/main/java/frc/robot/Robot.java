@@ -39,6 +39,8 @@ public class Robot extends TimedRobot
    {
       CommandScheduler.getInstance().run();
 
+      CommandScheduler.getInstance().schedule(RobotContainer.getInstance().testCommandChooser.getSelected());
+
       Telemetry.getInstance().update();
    }
 
