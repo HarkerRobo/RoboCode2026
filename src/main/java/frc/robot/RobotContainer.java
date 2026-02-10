@@ -110,8 +110,7 @@ public class RobotContainer
       joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
       joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
       
-      // Reset the field-centric heading on left bumper press.
-      joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+      // Zero DT
       joystick.leftBumper().onTrue(
             drivetrain.runOnce(() -> {System.out.println("Zeroing Drivetrain"); drivetrain.seedFieldCentric();})
             .andThen(drivetrain.runOnce(() -> drivetrain.resetPose(
