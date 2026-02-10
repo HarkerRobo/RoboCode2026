@@ -34,6 +34,7 @@ import frc.robot.Constants.Drivetrain;
 import frc.robot.Constants.Simulation;
 import frc.robot.Constants.TunerConstants;
 import frc.robot.commands.climb.ClimbToLevel;
+import frc.robot.commands.climb.ElevatorUp;
 import frc.robot.commands.climb.MoveDownUntilStall;
 import frc.robot.commands.hood.AimToAngle;
 import frc.robot.commands.hood.ZeroHood;
@@ -111,10 +112,6 @@ public class RobotContainer
 
     private void configureBindings() 
     {
-        joystick.button(1).onTrue(new DefaultIntake());
-        joystick.button(2).onTrue(new RunIntake());
-        joystick.button(3).onTrue(new ExtendIntake());
-        joystick.button(4).onTrue(new RetractIntake());
 
         List<Integer> l = new ArrayList<>();
 
