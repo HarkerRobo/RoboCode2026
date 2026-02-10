@@ -12,7 +12,9 @@ import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.swerve.SwerveModule.*;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.pathplanner.lib.util.FlippingUtil;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -25,6 +27,7 @@ import frc.robot.Constants.Simulation;
 import frc.robot.Constants.TunerConstants;
 import frc.robot.commands.climb.ClimbToLevel;
 import frc.robot.commands.climb.MoveDownUntilStall;
+import frc.robot.commands.drive.DriveToPose;
 import frc.robot.commands.hood.AimToAngle;
 import frc.robot.commands.hood.ZeroHood;
 import frc.robot.commands.hood.ZeroHoodSoft;
@@ -101,15 +104,24 @@ public class RobotContainer
       joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
       joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
       
-     joystick.button(1).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-     joystick.button(2).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-     joystick.button(3).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-     joystick.button(4).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+//      joystick.button(1).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+//      joystick.button(2).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+//      joystick.button(3).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+//      joystick.button(4).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+
+     joystick.button(1).whileTrue(new DriveToPose(drivetrain));
 
       // Reset the field-centric heading on left bumper press.
       joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
       drivetrain.registerTelemetry(Telemetry.getInstance()::telemeterize);
+
+      joystick.leftBumper().onTrue(
+            drivetrain.runOnce(() -> {System.out.println("Zeroing Drivetrain"); drivetrain.seedFieldCentric();})
+            .andThen(drivetrain.runOnce(() -> drivetrain.resetPose(
+                (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) ? 
+                FlippingUtil.flipFieldPose(Constants.ZEROING_POSE) : Constants.ZEROING_POSE)))
+            .withName("ZeroDrivetrain"));
 
    }
 
@@ -130,6 +142,13 @@ public class RobotContainer
             drivetrain.applyRequest(() -> idle));
    }
 
+   public double getJoystickLeftY() {
+      return joystick.getLeftY();
+      }
+
+      public double getJoystickLeftX() {
+      return joystick.getLeftX();
+      }
    public static RobotContainer getInstance()
    {
       if (instance == null) instance = new RobotContainer();
