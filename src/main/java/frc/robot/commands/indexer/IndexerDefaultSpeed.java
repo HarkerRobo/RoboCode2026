@@ -27,4 +27,10 @@ public class IndexerDefaultSpeed extends Command{
     {
         return true;
     }
+
+    @Override
+    public String getName()
+    {
+        return "IntexerDefaultSpeed";
+    }
 }

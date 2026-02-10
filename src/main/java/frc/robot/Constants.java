@@ -87,54 +87,55 @@ public class Constants
 
     public class Intake
     {
+        public static int ID = 23;
 
-        public static int MAIN_ID = 23;
+        public static final double STATOR_CURRENT_LIMIT = 90.0;
+        public static final double SUPPLY_CURRENT_LIMIT = 90.0;
 
-        public static final double MAIN_STATOR_CURRENT_LIMIT = 90.0;
-        public static final double MAIN_SUPPLY_CURRENT_LIMIT = 90.0;
+        public static final double INTAKE_VOLTAGE = 1.0; //TODO
+        public static final double DEFAULT_INTAKE_VOLTAGE = 0.0; //TODO
 
-        public static final double MAIN_INTAKE_VOLTAGE = 1.0; //TODO
-        public static final double MAIN_DEFAULT_INTAKE_VOLTAGE = 0.0; //TODO
-
-        public static final double MAIN_KP = 0.0023821; // TODO
-		public static final double MAIN_KI = 0.0; // TODO
-		public static final double MAIN_KD = 0.0; // TODO
+        public static final double KP = 0.0023821; // TODO
+		public static final double KI = 0.0; // TODO
+		public static final double KD = 0.0; // TODO
 		
-        public static final double MAIN_KS = 0.0017035; // TODO
-        public static final double MAIN_KV = 0.12364; // TODO
-        public static final double MAIN_KA = 0.0078492; // TODO
-        public static final InvertedValue MAIN_INVERTED = InvertedValue.CounterClockwise_Positive;
+        public static final double KS = 0.0017035; // TODO
+        public static final double KV = 0.12364; // TODO
+        public static final double KA = 0.0078492; // TODO
+        public static final InvertedValue INVERTED = InvertedValue.CounterClockwise_Positive;
 
         
-        public static final double MAIN_GEAR_RATIO = 8.0/9.0; //TODO
+        public static final double GEAR_RATIO = 8.0/9.0; //TODO
         
-        public static final ChassisReference MAIN_MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
+        public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
 
-        public static int EXTENSION_ID = 24;
+    }
 
+    public class IntakeExtension
+    {
+        public static int ID = 24;
 
+        public static final double STATOR_CURRENT_LIMIT = 90.0;
+        public static final double SUPPLY_CURRENT_LIMIT = 90.0;
 
-        public static final double EXTENSION_STATOR_CURRENT_LIMIT = 90.0;
-        public static final double EXTENSION_SUPPLY_CURRENT_LIMIT = 90.0;
+        public static final double EXTENDING_VOLTAGE = 1.0; //TODO
+        public static final double RETRACTING_VOLTAGE = -1.0; //TODO
 
-        public static final double EXTENSION_EXTENDING_VOLTAGE = 1.0; //TODO
-        public static final double EXTENSION_RETRACTING_VOLTAGE = -1.0; //TODO
-
-        public static final double EXTENSION_KP = 0.0023821; // TODO
-		public static final double EXTENSION_KI = 0.0; // TODO
-		public static final double EXTENSION_KD = 0.0; // TODO
+        public static final double KP = 0.0023821; // TODO
+		public static final double KI = 0.0; // TODO
+		public static final double KD = 0.0; // TODO
 		
-        public static final double EXTENSION_KS = 0.0017035; // TODO
-        public static final double EXTENSION_KV = 0.12364; // TODO
-        public static final double EXTENSION_KA = 0.0078492; // TODO
-        public static final InvertedValue EXTENSION_INVERTED = InvertedValue.CounterClockwise_Positive;
+        public static final double KS = 0.0017035; // TODO
+        public static final double KV = 0.12364; // TODO
+        public static final double KA = 0.0078492; // TODO
+        public static final InvertedValue INVERTED = InvertedValue.CounterClockwise_Positive;
 
         
-        public static final double EXTENSION_GEAR_RATIO = 6.25; //TODO
+        public static final double GEAR_RATIO = 6.25; //TODO
         
-        public static final ChassisReference EXTENSION_MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
+        public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
 
-        public static final double INTAKE_STALLING_CURRENT = 50;
+        public static final double STALLING_CURRENT = 50;
     }
 
     public class Hopper
@@ -168,7 +169,7 @@ public class Constants
         public static final double FORWARD_VOLTAGE = 1.0; // TODO
         public static final double BACKWARD_VOLTAGE = -1.0; // TODO
 
-        public static final double HOPPER_STALLING_CURRENT = 50;
+        public static final double STALLING_CURRENT = 50;
 
         public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
     }
@@ -204,15 +205,16 @@ public class Constants
 
         public static final double MOMENT_OF_INERTIA = 0.001; // TODO (kg m^2)
 
-        public static final double HOOD_LENGTH = 0.5; // TODO meters
-        public static final double HOOD_MIN_ANGLE = 5.0; // TODO degrees
-        public static final double HOOD_MAX_ANGLE = 70.0; // TODO degrees
+        public static final double LENGTH = 0.5; // TODO meters
+        public static final double MIN_ANGLE = 5.0; // TODO degrees
+        public static final double MAX_ANGLE = 70.0; // TODO degrees
     
         public static final double STALLING_CURRENT = 50.0;
 
         public static final double ZEROING_VOLTAGE = -1.0; // TODO
     }
 
+    /*
     public class Turret // this can be ignored for the present
     {
         public static final double ERROR_THRESHOLD = 1.0; // TODO degrees
@@ -241,6 +243,7 @@ public class Constants
         
         public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
     }
+        */
 
     public class Simulation
     {
@@ -333,13 +336,13 @@ public class Constants
         public static final double STATOR_CURRENT_LIMIT = 80.0;
         public static final double SUPPLY_CURRENT_LIMIT = 80.0;
 
-        public static final double kG = 0.0; //TODO
-        public static final double kS = 0.5; //TODO
-        public static final double kV = 0.0; //TODO
-        public static final double kA = 0.0; //TODO
-        public static final double kP = 0.0; //TODO
-        public static final double kI = 0.0; //TODO
-        public static final double kD = 0.0; //TODO
+        public static final double KG = 0.0; //TODO
+        public static final double KS = 0.5; //TODO
+        public static final double KV = 0.0; //TODO
+        public static final double KA = 0.0; //TODO
+        public static final double KP = 1.0; //TODO
+        public static final double KI = 0.0; //TODO
+        public static final double KD = 0.0; //TODO
 
         
         /*

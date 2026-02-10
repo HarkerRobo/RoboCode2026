@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.intake;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
@@ -33,25 +33,20 @@ public class Intake extends SubsystemBase
 {
     private static Intake instance;
     private TalonFX main;
-    private TalonFX extension;
 
     private DCMotorSim mainSim = new DCMotorSim(
-        LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 0.001, Constants.Intake.MAIN_GEAR_RATIO),
+        LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 0.001, Constants.Intake.GEAR_RATIO),
         DCMotor.getKrakenX60Foc(1));
    
     private Intake()
     {
-        main = new TalonFX(Constants.Intake.MAIN_ID);
-        extension = new TalonFX(Constants.Intake.EXTENSION_ID);
+        main = new TalonFX(Constants.Intake.ID);
         config();
         
         if (Robot.isSimulation())
         {
-            main.getSimState().Orientation = Constants.Intake.MAIN_MECHANICAL_ORIENTATION;
+            main.getSimState().Orientation = Constants.Intake.MECHANICAL_ORIENTATION;
             main.getSimState().setMotorType(TalonFXSimState.MotorType.KrakenX60);
-            
-            extension.getSimState().Orientation = Constants.Intake.EXTENSION_MECHANICAL_ORIENTATION;
-            extension.getSimState().setMotorType(TalonFXSimState.MotorType.KrakenX60);
         }
     }
 
@@ -60,48 +55,25 @@ public class Intake extends SubsystemBase
         main.clearStickyFaults();
         TalonFXConfiguration mainConfig = new TalonFXConfiguration();
 
-        mainConfig.Feedback.SensorToMechanismRatio = Constants.Intake.MAIN_GEAR_RATIO;
+        mainConfig.Feedback.SensorToMechanismRatio = Constants.Intake.GEAR_RATIO;
 
-        mainConfig.MotorOutput.Inverted = Constants.Intake.MAIN_INVERTED;
+        mainConfig.MotorOutput.Inverted = Constants.Intake.INVERTED;
         mainConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
-        mainConfig.Slot0.kP = Constants.Intake.MAIN_KP;
-        mainConfig.Slot0.kI = Constants.Intake.MAIN_KI;
-        mainConfig.Slot0.kD = Constants.Intake.MAIN_KD;
-        mainConfig.Slot0.kS = Constants.Intake.MAIN_KS;
-        mainConfig.Slot0.kV = Constants.Intake.MAIN_KV;
-        mainConfig.Slot0.kA = Constants.Intake.MAIN_KA;
+        mainConfig.Slot0.kP = Constants.Intake.KP;
+        mainConfig.Slot0.kI = Constants.Intake.KI;
+        mainConfig.Slot0.kD = Constants.Intake.KD;
+        mainConfig.Slot0.kS = Constants.Intake.KS;
+        mainConfig.Slot0.kV = Constants.Intake.KV;
+        mainConfig.Slot0.kA = Constants.Intake.KA;
 
         mainConfig.Voltage.PeakForwardVoltage = Constants.MAX_VOLTAGE;
         mainConfig.Voltage.PeakReverseVoltage = -Constants.MAX_VOLTAGE;
 
-        mainConfig.CurrentLimits.StatorCurrentLimit = Constants.Intake.MAIN_STATOR_CURRENT_LIMIT;
-        mainConfig.CurrentLimits.StatorCurrentLimit = Constants.Intake.MAIN_SUPPLY_CURRENT_LIMIT;
+        mainConfig.CurrentLimits.StatorCurrentLimit = Constants.Intake.STATOR_CURRENT_LIMIT;
+        mainConfig.CurrentLimits.StatorCurrentLimit = Constants.Intake.SUPPLY_CURRENT_LIMIT;
 
         main.getConfigurator().apply(mainConfig);
-        
-        extension.clearStickyFaults();
-        TalonFXConfiguration extensionConfig = new TalonFXConfiguration();
-
-        extensionConfig.Feedback.SensorToMechanismRatio = Constants.Intake.EXTENSION_GEAR_RATIO;
-
-        extensionConfig.MotorOutput.Inverted = Constants.Intake.EXTENSION_INVERTED;
-        extensionConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-
-        extensionConfig.Slot0.kP = Constants.Intake.EXTENSION_KP;
-        extensionConfig.Slot0.kI = Constants.Intake.EXTENSION_KI;
-        extensionConfig.Slot0.kD = Constants.Intake.EXTENSION_KD;
-        extensionConfig.Slot0.kS = Constants.Intake.EXTENSION_KS;
-        extensionConfig.Slot0.kV = Constants.Intake.EXTENSION_KV;
-        extensionConfig.Slot0.kA = Constants.Intake.EXTENSION_KA;
-
-        extensionConfig.Voltage.PeakForwardVoltage = Constants.MAX_VOLTAGE;
-        extensionConfig.Voltage.PeakReverseVoltage = -Constants.MAX_VOLTAGE;
-
-        extensionConfig.CurrentLimits.StatorCurrentLimit = Constants.Intake.EXTENSION_STATOR_CURRENT_LIMIT;
-        extensionConfig.CurrentLimits.StatorCurrentLimit = Constants.Intake.EXTENSION_SUPPLY_CURRENT_LIMIT;
-
-        extension.getConfigurator().apply(extensionConfig);
     }
    
     public Voltage getMainVoltage()
@@ -130,37 +102,6 @@ public class Intake extends SubsystemBase
         main.setControl(new DutyCycleOut(velocity));
     }
     
-    public Voltage getExtensionVoltage()
-    {
-        return extension.getMotorVoltage().getValue();
-    }
-    
-    public AngularVelocity getExtensionVelocity()
-    {
-        return extension.getVelocity().getValue();
-    }
-   
-    public void setExtensionVoltage (Voltage voltage)
-    {
-        extension.setControl(new VoltageOut(voltage));
-    }
-
-    public void setExtensionVelocity (AngularVelocity velocity)
-    {
-        System.out.println("Velocity set to " + velocity);
-        extension.setControl(new VelocityVoltage(velocity));
-    }
-
-    public void setExtensionDutyCycle(double velocity) 
-    {
-        extension.setControl(new DutyCycleOut(velocity));
-    }
-
-    public boolean extensionIsStalling()
-    {
-        return Math.abs(extension.getStatorCurrent().getValueAsDouble()) >= Constants.Intake.INTAKE_STALLING_CURRENT;
-    }
-    
     @Override
     public void simulationPeriodic ()
     {
@@ -177,8 +118,8 @@ public class Intake extends SubsystemBase
         // apply the new rotor position and velocity to the TalonFX;
         // note that this is rotor position/velocity (before gear ratio), but
         // DCMotorSim returns mechanism position/velocity (after gear ratio)
-        simState.setRawRotorPosition(mainSim.getAngularPosition().times(Constants.Intake.MAIN_GEAR_RATIO));
-        simState.setRotorVelocity(mainSim.getAngularVelocity().times(Constants.Intake.MAIN_GEAR_RATIO));
+        simState.setRawRotorPosition(mainSim.getAngularPosition().times(Constants.Intake.GEAR_RATIO));
+        simState.setRotorVelocity(mainSim.getAngularVelocity().times(Constants.Intake.GEAR_RATIO));
     }
     
     /*

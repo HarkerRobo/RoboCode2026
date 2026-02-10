@@ -27,4 +27,10 @@ public class IndexerFullSpeed extends Command{
     {
         return true;
     }
+    
+    @Override
+    public String getName()
+    {
+        return "IndexerFullSpeed";
+    }
 }

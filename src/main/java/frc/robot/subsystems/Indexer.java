@@ -55,13 +55,13 @@ public class Indexer extends SubsystemBase
 
         // set slot 0 gains
         var slot0Configs = talonFXConfigs.Slot0;
-        slot0Configs.kG = Constants.Indexer.kG;
-        slot0Configs.kS = Constants.Indexer.kS;
-        slot0Configs.kV = Constants.Indexer.kV;
-        slot0Configs.kA = Constants.Indexer.kA;
-        slot0Configs.kP = Constants.Indexer.kP;
-        slot0Configs.kI = Constants.Indexer.kI;
-        slot0Configs.kD = Constants.Indexer.kD;
+        slot0Configs.kG = Constants.Indexer.KG;
+        slot0Configs.kS = Constants.Indexer.KS;
+        slot0Configs.kV = Constants.Indexer.KV;
+        slot0Configs.kA = Constants.Indexer.KA;
+        slot0Configs.kP = Constants.Indexer.KP;
+        slot0Configs.kI = Constants.Indexer.KI;
+        slot0Configs.kD = Constants.Indexer.KD;
 
         talonFXConfigs.CurrentLimits.StatorCurrentLimit = Constants.Indexer.STATOR_CURRENT_LIMIT;
         talonFXConfigs.CurrentLimits.StatorCurrentLimitEnable = true;

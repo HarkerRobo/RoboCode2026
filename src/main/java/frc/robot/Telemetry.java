@@ -20,26 +20,22 @@ import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
 
 import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.DoubleArrayPublisher;
-import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.StructPublisher;
-import edu.wpi.first.networktables.DoubleTopic;
 import edu.wpi.first.networktables.IntegerPublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StringPublisher;
 import edu.wpi.first.networktables.StructArrayPublisher;
-import edu.wpi.first.networktables.StructArrayTopic;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.Simulation;
 import frc.robot.simulation.SimulationState;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeExtension;
 import frc.robot.subsystems.Climb;
-import frc.robot.subsystems.Intake;
 
 public class Telemetry 
 {
@@ -49,12 +45,15 @@ public class Telemetry
     private NetworkTable table = tableInstance.getTable("1072");
 
     private NetworkTable intake = table.getSubTable("Intake");
-    private StringPublisher intakeCommand = intake.getStringTopic("command").publish();
+    private StringPublisher intakeCommand = intake.getStringTopic("main command").publish();
     private DoublePublisher intakeMainVelocity = intake.getDoubleTopic("main velocity (rot per s)").publish();
     private DoublePublisher intakeMainVoltage = intake.getDoubleTopic("main voltage (V)").publish();
+
+    private StringPublisher intakeExtensionCommand = intake.getStringTopic("extension command").publish();
     private DoublePublisher intakeExtensionVelocity = intake.getDoubleTopic("extension velocity (rot per s)").publish();
     private DoublePublisher intakeExtensionVoltage = intake.getDoubleTopic("extension voltage (V)").publish();
 
+    /*
     private NetworkTable turret = table.getSubTable("Turret");
     private StringPublisher turretCommand = turret.getStringTopic("command").publish();
     private DoublePublisher turretPosition = turret.getDoubleTopic("position (°)").publish();
@@ -62,6 +61,7 @@ public class Telemetry
     private DoublePublisher turretVelocity = turret.getDoubleTopic("velocity (° per s)").publish();
     private DoublePublisher turretVoltage = turret.getDoubleTopic("voltage (V)").publish();
     private BooleanPublisher turretReadyToShoot = turret.getBooleanTopic("ready to shoot?").publish();
+    */
 
     private NetworkTable hood = table.getSubTable("Hood");
     private StringPublisher hoodCommand = hood.getStringTopic("command").publish();
@@ -86,11 +86,13 @@ public class Telemetry
     private DoublePublisher climbElevatorTarget = climb.getDoubleTopic("elevator target (rot)").publish();
     private DoublePublisher climbClimbVoltage = climb.getDoubleTopic("climb voltage (V)").publish();
 
+    /*
     private NetworkTable persistent = table.getSubTable("[persistent variables]");
     // yaw is recorded so that we can record the position of the turret through power cycles without having to use a hard stop or otherwise zeroing
     private DoubleTopic turretYawRaw = persistent.getDoubleTopic("yaw");
     public DoubleEntry turretYawRawSubscriber = turretYawRaw.getEntry(0.0);
     private DoublePublisher turretYawRawPublisher = turretYawRaw.publish();
+    */
 
     private NetworkTable simulation = table.getSubTable("Simulation");
     private StructArrayPublisher<Translation3d> fuels = simulation.getStructArrayTopic("FuelPosition", Translation3d.struct).publish();
@@ -163,21 +165,22 @@ public class Telemetry
 
     private Telemetry ()
     {
-        turretYawRaw.setPersistent(true);
+        //turretYawRaw.setPersistent(true);
     }
 
     public void update ()
     {
-        turretYawRaw.setPersistent(true);
-
-
         Command intakeCommand = Intake.getInstance().getCurrentCommand();
         this.intakeCommand.set(intakeCommand == null ? "" : intakeCommand.getName());
         intakeMainVelocity.set(Intake.getInstance().getMainVelocity().in(RotationsPerSecond));
         intakeMainVoltage.set(Intake.getInstance().getMainVoltage().in(Volts));
-        intakeExtensionVelocity.set(Intake.getInstance().getExtensionVelocity().in(RotationsPerSecond));
-        intakeExtensionVoltage.set(Intake.getInstance().getExtensionVoltage().in(Volts));
+        
+        Command intakeExtensionCommand = IntakeExtension.getInstance().getCurrentCommand();
+        this.intakeExtensionCommand.set(intakeExtensionCommand == null ? "" : intakeExtensionCommand.getName());
+        intakeExtensionVelocity.set(IntakeExtension.getInstance().getExtensionVelocity().in(RotationsPerSecond));
+        intakeExtensionVoltage.set(IntakeExtension.getInstance().getExtensionVoltage().in(Volts));
 
+        /*
         Command turretCommand = Turret.getInstance().getCurrentCommand();
         this.turretCommand.set(turretCommand == null ? "" : turretCommand.getName());
         turretPosition.set(Turret.getInstance().getPosition().in(Degrees));
@@ -185,6 +188,7 @@ public class Telemetry
         turretVelocity.set(Turret.getInstance().getVelocity().in(DegreesPerSecond));
         turretVoltage.set(Turret.getInstance().getVoltage().in(Volts));
         turretReadyToShoot.set(Turret.getInstance().readyToShoot());
+        */
         
         Command hoodCommand = Hood.getInstance().getCurrentCommand();
         this.hoodCommand.set(hoodCommand == null ? "" : hoodCommand.getName());
@@ -217,7 +221,7 @@ public class Telemetry
         climbClimbVoltage.set(Climb.getInstance().getClimbVoltage().in(Volts));
 
 
-        turretYawRawPublisher.set(Turret.getInstance().getPosition().in(Rotations));
+        //turretYawRawPublisher.set(Turret.getInstance().getPosition().in(Rotations));
 
         fuels.set(SimulationState.getInstance().fuelPositionsRaw);
 

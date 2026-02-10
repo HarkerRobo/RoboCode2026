@@ -4,19 +4,20 @@ import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeExtension;
 
 public class RetractIntake extends Command
 {
     public RetractIntake()
     {
-        addRequirements(Intake.getInstance());
+        addRequirements(IntakeExtension.getInstance());
     }
 
     @Override
     public void initialize()
     {
-        Intake.getInstance().setExtensionVoltage(Volts.of(Constants.Intake.EXTENSION_RETRACTING_VOLTAGE));
+        IntakeExtension.getInstance().setExtensionVoltage(Volts.of(Constants.IntakeExtension.RETRACTING_VOLTAGE));
     }
 
     @Override
@@ -27,13 +28,18 @@ public class RetractIntake extends Command
     @Override
     public boolean isFinished()
     {
-        return Intake.getInstance().extensionIsStalling();
+        return IntakeExtension.getInstance().extensionIsStalling();
     }
 
     @Override
     public void end(boolean interrupted)
     {
-        Intake.getInstance().setExtensionVoltage(Volts.of(0.0));
+        IntakeExtension.getInstance().setExtensionVoltage(Volts.of(0.0));
     }
     
+    @Override
+    public String getName()
+    {
+        return "RetractIntake";
+    }
 }

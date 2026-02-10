@@ -45,4 +45,10 @@ public class ClimbToLevel extends Command
     {
         
     }
+
+    @Override
+    public String getName()
+    {
+        return "ClimbToLevel";
+    }
 }
