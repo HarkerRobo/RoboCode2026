@@ -33,7 +33,7 @@ public class DriveToPose extends Command{
         double xdiff = (red ? AlignConstants.HUB_RED.getX() : AlignConstants.HUB_BLUE.getX()) - dt.getState().Pose.getX();
         double ydiff = (red ? AlignConstants.HUB_RED.getY() : AlignConstants.HUB_BLUE.getY()) - dt.getState().Pose.getY();
         double angle = Math.atan(ydiff/xdiff);
-        if (xdiff > 0) angle = Math.PI +angle;
+        if (xdiff < 0) angle = Math.PI +angle;
         return new Rotation2d(angle);
     }
 
