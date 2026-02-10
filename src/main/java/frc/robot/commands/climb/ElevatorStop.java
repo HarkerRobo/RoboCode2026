@@ -8,9 +8,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.Climb;
 
-public class MoveDownUntilStall extends Command
+public class ElevatorStop extends Command
 {
-    public MoveDownUntilStall (int level)
+    public ElevatorStop ()
     {
         addRequirements(Climb.getInstance());
     }
@@ -24,18 +24,18 @@ public class MoveDownUntilStall extends Command
     @Override
     public void execute ()
     {
-        Climb.getInstance().setElevatorVelocity(Constants.Climb.ELEVATOR_GO_DOWN_VELO);
+        Climb.getInstance().setElevatorTargetPosition(Rotations.of(0.0));
     }
 
     @Override
     public boolean isFinished ()
     {
-        return Climb.getInstance().isElevatorStalling();
+        return false;
     }
 
     @Override
     public void end (boolean interrupted)
     {
-        Climb.getInstance().setElevatorVelocity(RotationsPerSecond.of(0.0));
+        
     }
 }

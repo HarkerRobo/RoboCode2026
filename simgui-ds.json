@@ -3,8 +3,12 @@
     {
       "axisConfig": [
         {
+<<<<<<< Updated upstream
           "decKey": 65,
           "incKey": 68
+=======
+          "incKey": 83
+>>>>>>> Stashed changes
         },
         {
           "decKey": 87,
@@ -17,15 +21,20 @@
           "keyRate": 0.009999999776482582
         }
       ],
+<<<<<<< Updated upstream
       "axisCount": 3,
       "buttonCount": 8,
+=======
+      "axisCount": 4,
+      "buttonCount": 6,
+>>>>>>> Stashed changes
       "buttonKeys": [
         90,
         88,
         67,
         86,
-        66,
-        78,
+        87,
+        48,
         77,
         44
       ],

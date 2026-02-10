@@ -22,9 +22,35 @@ public class Climb extends SubsystemBase {
     private TalonFX elevator;
     private TalonFX climb;
 
+<<<<<<< Updated upstream
     private Climb() 
     {
         config();
+=======
+    private ElevatorSim elevatorSim = new ElevatorSim(
+        LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60(1), 0.001, Constants.Climb.ELEVATOR_GEAR_RATIO),
+            DCMotor.getKrakenX60(1), Constants.Climb.ELEVATOR_MIN_HEIGHT, Constants.Climb.ELEVATOR_MAX_HEIGHT, true, Constants.Climb.ELEVATOR_MIN_HEIGHT);
+
+
+    private DCMotorSim climbSim = new DCMotorSim(
+        LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60(1),0.001, Constants.Climb.CLIMB_GEAR_RATIO),
+        DCMotor.getKrakenX60(1));
+
+    private Climb() 
+    {
+        config();
+        
+        if (Robot.isSimulation())
+        {
+            TalonFXSimState elevatorSimState = elevator.getSimState();
+            elevatorSimState.Orientation = Constants.Climb.ELEVATOR_MECHANICAL_ORIENTATION;
+            elevatorSimState.setMotorType(TalonFXSimState.MotorType.KrakenX60);
+            
+            TalonFXSimState climbSimState = climb.getSimState();
+            climbSimState.Orientation = Constants.Climb.CLIMB_MECHANICAL_ORIENTATION;
+            climbSimState.setMotorType(TalonFXSimState.MotorType.KrakenX60);
+        }
+>>>>>>> Stashed changes
     }
 
     //configurates the subsystem
@@ -144,6 +170,74 @@ public class Climb extends SubsystemBase {
         climb.setControl(new VoltageOut(v));
     }
     
+<<<<<<< Updated upstream
+=======
+    
+    @Override
+    public void simulationPeriodic()
+    {
+        TalonFXSimState elevatorSimState = elevator.getSimState();
+
+        // set the supply voltage of the TalonFX
+        elevatorSimState.setSupplyVoltage(RobotController.getBatteryVoltage());
+
+        // get the motor voltage of the TalonFX
+        Voltage elevatorMotorVoltage = elevatorSimState.getMotorVoltageMeasure();
+
+        // use the motor voltage to calculate new position and velocity
+        // using WPILib's DCMotorSim class for physics simulation
+        elevatorSim.setInputVoltage(elevatorMotorVoltage.in(Volts));
+        elevatorSim.update(0.020); // assume 20 ms loop time
+
+        // apply the new rotor position and velocity to the TalonFX;
+        // note that this is rotor position/velocity (before gear ratio), but
+        // DCMotorSim returns mechanism position/velocity (after gear ratio)
+        elevatorSimState.setRawRotorPosition(elevatorSim.getPositionMeters() * Constants.Climb.ELEVATOR_GEAR_RATIO);
+        elevatorSimState.setRotorVelocity(elevatorSim.getVelocityMetersPerSecond() * Constants.Climb.ELEVATOR_GEAR_RATIO);
+        
+
+        TalonFXSimState climbSimState = climb.getSimState();
+
+        // set the supply voltage of the TalonFX
+        climbSimState.setSupplyVoltage(RobotController.getBatteryVoltage());
+
+        // get the motor voltage of the TalonFX
+        Voltage climbMotorVoltage = climbSimState.getMotorVoltageMeasure();
+
+        // use the motor voltage to calculate new position and velocity
+        // using WPILib's DCMotorSim class for physics simulation
+        climbSim.setInputVoltage(climbMotorVoltage.in(Volts));
+        climbSim.update(0.020); // assume 20 ms loop time
+
+        // apply the new rotor position and velocity to the TalonFX;
+        // note that this is rotor position/velocity (before gear ratio), but
+        // DCMotorSim returns mechanism position/velocity (after gear ratio)
+        climbSimState.setRawRotorPosition(climbSim.getAngularPosition().in(Rotations) * Constants.Climb.CLIMB_GEAR_RATIO);
+        climbSimState.setRotorVelocity(climbSim.getAngularVelocity().in(Rotations.per(Second)) * Constants.Climb.CLIMB_GEAR_RATIO);
+    }
+    
+    private SysIdRoutine sysId = new SysIdRoutine(
+        new SysIdRoutine.Config(Volts.per(Second).of(0.1),Volts.of(0.2),Seconds.of(5.0)), 
+        new SysIdRoutine.Mechanism((Voltage v)->setElevatorVoltage(v),
+            (SysIdRoutineLog l)->l
+                .motor("Climb")
+                .voltage(getElevatorVoltage())
+                .angularPosition(elevator.getPosition().getValue())
+                .angularVelocity(getElevatorVelocity()),
+        this)
+    );
+
+    public Command sysIdQuasistatic (SysIdRoutine.Direction direction)
+    {
+        return sysId.quasistatic(direction).withName("SysId Q" + (direction == SysIdRoutine.Direction.kForward ? "F" : "R"));
+    }
+    
+    public Command sysIdDynamic (SysIdRoutine.Direction direction)
+    {
+        return sysId.dynamic(direction).withName("SysId Q" + (direction == SysIdRoutine.Direction.kForward ? "F" : "R"));
+    }
+    
+>>>>>>> Stashed changes
     //returns the instance of the subsystem
     public static Climb getInstance() 
     {

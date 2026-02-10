@@ -259,9 +259,13 @@ public class Constants
 
         public static final InvertedValue ELEVATOR_INVERTED = InvertedValue.Clockwise_Positive; // TODO
         public static final InvertedValue CLIMB_INVERTED = InvertedValue.Clockwise_Positive; // TODO
+        public static final InvertedValue ELEVATOR_INVERTED = InvertedValue.CounterClockwise_Positive; // TODO
+        public static final InvertedValue CLIMB_INVERTED = InvertedValue.CounterClockwise_Positive; // TODO
 
         public static final double ELEVATOR_GEAR_RATIO = 23.7;
         public static final double CLIMB_GEAR_RATIO = 23.7;
+        public static final double ELEVATOR_GEAR_RATIO = 1.0; //TODO
+        public static final double CLIMB_GEAR_RATIO = 1.0; //TODO
 
         public static final double KP_ELEVATOR = 5.0; // TODO
         public static final double KP_CLIMB = 26.41; // TODO
@@ -269,6 +273,13 @@ public class Constants
         public static final double KI_CLIMB = 0.0; // TODO
         public static final double KD_ELEVATOR = 0.89216; //TODO
         public static final double KD_CLIMB = 0.0; // TODO
+=======
+        public static final double KP_ELEVATOR = 5.374; // 10.374 (kind of fake value) / TODO
+        public static final double KP_CLIMB = 0.1; // TODO
+        public static final double KI_ELEVATOR = 0.0; //TODO
+        public static final double KI_CLIMB = 0.0; // TODO
+        public static final double KD_ELEVATOR = 0.097665; //TODO
+        public static final double KD_CLIMB = 0.1; // TODO
 
         public static final Current STATOR_CURRENT_LIMIT = Amps.of(100 + 40); // TODO
         public static final Current ELEVATOR_STALLING_CURRENT = Amps.of(50);
@@ -277,6 +288,9 @@ public class Constants
         public static final Angle CLIMB_POSITION_LEVEL_1 = Rotations.of(1.0);  // rotations // TODO
         public static final Angle CLIMB_POSITION_LEVEL_2 = Rotations.of(2.0);  // rotations // TODO
         public static final Angle CLIMB_POSITION_LEVEL_3 = Rotations.of(3.0);  // rotations // TODO
+        public static final Angle CLIMB_POSITION_LEVEL_1 = Rotations.of(2.0);  // rotations // TODO
+        public static final Angle CLIMB_POSITION_LEVEL_2 = Rotations.of(4.0);  // rotations // TODO
+        public static final Angle CLIMB_POSITION_LEVEL_3 = Rotations.of(6.0);  // rotations // TODO
 		
         public static final double KS = 0.081286; // TODO
         public static final double KV = 11.462; // TODO
@@ -286,6 +300,24 @@ public class Constants
 
         public static final Voltage ELEVATOR_STAY_VOLTAGE = Volts.of(0.0); //TODO
         public static final Voltage ELEVATOR_GO_DOWN_VOLTAGE = Volts.of(-5.0); //TODO
+=======
+        public static final double KS = 0.0025179; // TODO
+        public static final double KV = 0.018912; // TODO
+        public static final double KA = 0.0016769; // TODO
+		public static final double KG = 0.016586; // TODO
+        public static final Angle MAX_ERROR = Rotations.of(0.1);
+
+        public static final AngularVelocity ELEVATOR_GO_DOWN_VELO = RotationsPerSecond.of(-2.0); //TODO
+
+        public static final double ELEVATOR_MIN_HEIGHT = 0.0;
+        public static final double ELEVATOR_MAX_HEIGHT = 10.0;
+
+        public static final double MM_CRUISE_VELOCITY = 6.0;
+		public static final double MM_ACCELERATION = 5.0;
+		public static final double MM_JERK = 12.0;
+
+        public static final ChassisReference ELEVATOR_MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
+        public static final ChassisReference CLIMB_MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
     }
 
     public class Indexer {

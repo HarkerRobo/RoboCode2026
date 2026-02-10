@@ -22,7 +22,15 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.Drivetrain;
 import frc.robot.Constants.Simulation;
+<<<<<<< Updated upstream
 import frc.robot.generated.TunerConstants;
+=======
+import frc.robot.Constants.TunerConstants;
+import frc.robot.commands.climb.ClimbToLevel;
+import frc.robot.commands.climb.ElevatorGoUp;
+import frc.robot.commands.climb.ElevatorStop;
+import frc.robot.commands.climb.MoveDownUntilStall;
+>>>>>>> Stashed changes
 import frc.robot.commands.hood.AimToAngle;
 import frc.robot.commands.hood.ZeroHood;
 import frc.robot.commands.hood.ZeroHoodSoft;
@@ -67,6 +75,22 @@ public class RobotContainer
 
    private void configureBindings() 
    {
+<<<<<<< Updated upstream
+=======
+      
+      joystick.button(1).onTrue(new ClimbToLevel(1));
+      joystick.button(2).onTrue(new ClimbToLevel(2));
+      joystick.button(3).onTrue(new ClimbToLevel(3));
+      joystick.button(4).onTrue(new MoveDownUntilStall());
+      joystick.button(5).whileTrue(new ElevatorGoUp());
+      joystick.button(6).onTrue(new ElevatorStop());
+      // joystick.button(1).whileTrue(Climb.getInstance().sysIdQuasistatic(Direction.kForward));
+      // joystick.button(2).whileTrue(Climb.getInstance().sysIdQuasistatic(Direction.kReverse));
+      // joystick.button(3).whileTrue(Climb.getInstance().sysIdDynamic(Direction.kForward));
+      // joystick.button(4).whileTrue(Climb.getInstance().sysIdDynamic(Direction.kReverse));
+      
+
+>>>>>>> Stashed changes
       // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(

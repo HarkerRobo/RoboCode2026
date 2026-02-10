@@ -23,6 +23,7 @@ public class ClimbToLevel extends Command
     public void initialize ()
     {
         Climb.getInstance().setElevatorTargetPosition(levelHeights[level]);
+        
     }
 
     @Override
@@ -31,17 +32,19 @@ public class ClimbToLevel extends Command
         //Climb.getInstance().setElevatorVoltage(Volts.of(
             //Math.min(1.0,Math.abs((levelHeights[level].minus(Climb.getInstance().getElevatorPosition())).times(5.0).in(Rotations)))
             //* Math.signum(levelHeights[level].minus(Climb.getInstance().getElevatorPosition()).in(Rotations))));
+        Climb.getInstance().setElevatorTargetPosition(levelHeights[level-1]);
     }
 
     @Override
     public boolean isFinished ()
     {
+<<<<<<< Updated upstream
         return Climb.getInstance().getElevatorPosition().isNear(levelHeights[level], Rotations.of(Constants.EPSILON));
+=======
     }
 
     @Override
     public void end (boolean interrupted)
     {
-        
     }
 }
