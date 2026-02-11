@@ -5,6 +5,7 @@
 package frc.robot;
 
 import com.ctre.phoenix6.SignalLogger;
+import com.ctre.phoenix6.Utils;
 
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -12,6 +13,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.Simulation;
+import frc.robot.simulation.LimelightSimulation;
 import frc.robot.simulation.SimulationState;
 
 public class Robot extends TimedRobot 
@@ -33,6 +35,15 @@ public class Robot extends TimedRobot
          DriverStation.startDataLog(DataLogManager.getLog());
       }
    }
+
+   @Override
+  public void robotInit() {
+      if (Utils.isSimulation()) {
+         LimelightSimulation limelightSim = new LimelightSimulation(
+         Constants.Vision.kCamera1Name, Constants.Vision.kRobotToCam1);
+      }
+  }
+      
 
    @Override
    public void robotPeriodic() 
