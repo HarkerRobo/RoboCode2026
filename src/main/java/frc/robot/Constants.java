@@ -92,7 +92,7 @@ public class Constants
         public static final double STATOR_CURRENT_LIMIT = 90.0;
         public static final double SUPPLY_CURRENT_LIMIT = 90.0;
 
-        public static final double INTAKE_VOLTAGE = 1.0; //TODO
+        public static final double INTAKE_VOLTAGE = 2.5; //TODO
         public static final double DEFAULT_INTAKE_VOLTAGE = 0.0; //TODO
 
         public static final double KP = 0.0023821; // TODO
@@ -102,7 +102,7 @@ public class Constants
         public static final double KS = 0.0017035; // TODO
         public static final double KV = 0.12364; // TODO
         public static final double KA = 0.0078492; // TODO
-        public static final InvertedValue INVERTED = InvertedValue.CounterClockwise_Positive;
+        public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive;
 
         
         public static final double GEAR_RATIO = 8.0/9.0; //TODO
