@@ -85,9 +85,9 @@ public class RobotContainer
         configureBindings();
 
         testCommandChooser.setDefaultOption("None", Commands.none());
-        testCommandChooser.addOption("Climb/ClimbToLevel[1]", new ClimbToLevel(0));
-        testCommandChooser.addOption("Climb/ClimbToLevel[2]", new ClimbToLevel(1));
-        testCommandChooser.addOption("Climb/ClimbToLevel[3]", new ClimbToLevel(2));
+        testCommandChooser.addOption("Climb/ClimbToLevel[1]", new ClimbToLevel(1));
+        testCommandChooser.addOption("Climb/ClimbToLevel[2]", new ClimbToLevel(2));
+        testCommandChooser.addOption("Climb/ClimbToLevel[3]", new ClimbToLevel(3));
         testCommandChooser.addOption("Climb/MoveDownUntilStall", new MoveDownUntilStall());
         testCommandChooser.addOption("Hood/AimToAngle[" + Constants.Hood.MIN_ANGLE + "°]", new AimToAngle(Constants.Hood.MIN_ANGLE));
         testCommandChooser.addOption("Hood/AimToAngle[10°]", new AimToAngle(10.0));
