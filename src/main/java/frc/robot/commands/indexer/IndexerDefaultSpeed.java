@@ -17,7 +17,7 @@ public class IndexerDefaultSpeed extends Command{
     }
 
     @Override
-    public void initialize() 
+    public void execute() 
     {
         Indexer.getInstance().setVelocity(RotationsPerSecond.of(Constants.Indexer.DEFAULT_VELOCITY));
     }
@@ -25,7 +25,7 @@ public class IndexerDefaultSpeed extends Command{
     @Override
     public boolean isFinished() 
     {
-        return true;
+        return false;
     }
 
     @Override

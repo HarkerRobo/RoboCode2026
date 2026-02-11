@@ -103,7 +103,7 @@ public class Telemetry
     private IntegerPublisher fuelsInRedOutpost = simulation.getIntegerTopic("Fuels in RedOutpost").publish();
     private StructArrayPublisher<Translation3d> test = simulation.getStructArrayTopic("TEST", Translation3d.struct).publish();
 
-    private NetworkTable indexer = table.getSubTable("indexer");
+    private NetworkTable indexer = table.getSubTable("Indexer");
     private StringPublisher indexerCommand = indexer.getStringTopic("command").publish();
     private DoublePublisher indexerVelocity = indexer.getDoubleTopic("velocity (rps)").publish();
     private DoublePublisher indexerVoltage = indexer.getDoubleTopic("indexer voltage").publish();
