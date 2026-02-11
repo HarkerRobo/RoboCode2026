@@ -130,9 +130,14 @@ public class RobotContainer
         RobotModeTriggers.disabled().whileTrue(
                 drivetrain.applyRequest(() -> idle).ignoringDisable(true).withName("Drivetrain Set Idle"));
 
+                /*
         joystick.a().whileTrue(drivetrain.applyRequest(() -> brake).withName("Drivetrain Brake"));
         joystick.b().whileTrue(drivetrain
                 .applyRequest(() -> point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))));
+                */
+        joystick.x().toggleOnTrue(new RunIntake());
+        joystick.y().onTrue(new ExtendIntake());
+        joystick.a().onTrue(new RetractIntake());
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
