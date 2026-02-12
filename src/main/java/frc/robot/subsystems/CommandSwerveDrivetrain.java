@@ -91,6 +91,14 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      * SysId routine for characterizing rotation.
      * This is used to find PID gains for the FieldCentricFacingAngle HeadingController.
      * See the documentation of SwerveRequest.SysIdSwerveRotation for info on importing the log to SysId.
+     * 
+     * Found gains:
+     * 0.17386 - ks
+     * 0.11469 - kv
+     * 0.00558866 - ka
+     * 
+     * 0.061733 - kp
+     * 0 - kd
      */
     private final SysIdRoutine m_sysIdRoutineRotation = new SysIdRoutine(
             new SysIdRoutine.Config(
@@ -115,7 +123,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             );
 
     /* The SysId routine to test */
-    private SysIdRoutine m_sysIdRoutineToApply = m_sysIdRoutineTranslation;
+    private SysIdRoutine m_sysIdRoutineToApply = m_sysIdRoutineSteer;
 
     /**
      * Constructs a CTRE SwerveDrivetrain using the specified constants.

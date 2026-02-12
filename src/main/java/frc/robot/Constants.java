@@ -94,6 +94,7 @@ public class Constants
 
         public static final double INTAKE_VOLTAGE = 2.5; //TODO
         public static final double DEFAULT_INTAKE_VOLTAGE = 0.0; //TODO
+        public static final double EJECT_VOLTAGE = -2.5; //TODO
 
         public static final double KP = 0.0023821; // TODO
 		public static final double KI = 0.0; // TODO
@@ -108,7 +109,6 @@ public class Constants
         public static final double GEAR_RATIO = 8.0/9.0; //TODO
         
         public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
-
     }
 
     public class IntakeExtension
@@ -118,8 +118,8 @@ public class Constants
         public static final double STATOR_CURRENT_LIMIT = 90.0;
         public static final double SUPPLY_CURRENT_LIMIT = 90.0;
 
-        public static final double EXTENDING_VOLTAGE = 1.0; //TODO
-        public static final double RETRACTING_VOLTAGE = -1.0; //TODO
+        public static final double EXTENDING_VOLTAGE = 2.5;
+        public static final double RETRACTING_VOLTAGE = -2.5;
 
         public static final double KP = 0.0023821; // TODO
 		public static final double KI = 0.0; // TODO
@@ -370,8 +370,8 @@ public class Constants
         // the
         // output type specified by SwerveModuleConstants.SteerMotorClosedLoopOutput
         public static final Slot0Configs steerGains = new Slot0Configs()
-                .withKP(100).withKI(0).withKD(0.5)
-                .withKS(0.1).withKV(2.49).withKA(0)
+                .withKP(20.823).withKI(0).withKD(0.49617)
+                .withKS(0.0/*0.27579*/).withKV(2.4256).withKA(0.055487)
                 .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
         // When using closed-loop control, the drive motor uses the control
         // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput

@@ -46,6 +46,7 @@ import frc.robot.commands.hopper.RetractHopper;
 import frc.robot.commands.indexer.IndexerDefaultSpeed;
 import frc.robot.commands.indexer.IndexerFullSpeed;
 import frc.robot.commands.intake.DefaultIntake;
+import frc.robot.commands.intake.EjectIntake;
 import frc.robot.commands.intake.ExtendIntake;
 import frc.robot.commands.intake.RetractIntake;
 import frc.robot.commands.intake.RunIntake;
@@ -102,6 +103,7 @@ public class RobotContainer
         testCommandChooser.addOption("Indexer/IndexerFullSpeed", new IndexerFullSpeed());
         testCommandChooser.addOption("Intake/DefaultIntake", new DefaultIntake());
         testCommandChooser.addOption("Intake/RunIntake", new RunIntake());
+        testCommandChooser.addOption("Intake/EjectIntake", new EjectIntake());
         testCommandChooser.addOption("Intake/ExtendIntake", new ExtendIntake());
         testCommandChooser.addOption("Intake/RetractIntake", new RetractIntake());
         testCommandChooser.addOption("Shooter/RampUpShooter", new RampUpShooter());
@@ -135,7 +137,6 @@ public class RobotContainer
         joystick.b().whileTrue(drivetrain
                 .applyRequest(() -> point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))));
                 */
-        
         
         joystick.x().toggleOnTrue(new RunIntake());
         joystick.y().toggleOnTrue(new ExtendIntake());
