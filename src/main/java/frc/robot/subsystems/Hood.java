@@ -118,7 +118,7 @@ public class Hood extends SubsystemBase
 
     public void moveToPosition(Angle desiredPosition)
     {
-        System.out.println("Moving to position: " + desiredPosition.in(Degrees) + "°");
+        //System.out.println("Moving to position: " + desiredPosition.in(Degrees) + "°");
         this.desiredPosition = desiredPosition.in(Rotations);
         master.setControl(new MotionMagicVoltage(desiredPosition));
     }

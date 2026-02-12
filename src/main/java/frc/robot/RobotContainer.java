@@ -138,8 +138,8 @@ public class RobotContainer
         
         
         joystick.x().toggleOnTrue(new RunIntake());
-        joystick.y().toggleOnTrue(new StartEndCommand(()->System.out.println("Start"), ()->System.out.println("End")));
-        joystick.a().onTrue(new RetractIntake());
+        joystick.y().toggleOnTrue(new ExtendIntake());
+        joystick.a().toggleOnTrue(new RetractIntake());
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
@@ -151,9 +151,11 @@ public class RobotContainer
         // Zero DT
         joystick.leftBumper().onTrue(
                 drivetrain.runOnce(() -> {System.out.println("Zeroing Drivetrain"); drivetrain.seedFieldCentric();})
+                /*
                 .andThen(drivetrain.runOnce(() -> drivetrain.resetPose(
                             (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) ? 
                             FlippingUtil.flipFieldPose(Constants.ZEROING_POSE) : Constants.ZEROING_POSE)))
+                            */
                 .withName("ZeroDrivetrain"));
         drivetrain.registerTelemetry(Telemetry.getInstance()::telemeterize);
 

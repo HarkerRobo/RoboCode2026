@@ -89,7 +89,7 @@ public class IntakeExtension extends SubsystemBase
 
     public void setExtensionVelocity (AngularVelocity velocity)
     {
-        System.out.println("Velocity set to " + velocity);
+        //System.out.println("Velocity set to " + velocity);
         extension.setControl(new VelocityVoltage(velocity));
     }
 

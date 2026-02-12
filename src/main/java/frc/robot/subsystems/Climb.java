@@ -160,7 +160,7 @@ public class Climb extends SubsystemBase
     public void setElevatorTargetPosition(Angle tPosition) 
     {
         targetPosition = tPosition;
-        System.out.println("Aiming to " + tPosition.in(Rotations) + ".");
+        //System.out.println("Aiming to " + tPosition.in(Rotations) + ".");
         elevator.setControl(new MotionMagicVoltage(tPosition));
     }
 

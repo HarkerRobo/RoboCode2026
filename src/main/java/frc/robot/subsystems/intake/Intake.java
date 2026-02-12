@@ -93,7 +93,7 @@ public class Intake extends SubsystemBase
 
     public void setMainVelocity (AngularVelocity velocity)
     {
-        System.out.println("Velocity set to " + velocity);
+        //System.out.println("Velocity set to " + velocity);
         main.setControl(new VelocityVoltage(velocity));
     }
 
