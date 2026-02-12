@@ -16,12 +16,15 @@ import frc.robot.simulation.SimulationState;
 
 public class Robot extends TimedRobot 
 {
-   Command autonomousCommand;
+   private Command autonomousCommand;
+   public RobotContainer robotContainer;
+   public static Robot instance;
 
    public Robot() 
    {
+      instance = this;
       Telemetry.getInstance();
-      RobotContainer.getInstance();
+      robotContainer = new RobotContainer();
       
 
       boolean logSimulation = false;
@@ -39,7 +42,7 @@ public class Robot extends TimedRobot
    {
       CommandScheduler.getInstance().run();
 
-      CommandScheduler.getInstance().schedule(RobotContainer.getInstance().testCommandChooser.getSelected());
+      CommandScheduler.getInstance().schedule(robotContainer.testCommandChooser.getSelected());
 
       Telemetry.getInstance().update();
    }
@@ -68,7 +71,7 @@ public class Robot extends TimedRobot
    @Override
    public void autonomousInit() 
    {
-      autonomousCommand = RobotContainer.getInstance().getAutonomousCommand();
+      autonomousCommand = robotContainer.getAutonomousCommand();
 
       if (autonomousCommand != null) 
       {

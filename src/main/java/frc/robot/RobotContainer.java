@@ -26,6 +26,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -59,8 +61,7 @@ import frc.robot.subsystems.intake.IntakeExtension;
 
 public class RobotContainer 
 {
-    private static RobotContainer instance;
-    private static final Intake intake = Intake.getInstance();
+    private final Intake intake = Intake.getInstance();
 
     public double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
@@ -77,10 +78,10 @@ public class RobotContainer
     public final CommandSwerveDrivetrain drivetrain = Modules.createDrivetrain();
 
     public SendableChooser<Command> testCommandChooser = new SendableChooser<>();
-
-    private RobotContainer() 
+        
+    public RobotContainer() 
     {
-        intake.setDefaultCommand(new DefaultIntake());
+        //intake.setDefaultCommand(new DefaultIntake());
 
         configureBindings();
 
@@ -112,7 +113,6 @@ public class RobotContainer
 
     private void configureBindings() 
     {
-
         List<Integer> l = new ArrayList<>();
 
         // Note that X is defined as forward according to WPILib convention,
@@ -135,8 +135,10 @@ public class RobotContainer
         joystick.b().whileTrue(drivetrain
                 .applyRequest(() -> point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))));
                 */
+        
+        
         joystick.x().toggleOnTrue(new RunIntake());
-        joystick.y().onTrue(new ExtendIntake());
+        joystick.y().toggleOnTrue(new StartEndCommand(()->System.out.println("Start"), ()->System.out.println("End")));
         joystick.a().onTrue(new RetractIntake());
 
         // Run SysId routines when holding back/start and X/Y.
@@ -172,12 +174,5 @@ public class RobotContainer
                 .withTimeout(5.0),
                 // Finally idle for the rest of auton
                 drivetrain.applyRequest(() -> idle));
-    }
-
-    public static RobotContainer getInstance()
-    {
-        if (instance == null) instance = new RobotContainer();
-
-        return instance;
     }
 }
