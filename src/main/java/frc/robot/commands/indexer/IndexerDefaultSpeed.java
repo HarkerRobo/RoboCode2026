@@ -17,7 +17,7 @@ public class IndexerDefaultSpeed extends Command{
     }
 
     @Override
-    public void execute() 
+    public void initialize() 
     {
         Indexer.getInstance().setVelocity(RotationsPerSecond.of(Constants.Indexer.DEFAULT_VELOCITY));
     }
