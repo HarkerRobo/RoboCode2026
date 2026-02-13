@@ -175,7 +175,7 @@ public class RobotContainer
         */
 
         // Zero DT
-        joystick.button(1).onTrue(
+        joystick.leftBumper().onTrue(
                 drivetrain.runOnce(() -> drivetrain.seedFieldCentric())
                 .andThen(drivetrain.runOnce(() -> drivetrain.resetPose(
                             (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) ? 
