@@ -48,7 +48,10 @@ public class Constants
     public static final double MAX_VOLTAGE = 12.0;
     
     public static final double EPSILON = 0.1;
-    public static final Pose2d ZEROING_POSE = new Pose2d(0.0, 0.0, new Rotation2d(0.0));
+
+    public static final double ROBOT_DIAMETER = 0.889;
+
+    public static final Pose2d ZEROING_POSE = new Pose2d(4.028649 - ROBOT_DIAMETER / 2.0, 4.034536, new Rotation2d(0.0));
 
     public class Vision {
         public static final String kCamera1Name = "limelight";
@@ -61,10 +64,6 @@ public class Constants
         public static final Matrix<N3, N1> kTagStdDevs = VecBuilder.fill(0.1, 0.1, 99999);
         public static final Matrix<N3, N1> stateStdDevs = VecBuilder.fill(0.05, 0.05, 0.1);
     }
-
-    public static final double ROBOT_DIAMETER = 0.889;
-
-    public static final Pose2d ZEROING_POSE = new Pose2d(4.028649 - ROBOT_DIAMETER / 2.0, 4.034536, new Rotation2d(0.0));
 
     public class Drivetrain 
     {

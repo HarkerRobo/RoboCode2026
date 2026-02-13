@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.TunerConstants;
+import frc.robot.Robot;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import edu.wpi.first.wpilibj.DriverStation;
 
@@ -39,8 +40,8 @@ public class DriveToPose extends Command{
 
     public void execute() {
         
-        double xSpeed = -RobotContainer.getInstance().getJoystickLeftY();
-        double ySpeed = -RobotContainer.getInstance().getJoystickLeftX();
+        double xSpeed = -Robot.instance.robotContainer.joystick.getLeftY();
+        double ySpeed = -Robot.instance.robotContainer.joystick.getLeftX();
 
         SwerveRequest.FieldCentricFacingAngle drive = new SwerveRequest.FieldCentricFacingAngle()
             .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1)
