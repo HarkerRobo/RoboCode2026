@@ -16,6 +16,7 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -25,12 +26,14 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants;
+import frc.robot.LimelightHelpers;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Telemetry;
 import frc.robot.subsystems.Modules.TunerSwerveDrivetrain;
 
@@ -276,6 +279,44 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 m_hasAppliedOperatorPerspective = true;
             });
         }
+
+        //Pose Estimation using AprilTags
+        double redAllianceYaw = this.getPigeon2().getRotation2d().getDegrees();
+        
+        // DEBUG THIS!! shows as reflection on the other side of the april tag
+        LimelightHelpers.SetRobotOrientation(
+            Constants.Vision.kCamera1Name,
+            redAllianceYaw,
+            0, 0, 0, 0, 0
+        );
+        // LimelightHelpers.SetIMUMode(Constants.Vision.kCamera1Name);
+        LimelightHelpers.PoseEstimate EELimelightEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.Vision.kCamera1Name);
+        LimelightHelpers.PoseEstimate intakeLimelightEstimate = null; //LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.Vision.kCamera2Name);
+
+
+       // Only run vision updates if we see a tag
+        if ((EELimelightEstimate != null && EELimelightEstimate.tagCount > 0) ||
+            (intakeLimelightEstimate != null && intakeLimelightEstimate.tagCount > 0)) {
+
+            LimelightHelpers.PoseEstimate bestEstimate = selectBestEstimate(EELimelightEstimate, intakeLimelightEstimate);
+
+            SmartDashboard.putNumber("Drive/bestEstimateX", bestEstimate.pose.getX());
+            SmartDashboard.putNumber("Drive/bestEstimateY", bestEstimate.pose.getY());
+            SmartDashboard.putNumber("Drive/bestEstimateYaw", bestEstimate.pose.getRotation().getDegrees());
+            if (bestEstimate != null && bestEstimate.tagCount > 0) {
+                double stdDevFactor = Math.pow(bestEstimate.avgTagDist, 2.0) / bestEstimate.tagCount;
+                double linearStdDev = Constants.Vision.linTagStdDevs * stdDevFactor;
+                
+                if (bestEstimate.avgTagDist < 3.0 && bestEstimate.rawFiducials[0].ambiguity < 0.7)
+                {
+                    addVisionMeasurement(bestEstimate.pose, bestEstimate.timestampSeconds, VecBuilder.fill(linearStdDev, linearStdDev, Constants.Vision.angTagStdDevs));
+                }
+                
+                // if (bestEstimate.tagCount >= 2 || (bestEstimate.avgTagDist < 3.0 && bestEstimate.rawFiducials[0].ambiguity < 0.7)) {
+                //     addVisionMeasurement(bestEstimate.pose, bestEstimate.timestampSeconds, Constants.Vision.kTagStdDevs);
+                // }
+            }
+        } 
     }
 
     private void startSimThread() 
@@ -341,6 +382,37 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public Optional<Pose2d> samplePoseAt(double timestampSeconds) 
     {
         return super.samplePoseAt(Utils.fpgaToCurrentTime(timestampSeconds));
+    }
+
+    private LimelightHelpers.PoseEstimate selectBestEstimate(LimelightHelpers.PoseEstimate upper, LimelightHelpers.PoseEstimate lower) {
+
+        // Case: Both are null, return null
+        if ((upper == null || upper.tagCount == 0) && (lower == null || lower.tagCount == 0)) {
+            return null;
+        }
+
+        //  if (upper.avgTagDist > 3 && lower.avgTagDist > 3) {
+        //     return null; // Use odometry-only if no Limelight sees a tag within 3m
+        // }
+
+        // Case: One is null or has no valid tags, return the other
+        if (upper == null || upper.tagCount == 0) {
+            return lower;
+        }
+        if (lower == null || lower.tagCount == 0) {
+            return upper;
+        }
+
+        // Case: Favor closer estimate
+        if (upper.avgTagDist < lower.avgTagDist) {
+            return upper;
+        } 
+        if (lower.avgTagDist < upper.avgTagDist) {
+            return lower;
+        }
+
+        // Case: Same distance, use most recent timestamp
+        return (upper.timestampSeconds > lower.timestampSeconds) ? upper : lower;
     }
 
     private void configureAutoBuilder() 

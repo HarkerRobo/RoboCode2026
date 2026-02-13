@@ -41,6 +41,7 @@ import frc.robot.Constants.TunerConstants;
 import frc.robot.commands.climb.ClimbToLevel;
 import frc.robot.commands.climb.ElevatorUp;
 import frc.robot.commands.climb.MoveDownUntilStall;
+import frc.robot.commands.drive.DriveToPose;
 import frc.robot.commands.hood.AimToAngle;
 import frc.robot.commands.hood.ZeroHood;
 import frc.robot.commands.hood.ZeroHoodSoft;
@@ -173,6 +174,7 @@ public class RobotContainer
         joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
         joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
         */
+        joystick.start().whileTrue(new DriveToPose(drivetrain));
 
         // Zero DT
         joystick.leftBumper().onTrue(
