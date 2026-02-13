@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Turret;
+import frc.robot.util.Util;
 
 public class AimToAngle extends Command
 {
@@ -20,7 +21,9 @@ public class AimToAngle extends Command
     */
     public AimToAngle (double pitch)
     {
-        this.pitch = pitch;
+        double boundedPitch = Util.bound(pitch, Constants.Hood.MIN_ANGLE, Constants.Hood.MAX_ANGLE);
+        if (boundedPitch != pitch) System.out.println("Bounding out-of-bounds pitch " + pitch + "to " + boundedPitch);
+        this.pitch = boundedPitch;
 
         addRequirements(Hood.getInstance());
     }

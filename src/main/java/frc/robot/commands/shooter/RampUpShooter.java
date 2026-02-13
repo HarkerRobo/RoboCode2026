@@ -2,21 +2,27 @@ package frc.robot.commands.shooter;
 
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.Shooter;
 
 public class RampUpShooter extends Command
 {
-    public RampUpShooter()
+    DoubleSupplier targetSpeedSupplier;
+    double targetSpeed;
+    public RampUpShooter(DoubleSupplier targetSpeedSupplier)
     {
+        this.targetSpeedSupplier = targetSpeedSupplier;
         addRequirements(Shooter.getInstance());
     }
 
     @Override
     public void initialize()
     {
-        Shooter.getInstance().setVelocity(RotationsPerSecond.of(Constants.Shooter.SHOOT_VELOCITY));
+        targetSpeed = targetSpeedSupplier.getAsDouble();
+        Shooter.getInstance().setVelocity(RotationsPerSecond.of(targetSpeed));
     }
 
     @Override
@@ -27,7 +33,7 @@ public class RampUpShooter extends Command
     @Override
     public boolean isFinished()
     {
-        return Shooter.getInstance().getLeftVelocity().in(RotationsPerSecond) >= Constants.Shooter.SHOOT_VELOCITY;
+        return Shooter.getInstance().getLeftVelocity().in(RotationsPerSecond) >= targetSpeed;
     }
 
     @Override

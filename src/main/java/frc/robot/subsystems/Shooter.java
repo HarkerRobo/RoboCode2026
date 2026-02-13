@@ -202,6 +202,12 @@ public class Shooter extends SubsystemBase
                 .angularVelocity(getLeftVelocity()),
         this)
     );
+    
+    public boolean readyToShoot (double target)
+    {
+        return Math.abs(leftMaster.getPosition().getValue().in(Rotations) - target) < Constants.EPSILON &&
+               Math.abs(rightMaster.getPosition().getValue().in(Rotations) - target) < Constants.EPSILON;
+    }
 
     public Command leftSysIdQuasistatic (SysIdRoutine.Direction direction)
     {
