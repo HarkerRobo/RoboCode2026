@@ -7,9 +7,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.intake.Intake;
 
-public class RunIntake extends Command 
+public class EjectIntake extends Command 
 {
-    public RunIntake () 
+    public EjectIntake () 
     {
         addRequirements(Intake.getInstance());
     }
@@ -17,7 +17,7 @@ public class RunIntake extends Command
     @Override
     public void initialize()
     {
-        Intake.getInstance().setMainVoltage(Volts.of(Constants.Intake.INTAKE_VOLTAGE));
+        Intake.getInstance().setMainVoltage(Volts.of(Constants.Intake.EJECT_VOLTAGE));
     }
 
     @Override

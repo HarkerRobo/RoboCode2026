@@ -43,6 +43,7 @@ import frc.robot.Telemetry;
  */
 public class Turret extends SubsystemBase
 {
+    /*
     private static Turret instance;
 
     private TalonFX motor;
@@ -123,7 +124,7 @@ public class Turret extends SubsystemBase
             System.out.println("Pitch motor position below " + Constants.Turret.MIN_PITCH + " causing pitch motor to be disabled");
             pitchMotor.disable();
         }
-        */
+        * /
     }
 
 
@@ -195,4 +196,6 @@ public class Turret extends SubsystemBase
         if (instance == null) instance = new Turret();
         return instance;
     }
+
+    */
 }

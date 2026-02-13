@@ -39,7 +39,7 @@ public class Climb extends SubsystemBase
 
     private ElevatorSim elevatorSim = new ElevatorSim(
         LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60(1), 0.001, Constants.Climb.ELEVATOR_GEAR_RATIO),
-            DCMotor.getKrakenX60(1), Constants.Climb.ELEVATOR_MIN_HEIGHT, Constants.Climb.ELEVATOR_MAX_HEIGHT, false, Constants.Climb.ELEVATOR_MIN_HEIGHT);
+            DCMotor.getKrakenX60(1), Constants.Climb.ELEVATOR_MIN_HEIGHT, Constants.Climb.ELEVATOR_MAX_HEIGHT, true, Constants.Climb.ELEVATOR_MIN_HEIGHT);
 
 
     private DCMotorSim climbSim = new DCMotorSim(
@@ -53,11 +53,11 @@ public class Climb extends SubsystemBase
         if (Robot.isSimulation())
         {
             TalonFXSimState elevatorSimState = elevator.getSimState();
-            elevatorSimState.Orientation = Constants.Hopper.MECHANICAL_ORIENTATION;
+            elevatorSimState.Orientation = Constants.Climb.ELEVATOR_MECHANICAL_ORIENTATION;
             elevatorSimState.setMotorType(TalonFXSimState.MotorType.KrakenX60);
             
             TalonFXSimState climbSimState = climb.getSimState();
-            climbSimState.Orientation = Constants.Hopper.MECHANICAL_ORIENTATION;
+            climbSimState.Orientation = Constants.Climb.CLIMB_MECHANICAL_ORIENTATION;
             climbSimState.setMotorType(TalonFXSimState.MotorType.KrakenX60);
         }
     }
@@ -160,13 +160,13 @@ public class Climb extends SubsystemBase
     public void setElevatorTargetPosition(Angle tPosition) 
     {
         targetPosition = tPosition;
-        System.out.println("Aiming to " + tPosition.in(Rotations) + ".");
+        //System.out.println("Aiming to " + tPosition.in(Rotations) + ".");
         elevator.setControl(new MotionMagicVoltage(tPosition));
     }
 
     public boolean isElevatorStalling()
     {
-        return elevator.getStatorCurrent().getValueAsDouble() >= Constants.Climb.ELEVATOR_STALLING_CURRENT.in(Amps);
+        return Math.abs(elevator.getStatorCurrent().getValueAsDouble()) >= Constants.Climb.ELEVATOR_STALLING_CURRENT.in(Amps);
     }
 
     public void setClimbDutyCycle(double velocity) 
@@ -204,8 +204,8 @@ public class Climb extends SubsystemBase
         // apply the new rotor position and velocity to the TalonFX;
         // note that this is rotor position/velocity (before gear ratio), but
         // DCMotorSim returns mechanism position/velocity (after gear ratio)
-        elevatorSimState.setRawRotorPosition(elevatorSim.getPositionMeters() * Constants.Hopper.GEAR_RATIO);
-        elevatorSimState.setRotorVelocity(elevatorSim.getVelocityMetersPerSecond() * Constants.Hopper.GEAR_RATIO);
+        elevatorSimState.setRawRotorPosition(elevatorSim.getPositionMeters() * Constants.Climb.ELEVATOR_GEAR_RATIO);
+        elevatorSimState.setRotorVelocity(elevatorSim.getVelocityMetersPerSecond() * Constants.Climb.ELEVATOR_GEAR_RATIO);
         
 
         TalonFXSimState climbSimState = climb.getSimState();
@@ -224,15 +224,15 @@ public class Climb extends SubsystemBase
         // apply the new rotor position and velocity to the TalonFX;
         // note that this is rotor position/velocity (before gear ratio), but
         // DCMotorSim returns mechanism position/velocity (after gear ratio)
-        climbSimState.setRawRotorPosition(climbSim.getAngularPosition().in(Rotations) * Constants.Hopper.GEAR_RATIO);
-        climbSimState.setRotorVelocity(climbSim.getAngularVelocity().in(Rotations.per(Second)) * Constants.Hopper.GEAR_RATIO);
+        climbSimState.setRawRotorPosition(climbSim.getAngularPosition().in(Rotations) * Constants.Climb.CLIMB_GEAR_RATIO);
+        climbSimState.setRotorVelocity(climbSim.getAngularVelocity().in(Rotations.per(Second)) * Constants.Climb.CLIMB_GEAR_RATIO);
     }
     
     private SysIdRoutine sysId = new SysIdRoutine(
-        new SysIdRoutine.Config(), 
+        new SysIdRoutine.Config(Volts.per(Second).of(0.1),Volts.of(0.5),Seconds.of(10.0)), 
         new SysIdRoutine.Mechanism((Voltage v)->setElevatorVoltage(v),
             (SysIdRoutineLog l)->l
-                .motor("Shooter")
+                .motor("Climb")
                 .voltage(getElevatorVoltage())
                 .angularPosition(elevator.getPosition().getValue())
                 .angularVelocity(getElevatorVelocity()),

@@ -33,7 +33,7 @@ public class ZeroHoodSoft extends Command
 
         if (!interrupted)
         {
-            Hood.getInstance().setPosition(Degrees.of(Constants.Hood.HOOD_MIN_ANGLE));
+            Hood.getInstance().setPosition(Degrees.of(Constants.Hood.MIN_ANGLE));
         }
     }
 }

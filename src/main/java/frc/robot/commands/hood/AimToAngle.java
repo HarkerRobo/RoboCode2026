@@ -29,7 +29,7 @@ public class AimToAngle extends Command
     public void initialize ()
     {
         Hood.getInstance().moveToPosition(Degrees.of(pitch));
-        System.out.println("Aiming: " + pitch + "°");
+        //System.out.println("Aiming: " + pitch + "°");
     }
 
     @Override

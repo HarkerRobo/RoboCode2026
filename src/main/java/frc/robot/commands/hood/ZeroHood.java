@@ -25,7 +25,7 @@ public class ZeroHood extends Command
     @Override
     public void execute()
     {
-        Hood.getInstance().moveToPosition(Degrees.of(Constants.Hood.HOOD_MIN_ANGLE));
+        Hood.getInstance().moveToPosition(Degrees.of(Constants.Hood.MIN_ANGLE));
     }
 
     @Override
@@ -37,12 +37,6 @@ public class ZeroHood extends Command
     @Override
     public void end(boolean interrupted)
     {
-        Hood.getInstance().setPosition(Degrees.of(Constants.Hood.HOOD_MIN_ANGLE));
-    }
-    
-    @Override
-    public String getName()
-    {
-        return "ZeroHood";
+        Hood.getInstance().setPosition(Degrees.of(Constants.Hood.MIN_ANGLE));
     }
 }

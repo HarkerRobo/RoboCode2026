@@ -34,7 +34,7 @@ public class Indexer extends SubsystemBase
     private static TalonFX motor;
     
     private DCMotorSim sim = new DCMotorSim(
-        LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 0.001, Constants.Intake.GEAR_RATIO),
+        LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 0.001, Constants.Indexer.GEAR_RATIO),
         DCMotor.getKrakenX60Foc(1));
 
     private Indexer() { 
@@ -55,13 +55,13 @@ public class Indexer extends SubsystemBase
 
         // set slot 0 gains
         var slot0Configs = talonFXConfigs.Slot0;
-        slot0Configs.kG = Constants.Indexer.kG;
-        slot0Configs.kS = Constants.Indexer.kS;
-        slot0Configs.kV = Constants.Indexer.kV;
-        slot0Configs.kA = Constants.Indexer.kA;
-        slot0Configs.kP = Constants.Indexer.kP;
-        slot0Configs.kI = Constants.Indexer.kI;
-        slot0Configs.kD = Constants.Indexer.kD;
+        slot0Configs.kG = Constants.Indexer.KG;
+        slot0Configs.kS = Constants.Indexer.KS;
+        slot0Configs.kV = Constants.Indexer.KV;
+        slot0Configs.kA = Constants.Indexer.KA;
+        slot0Configs.kP = Constants.Indexer.KP;
+        slot0Configs.kI = Constants.Indexer.KI;
+        slot0Configs.kD = Constants.Indexer.KD;
 
         talonFXConfigs.CurrentLimits.StatorCurrentLimit = Constants.Indexer.STATOR_CURRENT_LIMIT;
         talonFXConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
@@ -126,8 +126,8 @@ public class Indexer extends SubsystemBase
         // apply the new rotor position and velocity to the TalonFX;
         // note that this is rotor position/velocity (before gear ratio), but
         // DCMotorSim returns mechanism position/velocity (after gear ratio)
-        simState.setRawRotorPosition(sim.getAngularPosition().times(Constants.Intake.GEAR_RATIO));
-        simState.setRotorVelocity(sim.getAngularVelocity().times(Constants.Intake.GEAR_RATIO));
+        simState.setRawRotorPosition(sim.getAngularPosition().times(Constants.Indexer.GEAR_RATIO));
+        simState.setRotorVelocity(sim.getAngularVelocity().times(Constants.Indexer.GEAR_RATIO));
     }
     
     private SysIdRoutine sysId = new SysIdRoutine(

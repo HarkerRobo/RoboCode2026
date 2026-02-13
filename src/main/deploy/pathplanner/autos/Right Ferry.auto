@@ -1,0 +1,115 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "EjectIntake (with timeout)"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Right Ferry 1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ExtendIntake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "StartRunIntake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Right Ferry 2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "StartDefaultIntake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "RetractIntake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Right Ferry 3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "EjectIntake (with timeout)"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Right Ferry 4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ExtendIntake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "StartRunIntake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Right Ferry 5"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "StartDefaultIntake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "RetractIntake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Right Ferry 6"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "EjectIntake (with timeout)"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

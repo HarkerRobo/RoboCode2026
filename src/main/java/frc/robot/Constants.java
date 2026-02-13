@@ -62,6 +62,10 @@ public class Constants
         public static final Matrix<N3, N1> stateStdDevs = VecBuilder.fill(0.05, 0.05, 0.1);
     }
 
+    public static final double ROBOT_DIAMETER = 0.889;
+
+    public static final Pose2d ZEROING_POSE = new Pose2d(4.028649 - ROBOT_DIAMETER / 2.0, 4.034536, new Rotation2d(0.0));
+
     public class Drivetrain 
     {
         public static final double MAX_VELOCITY = 1.0;
@@ -71,9 +75,9 @@ public class Constants
     public class Shooter
     {
         public static final int LEFT_MASTER_ID = 19; // TODO
-        public static final int LEFT_FOLLOWER_ID = 19; // TODO
-        public static final int RIGHT_MASTER_ID = 19; // TODO
-        public static final int RIGHT_FOLLOWER_ID = 19; // TODO
+        public static final int LEFT_FOLLOWER_ID = 20; // TODO
+        public static final int RIGHT_MASTER_ID = 21; // TODO
+        public static final int RIGHT_FOLLOWER_ID = 22; // TODO
         
         public static final double STATOR_CURRENT_LIMIT = 90.0;
         public static final double SUPPLY_CURRENT_LIMIT = 90.0;
@@ -102,13 +106,39 @@ public class Constants
 
     public class Intake
     {
-        public static int MOTOR_ID = 19;
+        public static int ID = 23;
 
         public static final double STATOR_CURRENT_LIMIT = 90.0;
         public static final double SUPPLY_CURRENT_LIMIT = 90.0;
 
-        public static final double INTAKE_VOLTAGE = 10.0; //TODO
+        public static final double INTAKE_VOLTAGE = 3.0; //TODO
         public static final double DEFAULT_INTAKE_VOLTAGE = 0.0; //TODO
+        public static final double EJECT_VOLTAGE = -2.5; //TODO
+
+        public static final double KP = 0.0023821; // TODO
+		public static final double KI = 0.0; // TODO
+		public static final double KD = 0.0; // TODO
+		
+        public static final double KS = 0.0017035; // TODO
+        public static final double KV = 0.12364; // TODO
+        public static final double KA = 0.0078492; // TODO
+        public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive;
+
+        
+        public static final double GEAR_RATIO = 8.0/9.0; //TODO
+        
+        public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
+    }
+
+    public class IntakeExtension
+    {
+        public static int ID = 24;
+
+        public static final double STATOR_CURRENT_LIMIT = 90.0;
+        public static final double SUPPLY_CURRENT_LIMIT = 90.0;
+
+        public static final double EXTENDING_VOLTAGE = 2.5;
+        public static final double RETRACTING_VOLTAGE = -2.5;
 
         public static final double KP = 0.0023821; // TODO
 		public static final double KI = 0.0; // TODO
@@ -120,15 +150,19 @@ public class Constants
         public static final InvertedValue INVERTED = InvertedValue.CounterClockwise_Positive;
 
         
-        public static final double GEAR_RATIO = 1.0; //TODO
+        public static final double GEAR_RATIO = 6.25; //TODO
         
         public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
 
+        public static final double STALLING_CURRENT = 50;
+
+        public static final double MIN_HEIGHT = 0.0; // TODO
+        public static final double MAX_HEIGHT = 1.0; // TODO
     }
 
     public class Hopper
     {
-        public static final int MOTOR_ID = 19;
+        public static final int MOTOR_ID = 25;
         
         public static final double STATOR_CURRENT_LIMIT = 90.0;
         public static final double SUPPLY_CURRENT_LIMIT = 90.0;
@@ -157,15 +191,15 @@ public class Constants
         public static final double FORWARD_VOLTAGE = 1.0; // TODO
         public static final double BACKWARD_VOLTAGE = -1.0; // TODO
 
-        public static final double HOPPER_STALLING_CURRENT = 50; //TODO 
+        public static final double STALLING_CURRENT = 50;
 
         public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
     }
     
     public class Hood
     {
-        public static final int MASTER_ID = 19;
-        public static final int FOLLOWER_ID = 19;
+        public static final int MASTER_ID = 26;
+        public static final int FOLLOWER_ID = 27;
         
         public static final double STATOR_CURRENT_LIMIT = 90.0;
         public static final double SUPPLY_CURRENT_LIMIT = 90.0;
@@ -193,20 +227,21 @@ public class Constants
 
         public static final double MOMENT_OF_INERTIA = 0.001; // TODO (kg m^2)
 
-        public static final double HOOD_LENGTH = 0.5; // TODO meters
-        public static final double HOOD_MIN_ANGLE = 5.0; // TODO degrees
-        public static final double HOOD_MAX_ANGLE = 70.0; // TODO degrees
+        public static final double LENGTH = 0.5; // TODO meters
+        public static final double MIN_ANGLE = 5.0; // TODO degrees
+        public static final double MAX_ANGLE = 70.0; // TODO degrees
     
         public static final double STALLING_CURRENT = 50.0;
 
         public static final double ZEROING_VOLTAGE = -1.0; // TODO
     }
 
-    public class Turret
+    /*
+    public class Turret // this can be ignored for the present
     {
         public static final double ERROR_THRESHOLD = 1.0; // TODO degrees
 
-        public static final int MOTOR_ID = 19; // TODO
+        public static final int MOTOR_ID = 28; // TODO
 
         public static final double STATOR_CURRENT_LIMIT = 90.0;
         public static final double SUPPLY_CURRENT_LIMIT = 90.0;
@@ -230,6 +265,7 @@ public class Constants
         
         public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
     }
+        */
 
     public class Simulation
     {
@@ -273,62 +309,64 @@ public class Constants
     }
     public static final class Climb 
     {
-        public static final int ELEVATOR_ID = 20;
-        public static final int HINGE_ID = 21;
+        public static final int ELEVATOR_ID = 29;
+        public static final int HINGE_ID = 30;
 
-        public static final InvertedValue ELEVATOR_INVERTED = InvertedValue.Clockwise_Positive; // TODO
-        public static final InvertedValue CLIMB_INVERTED = InvertedValue.Clockwise_Positive; // TODO
+        public static final InvertedValue ELEVATOR_INVERTED = InvertedValue.CounterClockwise_Positive; // TODO
+        public static final InvertedValue CLIMB_INVERTED = InvertedValue.CounterClockwise_Positive; // TODO
 
-        public static final double ELEVATOR_GEAR_RATIO = 23.7;
-        public static final double CLIMB_GEAR_RATIO = 23.7;
+        public static final ChassisReference ELEVATOR_MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
+        public static final ChassisReference CLIMB_MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
 
-        public static final double KP_ELEVATOR = 1000.0; // TODO
-        public static final double KP_CLIMB = 26.41; // TODO
+        public static final double ELEVATOR_GEAR_RATIO = 1.0;
+        public static final double CLIMB_GEAR_RATIO = 1.0;
+
+        public static final double KP_ELEVATOR = 1.0; // TODO
+        public static final double KP_CLIMB = 1.0; // TODO
         public static final double KI_ELEVATOR = 0.0; //TODO
         public static final double KI_CLIMB = 0.0; // TODO
         public static final double KD_ELEVATOR = 0.0; //TODO
-        public static final double KD_CLIMB = 0.0; // TODO
+        public static final double KD_CLIMB = 0.037935; // TODO
 
         public static final Current STATOR_CURRENT_LIMIT = Amps.of(100 + 40); // TODO
-        public static final Current ELEVATOR_STALLING_CURRENT = Amps.of(50);
+        public static final Current ELEVATOR_STALLING_CURRENT = Amps.of(100);
         public static final Current SUPPLY_CURRENT_LIMIT = Amps.of(100 + 20); // TODO
 
-        public static final Angle CLIMB_POSITION_LEVEL_1 = Rotations.of(1.0);  // rotations // TODO
-        public static final Angle CLIMB_POSITION_LEVEL_2 = Rotations.of(2.0);  // rotations // TODO
-        public static final Angle CLIMB_POSITION_LEVEL_3 = Rotations.of(3.0);  // rotations // TODO
+        public static final Angle CLIMB_POSITION_LEVEL_1 = Rotations.of(2.0);  // rotations // TODO
+        public static final Angle CLIMB_POSITION_LEVEL_2 = Rotations.of(4.0);  // rotations // TODO
+        public static final Angle CLIMB_POSITION_LEVEL_3 = Rotations.of(6.0);  // rotations // TODO
 		
-        public static final double KS = 0.0055451; // TODO
-        public static final double KV = 0.1138; // TODO
-        public static final double KA = 0.0049434; // TODO
-		public static final double KG = 0.012971; // TODO
+        public static final double KS = 0.0025457; // TODO
+        public static final double KV = 0.018935; // TODO
+        public static final double KA = 0.0016851; // TODO
+		public static final double KG = 0.016529; // TODO
         public static final Angle MAX_ERROR = Rotations.of(0.1);
 
-        public static final Voltage ELEVATOR_STAY_VOLTAGE = Volts.of(0.0); //TODO
-        public static final Voltage ELEVATOR_GO_DOWN_VOLTAGE = Volts.of(-5.0); //TODO
+        public static final Voltage ELEVATOR_GO_DOWN_VOLTAGE = Volts.of(-2.0); //TODO
 
         public static final double ELEVATOR_MIN_HEIGHT = 0.0;
-        public static final double ELEVATOR_MAX_HEIGHT = 5.0;
+        public static final double ELEVATOR_MAX_HEIGHT = 10.0;
 
-        public static final double MM_CRUISE_VELOCITY = 60.0;
-		public static final double MM_ACCELERATION = 60.0;
-		public static final double MM_JERK = 240.0;
+        public static final double MM_CRUISE_VELOCITY = 6.0;
+		public static final double MM_ACCELERATION = 5.0;
+		public static final double MM_JERK = 24.0;
     }
 
     public class Indexer {
 
-        public static final int MOTOR_ID = 19; //TODO
+        public static final int MOTOR_ID = 31; //TODO
 
         public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive; // TODO
         public static final double STATOR_CURRENT_LIMIT = 80.0;
         public static final double SUPPLY_CURRENT_LIMIT = 80.0;
 
-        public static final double kG = 0.0; //TODO
-        public static final double kS = 0.5; //TODO
-        public static final double kV = 0.0; //TODO
-        public static final double kA = 0.0; //TODO
-        public static final double kP = 0.0; //TODO
-        public static final double kI = 0.0; //TODO
-        public static final double kD = 0.0; //TODO
+        public static final double KG = 0.0; //TODO
+        public static final double KS = 0.5; //TODO
+        public static final double KV = 0.0; //TODO
+        public static final double KA = 0.0; //TODO
+        public static final double KP = 1.0; //TODO
+        public static final double KI = 0.0; //TODO
+        public static final double KD = 0.0; //TODO
 
         
         /*
@@ -338,11 +376,11 @@ public class Constants
         */
 
         public static final double MAX_VELOCITY = 1.0; // TODO rotations per second
-        public static final double DEFAULT_VELOCITY = 0.0; // TODO rotations per second
+        public static final double DEFAULT_VELOCITY = 0.2; // TODO rotations per second
 
         public static final double GEAR_RATIO = 1.0; // TODO
 
-        public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
+        public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.Clockwise_Positive;
     }
 
     // Generated by the 2026 Tuner X Swerve Project Generator
@@ -354,8 +392,8 @@ public class Constants
         // the
         // output type specified by SwerveModuleConstants.SteerMotorClosedLoopOutput
         public static final Slot0Configs steerGains = new Slot0Configs()
-                .withKP(100).withKI(0).withKD(0.5)
-                .withKS(0.1).withKV(2.49).withKA(0)
+                .withKP(20.823).withKI(0).withKD(0.49617)
+                .withKS(0.0/*0.27579*/).withKV(2.4256).withKA(0.055487)
                 .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
         // When using closed-loop control, the drive motor uses the control
         // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
@@ -419,7 +457,7 @@ public class Constants
         public static final boolean kInvertLeftSide = false;
         public static final boolean kInvertRightSide = true;
 
-        public static final int kPigeonId = 0;
+        public static final int kPigeonId = 2;
 
         // These are only used for simulation
         public static final MomentOfInertia kSteerInertia = KilogramSquareMeters.of(0.01);

@@ -39,10 +39,4 @@ public class RetractHopper extends Command
     {
         
     }
-
-    @Override
-    public String getName()
-    {
-        return "Retract Hopper";
-    }
 }

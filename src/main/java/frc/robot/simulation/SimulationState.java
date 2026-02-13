@@ -17,8 +17,15 @@ import edu.wpi.first.util.struct.StructGenerator;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
+/**
+ * Stores the position of fuels and models their physics/possession, making sure that their associated poses line up to their position for correct visualization
+ */
 public class SimulationState
 {
+    /**
+     * What possesses the fuel and modifies its position; Field means that the fuel has its own position modified by physics; anything else means the position is subject
+     * to change to display it visually in the logical location
+     */
     public enum FieldLocation
     {
         Field,
@@ -33,7 +40,7 @@ public class SimulationState
     {
         public FieldLocation location;
 
-        public BallState state;
+        public BallState state; // associated physics values such as position, velocity, spin
 
         public FuelPosition(FieldLocation location, double xPositionMeters, double yPositionMeters)
         {
@@ -116,6 +123,9 @@ public class SimulationState
         init();
     }
 
+    /**
+     * Sets the position of fuels to their position on the field at the start of the match
+     */
     public void init ()
     {
         int offset = 0;
@@ -189,6 +199,8 @@ public class SimulationState
 
     public void update ()
     {
+        StallSimulator.update();
+
         long now = RobotController.getFPGATime();
         double dt = (now - lastTime) * 1e-6;
 
@@ -219,7 +231,7 @@ public class SimulationState
                     fuelPositions[i].state.pose = new Pose3d(Util.packEl(Util.rotate(OUTPOST), 0.0762, FUEL_DIAMETER, fuelsInRedOutpost), new Rotation3d());
                     fuelsInRedOutpost++; 
                     break;
-                case Field:
+                case Field: // if the fuel is in the field, change the position depending on physics and setting the fuel location if the fuel is in the correct position
                     if (lastTime != 0)
                     {
                         BallPhysics.step(fuelPositions[i].state, BALL_CONSTANTS, dt);
@@ -255,6 +267,10 @@ public class SimulationState
         return count;
     }
 
+    /**
+     * Moves a fuel which is currently on the field to the specified location. For example, if the passed in location is the red hub, the fuel will be moved to to the red
+     * hub, and it will be moved to the correct position for its ball state at the next call to update
+     */
     public void testPlop (FieldLocation fl)
     {
         for (int i = 0; i < fuelPositions.length; i++)
@@ -267,6 +283,9 @@ public class SimulationState
         }
     }
 
+    /**
+     * Moves all fuel which are currently on the field to a random spot on the field, elevated by 4 meters
+     */
     public void testDrop ()
     {
         for (int i = 0; i < fuelPositions.length; i++)
@@ -280,6 +299,9 @@ public class SimulationState
         }
     }
 
+    /**
+     * Moves a fuel in the specified outpost to the field immediately outside of it
+     */
     public void spawnFromOutpost(Alliance alliance)
     {
         for (FuelPosition p : fuelPositions)
