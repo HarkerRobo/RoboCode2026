@@ -115,7 +115,7 @@ public class IntakeExtension extends SubsystemBase
     public boolean isStalling()
     {
     //    if (Robot.isSimulation()) return stallSim.get();
-
+        System.out.println("Stator Current: " + motor.getStatorCurrent().getValueAsDouble());
         return Math.abs(motor.getStatorCurrent().getValueAsDouble()) >= Constants.IntakeExtension.STALLING_CURRENT;
     }
     

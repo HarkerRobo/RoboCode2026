@@ -153,7 +153,7 @@ public class Constants
         
         public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
 
-        public static final double STALLING_CURRENT = 50;
+        public static final double STALLING_CURRENT = 44;
 
         public static final double MIN_HEIGHT = 0.0; // TODO
         public static final double MAX_HEIGHT = 1.0; // TODO

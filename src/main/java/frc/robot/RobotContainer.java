@@ -135,11 +135,6 @@ public class RobotContainer
         */
         SmartDashboard.putData("Auton Chooser", autonChooser);
 
-        configureBindings();
-    }
-
-    private void configureBindings() 
-    {
         intake.setDefaultCommand(new DefaultIntake());
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
@@ -149,6 +144,12 @@ public class RobotContainer
                     .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
                     .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
                     ).withName("SwerveManual"));
+        configureDriverBindings();
+        configureOperatorBindings();
+    }
+
+    private void configureDriverBindings() 
+    {
 
         // Idle while the robot is disabled. This ensures the configured
         // neutral mode is applied to the drive motors while disabled.
@@ -184,6 +185,10 @@ public class RobotContainer
                             FlippingUtil.flipFieldPose(Constants.ZEROING_POSE) : Constants.ZEROING_POSE)))
                 .withName("ZeroDrivetrain"));
         drivetrain.registerTelemetry(Telemetry.getInstance()::telemeterize);
+    }
+
+    public void configureOperatorBindings()
+    {
     }
 
     public Command getAutonomousCommand() 
