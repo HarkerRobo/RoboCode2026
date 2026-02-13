@@ -22,33 +22,42 @@ import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Robot;
+import frc.robot.RobotContainer;
+import frc.robot.simulation.StallSimulator;
 
 public class IntakeExtension extends SubsystemBase 
 {
     private static IntakeExtension instance;
-    private TalonFX extension;
+    private TalonFX motor;
+
+    private ElevatorSim sim = new ElevatorSim(
+        LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60(1), 0.001, Constants.Climb.ELEVATOR_GEAR_RATIO),
+            DCMotor.getKrakenX60(1), Constants.IntakeExtension.MIN_HEIGHT, Constants.IntakeExtension.MAX_HEIGHT, false, Constants.IntakeExtension.MIN_HEIGHT);
+    
+    //private StallSimulator stallSim = new StallSimulator(()->getPosition().in(Rotations));
 
     private IntakeExtension()
     {
-        extension = new TalonFX(Constants.IntakeExtension.ID);
+        motor = new TalonFX(Constants.IntakeExtension.ID);
         config();
         
         if (Robot.isSimulation())
         {
-            extension.getSimState().Orientation = Constants.IntakeExtension.MECHANICAL_ORIENTATION;
-            extension.getSimState().setMotorType(TalonFXSimState.MotorType.KrakenX60);
+            motor.getSimState().Orientation = Constants.IntakeExtension.MECHANICAL_ORIENTATION;
+            motor.getSimState().setMotorType(TalonFXSimState.MotorType.KrakenX60);
         }
     }
 
     private void config()
     {
-        extension.clearStickyFaults();
+        motor.clearStickyFaults();
         TalonFXConfiguration extensionConfig = new TalonFXConfiguration();
 
         extensionConfig.Feedback.SensorToMechanismRatio = Constants.IntakeExtension.GEAR_RATIO;
@@ -69,43 +78,69 @@ public class IntakeExtension extends SubsystemBase
         extensionConfig.CurrentLimits.StatorCurrentLimit = Constants.IntakeExtension.STATOR_CURRENT_LIMIT;
         extensionConfig.CurrentLimits.StatorCurrentLimit = Constants.IntakeExtension.SUPPLY_CURRENT_LIMIT;
 
-        extension.getConfigurator().apply(extensionConfig);
+        motor.getConfigurator().apply(extensionConfig);
     }
     
-    public Voltage getExtensionVoltage()
+    public Voltage getVoltage()
     {
-        return extension.getMotorVoltage().getValue();
+        return motor.getMotorVoltage().getValue();
     }
     
-    public AngularVelocity getExtensionVelocity()
+    public AngularVelocity getVelocity()
     {
-        return extension.getVelocity().getValue();
+        return motor.getVelocity().getValue();
+    }
+
+    public Angle getPosition()
+    {
+        return motor.getPosition().getValue();
     }
    
-    public void setExtensionVoltage (Voltage voltage)
+    public void setVoltage (Voltage voltage)
     {
-        extension.setControl(new VoltageOut(voltage));
+        motor.setControl(new VoltageOut(voltage));
     }
 
-    public void setExtensionVelocity (AngularVelocity velocity)
+    public void setVelocity (AngularVelocity velocity)
     {
         //System.out.println("Velocity set to " + velocity);
-        extension.setControl(new VelocityVoltage(velocity));
+        motor.setControl(new VelocityVoltage(velocity));
     }
 
-    public void setExtensionDutyCycle(double velocity) 
+    public void setDutyCycle(double velocity) 
     {
-        extension.setControl(new DutyCycleOut(velocity));
+        motor.setControl(new DutyCycleOut(velocity));
     }
 
-    public boolean extensionIsStalling()
+    public boolean isStalling()
     {
-        return Math.abs(extension.getStatorCurrent().getValueAsDouble()) >= Constants.IntakeExtension.STALLING_CURRENT;
+    //    if (Robot.isSimulation()) return stallSim.get();
+
+        return Math.abs(motor.getStatorCurrent().getValueAsDouble()) >= Constants.IntakeExtension.STALLING_CURRENT;
     }
     
     @Override
     public void simulationPeriodic ()
     {
+        TalonFXSimState simState = motor.getSimState();
+
+        // set the supply voltage of the TalonFX
+        simState.setSupplyVoltage(RobotController.getBatteryVoltage());
+
+        // get the motor voltage of the TalonFX
+        Voltage elevatorMotorVoltage = simState.getMotorVoltageMeasure();
+
+        // use the motor voltage to calculate new position and velocity
+        // using WPILib's DCMotorSim class for physics simulation
+        sim.setInputVoltage(elevatorMotorVoltage.in(Volts));
+        sim.update(0.020); // assume 20 ms loop time
+
+        // apply the new rotor position and velocity to the TalonFX;
+        // note that this is rotor position/velocity (before gear ratio), but
+        // DCMotorSim returns mechanism position/velocity (after gear ratio)
+        simState.setRawRotorPosition(sim.getPositionMeters() * Constants.IntakeExtension.GEAR_RATIO);
+        simState.setRotorVelocity(sim.getVelocityMetersPerSecond() * Constants.IntakeExtension.GEAR_RATIO);
+        
     }
     
     /*

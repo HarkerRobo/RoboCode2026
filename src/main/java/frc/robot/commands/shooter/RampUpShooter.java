@@ -34,10 +34,4 @@ public class RampUpShooter extends Command
     public void end(boolean interrupted)
     {
     }
-
-    @Override
-    public String getName()
-    {
-        return "RampUpShooter";
-    }
 }

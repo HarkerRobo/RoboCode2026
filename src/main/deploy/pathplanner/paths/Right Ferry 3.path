@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.5055111111111112,
-        "y": 1.8078111111111106
+        "x": 7.848,
+        "y": 2.0
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.754647550672331,
-        "y": 1.828572481074547
+        "x": 7.783237924865832,
+        "y": 0.5546511627906963
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.5055111111111112,
-        "y": 1.8078111111111106
+        "x": 3.548,
+        "y": 0.555
       },
       "prevControl": {
-        "x": 2.4847497411476764,
-        "y": 1.5586746715498907
+        "x": 5.54372450805009,
+        "y": 0.45764758497316727
       },
       "nextControl": null,
       "isLocked": false,
@@ -45,10 +45,10 @@
     "rotation": 90.0
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Ferrying",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 90.0
   },
   "useDefaultConstraints": true
 }

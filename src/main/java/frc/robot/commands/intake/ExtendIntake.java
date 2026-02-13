@@ -17,7 +17,7 @@ public class ExtendIntake extends Command
     @Override
     public void initialize()
     {
-        IntakeExtension.getInstance().setExtensionVoltage(Volts.of(Constants.IntakeExtension.EXTENDING_VOLTAGE));
+        IntakeExtension.getInstance().setVoltage(Volts.of(Constants.IntakeExtension.EXTENDING_VOLTAGE));
     }
 
     @Override
@@ -28,18 +28,12 @@ public class ExtendIntake extends Command
     @Override
     public boolean isFinished()
     {
-        return IntakeExtension.getInstance().extensionIsStalling();
+        return IntakeExtension.getInstance().isStalling();
     }
 
     @Override
     public void end(boolean interrupted)
     {
-        IntakeExtension.getInstance().setExtensionVoltage(Volts.of(0.0));
-    }
-    
-    @Override
-    public String getName()
-    {
-        return "ExtendIntake";
+        IntakeExtension.getInstance().setVoltage(Volts.of(0.0));
     }
 }

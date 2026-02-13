@@ -36,10 +36,4 @@ public class EjectIntake extends Command
     {
         Intake.getInstance().setMainVoltage(Volts.of(Constants.Intake.DEFAULT_INTAKE_VOLTAGE));
     }
-
-    @Override
-    public String getName()
-    {
-        return "EjectIntake";
-    }
 }

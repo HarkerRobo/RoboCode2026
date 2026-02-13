@@ -39,10 +39,4 @@ public class ZeroHood extends Command
     {
         Hood.getInstance().setPosition(Degrees.of(Constants.Hood.MIN_ANGLE));
     }
-    
-    @Override
-    public String getName()
-    {
-        return "ZeroHood";
-    }
 }

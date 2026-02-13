@@ -38,10 +38,4 @@ public class MoveDownUntilStall extends Command
     {
         Climb.getInstance().setElevatorVoltage(Volts.of(0.0));
     }
-
-    @Override
-    public String getName()
-    {
-        return "MoveDownUntilStall";
-    }
 }

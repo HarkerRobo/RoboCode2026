@@ -17,6 +17,9 @@ import java.util.List;
 
 import com.ctre.phoenix6.swerve.SwerveModule.*;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.util.FlippingUtil;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -79,13 +82,11 @@ public class RobotContainer
     public final CommandSwerveDrivetrain drivetrain = Modules.createDrivetrain();
 
     public SendableChooser<Command> testCommandChooser = new SendableChooser<>();
+
+    private SendableChooser<Command> autonChooser;
         
     public RobotContainer() 
     {
-        //intake.setDefaultCommand(new DefaultIntake());
-
-        configureBindings();
-
         testCommandChooser.setDefaultOption("None", Commands.none());
         testCommandChooser.addOption("Climb/ClimbToLevel[1]", new ClimbToLevel(1));
         testCommandChooser.addOption("Climb/ClimbToLevel[2]", new ClimbToLevel(2));
@@ -111,12 +112,34 @@ public class RobotContainer
 
         SmartDashboard.putData("Test a Command", testCommandChooser);
         SmartDashboard.putData(CommandScheduler.getInstance());
+
+        NamedCommands.registerCommand("ExtendIntake", new ExtendIntake());
+        NamedCommands.registerCommand("RetractIntake", new RetractIntake());
+        NamedCommands.registerCommand("StartRunIntake", Intake.getInstance().runOnce(()->Intake.getInstance().setMainVoltage(Volts.of(Constants.Intake.INTAKE_VOLTAGE))));
+        NamedCommands.registerCommand("StartDefaultIntake", Intake.getInstance().runOnce(()->Intake.getInstance().setMainVoltage(Volts.of(Constants.Intake.DEFAULT_INTAKE_VOLTAGE))));
+        NamedCommands.registerCommand("DefaultIntake", new DefaultIntake());
+        NamedCommands.registerCommand("EjectIntake (with timeout)", new EjectIntake().withTimeout(1.0));
+
+        autonChooser = AutoBuilder.buildAutoChooser();
+        /*
+        autonChooser = new SendableChooser<>();
+        //autonChooser.setDefaultOption("None", Commands.none());
+        //AutoBuilder.getAllAutoNames().forEach(s->autonChooser.addOption(s, new PathPlannerAuto(s)));
+        PathPlannerAuto rightFerry = new PathPlannerAuto("Right Ferry");
+        rightFerry.isRunning().onTrue(Commands.print("Right Ferry Auto Started")).onFalse(Commands.print("Right Ferry Auto Ended"));
+        rightFerry.timeElapsed(1.0).onTrue(Commands.print("One Second Elapsed"));
+        rightFerry.activePath("Right Ferry 1").onTrue(Commands.print("Starting Path \"Right Ferry 1\"")).onFalse(Commands.print("Ending Path \"Right Ferry 1\""));
+        joystick.button(2).onTrue(rightFerry);
+        autonChooser.addOption("Right Ferry", rightFerry);
+        */
+        SmartDashboard.putData("Auton Chooser", autonChooser);
+
+        configureBindings();
     }
 
     private void configureBindings() 
     {
-        List<Integer> l = new ArrayList<>();
-
+        intake.setDefaultCommand(new DefaultIntake());
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
@@ -144,38 +167,25 @@ public class RobotContainer
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
+        /*
         joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
         joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
         joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
         joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        */
 
         // Zero DT
-        joystick.leftBumper().onTrue(
-                drivetrain.runOnce(() -> {System.out.println("Zeroing Drivetrain"); drivetrain.seedFieldCentric();})
-                /*
+        joystick.button(1).onTrue(
+                drivetrain.runOnce(() -> drivetrain.seedFieldCentric())
                 .andThen(drivetrain.runOnce(() -> drivetrain.resetPose(
                             (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) ? 
                             FlippingUtil.flipFieldPose(Constants.ZEROING_POSE) : Constants.ZEROING_POSE)))
-                            */
                 .withName("ZeroDrivetrain"));
         drivetrain.registerTelemetry(Telemetry.getInstance()::telemeterize);
-
     }
 
     public Command getAutonomousCommand() 
     {
-        // Simple drive forward auton
-        final var idle = new SwerveRequest.Idle();
-        return Commands.sequence(
-                // Reset our field centric heading to match the robot
-                // facing away from our alliance station wall (0 deg).
-                drivetrain.runOnce(() -> drivetrain.seedFieldCentric(Rotation2d.kZero)),
-                // Then slowly drive forward (away from us) for 5 seconds.
-                drivetrain.applyRequest(() -> drive.withVelocityX(0.5)
-                    .withVelocityY(0)
-                    .withRotationalRate(0))
-                .withTimeout(5.0),
-                // Finally idle for the rest of auton
-                drivetrain.applyRequest(() -> idle));
+        return autonChooser.getSelected();
     }
 }

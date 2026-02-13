@@ -39,10 +39,4 @@ public class ExtendHopper extends Command
     {
         
     }
-
-    @Override
-    public String getName()
-    {
-        return "ExtendHopper";
-    }
 }

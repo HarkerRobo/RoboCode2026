@@ -50,6 +50,7 @@ public class Telemetry
     private DoublePublisher intakeMainVoltage = intake.getDoubleTopic("main voltage (V)").publish();
 
     private StringPublisher intakeExtensionCommand = intake.getStringTopic("extension command").publish();
+    private DoublePublisher intakeExtensionPosition = intake.getDoubleTopic("extension position (rot)").publish();
     private DoublePublisher intakeExtensionVelocity = intake.getDoubleTopic("extension velocity (rot per s)").publish();
     private DoublePublisher intakeExtensionVoltage = intake.getDoubleTopic("extension voltage (V)").publish();
 
@@ -177,8 +178,9 @@ public class Telemetry
         
         Command intakeExtensionCommand = IntakeExtension.getInstance().getCurrentCommand();
         this.intakeExtensionCommand.set(intakeExtensionCommand == null ? "" : intakeExtensionCommand.getName());
-        intakeExtensionVelocity.set(IntakeExtension.getInstance().getExtensionVelocity().in(RotationsPerSecond));
-        intakeExtensionVoltage.set(IntakeExtension.getInstance().getExtensionVoltage().in(Volts));
+        intakeExtensionPosition.set(IntakeExtension.getInstance().getPosition().in(Rotations));
+        intakeExtensionVelocity.set(IntakeExtension.getInstance().getVelocity().in(RotationsPerSecond));
+        intakeExtensionVoltage.set(IntakeExtension.getInstance().getVoltage().in(Volts));
 
         /*
         Command turretCommand = Turret.getInstance().getCurrentCommand();

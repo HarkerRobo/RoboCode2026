@@ -43,10 +43,4 @@ public class DefaultIntake extends Command
     {
         Intake.getInstance().setMainVoltage(Volts.of(0.0));
     }
-
-    @Override
-    public String getName()
-    {
-        return "DefaultIntake";
-    }
 }

@@ -37,6 +37,7 @@ public class Intake extends SubsystemBase
     private DCMotorSim mainSim = new DCMotorSim(
         LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 0.001, Constants.Intake.GEAR_RATIO),
         DCMotor.getKrakenX60Foc(1));
+    
    
     private Intake()
     {

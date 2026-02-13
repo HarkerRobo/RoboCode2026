@@ -17,7 +17,7 @@ public class RetractIntake extends Command
     @Override
     public void initialize()
     {
-        IntakeExtension.getInstance().setExtensionVoltage(Volts.of(Constants.IntakeExtension.RETRACTING_VOLTAGE));
+        IntakeExtension.getInstance().setVoltage(Volts.of(Constants.IntakeExtension.RETRACTING_VOLTAGE));
     }
 
     @Override
@@ -28,18 +28,12 @@ public class RetractIntake extends Command
     @Override
     public boolean isFinished()
     {
-        return IntakeExtension.getInstance().extensionIsStalling();
+        return IntakeExtension.getInstance().isStalling();
     }
 
     @Override
     public void end(boolean interrupted)
     {
-        IntakeExtension.getInstance().setExtensionVoltage(Volts.of(0.0));
-    }
-    
-    @Override
-    public String getName()
-    {
-        return "RetractIntake";
+        IntakeExtension.getInstance().setVoltage(Volts.of(0.0));
     }
 }

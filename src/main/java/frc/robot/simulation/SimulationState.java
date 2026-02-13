@@ -199,6 +199,8 @@ public class SimulationState
 
     public void update ()
     {
+        StallSimulator.update();
+
         long now = RobotController.getFPGATime();
         double dt = (now - lastTime) * 1e-6;
 

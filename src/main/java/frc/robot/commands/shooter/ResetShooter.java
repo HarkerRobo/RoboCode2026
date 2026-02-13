@@ -34,10 +34,4 @@ public class ResetShooter extends Command
     public void end(boolean interrupted)
     {
     }
-
-    @Override
-    public String getName()
-    {
-        return "ResetShooter";
-    }
 }

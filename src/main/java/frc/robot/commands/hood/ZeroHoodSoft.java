@@ -36,10 +36,4 @@ public class ZeroHoodSoft extends Command
             Hood.getInstance().setPosition(Degrees.of(Constants.Hood.MIN_ANGLE));
         }
     }
-    
-    @Override
-    public String getName()
-    {
-        return "ZeroHoodSoft";
-    }
 }
