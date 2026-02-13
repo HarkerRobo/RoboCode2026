@@ -143,6 +143,16 @@ public class Shooter extends SubsystemBase
         rightMaster.setControl(new VelocityVoltage(velocity));
     }
 
+    public void setLeftVelocity(AngularVelocity velocity)
+    {
+        leftMaster.setControl(new VelocityVoltage(velocity));
+    }
+
+    public void setRightVelocity(AngularVelocity velocity)
+    {
+        rightMaster.setControl(new VelocityVoltage(velocity));
+    }
+
     public void setVoltage (Voltage voltage)
     {
         leftMaster.setControl(new VoltageOut(voltage));
