@@ -102,7 +102,9 @@ public class Constants
 
         public static final double DEFAULT_VELOCITY = 0.1; // TODO rotations per second (nonzero to decrease startup time)
         public static final double SHOOT_VELOCITY = 10.0; // TODO rotations per second 
-        public static final double MAX_VELOCITY = 20.0; // TODO rotations per second 
+
+        public static final double INCREASE_VELOCITY = 0.5; // TODO
+        public static final double MAX_VELOCITY = 20.0; // TODO
         
         public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
     }

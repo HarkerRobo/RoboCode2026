@@ -83,8 +83,34 @@ public class RobotContainer
     private boolean intakeTriggered = false; // true if intake, hopper are extended and intake has been enabled
     public double pitchOffset = 0.0;
     private double flywheelOffset = 0.0;
-
+  
     private List<Command> commands = new ArrayList<>(40);
+  
+    public enum PassDirection {Left, Right, Automatic};
+
+    private static PassDirection direction = PassDirection.Left; // Default
+
+    public void setPassDirection(PassDirection newDirection) {
+        direction = newDirection;
+    }
+
+    public static PassDirection getPassDirection() {
+        return direction;
+    }
+
+    public Command SetPassDirection(PassDirection direct) {
+        return new Command() {
+            public void execute() {setPassDirection(direct);}
+        };
+    }
+  
+    public boolean onLeftSize()
+    {
+      if (direction == PassDirection.Left) return true;
+      if (direction == PassDirection.Right) return false;
+      return Util.onLeftSide(direction);
+    }
+  
         
     public RobotContainer() 
     {
@@ -227,7 +253,7 @@ public class RobotContainer
         
         // tested in sim
         Command pass = 
-        new DriveToPose(drivetrain, ()->Util.onLeftSide(drivetrain) ? 
+        new DriveToPose(drivetrain, ()->onLeftSize() ? 
             Constants.PASS_LEFT_TARGET_POSITION.toTranslation2d() : 
             Constants.PASS_RIGHT_TARGET_POSITION.toTranslation2d())
             .alongWith(new AimToAngle(()->Util.calculatePassPitch(drivetrain).in(Degrees) + pitchOffset))
@@ -313,7 +339,7 @@ public class RobotContainer
                 /*
         // Zero DT
         operator.x().onTrue(
-                drivetrain.runOnce(() -> drivetrain.seedFieldCentric())
+        drivetrain.runOnce(() -> drivetrain.seedFieldCentric())
                 .andThen(drivetrain.runOnce(() -> drivetrain.resetPose(
                             (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) ? 
                             FlippingUtil.flipFieldPose(Constants.ZEROING_POSE) : Constants.ZEROING_POSE)))
@@ -323,6 +349,46 @@ public class RobotContainer
 
     public void configureOperatorBindings()
     {
+        operator.start().onTrue(
+                drivetrain.runOnce(() -> drivetrain.seedFieldCentric())
+                .andThen(drivetrain.runOnce(() -> drivetrain.resetPose(
+                            (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) ? 
+                            FlippingUtil.flipFieldPose(Constants.ZEROING_POSE) : Constants.ZEROING_POSE)))
+                .withName("ZeroDrivetrain"));
+
+        operator.back().onTrue(new ZeroHood()
+            .alongWith(new ResetShooter()));
+
+        operator.leftTrigger().onTrue(new EjectIntake());
+        // operator.rightTrigger().onTrue();    Soft Pass
+
+        operator.leftBumper().onTrue(SetPassDirection(PassDirection.Left));
+        operator.rightBumper().onTrue(SetPassDirection(PassDirection.Right));
+
+        operator.y().onTrue(new AimToAngle(Constants.Hood.MAX_ANGLE));
+        operator.x().onTrue(new RetractIntake());
+        operator.a().onTrue(new AimToAngle(Constants.Hood.MIN_ANGLE));
+        operator.b().onTrue(new ExtendIntake());
+
+        operator.povUp().onTrue(Shooter.getInstance().runOnce(() -> 
+            Shooter.getInstance().setRightVelocity(RotationsPerSecond.of(
+                Math.min(Constants.Shooter.MAX_VELOCITY, 
+                Constants.Shooter.INCREASE_VELOCITY + Shooter.getInstance().getRightVelocity().in(RotationsPerSecond))))));
+        
+        operator.povDown().onTrue(Shooter.getInstance().runOnce(() -> 
+            Shooter.getInstance().setLeftVelocity(RotationsPerSecond.of(
+                Math.max(Constants.Shooter.DEFAULT_VELOCITY, 
+                -Constants.Shooter.INCREASE_VELOCITY + Shooter.getInstance().getLeftVelocity().in(RotationsPerSecond))))));      
+        
+        operator.povLeft().onTrue(Shooter.getInstance().runOnce(() -> 
+            Shooter.getInstance().setLeftVelocity(RotationsPerSecond.of(
+                Math.min(Constants.Shooter.MAX_VELOCITY, 
+                Constants.Shooter.INCREASE_VELOCITY + Shooter.getInstance().getLeftVelocity().in(RotationsPerSecond))))));
+              
+        operator.povRight().onTrue(Shooter.getInstance().runOnce(() -> 
+            Shooter.getInstance().setRightVelocity(RotationsPerSecond.of(
+                Math.max(Constants.Shooter.DEFAULT_VELOCITY, 
+                -Constants.Shooter.INCREASE_VELOCITY + Shooter.getInstance().getRightVelocity().in(RotationsPerSecond))))));             
     }
 
     public Command track(Command command)

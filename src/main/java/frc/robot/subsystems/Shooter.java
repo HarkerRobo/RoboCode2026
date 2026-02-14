@@ -146,6 +146,16 @@ public class Shooter extends SubsystemBase
         targetVelocity = velocity.in(Rotations.per(Second));
     }
 
+    public void setLeftVelocity(AngularVelocity velocity)
+    {
+        leftMaster.setControl(new VelocityVoltage(velocity));
+    }
+
+    public void setRightVelocity(AngularVelocity velocity)
+    {
+        rightMaster.setControl(new VelocityVoltage(velocity));
+    }
+
     public void setVoltage (Voltage voltage)
     {
         leftMaster.setControl(new VoltageOut(voltage));
