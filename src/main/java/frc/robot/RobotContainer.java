@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
@@ -80,7 +81,8 @@ public class RobotContainer
 
     private boolean isSlow = false;
     public boolean mostRecentAim = false; // false = shoot; true = pass
-    private boolean intakeTriggered = false; // true if intake, hopper are extended and intake has been enabled
+    private boolean intakeTriggered = false; // true if intake has been enabled
+    private boolean intakeExtended = false; //true if intake and hopper have been extended
     public double pitchOffset = 0.0;
     private double flywheelOffset = 0.0;
   
@@ -270,23 +272,42 @@ public class RobotContainer
         driver.leftBumper().onTrue(stow.get().andThen(Commands.print("Stowing")).withName("Stow"));
 
         // tested in sim
+        //changed from retract/extand hopper and intake
         driver.rightBumper().onTrue(track(
             Commands.runOnce(()->{
                 if (intakeTriggered)
                 {
                     intakeTriggered = false;
                     CommandScheduler.getInstance().schedule(
-                        track(new DefaultIntake().withTimeout(0.01).andThen(new RetractIntake().alongWith(new RetractHopper()))
-                        .withName("UndeployIntake")));
+                        track(new DefaultIntake()
+                        .withName("DeactivateIntake")));
                 }
-                else
+                else if (intakeExtended)
                 {
                     intakeTriggered = true;
                     CommandScheduler.getInstance().schedule(
-                        track(new ExtendIntake().alongWith(new ExtendHopper()).andThen(new RunIntake())
-                        .withName("DeployIntake")));
+                        track(new RunIntake()
+                        .withName("ActivateIntake")));
                 }
         })));
+        // driver.rightBumper().onTrue(track(
+        //     Commands.runOnce(()->{
+        //         if (intakeTriggered)
+        //         {
+        //             intakeTriggered = false;
+        //             CommandScheduler.getInstance().schedule(
+        //                 track(new DefaultIntake().withTimeout(0.01).andThen(new RetractIntake().alongWith(new RetractHopper()))
+        //                 .withName("UndeployIntake")));
+        //         }
+        //         else
+        //         {
+        //             intakeTriggered = true;
+        //             CommandScheduler.getInstance().schedule(
+        //                 track(new ExtendIntake().alongWith(new ExtendHopper()).andThen(new RunIntake())
+        //                 .withName("DeployIntake")));
+        //         }
+        // })));
+        
         
         // tested in sim
         driver.button(7) // home button/left paddle
@@ -365,9 +386,18 @@ public class RobotContainer
         operator.rightBumper().onTrue(SetPassDirection(PassDirection.Right));
 
         operator.y().onTrue(new AimToAngle(Constants.Hood.MAX_ANGLE));
-        operator.x().onTrue(new RetractIntake());
+        operator.x().onTrue(new RetractIntake()
+            .andThen(Commands.runOnce(()->
+            {
+                intakeExtended = false;
+            }
+            )));
         operator.a().onTrue(new AimToAngle(Constants.Hood.MIN_ANGLE));
-        operator.b().onTrue(new ExtendIntake());
+        operator.b().onTrue(new ExtendIntake()
+            .andThen(Commands.runOnce(()->
+            {
+                intakeExtended = true;
+            })));
 
         operator.povUp().onTrue(Shooter.getInstance().runOnce(() -> 
             Shooter.getInstance().setRightVelocity(RotationsPerSecond.of(
