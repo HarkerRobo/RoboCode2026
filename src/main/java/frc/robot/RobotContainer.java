@@ -4,43 +4,36 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.*;
-import edu.wpi.first.units.measure.*;
 import static edu.wpi.first.units.Units.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 import com.ctre.phoenix6.swerve.SwerveModule.*;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.util.FlippingUtil;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.Constants.Drivetrain;
-import frc.robot.Constants.Simulation;
 import frc.robot.Constants.TunerConstants;
 import frc.robot.commands.climb.ClimbToLevel;
-import frc.robot.commands.climb.ElevatorUp;
 import frc.robot.commands.climb.MoveDownUntilStall;
+import frc.robot.commands.climb.RunClimb;
+import frc.robot.commands.climb.UndeployClimb;
 import frc.robot.commands.drive.DriveToPose;
 import frc.robot.commands.hood.AimToAngle;
 import frc.robot.commands.hood.ZeroHood;
@@ -54,13 +47,11 @@ import frc.robot.commands.intake.EjectIntake;
 import frc.robot.commands.intake.ExtendIntake;
 import frc.robot.commands.intake.RetractIntake;
 import frc.robot.commands.intake.RunIntake;
-import frc.robot.commands.shooter.RampUpShooter;
-import frc.robot.commands.shooter.ResetShooter;
-import frc.robot.simulation.SimulationState;
-import frc.robot.simulation.SimulationState.FieldLocation;
+import frc.robot.commands.shooter.ShooterDefaultSpeed;
+import frc.robot.commands.shooter.ShooterTargetSpeed;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.intake.IntakeExtension;
+import frc.robot.util.Util;
 
 
 
@@ -78,7 +69,7 @@ public class RobotContainer
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
-    public final CommandXboxController joystick = new CommandXboxController(0);
+    public final CommandXboxController driver = new CommandXboxController(0);
     public final CommandXboxController operator = new CommandXboxController(1);
 
     public final CommandSwerveDrivetrain drivetrain = Modules.createDrivetrain();
@@ -87,6 +78,14 @@ public class RobotContainer
 
     private SendableChooser<Command> autonChooser;
 
+    private boolean isSlow = false;
+    public boolean mostRecentAim = false; // false = shoot; true = pass
+    private boolean intakeTriggered = false; // true if intake, hopper are extended and intake has been enabled
+    public double pitchOffset = 0.0;
+    private double flywheelOffset = 0.0;
+  
+    private List<Command> commands = new ArrayList<>(40);
+  
     public enum PassDirection {Left, Right, Automatic};
 
     private static PassDirection direction = PassDirection.Left; // Default
@@ -104,6 +103,14 @@ public class RobotContainer
             public void execute() {setPassDirection(direct);}
         };
     }
+  
+    public boolean onLeftSize()
+    {
+      if (direction == PassDirection.Left) return true;
+      if (direction == PassDirection.Right) return false;
+      return Util.onLeftSide(direction);
+    }
+  
         
     public RobotContainer() 
     {
@@ -127,8 +134,9 @@ public class RobotContainer
         testCommandChooser.addOption("Intake/EjectIntake", new EjectIntake());
         testCommandChooser.addOption("Intake/ExtendIntake", new ExtendIntake());
         testCommandChooser.addOption("Intake/RetractIntake", new RetractIntake());
-        testCommandChooser.addOption("Shooter/RampUpShooter", new RampUpShooter());
-        testCommandChooser.addOption("Shooter/ResetShooter", new ResetShooter());
+        testCommandChooser.addOption("Shooter/ShooterTargetSpeed[10]", new ShooterTargetSpeed(10.0));
+        testCommandChooser.addOption("Shooter/ShooterTargetSpeed[" + Constants.HARDCODE_VELOCITY + "]", new ShooterTargetSpeed(Constants.HARDCODE_VELOCITY));
+        testCommandChooser.addOption("Shooter/ShooterDefaultSpeed", new ShooterDefaultSpeed());
 
         SmartDashboard.putData("Test a Command", testCommandChooser);
         SmartDashboard.putData(CommandScheduler.getInstance());
@@ -155,20 +163,172 @@ public class RobotContainer
         SmartDashboard.putData("Auton Chooser", autonChooser);
 
         intake.setDefaultCommand(new DefaultIntake());
+        Indexer.getInstance().setDefaultCommand(new IndexerDefaultSpeed());
+
+
+
+        boolean useDebuggingBindings = false; // mainly for sysid or debugging
+        boolean useDefaultBindings = false; // in case ever the official controls don't work, use these as a backup to be able to drive around
+        if (useDebuggingBindings) configureDebugBindings();
+        else if (useDefaultBindings)
+        {
+            configureDefaultBindings();
+        }
+        else
+        {
+            configureDriverBindings();
+            configureOperatorBindings();
+        }
+    }
+
+    private void configureDebugBindings()
+    {
+        driver.button(1).onTrue(Indexer.getInstance().sysIdQuasistatic(Direction.kForward));
+        driver.button(2).onTrue(Indexer.getInstance().sysIdQuasistatic(Direction.kReverse));
+        driver.button(3).onTrue(Indexer.getInstance().sysIdDynamic(Direction.kForward));
+        driver.button(4).onTrue(Indexer.getInstance().sysIdDynamic(Direction.kReverse));
+
+        driver.povUp().onTrue(Commands.print("POV UP"));
+        driver.povDown().onTrue(Commands.print("POV DOWN"));
+        driver.povLeft().onTrue(Commands.print("POV LEFT"));
+        driver.povRight().onTrue(Commands.print("POV RIGHT"));
+        
+        drivetrain.registerTelemetry(Telemetry.getInstance()::telemeterize);
+    }
+
+    private void configureDefaultBindings()
+    {
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
                 // Drivetrain will execute this command periodically
-                drivetrain.applyRequest(() -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-                    .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                    .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+                drivetrain.applyRequest(() -> 
+                        drive.withVelocityX(-driver.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+                        .withVelocityY(-driver.getLeftX() * MaxSpeed * (isSlow ? Constants.TRANSLATION_SLOW_MULTIPLIER : 1.0)) // Drive left with negative X (left)
+                        .withRotationalRate(-driver.getRightX() * MaxAngularRate * (isSlow ? Constants.ROTATION_SLOW_MULTIPLIER : 1.0)) // Drive counterclockwise with negative X (left)
                     ).withName("SwerveManual"));
-        configureDriverBindings();
-        configureOperatorBindings();
+
+        driver.b().toggleOnTrue(new RunIntake());
+        driver.a().toggleOnTrue(new ExtendIntake());
+        driver.y().toggleOnTrue(new RetractIntake());
+
+        driver.start().onTrue(
+                drivetrain.runOnce(() -> drivetrain.seedFieldCentric())
+                .andThen(drivetrain.runOnce(() -> drivetrain.resetPose(
+                            (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) ? 
+                            FlippingUtil.flipFieldPose(Constants.ZEROING_POSE) : Constants.ZEROING_POSE)))
+                .withName("ZeroDrivetrain"));
     }
+   
 
     private void configureDriverBindings() 
     {
+        // Note that X is defined as forward according to WPILib convention,
+        // and Y is defined as to the left according to WPILib convention.
+        drivetrain.setDefaultCommand(
+                // Drivetrain will execute this command periodically
+                drivetrain.applyRequest(() -> 
+                        drive.withVelocityX(-driver.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+                        .withVelocityY(-driver.getLeftX() * MaxSpeed * (isSlow ? Constants.TRANSLATION_SLOW_MULTIPLIER : 1.0)) // Drive left with negative X (left)
+                        .withRotationalRate(-driver.getRightX() * MaxAngularRate * (isSlow ? Constants.ROTATION_SLOW_MULTIPLIER : 1.0)) // Drive counterclockwise with negative X (left)
+                    ).withName("SwerveManual"));
+
+        // tested
+        driver.leftTrigger().whileTrue(new StartEndCommand(()->isSlow = true, ()->isSlow = false).withName("ToggleSlow"));
+
+        // tested in sim
+        Supplier<Command> stow = ()->Commands.runOnce(()->CommandScheduler.getInstance().cancel(commands.toArray(new Command[0]))).andThen(
+            new ShooterDefaultSpeed()); // because a command instance cannot be scheduled to independent triggers
+
+        // tested in sim
+        Command shoot = 
+        new DriveToPose(drivetrain, ()->AlignConstants.HUB)
+            .alongWith(new AimToAngle(()->Util.calculateShootPitch(drivetrain).in(Degrees) + pitchOffset))
+        .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot(Util.calculateShootVelocity(drivetrain)) && Hood.getInstance().readyToShoot()))
+        .andThen(new IndexerFullSpeed()) // load to shoot
+        .finallyDo(()->{
+            CommandScheduler.getInstance().schedule(stow.get());
+        })
+        .withName("Shoot");
+        
+        // tested in sim
+        Command pass = 
+        new DriveToPose(drivetrain, ()->onLeftSize() ? 
+            Constants.PASS_LEFT_TARGET_POSITION.toTranslation2d() : 
+            Constants.PASS_RIGHT_TARGET_POSITION.toTranslation2d())
+            .alongWith(new AimToAngle(()->Util.calculatePassPitch(drivetrain).in(Degrees) + pitchOffset))
+        .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot(Util.calculatePassVelocity(drivetrain)) && Hood.getInstance().readyToShoot()))
+        .andThen(new IndexerFullSpeed()) // load to shoot
+        .finallyDo(()->{
+            CommandScheduler.getInstance().schedule(stow.get());
+        })
+        .withName("Pass");
+
+        driver.rightTrigger().and(()->!mostRecentAim).whileTrue(track(shoot));
+        driver.rightTrigger().and(()->mostRecentAim).whileTrue(track(pass));
+
+        // tested in sim
+        driver.leftBumper().onTrue(stow.get().andThen(Commands.print("Stowing")).withName("Stow"));
+
+        // tested in sim
+        driver.rightBumper().onTrue(track(
+            Commands.runOnce(()->{
+                if (intakeTriggered)
+                {
+                    intakeTriggered = false;
+                    CommandScheduler.getInstance().schedule(
+                        track(new DefaultIntake().withTimeout(0.01).andThen(new RetractIntake().alongWith(new RetractHopper()))
+                        .withName("UndeployIntake")));
+                }
+                else
+                {
+                    intakeTriggered = true;
+                    CommandScheduler.getInstance().schedule(
+                        track(new ExtendIntake().alongWith(new ExtendHopper()).andThen(new RunIntake())
+                        .withName("DeployIntake")));
+                }
+        })));
+        
+        // tested in sim
+        driver.button(7) // home button/left paddle
+            .onTrue(track(new ShooterTargetSpeed(()->Util.calculateShootVelocity(drivetrain) + flywheelOffset).until(()->Shooter.getInstance().readyToShoot())
+            .andThen(
+                Commands.runOnce(()->driver.setRumble(RumbleType.kBothRumble, 1.0)))
+                .andThen(Commands.runOnce(()->mostRecentAim = false))
+                .withName("RevShoot")));
+        
+        // tested in sim
+        driver.button(8) // menu button/right paddle
+            .onTrue(track(new ShooterTargetSpeed(()->Util.calculatePassVelocity(drivetrain) + flywheelOffset).until(()->Shooter.getInstance().readyToShoot())
+            .andThen(
+                Commands.runOnce(()->driver.setRumble(RumbleType.kBothRumble, 1.0)))
+                .andThen(Commands.runOnce(()->mostRecentAim = true))
+                .withName("RevPass")));
+
+        // tested in sim
+        driver.y().onTrue(track(new ClimbToLevel(3).andThen(new RunClimb())
+            .withName("Climb L3"))); // TODO: add autoalign
+        // tested in sim
+        driver.b().onTrue(track(new ClimbToLevel(1).andThen(new RunClimb())
+            .withName("Climb L1"))); // TODO: add autoalign
+
+        // tested in sim
+        driver.x().onTrue(track(
+            new AimToAngle(Constants.HARDCODE_HOOD_PITCH.in(Degrees) + pitchOffset)
+            .alongWith(new ShooterTargetSpeed(()->Constants.HARDCODE_VELOCITY).until(()->Shooter.getInstance().readyToShoot()))
+            .andThen(new IndexerFullSpeed())
+            .withName("HardShoot")));
+        
+        // tested (?) in sim
+        driver.a().onTrue(track(new UndeployClimb().andThen(stow.get()).withName("Drop")));
+        
+        // tested in sim
+        driver.povUp().onTrue(Commands.runOnce(()->pitchOffset += Constants.PITCH_OFFSET_UNIT));
+        driver.povDown().onTrue(Commands.runOnce(()->pitchOffset -= Constants.PITCH_OFFSET_UNIT));
+
+        // tested in sim
+        driver.povLeft().onTrue(Commands.runOnce(()->flywheelOffset += Constants.FLYWHEEL_OFFSET_UNIT));
+        driver.povRight().onTrue(Commands.runOnce(()->flywheelOffset -= Constants.FLYWHEEL_OFFSET_UNIT));
 
         // Idle while the robot is disabled. This ensures the configured
         // neutral mode is applied to the drive motors while disabled.
@@ -177,26 +337,14 @@ public class RobotContainer
                 drivetrain.applyRequest(() -> idle).ignoringDisable(true).withName("Drivetrain Set Idle"));
 
                 /*
-        joystick.a().whileTrue(drivetrain.applyRequest(() -> brake).withName("Drivetrain Brake"));
-        joystick.b().whileTrue(drivetrain
-                .applyRequest(() -> point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))));
-                */
-        
-        joystick.x().toggleOnTrue(new RunIntake());
-        joystick.y().toggleOnTrue(new ExtendIntake());
-        joystick.a().toggleOnTrue(new RetractIntake());
-
-        // Run SysId routines when holding back/start and X/Y.
-        // Note that each routine should be run exactly once in a single log.
-        /*
-        joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
-        */
-        joystick.start().whileTrue(new DriveToPose(drivetrain));
-
         // Zero DT
+        operator.x().onTrue(
+        drivetrain.runOnce(() -> drivetrain.seedFieldCentric())
+                .andThen(drivetrain.runOnce(() -> drivetrain.resetPose(
+                            (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) ? 
+                            FlippingUtil.flipFieldPose(Constants.ZEROING_POSE) : Constants.ZEROING_POSE)))
+                .withName("ZeroDrivetrain"));
+                */
     }
 
     public void configureOperatorBindings()
@@ -241,6 +389,12 @@ public class RobotContainer
             Shooter.getInstance().setRightVelocity(RotationsPerSecond.of(
                 Math.max(Constants.Shooter.DEFAULT_VELOCITY, 
                 -Constants.Shooter.INCREASE_VELOCITY + Shooter.getInstance().getRightVelocity().in(RotationsPerSecond))))));             
+    }
+
+    public Command track(Command command)
+    {
+        commands.add(command);
+        return command;
     }
 
     public Command getAutonomousCommand() 

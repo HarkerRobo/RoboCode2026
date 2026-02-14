@@ -13,6 +13,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.ChassisReference;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 
@@ -161,7 +162,7 @@ public class Hood extends SubsystemBase
     
     public boolean readyToShoot ()
     {
-        return Math.abs(master.getPosition().getValue().in(Rotation) - desiredPosition) < Constants.EPSILON;
+        return Math.abs(master.getPosition().getValue().in(Rotations) - desiredPosition) < Constants.EPSILON;
     }
     
     public Angle getDesiredPosition()
@@ -169,10 +170,11 @@ public class Hood extends SubsystemBase
         return Rotations.of(desiredPosition);
     }
     
-    public boolean isStalling ()
+    public boolean isStalling()
     {
         return Math.abs(master.getStatorCurrent().getValueAsDouble()) >= Constants.Hood.STALLING_CURRENT;
     }
+
 
     @Override
     public void simulationPeriodic()

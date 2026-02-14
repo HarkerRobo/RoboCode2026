@@ -53,6 +53,8 @@ public class Shooter extends SubsystemBase
         LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60(2), 0.001, Constants.Shooter.GEAR_RATIO),
         DCMotor.getKrakenX60(2));
 
+    private double targetVelocity = 0.0;
+
     private Shooter()
     {
         leftMaster = new TalonFX(Constants.Shooter.LEFT_MASTER_ID);
@@ -141,6 +143,7 @@ public class Shooter extends SubsystemBase
     {
         leftMaster.setControl(new VelocityVoltage(velocity));
         rightMaster.setControl(new VelocityVoltage(velocity));
+        targetVelocity = velocity.in(Rotations.per(Second));
     }
 
     public void setLeftVelocity(AngularVelocity velocity)
@@ -212,6 +215,18 @@ public class Shooter extends SubsystemBase
                 .angularVelocity(getLeftVelocity()),
         this)
     );
+    
+    public boolean readyToShoot()
+    {
+        return Math.abs(leftMaster.getVelocity().getValue().in(Rotations.per(Second)) - targetVelocity) < Constants.EPSILON &&
+               Math.abs(rightMaster.getVelocity().getValue().in(Rotations.per(Second)) - targetVelocity) < Constants.EPSILON;
+    }
+    
+    public boolean readyToShoot(double targetVelocity)
+    {
+        return Math.abs(leftMaster.getVelocity().getValue().in(Rotations.per(Second)) - targetVelocity) < Constants.EPSILON &&
+               Math.abs(rightMaster.getVelocity().getValue().in(Rotations.per(Second)) - targetVelocity) < Constants.EPSILON;
+    }
 
     public Command leftSysIdQuasistatic (SysIdRoutine.Direction direction)
     {

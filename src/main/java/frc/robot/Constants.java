@@ -53,6 +53,9 @@ public class Constants
 
     public static final Pose2d ZEROING_POSE = new Pose2d(4.028649 - ROBOT_DIAMETER / 2.0, 4.034536, new Rotation2d(0.0));
 
+    public static final double TRANSLATION_SLOW_MULTIPLIER = 0.2;
+    public static final double ROTATION_SLOW_MULTIPLIER = 0.4;
+
     public class Vision {
         public static final String kCamera1Name = "limelight";
         public static final Transform3d kRobotToCam1 = new Transform3d(
@@ -88,20 +91,20 @@ public class Constants
         
         public static final double GEAR_RATIO = 1.0; // TODO
 
-		public static final double KP = 0.0031416; // TODO
+		public static final double KP = 0.042562; // TODO
 		public static final double KI = 0.0; // TODO
 		public static final double KD = 0.0; // TODO
 		
-        public static final double KS = 0.0; // TODO
-		public static final double KG = 0.0832731; // TODO
-        public static final double KV = 0.11933; // TODO
-        public static final double KA = 0.11116; // TODO
+        public static final double KS = 0.0022734; // TODO
+		public static final double KG = 0.0; // TODO
+        public static final double KV = 0.11931; // TODO
+        public static final double KA = 0.0059936; // TODO
 
         public static final double DEFAULT_VELOCITY = 0.1; // TODO rotations per second (nonzero to decrease startup time)
         public static final double SHOOT_VELOCITY = 10.0; // TODO rotations per second 
 
         public static final double INCREASE_VELOCITY = 0.5; // TODO
-        public static final double MAX_VELOCITY = 10.0; // TODO
+        public static final double MAX_VELOCITY = 20.0; // TODO
         
         public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
     }
@@ -214,13 +217,13 @@ public class Constants
         public static final double GEAR_RATIO = 1.0; // TODO
 
 		public static final double KP = 1.0; // TODO
-		public static final double KI = 0.7; // TODO
-		public static final double KD = 0.1; // TODO
+		public static final double KI = 0.9; // TODO
+		public static final double KD = 0.038151; // TODO
 		
-        public static final double KS = 0.0055451; // TODO
-        public static final double KV = 0.1138; // TODO
-        public static final double KA = 0.0049434; // TODO
-		public static final double KG = 0.0143; // TODO
+        public static final double KS = 0.0024809; // TODO
+        public static final double KV = 0.1205; // TODO
+        public static final double KA = 0.0042197; // TODO
+		public static final double KG = 0.017908; // TODO
 
         public static final double FORWARD_SOFTWARE_LIMIT_THRESHOLD = 4.82; // TODO
 		public static final double REVERSE_SOFTWARE_LIMIT_THRESHOLD = -0.01; // TODO
@@ -345,6 +348,8 @@ public class Constants
         public static final Angle MAX_ERROR = Rotations.of(0.1);
 
         public static final Voltage ELEVATOR_GO_DOWN_VOLTAGE = Volts.of(-2.0); //TODO
+        public static final Voltage CLIMB_DEPLOY_VOLTAGE = Volts.of(1.0); // TODO
+        public static final Voltage CLIMB_UNDEPLOY_VOLTAGE = Volts.of(-1.0); // TODO
 
         public static final double ELEVATOR_MIN_HEIGHT = 0.0;
         public static final double ELEVATOR_MAX_HEIGHT = 10.0;
@@ -362,11 +367,12 @@ public class Constants
         public static final double STATOR_CURRENT_LIMIT = 80.0;
         public static final double SUPPLY_CURRENT_LIMIT = 80.0;
 
+        public static final double KS = 0.0048438; //TODO
+        public static final double KV = 0.12361; //TODO
+        public static final double KA = 0.0089587; //TODO
         public static final double KG = 0.0; //TODO
-        public static final double KS = 0.5; //TODO
-        public static final double KV = 0.0; //TODO
-        public static final double KA = 0.0; //TODO
-        public static final double KP = 1.0; //TODO
+        
+        public static final double KP = 0.093687; //TODO
         public static final double KI = 0.0; //TODO
         public static final double KD = 0.0; //TODO
 
@@ -378,7 +384,7 @@ public class Constants
         */
 
         public static final double MAX_VELOCITY = 1.0; // TODO rotations per second
-        public static final double DEFAULT_VELOCITY = 0.2; // TODO rotations per second
+        public static final double DEFAULT_VELOCITY = 0.0; // TODO rotations per second
 
         public static final double GEAR_RATIO = 1.0; // TODO
 
@@ -540,5 +546,20 @@ public class Constants
         public static final Distance kBackRightYPos = Inches.of(-10.375);
 
     }
+
+    public static final Translation3d HUB_TARGET_POSITION = new Translation3d(Simulation.HUB_CONTENTS.getCenter().getTranslation().getX(),
+        Simulation.HUB_CONTENTS.getCenter().getTranslation().getX(),
+        Simulation.HUB_INTAKE_HEIGHT);
+
+    public static final double HOOD_BASE_HEIGHT = 0.10; // TODO
+
+    public static final Translation3d PASS_LEFT_TARGET_POSITION = new Translation3d(2.010664, 2.010664, 1.0);
+    public static final Translation3d PASS_RIGHT_TARGET_POSITION = new Translation3d(2.010664, Simulation.FIELD_HEIGHT - 2.010664, 1.0);
+
+    public static final Angle HARDCODE_HOOD_PITCH = Degrees.of(20.0);
+    public static final double HARDCODE_VELOCITY = 5.0;
+
+    public static final double PITCH_OFFSET_UNIT = 5.0; // TODO
+    public static final double FLYWHEEL_OFFSET_UNIT = 2.5; // TODO
 
 }

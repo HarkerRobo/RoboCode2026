@@ -1,14 +1,18 @@
 package frc.robot.commands.shooter;
 
+import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.Second;
+
+import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.Shooter;
 
-public class ResetShooter extends Command
+public class ShooterDefaultSpeed extends Command
 {
-    public ResetShooter()
+    public ShooterDefaultSpeed()
     {
         addRequirements(Shooter.getInstance());
     }
@@ -27,7 +31,7 @@ public class ResetShooter extends Command
     @Override
     public boolean isFinished()
     {
-        return Math.abs(Shooter.getInstance().getLeftVelocity().in(RotationsPerSecond) - Constants.Shooter.DEFAULT_VELOCITY) < 0.1;
+        return false;
     }
 
     @Override
