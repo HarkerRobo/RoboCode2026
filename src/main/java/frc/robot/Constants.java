@@ -91,17 +91,18 @@ public class Constants
         
         public static final double GEAR_RATIO = 1.0; // TODO
 
-		public static final double KP = 0.0031416; // TODO
+		public static final double KP = 0.042562; // TODO
 		public static final double KI = 0.0; // TODO
 		public static final double KD = 0.0; // TODO
 		
-        public static final double KS = 0.0; // TODO
-		public static final double KG = 0.0832731; // TODO
-        public static final double KV = 0.11933; // TODO
-        public static final double KA = 0.11116; // TODO
+        public static final double KS = 0.0022734; // TODO
+		public static final double KG = 0.0; // TODO
+        public static final double KV = 0.11931; // TODO
+        public static final double KA = 0.0059936; // TODO
 
         public static final double DEFAULT_VELOCITY = 0.1; // TODO rotations per second (nonzero to decrease startup time)
         public static final double SHOOT_VELOCITY = 10.0; // TODO rotations per second 
+        public static final double MAX_VELOCITY = 20.0; // TODO rotations per second 
         
         public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
     }
@@ -214,13 +215,13 @@ public class Constants
         public static final double GEAR_RATIO = 1.0; // TODO
 
 		public static final double KP = 1.0; // TODO
-		public static final double KI = 0.7; // TODO
-		public static final double KD = 0.1; // TODO
+		public static final double KI = 0.9; // TODO
+		public static final double KD = 0.038151; // TODO
 		
-        public static final double KS = 0.0055451; // TODO
-        public static final double KV = 0.1138; // TODO
-        public static final double KA = 0.0049434; // TODO
-		public static final double KG = 0.0143; // TODO
+        public static final double KS = 0.0024809; // TODO
+        public static final double KV = 0.1205; // TODO
+        public static final double KA = 0.0042197; // TODO
+		public static final double KG = 0.017908; // TODO
 
         public static final double FORWARD_SOFTWARE_LIMIT_THRESHOLD = 4.82; // TODO
 		public static final double REVERSE_SOFTWARE_LIMIT_THRESHOLD = -0.01; // TODO
@@ -364,11 +365,12 @@ public class Constants
         public static final double STATOR_CURRENT_LIMIT = 80.0;
         public static final double SUPPLY_CURRENT_LIMIT = 80.0;
 
+        public static final double KS = 0.0048438; //TODO
+        public static final double KV = 0.12361; //TODO
+        public static final double KA = 0.0089587; //TODO
         public static final double KG = 0.0; //TODO
-        public static final double KS = 0.5; //TODO
-        public static final double KV = 0.0; //TODO
-        public static final double KA = 0.0; //TODO
-        public static final double KP = 1.0; //TODO
+        
+        public static final double KP = 0.093687; //TODO
         public static final double KI = 0.0; //TODO
         public static final double KD = 0.0; //TODO
 
@@ -556,6 +558,6 @@ public class Constants
     public static final double HARDCODE_VELOCITY = 5.0;
 
     public static final double PITCH_OFFSET_UNIT = 5.0; // TODO
-    public static final double FLYWHEEL_OFFSET_UNIT = 5.0; // TODO
+    public static final double FLYWHEEL_OFFSET_UNIT = 2.5; // TODO
 
 }

@@ -45,6 +45,7 @@ public class Telemetry
     private NetworkTable table = tableInstance.getTable("1072");
 
     private StringPublisher mostRecentAim = table.getStringTopic("Most Recent Aim").publish();
+    private DoublePublisher hoodOffset = table.getDoubleTopic("Hood Offset").publish();
 
     private NetworkTable intake = table.getSubTable("Intake");
     private StringPublisher intakeCommand = intake.getStringTopic("main command").publish();
@@ -173,7 +174,8 @@ public class Telemetry
 
     public void update ()
     {
-        mostRecentAim.set(Robot.instance.robotContainer.mostRecentAim ? "Shoot" : "Pass");
+        mostRecentAim.set(Robot.instance.robotContainer.mostRecentAim ? "Pass" : "Shoot");
+        hoodOffset.set(Robot.instance.robotContainer.pitchOffset);
 
         Command intakeCommand = Intake.getInstance().getCurrentCommand();
         this.intakeCommand.set(intakeCommand == null ? "" : intakeCommand.getName());

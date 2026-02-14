@@ -162,7 +162,7 @@ public class Hood extends SubsystemBase
     
     public boolean readyToShoot ()
     {
-        return Math.abs(master.getPosition().getValue().in(Rotation) - desiredPosition) < Constants.EPSILON;
+        return Math.abs(master.getPosition().getValue().in(Rotations) - desiredPosition) < Constants.EPSILON;
     }
     
     public Angle getDesiredPosition()

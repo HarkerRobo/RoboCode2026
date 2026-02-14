@@ -5,8 +5,11 @@ import edu.wpi.first.math.geometry.Rectangle2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.math.geometry.Translation2d;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Radian;
 import static edu.wpi.first.units.Units.Radians;
 
@@ -88,7 +91,7 @@ public class Util
         double base = Math.sqrt(dx * dx + dy * dy);
         double height = target.getZ() - position.getZ();
         double idealAngle = Math.atan2(height, base);
-        return Radians.of(idealAngle + 10.0); // TODO make this real
+        return Radians.of(idealAngle).plus(Degrees.of(10.0)); // TODO make this real
     }
 
     public static double calculateVelocity(Translation3d position, Translation3d target)
@@ -143,7 +146,15 @@ public class Util
 
     public static boolean onLeftSide(CommandSwerveDrivetrain drivetrain)
     {
-        return drivetrain.getState().Pose.getY() < Constants.Simulation.FIELD_HEIGHT;
+        if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red)
+        {
+            
+            return drivetrain.getState().Pose.getY() > Constants.Simulation.FIELD_HEIGHT / 2.0;
+        }
+        else
+        {
+            return drivetrain.getState().Pose.getY() < Constants.Simulation.FIELD_HEIGHT / 2.0;
+        }
     }
 
 }
