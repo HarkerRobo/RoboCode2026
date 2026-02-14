@@ -2,14 +2,13 @@ package frc.robot.commands.shooter;
 
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
-
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.Shooter;
 
-public class ShooterDefaultSpeed extends Command
+public class ResetShooter extends Command
 {
-    public ShooterDefaultSpeed()
+    public ResetShooter()
     {
         addRequirements(Shooter.getInstance());
     }
@@ -28,7 +27,7 @@ public class ShooterDefaultSpeed extends Command
     @Override
     public boolean isFinished()
     {
-        return false;
+        return Math.abs(Shooter.getInstance().getLeftVelocity().in(RotationsPerSecond) - Constants.Shooter.DEFAULT_VELOCITY) < 0.1;
     }
 
     @Override

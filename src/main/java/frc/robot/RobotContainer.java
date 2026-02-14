@@ -86,15 +86,15 @@ public class RobotContainer
   
     private List<Command> commands = new ArrayList<>(40);
   
-    public enum PassDirection {Left, Right, Automatic};
+    public static enum PassDirection {Left, Right, Automatic};
 
-    private static PassDirection direction = PassDirection.Left; // Default
+    private PassDirection direction = PassDirection.Left; // Default
 
     public void setPassDirection(PassDirection newDirection) {
         direction = newDirection;
     }
 
-    public static PassDirection getPassDirection() {
+    public PassDirection getPassDirection() {
         return direction;
     }
 
@@ -108,7 +108,7 @@ public class RobotContainer
     {
       if (direction == PassDirection.Left) return true;
       if (direction == PassDirection.Right) return false;
-      return Util.onLeftSide(direction);
+      return Util.onLeftSide(drivetrain);
     }
   
         
@@ -165,8 +165,6 @@ public class RobotContainer
         intake.setDefaultCommand(new DefaultIntake());
         Indexer.getInstance().setDefaultCommand(new IndexerDefaultSpeed());
 
-
-
         boolean useDebuggingBindings = false; // mainly for sysid or debugging
         boolean useDefaultBindings = false; // in case ever the official controls don't work, use these as a backup to be able to drive around
         if (useDebuggingBindings) configureDebugBindings();
@@ -179,6 +177,8 @@ public class RobotContainer
             configureDriverBindings();
             configureOperatorBindings();
         }
+        
+        drivetrain.registerTelemetry(Telemetry.getInstance()::telemeterize);
     }
 
     private void configureDebugBindings()
@@ -193,7 +193,6 @@ public class RobotContainer
         driver.povLeft().onTrue(Commands.print("POV LEFT"));
         driver.povRight().onTrue(Commands.print("POV RIGHT"));
         
-        drivetrain.registerTelemetry(Telemetry.getInstance()::telemeterize);
     }
 
     private void configureDefaultBindings()
@@ -357,7 +356,7 @@ public class RobotContainer
                 .withName("ZeroDrivetrain"));
 
         operator.back().onTrue(new ZeroHood()
-            .alongWith(new ResetShooter()));
+            .alongWith(new ShooterDefaultSpeed()));
 
         operator.leftTrigger().onTrue(new EjectIntake());
         // operator.rightTrigger().onTrue();    Soft Pass

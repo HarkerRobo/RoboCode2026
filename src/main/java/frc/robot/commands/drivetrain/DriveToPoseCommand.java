@@ -3,12 +3,12 @@
 package frc.robot.commands.drivetrain;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.AlignmentConstants;
+import frc.robot.AlignConstants;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
 import frc.robot.RobotContainer;
-import frc.robot.RobotContainer.AlignDirection;
-import frc.robot.subsystems.swerve.Drivetrain;
+import frc.robot.RobotContainer.PassDirection;
+//import frc.robot.subsystems.swerve.Drivetrain;
 import edu.wpi.first.math.geometry.Pose2d;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.Waypoint;
@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class DriveToPoseCommand extends Command {
+    /*
     private final Drivetrain drivetrain;
     private Pose2d targetPose;
     private Command pathCommand;
@@ -64,7 +65,7 @@ public class DriveToPoseCommand extends Command {
             }
     }
 
-    /** Updates the target pose dynamically based on AprilTag ID */
+    /** Updates the target pose dynamically based on AprilTag ID * /
     private void updateTargetPose() {
 
         if (targetPose != null && drivetrain.getState().Pose.equals(targetPose)) {
@@ -85,4 +86,5 @@ public class DriveToPoseCommand extends Command {
         if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) targetPose = FlippingUtil.flipFieldPose(targetPose);
         
     }
+    */
 }

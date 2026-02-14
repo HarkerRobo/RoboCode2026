@@ -1,8 +1,5 @@
 package frc.robot.commands.hood;
 
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.*;
-import edu.wpi.first.units.measure.*;
 import static edu.wpi.first.units.Units.*;
 
 import java.util.function.DoubleSupplier;
@@ -10,7 +7,6 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.Hood;
-import frc.robot.subsystems.Turret;
 import frc.robot.util.Util;
 
 public class AimToAngle extends Command

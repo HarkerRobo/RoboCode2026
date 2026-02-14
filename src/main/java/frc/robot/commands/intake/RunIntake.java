@@ -2,7 +2,6 @@ package frc.robot.commands.intake;
 
 import static edu.wpi.first.units.Units.Volts;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.intake.Intake;

@@ -1,19 +1,13 @@
 package frc.robot.simulation;
 
-import frc.robot.Constants;
-import frc.robot.RobotContainer;
-import frc.robot.Constants.Simulation;
 import frc.robot.util.Util;
 
 import static frc.robot.Constants.Simulation.*;
 
-import java.nio.ByteBuffer;
 
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.util.struct.Struct;
-import edu.wpi.first.util.struct.StructGenerator;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
