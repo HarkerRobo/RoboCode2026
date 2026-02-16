@@ -1,11 +1,14 @@
 package frc.robot.simulation;
 
+import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.util.Util;
 
 import static frc.robot.Constants.Simulation.*;
 
 
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.RobotController;
@@ -198,7 +201,7 @@ public class SimulationState
         long now = RobotController.getFPGATime();
         double dt = (now - lastTime) * 1e-6;
 
-        Pose2d robotPose = Robot.getInstance().RobotContainer.drivetrain.samplePoseAt(now);
+        Pose2d robotPose = Robot.instance.robotContainer.drivetrain.samplePoseAt(now).get();
         double RobotX = robotPose.getTranslation().getX();
         double RobotY = robotPose.getTranslation().getY();
         double RobotTheta = robotPose.getRotation().getRadians();

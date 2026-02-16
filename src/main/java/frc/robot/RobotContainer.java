@@ -93,6 +93,39 @@ public class RobotContainer
     public static enum PassDirection {Left, Right, Automatic};
 
     private PassDirection direction = PassDirection.Left; // Default
+        
+    // tested in sim
+    private Supplier<Command> stow = ()->Commands.runOnce(()->CommandScheduler.getInstance().cancel(commands.toArray(new Command[0]))).andThen(
+            new ShooterDefaultSpeed()); // because a command instance cannot be scheduled to independent triggers
+        
+    // tested in sim
+    private Command shoot = 
+        new DriveToPose(drivetrain, ()->AlignConstants.HUB)
+            .alongWith(new AimToAngle(()->Util.calculateShootPitch(drivetrain).in(Degrees) + pitchOffset))
+        .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot(Util.calculateShootVelocity(drivetrain)) && Hood.getInstance().readyToShoot()))
+        .andThen(new IndexerFullSpeed()) // load to shoot
+        .finallyDo(()->{
+            CommandScheduler.getInstance().schedule(stow.get());
+        })
+        .withName("Shoot");
+        
+    // tested in sim
+    private Command pass = 
+        new DriveToPose(drivetrain, ()->onLeftSize() ? 
+            Constants.PASS_LEFT_TARGET_POSITION.toTranslation2d() : 
+            Constants.PASS_RIGHT_TARGET_POSITION.toTranslation2d())
+            .alongWith(new AimToAngle(()->Util.calculatePassPitch(drivetrain).in(Degrees) + pitchOffset))
+        .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot(Util.calculatePassVelocity(drivetrain)) && Hood.getInstance().readyToShoot()))
+        .andThen(new IndexerFullSpeed()) // load to shoot
+        .finallyDo(()->{
+            CommandScheduler.getInstance().schedule(stow.get());
+        })
+        .withName("Pass");
+
+    private Command hardShoot = new AimToAngle(Constants.HARDCODE_HOOD_PITCH.in(Degrees) + pitchOffset)
+            .alongWith(new ShooterTargetSpeed(()->Constants.HARDCODE_VELOCITY).until(()->Shooter.getInstance().readyToShoot()))
+            .andThen(new IndexerFullSpeed())
+            .withName("HardShoot");
 
     public void setPassDirection(PassDirection newDirection) {
         direction = newDirection;
@@ -153,6 +186,8 @@ public class RobotContainer
         NamedCommands.registerCommand("StartDefaultIntake", Intake.getInstance().runOnce(()->Intake.getInstance().setMainVoltage(Volts.of(Constants.Intake.DEFAULT_INTAKE_VOLTAGE))));
         NamedCommands.registerCommand("DefaultIntake", new DefaultIntake());
         NamedCommands.registerCommand("EjectIntake (with timeout)", new EjectIntake().withTimeout(1.0));
+        NamedCommands.registerCommand("HardShoot", hardShoot);
+        NamedCommands.registerCommand("ClimbL3", new ClimbToLevel(3).andThen(new RunClimb()));
 
         autonChooser = AutoBuilder.buildAutoChooser();
         /*
@@ -244,32 +279,10 @@ public class RobotContainer
         driver.leftTrigger().whileTrue(new StartEndCommand(()->isSlow = true, ()->isSlow = false).withName("ToggleSlow"));
 
         // tested in sim
-        Supplier<Command> stow = ()->Commands.runOnce(()->CommandScheduler.getInstance().cancel(commands.toArray(new Command[0]))).andThen(
-            new ShooterDefaultSpeed()); // because a command instance cannot be scheduled to independent triggers
 
         // tested in sim
-        Command shoot = 
-        new DriveToPose(drivetrain, ()->AlignConstants.HUB)
-            .alongWith(new AimToAngle(()->Util.calculateShootPitch(drivetrain).in(Degrees) + pitchOffset))
-        .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot(Util.calculateShootVelocity(drivetrain)) && Hood.getInstance().readyToShoot()))
-        .andThen(new IndexerFullSpeed()) // load to shoot
-        .finallyDo(()->{
-            CommandScheduler.getInstance().schedule(stow.get());
-        })
-        .withName("Shoot");
         
         // tested in sim
-        Command pass = 
-        new DriveToPose(drivetrain, ()->onLeftSize() ? 
-            Constants.PASS_LEFT_TARGET_POSITION.toTranslation2d() : 
-            Constants.PASS_RIGHT_TARGET_POSITION.toTranslation2d())
-            .alongWith(new AimToAngle(()->Util.calculatePassPitch(drivetrain).in(Degrees) + pitchOffset))
-        .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot(Util.calculatePassVelocity(drivetrain)) && Hood.getInstance().readyToShoot()))
-        .andThen(new IndexerFullSpeed()) // load to shoot
-        .finallyDo(()->{
-            CommandScheduler.getInstance().schedule(stow.get());
-        })
-        .withName("Pass");
 
         driver.rightTrigger().and(()->!mostRecentAim).whileTrue(track(shoot));
         driver.rightTrigger().and(()->mostRecentAim).whileTrue(track(pass));
@@ -339,11 +352,7 @@ public class RobotContainer
             .withName("Climb L1"))); // TODO: add autoalign
 
         // tested in sim
-        driver.x().onTrue(track(
-            new AimToAngle(Constants.HARDCODE_HOOD_PITCH.in(Degrees) + pitchOffset)
-            .alongWith(new ShooterTargetSpeed(()->Constants.HARDCODE_VELOCITY).until(()->Shooter.getInstance().readyToShoot()))
-            .andThen(new IndexerFullSpeed())
-            .withName("HardShoot")));
+        driver.x().onTrue(track(hardShoot));
         
         // tested (?) in sim
         driver.a().onTrue(track(new UndeployClimb().andThen(stow.get()).withName("Drop")));
