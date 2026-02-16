@@ -52,10 +52,10 @@ public class Shooter extends SubsystemBase
 
     private Shooter()
     {
-        leftMaster = new TalonFX((RobotContainer.disableShooter ? 100 : 0) + Constants.Shooter.LEFT_MASTER_ID);
-        leftFollower = new TalonFX((RobotContainer.disableShooter ? 100 : 0) +Constants.Shooter.LEFT_FOLLOWER_ID);
-        rightMaster = new TalonFX((RobotContainer.disableShooter ? 100 : 0) + Constants.Shooter.RIGHT_MASTER_ID);
-        rightFollower = new TalonFX((RobotContainer.disableShooter ? 100 : 0) +Constants.Shooter.RIGHT_FOLLOWER_ID);
+        leftMaster = new TalonFX((RobotContainer.disableShooter ? 14 : 0) + Constants.Shooter.LEFT_MASTER_ID);
+        leftFollower = new TalonFX((RobotContainer.disableShooter ? 14 : 0) +Constants.Shooter.LEFT_FOLLOWER_ID);
+        rightMaster = new TalonFX((RobotContainer.disableShooter ? 14 : 0) + Constants.Shooter.RIGHT_MASTER_ID);
+        rightFollower = new TalonFX((RobotContainer.disableShooter ? 14 : 0) +Constants.Shooter.RIGHT_FOLLOWER_ID);
 
         config();
         

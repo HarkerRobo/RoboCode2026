@@ -47,8 +47,8 @@ public class Climb extends SubsystemBase
     private Climb() 
     {
         targetPosition = Rotations.of(0);
-        elevator = new TalonFX(/*(RobotContainer.disableClimb ? 100 : 0)*/ + Constants.Climb.ELEVATOR_ID);
-        climb = new TalonFX(/*(RobotContainer.disableClimb ? 100 : 0)*/ + Constants.Climb.HINGE_ID);
+        elevator = new TalonFX((RobotContainer.disableClimb ? 14 : 0) + Constants.Climb.ELEVATOR_ID);
+        climb = new TalonFX((RobotContainer.disableClimb ? 14 : 0) + Constants.Climb.HINGE_ID);
 
         config();
         

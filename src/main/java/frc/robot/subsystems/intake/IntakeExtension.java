@@ -34,7 +34,7 @@ public class IntakeExtension extends SubsystemBase
 
     private IntakeExtension()
     {
-        motor = new TalonFX((RobotContainer.disableIntakeExtension ? 100 : 0) + Constants.IntakeExtension.ID);
+        motor = new TalonFX((RobotContainer.disableIntakeExtension ? 14 : 0) + Constants.IntakeExtension.ID);
         config();
         
         if (RobotContainer.simulateIntakeExtension)

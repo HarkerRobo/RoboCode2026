@@ -143,19 +143,19 @@ public class RobotContainer
     public static boolean simulateDrivetrain = false;
     public static boolean simulateHood = false;
     public static boolean simulateHopper = false;
-    public static boolean simulateIndexer = true;
+    public static boolean simulateIndexer = false;
     public static boolean simulateShooter = false;
     public static boolean simulateShooterIndexer = false;
 
-    public static boolean disableIntake = false;
-    public static boolean disableIntakeExtension = false;
-    public static boolean disableClimb = false;
+    public static boolean disableIntake = true;
+    public static boolean disableIntakeExtension = true;
+    public static boolean disableClimb = true;
     public static boolean disableDrivetrain = false;
-    public static boolean disableHood = false;
-    public static boolean disableHopper = false;
-    public static boolean disableIndexer = false;
-    public static boolean disableShooter = false;
-    public static boolean disableShooterIndexer = false;
+    public static boolean disableHood = true;
+    public static boolean disableHopper = true;
+    public static boolean disableIndexer = true;
+    public static boolean disableShooter = true;
+    public static boolean disableShooterIndexer = true;
 
   
     public boolean onLeftSize()

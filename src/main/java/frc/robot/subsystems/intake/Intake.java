@@ -32,7 +32,7 @@ public class Intake extends SubsystemBase
    
     private Intake()
     {
-        main = new TalonFX((RobotContainer.disableIntake ? 100 : 0) + Constants.Intake.ID);
+        main = new TalonFX((RobotContainer.disableIntake ? 14 : 0) + Constants.Intake.ID);
         config();
         
         if (RobotContainer.simulateIntake)

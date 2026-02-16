@@ -61,8 +61,8 @@ public class Hood extends SubsystemBase
 
     private Hood()
     {
-        master = new TalonFX((RobotContainer.disableHood ? 100 : 0) + Constants.Hood.MASTER_ID);
-        follower = new TalonFX((RobotContainer.disableHood ? 100 : 0) + Constants.Hood.FOLLOWER_ID);
+        master = new TalonFX((RobotContainer.disableHood ? 14 : 0) + Constants.Hood.MASTER_ID);
+        follower = new TalonFX((RobotContainer.disableHood ? 14 : 0) + Constants.Hood.FOLLOWER_ID);
 
         config();
 

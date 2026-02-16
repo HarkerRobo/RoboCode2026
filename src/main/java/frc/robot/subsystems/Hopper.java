@@ -40,7 +40,7 @@ public class Hopper extends SubsystemBase
 
     private Hopper()
     {
-        master = new TalonFX((RobotContainer.disableHopper ? 100 : 0) + Constants.Hopper.ID);
+        master = new TalonFX((RobotContainer.disableHopper ? 14 : 0) + Constants.Hopper.ID);
         
         if (RobotContainer.simulateHopper)
         {

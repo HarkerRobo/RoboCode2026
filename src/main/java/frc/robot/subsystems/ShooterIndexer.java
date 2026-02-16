@@ -34,7 +34,7 @@ public class ShooterIndexer extends SubsystemBase
 
     private ShooterIndexer()
     {
-        motor = new TalonFX((RobotContainer.disableShooterIndexer ? 100 : 0) + Constants.ShooterIndexer.ID);
+        motor = new TalonFX((RobotContainer.disableShooterIndexer ? 14 : 0) + Constants.ShooterIndexer.ID);
         config();
         
         if (RobotContainer.simulateShooterIndexer)

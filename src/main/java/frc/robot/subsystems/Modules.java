@@ -22,33 +22,33 @@ public class Modules
 {
     public static final SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration> FrontLeft = ConstantCreator
         .createModuleConstants(
-                kFrontLeftSteerMotorId + (RobotContainer.disableDrivetrain ? 100 : 0),
-                kFrontLeftDriveMotorId + (RobotContainer.disableDrivetrain ? 100 : 0),
-                kFrontLeftEncoderId + (RobotContainer.disableDrivetrain ? 100 : 0),
+                kFrontLeftSteerMotorId,
+                kFrontLeftDriveMotorId,
+                kFrontLeftEncoderId,
                 kFrontLeftEncoderOffset,
                 kFrontLeftXPos, kFrontLeftYPos, kInvertLeftSide, kFrontLeftSteerMotorInverted,
                 kFrontLeftEncoderInverted);
     public static final SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration> FrontRight = ConstantCreator
         .createModuleConstants(
-                kFrontRightSteerMotorId + (RobotContainer.disableDrivetrain ? 100 : 0), 
-                kFrontRightDriveMotorId + (RobotContainer.disableDrivetrain ? 100 : 0), 
-                kFrontRightEncoderId + (RobotContainer.disableDrivetrain ? 100 : 0),
+                kFrontRightSteerMotorId,
+                kFrontRightDriveMotorId,
+                kFrontRightEncoderId,
                 kFrontRightEncoderOffset,
                 kFrontRightXPos, kFrontRightYPos, kInvertRightSide, kFrontRightSteerMotorInverted,
                 kFrontRightEncoderInverted);
     public static final SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration> BackLeft = ConstantCreator
         .createModuleConstants(
-                kBackLeftSteerMotorId + (RobotContainer.disableDrivetrain ? 100 : 0),
-                kBackLeftDriveMotorId + (RobotContainer.disableDrivetrain ? 100 : 0), 
-                kBackLeftEncoderId + (RobotContainer.disableDrivetrain ? 100 : 0), 
+                kBackLeftSteerMotorId,
+                kBackLeftDriveMotorId,
+                kBackLeftEncoderId,
                 kBackLeftEncoderOffset,
                 kBackLeftXPos, kBackLeftYPos, kInvertLeftSide, kBackLeftSteerMotorInverted,
                 kBackLeftEncoderInverted);
     public static final SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration> BackRight = ConstantCreator
         .createModuleConstants(
-                kBackRightSteerMotorId + (RobotContainer.disableDrivetrain ? 100 : 0),
-                kBackRightDriveMotorId + (RobotContainer.disableDrivetrain ? 100 : 0), 
-                kBackRightEncoderId + (RobotContainer.disableDrivetrain ? 100 : 0), 
+                kBackRightSteerMotorId,
+                kBackRightDriveMotorId,
+                kBackRightEncoderId,
                 kBackRightEncoderOffset,
                 kBackRightXPos, kBackRightYPos, kInvertRightSide, kBackRightSteerMotorInverted,
                 kBackRightEncoderInverted);

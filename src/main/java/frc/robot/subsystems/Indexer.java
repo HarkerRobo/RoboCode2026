@@ -34,7 +34,7 @@ public class Indexer extends SubsystemBase
         DCMotor.getKrakenX60Foc(1));
 
     private Indexer() { 
-        motor = new TalonFX((RobotContainer.disableIndexer ? 100 : 0) + Constants.Indexer.ID);
+        motor = new TalonFX((RobotContainer.disableIndexer ? 14 : 0) + Constants.Indexer.ID);
         config();
         
         if (RobotContainer.simulateIndexer)
