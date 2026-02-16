@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Robot;
+import frc.robot.RobotContainer;
 
 public class Intake extends SubsystemBase 
 {
@@ -31,10 +32,10 @@ public class Intake extends SubsystemBase
    
     private Intake()
     {
-        main = new TalonFX(Constants.Intake.ID);
+        main = new TalonFX((RobotContainer.disableIntake ? 100 : 0) + Constants.Intake.ID);
         config();
         
-        if (Robot.isSimulation())
+        if (RobotContainer.simulateIntake)
         {
             main.getSimState().Orientation = Constants.Intake.MECHANICAL_ORIENTATION;
             main.getSimState().setMotorType(TalonFXSimState.MotorType.KrakenX60);
@@ -62,7 +63,9 @@ public class Intake extends SubsystemBase
         mainConfig.Voltage.PeakReverseVoltage = -Constants.MAX_VOLTAGE;
 
         mainConfig.CurrentLimits.StatorCurrentLimit = Constants.Intake.STATOR_CURRENT_LIMIT;
-        mainConfig.CurrentLimits.StatorCurrentLimit = Constants.Intake.SUPPLY_CURRENT_LIMIT;
+        mainConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+        mainConfig.CurrentLimits.SupplyCurrentLimit = Constants.Intake.SUPPLY_CURRENT_LIMIT;
+        mainConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
         main.getConfigurator().apply(mainConfig);
     }
@@ -94,23 +97,27 @@ public class Intake extends SubsystemBase
     }
     
     @Override
-    public void simulationPeriodic ()
+    public void periodic ()
     {
-        TalonFXSimState simState = main.getSimState();
+        if (RobotContainer.simulateIntake)
+        {
+            System.out.println("Running simulate intake");
+            TalonFXSimState simState = main.getSimState();
 
-        // set the supply voltage of the TalonFX
-        simState.setSupplyVoltage(RobotController.getBatteryVoltage());
+            // set the supply voltage of the TalonFX
+            simState.setSupplyVoltage(RobotController.getBatteryVoltage());
 
-        // use the motor voltage to calculate new position and velocity
-        // using WPILib's DCMotorSim class for physics simulation
-        mainSim.setInputVoltage(simState.getMotorVoltageMeasure().in(Volts));
-        mainSim.update(0.020); // assume 20 ms loop time
+            // use the motor voltage to calculate new position and velocity
+            // using WPILib's DCMotorSim class for physics simulation
+            mainSim.setInputVoltage(simState.getMotorVoltageMeasure().in(Volts));
+            mainSim.update(0.020); // assume 20 ms loop time
 
-        // apply the new rotor position and velocity to the TalonFX;
-        // note that this is rotor position/velocity (before gear ratio), but
-        // DCMotorSim returns mechanism position/velocity (after gear ratio)
-        simState.setRawRotorPosition(mainSim.getAngularPosition().times(Constants.Intake.GEAR_RATIO));
-        simState.setRotorVelocity(mainSim.getAngularVelocity().times(Constants.Intake.GEAR_RATIO));
+            // apply the new rotor position and velocity to the TalonFX;
+            // note that this is rotor position/velocity (before gear ratio), but
+            // DCMotorSim returns mechanism position/velocity (after gear ratio)
+            simState.setRawRotorPosition(mainSim.getAngularPosition().times(Constants.Intake.GEAR_RATIO));
+            simState.setRotorVelocity(mainSim.getAngularVelocity().times(Constants.Intake.GEAR_RATIO));
+        }
     }
     
     /*

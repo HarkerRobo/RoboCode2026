@@ -31,6 +31,8 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
+import frc.robot.Robot;
+import frc.robot.RobotContainer;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.subsystems.Modules.TunerSwerveDrivetrain;
 
@@ -150,7 +152,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     {
         super(drivetrainConstants, modules);
         configureAutoBuilder();
-        if (Utils.isSimulation()) 
+        if (RobotContainer.simulateDrivetrain || Robot.isSimulation()) 
         {
             startSimThread();
         }
@@ -179,7 +181,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     {
         super(drivetrainConstants, odometryUpdateFrequency, modules);
         configureAutoBuilder();
-        if (Utils.isSimulation()) 
+        if (RobotContainer.simulateDrivetrain || Robot.isSimulation()) 
         {
             startSimThread();
         }
@@ -214,7 +216,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     {
         super(drivetrainConstants, odometryUpdateFrequency, odometryStandardDeviation, visionStandardDeviation, modules);
         configureAutoBuilder();
-        if (Utils.isSimulation()) 
+        if (RobotContainer.simulateDrivetrain || Robot.isSimulation()) 
         {
             startSimThread();
         }

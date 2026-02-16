@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Robot;
+import frc.robot.RobotContainer;
 
 /**
  * This class controls the powering of the flywheels to propel the fuel
@@ -51,14 +52,14 @@ public class Shooter extends SubsystemBase
 
     private Shooter()
     {
-        leftMaster = new TalonFX(Constants.Shooter.LEFT_MASTER_ID);
-        leftFollower = new TalonFX(Constants.Shooter.LEFT_FOLLOWER_ID);
-        rightMaster = new TalonFX(Constants.Shooter.RIGHT_MASTER_ID);
-        rightFollower = new TalonFX(Constants.Shooter.RIGHT_FOLLOWER_ID);
+        leftMaster = new TalonFX((RobotContainer.disableShooter ? 100 : 0) + Constants.Shooter.LEFT_MASTER_ID);
+        leftFollower = new TalonFX((RobotContainer.disableShooter ? 100 : 0) +Constants.Shooter.LEFT_FOLLOWER_ID);
+        rightMaster = new TalonFX((RobotContainer.disableShooter ? 100 : 0) + Constants.Shooter.RIGHT_MASTER_ID);
+        rightFollower = new TalonFX((RobotContainer.disableShooter ? 100 : 0) +Constants.Shooter.RIGHT_FOLLOWER_ID);
 
         config();
         
-        if (Robot.isSimulation())
+        if (RobotContainer.simulateShooter)
         {
             leftMaster.getSimState().Orientation = Constants.Shooter.MECHANICAL_ORIENTATION;
             leftMaster.getSimState().setMotorType(TalonFXSimState.MotorType.KrakenX60);
@@ -75,7 +76,7 @@ public class Shooter extends SubsystemBase
 
         TalonFXConfiguration config = new TalonFXConfiguration();
 
-        if (Robot.isReal())
+        if (RobotContainer.simulateShooter)
         {
             config.CurrentLimits.StatorCurrentLimit = Constants.Shooter.STATOR_CURRENT_LIMIT;
             config.CurrentLimits.StatorCurrentLimitEnable = true;
@@ -163,40 +164,42 @@ public class Shooter extends SubsystemBase
     }
     
     @Override
-    public void simulationPeriodic ()
+    public void periodic ()
     {
-        TalonFXSimState leftSimState = leftMaster.getSimState();
+        if (RobotContainer.simulateShooter)
+        {
+            TalonFXSimState leftSimState = leftMaster.getSimState();
 
-        // set the supply voltage of the TalonFX
-        leftSimState.setSupplyVoltage(RobotController.getBatteryVoltage());
+            // set the supply voltage of the TalonFX
+            leftSimState.setSupplyVoltage(RobotController.getBatteryVoltage());
 
-        // use the motor voltage to calculate new position and velocity
-        // using WPILib's DCMotorSim class for physics simulation
-        leftSim.setInputVoltage(leftSimState.getMotorVoltageMeasure().in(Volts));
-        leftSim.update(0.020); // assume 20 ms loop time
+            // use the motor voltage to calculate new position and velocity
+            // using WPILib's DCMotorSim class for physics simulation
+            leftSim.setInputVoltage(leftSimState.getMotorVoltageMeasure().in(Volts));
+            leftSim.update(0.020); // assume 20 ms loop time
 
-        // apply the new rotor position and velocity to the TalonFX;
-        // note that this is rotor position/velocity (before gear ratio), but
-        // DCMotorSim returns mechanism position/velocity (after gear ratio)
-        leftSimState.setRawRotorPosition(leftSim.getAngularPosition().times(Constants.Shooter.GEAR_RATIO));
-        leftSimState.setRotorVelocity(leftSim.getAngularVelocity().times(Constants.Shooter.GEAR_RATIO));
+            // apply the new rotor position and velocity to the TalonFX;
+            // note that this is rotor position/velocity (before gear ratio), but
+            // DCMotorSim returns mechanism position/velocity (after gear ratio)
+            leftSimState.setRawRotorPosition(leftSim.getAngularPosition().times(Constants.Shooter.GEAR_RATIO));
+            leftSimState.setRotorVelocity(leftSim.getAngularVelocity().times(Constants.Shooter.GEAR_RATIO));
 
+            TalonFXSimState rightSimState = rightMaster.getSimState();
 
-        TalonFXSimState rightSimState = rightMaster.getSimState();
+            // set the supply voltage of the TalonFX
+            rightSimState.setSupplyVoltage(RobotController.getBatteryVoltage());
 
-        // set the supply voltage of the TalonFX
-        rightSimState.setSupplyVoltage(RobotController.getBatteryVoltage());
+            // use the motor voltage to calculate new position and velocity
+            // using WPILib's DCMotorSim class for physics simulation
+            rightSim.setInputVoltage(rightSimState.getMotorVoltageMeasure().in(Volts));
+            rightSim.update(0.020); // assume 20 ms loop time
 
-        // use the motor voltage to calculate new position and velocity
-        // using WPILib's DCMotorSim class for physics simulation
-        rightSim.setInputVoltage(rightSimState.getMotorVoltageMeasure().in(Volts));
-        rightSim.update(0.020); // assume 20 ms loop time
-
-        // apply the new rotor position and velocity to the TalonFX;
-        // note that this is rotor position/velocity (before gear ratio), but
-        // DCMotorSim returns mechanism position/velocity (after gear ratio)
-        rightSimState.setRawRotorPosition(rightSim.getAngularPosition().times(Constants.Shooter.GEAR_RATIO));
-        rightSimState.setRotorVelocity(rightSim.getAngularVelocity().times(Constants.Shooter.GEAR_RATIO));
+            // apply the new rotor position and velocity to the TalonFX;
+            // note that this is rotor position/velocity (before gear ratio), but
+            // DCMotorSim returns mechanism position/velocity (after gear ratio)
+            rightSimState.setRawRotorPosition(rightSim.getAngularPosition().times(Constants.Shooter.GEAR_RATIO));
+            rightSimState.setRotorVelocity(rightSim.getAngularVelocity().times(Constants.Shooter.GEAR_RATIO));
+        }
     }
     
     private SysIdRoutine leftSysId = new SysIdRoutine(

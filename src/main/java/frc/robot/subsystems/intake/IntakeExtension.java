@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Robot;
+import frc.robot.RobotContainer;
 
 public class IntakeExtension extends SubsystemBase 
 {
@@ -33,10 +34,10 @@ public class IntakeExtension extends SubsystemBase
 
     private IntakeExtension()
     {
-        motor = new TalonFX(Constants.IntakeExtension.ID);
+        motor = new TalonFX((RobotContainer.disableIntakeExtension ? 100 : 0) + Constants.IntakeExtension.ID);
         config();
         
-        if (Robot.isSimulation())
+        if (RobotContainer.simulateIntakeExtension)
         {
             motor.getSimState().Orientation = Constants.IntakeExtension.MECHANICAL_ORIENTATION;
             motor.getSimState().setMotorType(TalonFXSimState.MotorType.KrakenX60);
@@ -108,27 +109,29 @@ public class IntakeExtension extends SubsystemBase
     }
     
     @Override
-    public void simulationPeriodic ()
+    public void periodic ()
     {
-        TalonFXSimState simState = motor.getSimState();
+        if (RobotContainer.simulateIntakeExtension)
+        {
+            TalonFXSimState simState = motor.getSimState();
 
-        // set the supply voltage of the TalonFX
-        simState.setSupplyVoltage(RobotController.getBatteryVoltage());
+            // set the supply voltage of the TalonFX
+            simState.setSupplyVoltage(RobotController.getBatteryVoltage());
 
-        // get the motor voltage of the TalonFX
-        Voltage elevatorMotorVoltage = simState.getMotorVoltageMeasure();
+            // get the motor voltage of the TalonFX
+            Voltage elevatorMotorVoltage = simState.getMotorVoltageMeasure();
 
-        // use the motor voltage to calculate new position and velocity
-        // using WPILib's DCMotorSim class for physics simulation
-        sim.setInputVoltage(elevatorMotorVoltage.in(Volts));
-        sim.update(0.020); // assume 20 ms loop time
+            // use the motor voltage to calculate new position and velocity
+            // using WPILib's DCMotorSim class for physics simulation
+            sim.setInputVoltage(elevatorMotorVoltage.in(Volts));
+            sim.update(0.020); // assume 20 ms loop time
 
-        // apply the new rotor position and velocity to the TalonFX;
-        // note that this is rotor position/velocity (before gear ratio), but
-        // DCMotorSim returns mechanism position/velocity (after gear ratio)
-        simState.setRawRotorPosition(sim.getPositionMeters() * Constants.IntakeExtension.GEAR_RATIO);
-        simState.setRotorVelocity(sim.getVelocityMetersPerSecond() * Constants.IntakeExtension.GEAR_RATIO);
-        
+            // apply the new rotor position and velocity to the TalonFX;
+            // note that this is rotor position/velocity (before gear ratio), but
+            // DCMotorSim returns mechanism position/velocity (after gear ratio)
+            simState.setRawRotorPosition(sim.getPositionMeters() * Constants.IntakeExtension.GEAR_RATIO);
+            simState.setRotorVelocity(sim.getVelocityMetersPerSecond() * Constants.IntakeExtension.GEAR_RATIO);
+        }
     }
     
     /*

@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Robot;
+import frc.robot.RobotContainer;
 
 /**
  * 
@@ -60,12 +61,12 @@ public class Hood extends SubsystemBase
 
     private Hood()
     {
-        master = new TalonFX(Constants.Hood.MASTER_ID);
-        follower = new TalonFX(Constants.Hood.FOLLOWER_ID);
+        master = new TalonFX((RobotContainer.disableHood ? 100 : 0) + Constants.Hood.MASTER_ID);
+        follower = new TalonFX((RobotContainer.disableHood ? 100 : 0) + Constants.Hood.FOLLOWER_ID);
 
         config();
 
-        if (Robot.isSimulation())
+        if (RobotContainer.simulateHood)
         {
             TalonFXSimState simState = master.getSimState();
             simState.Orientation = Constants.Hood.MECHANICAL_ORIENTATION;
@@ -79,7 +80,7 @@ public class Hood extends SubsystemBase
         follower.clearStickyFaults();
         TalonFXConfiguration config = new TalonFXConfiguration();
 
-        if (Robot.isReal())
+        if (!RobotContainer.simulateHood)
         {
             config.CurrentLimits.StatorCurrentLimit = Constants.Hood.STATOR_CURRENT_LIMIT;
             config.CurrentLimits.StatorCurrentLimitEnable = true;
@@ -172,26 +173,31 @@ public class Hood extends SubsystemBase
 
 
     @Override
-    public void simulationPeriodic()
+    public void periodic()
     {
-        TalonFXSimState simState = master.getSimState();
+        if (RobotContainer.simulateHood)
+        {
+            TalonFXSimState simState = master.getSimState();
 
-        // set the supply voltage of the TalonFX
-        simState.setSupplyVoltage(RobotController.getBatteryVoltage());
+            // set the supply voltage of the TalonFX
+            simState.setSupplyVoltage(RobotController.getBatteryVoltage());
 
-        // get the motor voltage of the TalonFX
-        Voltage motorVoltage = simState.getMotorVoltageMeasure();
+            // get the motor voltage of the TalonFX
+            Voltage motorVoltage = simState.getMotorVoltageMeasure();
 
-        // use the motor voltage to calculate new position and velocity
-        // using WPILib's DCMotorSim class for physics simulation
-        motorSimModel.setInputVoltage(motorVoltage.in(Volts));
-        motorSimModel.update(0.020); // assume 20 ms loop time
+            // use the motor voltage to calculate new position and velocity
+            // using WPILib's DCMotorSim class for physics simulation
+            motorSimModel.setInputVoltage(motorVoltage.in(Volts));
+            motorSimModel.update(0.020); // assume 20 ms loop time
 
-        // apply the new rotor position and velocity to the TalonFX;
-        // note that this is rotor position/velocity (before gear ratio), but
-        // DCMotorSim returns mechanism position/velocity (after gear ratio)
-        simState.setRawRotorPosition(Units.radiansToRotations(motorSimModel.getAngleRads()) * Constants.Hood.GEAR_RATIO);
-        simState.setRotorVelocity(Units.radiansToRotations(motorSimModel.getVelocityRadPerSec()) * Constants.Hood.GEAR_RATIO);
+            // apply the new rotor position and velocity to the TalonFX;
+            // note that this is rotor position/velocity (before gear ratio), but
+            // DCMotorSim returns mechanism position/velocity (after gear ratio)
+            simState.setRawRotorPosition(
+                    Units.radiansToRotations(motorSimModel.getAngleRads()) * Constants.Hood.GEAR_RATIO);
+            simState.setRotorVelocity(
+                    Units.radiansToRotations(motorSimModel.getVelocityRadPerSec()) * Constants.Hood.GEAR_RATIO);
+        }
     }
 
     

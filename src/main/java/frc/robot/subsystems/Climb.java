@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Robot;
+import frc.robot.RobotContainer;
 
 import static edu.wpi.first.units.Units.*;
 
@@ -45,9 +46,13 @@ public class Climb extends SubsystemBase
 
     private Climb() 
     {
+        targetPosition = Rotations.of(0);
+        elevator = new TalonFX(/*(RobotContainer.disableClimb ? 100 : 0)*/ + Constants.Climb.ELEVATOR_ID);
+        climb = new TalonFX(/*(RobotContainer.disableClimb ? 100 : 0)*/ + Constants.Climb.HINGE_ID);
+
         config();
         
-        if (Robot.isSimulation())
+        if (RobotContainer.simulateClimb)
         {
             TalonFXSimState elevatorSimState = elevator.getSimState();
             elevatorSimState.Orientation = Constants.Climb.ELEVATOR_MECHANICAL_ORIENTATION;
@@ -62,9 +67,6 @@ public class Climb extends SubsystemBase
     //configurates the subsystem
     private void config() 
     {
-        targetPosition = Rotations.of(0);
-        elevator = new TalonFX(Constants.Climb.ELEVATOR_ID);
-        climb = new TalonFX(Constants.Climb.HINGE_ID);
 
         elevator.clearStickyFaults();
         climb.clearStickyFaults();
@@ -183,46 +185,51 @@ public class Climb extends SubsystemBase
     
     
     @Override
-    public void simulationPeriodic()
+    public void periodic()
     {
-        TalonFXSimState elevatorSimState = elevator.getSimState();
+        if (RobotContainer.simulateClimb)
+        {
+            TalonFXSimState elevatorSimState = elevator.getSimState();
 
-        // set the supply voltage of the TalonFX
-        elevatorSimState.setSupplyVoltage(RobotController.getBatteryVoltage());
+            // set the supply voltage of the TalonFX
+            elevatorSimState.setSupplyVoltage(RobotController.getBatteryVoltage());
 
-        // get the motor voltage of the TalonFX
-        Voltage elevatorMotorVoltage = elevatorSimState.getMotorVoltageMeasure();
+            // get the motor voltage of the TalonFX
+            Voltage elevatorMotorVoltage = elevatorSimState.getMotorVoltageMeasure();
 
-        // use the motor voltage to calculate new position and velocity
-        // using WPILib's DCMotorSim class for physics simulation
-        elevatorSim.setInputVoltage(elevatorMotorVoltage.in(Volts));
-        elevatorSim.update(0.020); // assume 20 ms loop time
+            // use the motor voltage to calculate new position and velocity
+            // using WPILib's DCMotorSim class for physics simulation
+            elevatorSim.setInputVoltage(elevatorMotorVoltage.in(Volts));
+            elevatorSim.update(0.020); // assume 20 ms loop time
 
-        // apply the new rotor position and velocity to the TalonFX;
-        // note that this is rotor position/velocity (before gear ratio), but
-        // DCMotorSim returns mechanism position/velocity (after gear ratio)
-        elevatorSimState.setRawRotorPosition(elevatorSim.getPositionMeters() * Constants.Climb.ELEVATOR_GEAR_RATIO);
-        elevatorSimState.setRotorVelocity(elevatorSim.getVelocityMetersPerSecond() * Constants.Climb.ELEVATOR_GEAR_RATIO);
-        
+            // apply the new rotor position and velocity to the TalonFX;
+            // note that this is rotor position/velocity (before gear ratio), but
+            // DCMotorSim returns mechanism position/velocity (after gear ratio)
+            elevatorSimState.setRawRotorPosition(elevatorSim.getPositionMeters() * Constants.Climb.ELEVATOR_GEAR_RATIO);
+            elevatorSimState
+                    .setRotorVelocity(elevatorSim.getVelocityMetersPerSecond() * Constants.Climb.ELEVATOR_GEAR_RATIO);
 
-        TalonFXSimState climbSimState = climb.getSimState();
+            TalonFXSimState climbSimState = climb.getSimState();
 
-        // set the supply voltage of the TalonFX
-        climbSimState.setSupplyVoltage(RobotController.getBatteryVoltage());
+            // set the supply voltage of the TalonFX
+            climbSimState.setSupplyVoltage(RobotController.getBatteryVoltage());
 
-        // get the motor voltage of the TalonFX
-        Voltage climbMotorVoltage = climbSimState.getMotorVoltageMeasure();
+            // get the motor voltage of the TalonFX
+            Voltage climbMotorVoltage = climbSimState.getMotorVoltageMeasure();
 
-        // use the motor voltage to calculate new position and velocity
-        // using WPILib's DCMotorSim class for physics simulation
-        climbSim.setInputVoltage(climbMotorVoltage.in(Volts));
-        climbSim.update(0.020); // assume 20 ms loop time
+            // use the motor voltage to calculate new position and velocity
+            // using WPILib's DCMotorSim class for physics simulation
+            climbSim.setInputVoltage(climbMotorVoltage.in(Volts));
+            climbSim.update(0.020); // assume 20 ms loop time
 
-        // apply the new rotor position and velocity to the TalonFX;
-        // note that this is rotor position/velocity (before gear ratio), but
-        // DCMotorSim returns mechanism position/velocity (after gear ratio)
-        climbSimState.setRawRotorPosition(climbSim.getAngularPosition().in(Rotations) * Constants.Climb.CLIMB_GEAR_RATIO);
-        climbSimState.setRotorVelocity(climbSim.getAngularVelocity().in(Rotations.per(Second)) * Constants.Climb.CLIMB_GEAR_RATIO);
+            // apply the new rotor position and velocity to the TalonFX;
+            // note that this is rotor position/velocity (before gear ratio), but
+            // DCMotorSim returns mechanism position/velocity (after gear ratio)
+            climbSimState.setRawRotorPosition(
+                    climbSim.getAngularPosition().in(Rotations) * Constants.Climb.CLIMB_GEAR_RATIO);
+            climbSimState.setRotorVelocity(
+                    climbSim.getAngularVelocity().in(Rotations.per(Second)) * Constants.Climb.CLIMB_GEAR_RATIO);
+        }
     }
     
     private SysIdRoutine sysId = new SysIdRoutine(

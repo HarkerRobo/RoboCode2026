@@ -85,7 +85,7 @@ public class RobotContainer
     private boolean isSlow = false;
     public boolean mostRecentAim = false; // false = shoot; true = pass
     private boolean intakeTriggered = false; // true if intake has been enabled
-    private boolean intakeExtended = false; //true if intake and hopper have been extended
+    private boolean intakeExtended = true; //true if intake and hopper have been extended // TODO reverse
     public double pitchOffset = 0.0;
     private double flywheelOffset = 0.0;
   
@@ -93,7 +93,7 @@ public class RobotContainer
   
     public static enum PassDirection {Left, Right, Automatic};
 
-    private PassDirection direction = PassDirection.Left; // Default
+    private PassDirection direction = PassDirection.Automatic; // Default
         
     // tested in sim
     private Supplier<Command> stow = ()->Commands.runOnce(()->CommandScheduler.getInstance().cancel(commands.toArray(new Command[0]))).andThen(
@@ -128,6 +128,7 @@ public class RobotContainer
             .andThen(new IndexerFullSpeed())
             .withName("HardShoot");
 
+
     public void setPassDirection(PassDirection newDirection) {
         direction = newDirection;
     }
@@ -136,22 +137,50 @@ public class RobotContainer
         return direction;
     }
 
-    public Command SetPassDirection(PassDirection direct) {
-        return new Command() {
-            public void execute() {setPassDirection(direct);}
-        };
-    }
+    public static boolean simulateIntake = false;
+    public static boolean simulateIntakeExtension = false;
+    public static boolean simulateClimb = false;
+    public static boolean simulateDrivetrain = false;
+    public static boolean simulateHood = false;
+    public static boolean simulateHopper = false;
+    public static boolean simulateIndexer = true;
+    public static boolean simulateShooter = false;
+    public static boolean simulateShooterIndexer = false;
+
+    public static boolean disableIntake = false;
+    public static boolean disableIntakeExtension = false;
+    public static boolean disableClimb = false;
+    public static boolean disableDrivetrain = false;
+    public static boolean disableHood = false;
+    public static boolean disableHopper = false;
+    public static boolean disableIndexer = false;
+    public static boolean disableShooter = false;
+    public static boolean disableShooterIndexer = false;
+
   
     public boolean onLeftSize()
     {
-      if (direction == PassDirection.Left) return true;
-      if (direction == PassDirection.Right) return false;
-      return Util.onLeftSide(drivetrain);
+      if (direction == PassDirection.Left) return false; // not a bug
+      if (direction == PassDirection.Right) return true;
+      return (Util.onLeftSide(drivetrain));
     }
   
         
     public RobotContainer() 
     {
+        if (Robot.isSimulation())
+        {
+            simulateIntake = true;
+            simulateIntakeExtension = true;
+            simulateClimb = true;
+            simulateDrivetrain = true;
+            simulateHood = true;
+            simulateHopper = true;
+            simulateIndexer = true;
+            simulateShooter = true;
+            simulateShooterIndexer = true;
+        }
+
         testCommandChooser.setDefaultOption("None", Commands.none());
         testCommandChooser.addOption("Climb/ClimbToLevel[1]", new ClimbToLevel(1));
         testCommandChooser.addOption("Climb/ClimbToLevel[2]", new ClimbToLevel(2));
@@ -331,18 +360,22 @@ public class RobotContainer
         
         // tested in sim
         driver.button(7) // home button/left paddle
-            .onTrue(track(new ShooterTargetSpeed(()->Util.calculateShootVelocity(drivetrain) + flywheelOffset).until(()->Shooter.getInstance().readyToShoot())
+            .onTrue(track(
+                Commands.runOnce(()->mostRecentAim = false)
+            .andThen(
+                new ShooterTargetSpeed(()->Util.calculateShootVelocity(drivetrain) + flywheelOffset).until(()->Shooter.getInstance().readyToShoot()))
             .andThen(
                 Commands.runOnce(()->driver.setRumble(RumbleType.kBothRumble, 1.0)))
-                .andThen(Commands.runOnce(()->mostRecentAim = false))
                 .withName("RevShoot")));
         
         // tested in sim
         driver.button(8) // menu button/right paddle
-            .onTrue(track(new ShooterTargetSpeed(()->Util.calculatePassVelocity(drivetrain) + flywheelOffset).until(()->Shooter.getInstance().readyToShoot())
+            .onTrue(track(
+            Commands.runOnce(()->mostRecentAim = true)
+            .andThen(
+                new ShooterTargetSpeed(()->Util.calculatePassVelocity(drivetrain) + flywheelOffset).until(()->Shooter.getInstance().readyToShoot()))
             .andThen(
                 Commands.runOnce(()->driver.setRumble(RumbleType.kBothRumble, 1.0)))
-                .andThen(Commands.runOnce(()->mostRecentAim = true))
                 .withName("RevPass")));
 
         // tested in sim
@@ -398,8 +431,16 @@ public class RobotContainer
         operator.leftTrigger().onTrue(new EjectIntake());
         // operator.rightTrigger().onTrue();    Soft Pass
 
-        operator.leftBumper().onTrue(SetPassDirection(PassDirection.Left));
-        operator.rightBumper().onTrue(SetPassDirection(PassDirection.Right));
+        operator.leftBumper().onTrue(Commands.runOnce(()->
+        {
+            if (direction == PassDirection.Left) direction = PassDirection.Automatic;
+            else direction = PassDirection.Left;
+        }));
+        operator.rightBumper().onTrue(Commands.runOnce(()->
+        {
+            if (direction == PassDirection.Right) direction = PassDirection.Automatic;
+            else direction = PassDirection.Right;
+        }));
 
         operator.y().onTrue(new AimToAngle(Constants.Hood.MAX_ANGLE));
         operator.x().onTrue(new RetractIntake()

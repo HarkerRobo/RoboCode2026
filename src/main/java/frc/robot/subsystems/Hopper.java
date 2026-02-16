@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Robot;
+import frc.robot.RobotContainer;
 
 /**
  * controls the balls from intake to indexer
@@ -39,9 +40,9 @@ public class Hopper extends SubsystemBase
 
     private Hopper()
     {
-        master = new TalonFX(Constants.Hopper.ID);
+        master = new TalonFX((RobotContainer.disableHopper ? 100 : 0) + Constants.Hopper.ID);
         
-        if (Robot.isSimulation())
+        if (RobotContainer.simulateHopper)
         {
             TalonFXSimState simState = master.getSimState();
             simState.Orientation = Constants.Hopper.MECHANICAL_ORIENTATION;
@@ -172,26 +173,29 @@ public class Hopper extends SubsystemBase
 
     
     @Override
-    public void simulationPeriodic()
+    public void periodic()
     {
-        TalonFXSimState simState = master.getSimState();
+        if (RobotContainer.simulateHopper)
+        {
+            TalonFXSimState simState = master.getSimState();
 
-        // set the supply voltage of the TalonFX
-        simState.setSupplyVoltage(RobotController.getBatteryVoltage());
+            // set the supply voltage of the TalonFX
+            simState.setSupplyVoltage(RobotController.getBatteryVoltage());
 
-        // get the motor voltage of the TalonFX
-        Voltage motorVoltage = simState.getMotorVoltageMeasure();
+            // get the motor voltage of the TalonFX
+            Voltage motorVoltage = simState.getMotorVoltageMeasure();
 
-        // use the motor voltage to calculate new position and velocity
-        // using WPILib's DCMotorSim class for physics simulation
-        sim.setInputVoltage(motorVoltage.in(Volts));
-        sim.update(0.020); // assume 20 ms loop time
+            // use the motor voltage to calculate new position and velocity
+            // using WPILib's DCMotorSim class for physics simulation
+            sim.setInputVoltage(motorVoltage.in(Volts));
+            sim.update(0.020); // assume 20 ms loop time
 
-        // apply the new rotor position and velocity to the TalonFX;
-        // note that this is rotor position/velocity (before gear ratio), but
-        // DCMotorSim returns mechanism position/velocity (after gear ratio)
-        simState.setRawRotorPosition(sim.getPositionMeters() * Constants.Hopper.GEAR_RATIO);
-        simState.setRotorVelocity(sim.getVelocityMetersPerSecond() * Constants.Hopper.GEAR_RATIO);
+            // apply the new rotor position and velocity to the TalonFX;
+            // note that this is rotor position/velocity (before gear ratio), but
+            // DCMotorSim returns mechanism position/velocity (after gear ratio)
+            simState.setRawRotorPosition(sim.getPositionMeters() * Constants.Hopper.GEAR_RATIO);
+            simState.setRotorVelocity(sim.getVelocityMetersPerSecond() * Constants.Hopper.GEAR_RATIO);
+        }
     }
     
     /*

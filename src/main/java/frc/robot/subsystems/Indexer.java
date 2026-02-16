@@ -11,6 +11,7 @@ import static edu.wpi.first.units.Units.*;
 
 import frc.robot.Constants;
 import frc.robot.Robot;
+import frc.robot.RobotContainer;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
@@ -33,10 +34,10 @@ public class Indexer extends SubsystemBase
         DCMotor.getKrakenX60Foc(1));
 
     private Indexer() { 
-        motor = new TalonFX(Constants.Indexer.ID);
+        motor = new TalonFX((RobotContainer.disableIndexer ? 100 : 0) + Constants.Indexer.ID);
         config();
         
-        if (Robot.isSimulation())
+        if (RobotContainer.simulateIndexer)
         {
             motor.getSimState().Orientation = Constants.Indexer.MECHANICAL_ORIENTATION;
             motor.getSimState().setMotorType(TalonFXSimState.MotorType.KrakenX60);
@@ -106,23 +107,26 @@ public class Indexer extends SubsystemBase
     }
     
     @Override
-    public void simulationPeriodic ()
+    public void periodic ()
     {
-        TalonFXSimState simState = motor.getSimState();
+        if (RobotContainer.simulateIndexer)
+        {
+            TalonFXSimState simState = motor.getSimState();
 
-        // set the supply voltage of the TalonFX
-        simState.setSupplyVoltage(RobotController.getBatteryVoltage());
+            // set the supply voltage of the TalonFX
+            simState.setSupplyVoltage(RobotController.getBatteryVoltage());
 
-        // use the motor voltage to calculate new position and velocity
-        // using WPILib's DCMotorSim class for physics simulation
-        sim.setInputVoltage(simState.getMotorVoltageMeasure().in(Volts));
-        sim.update(0.020); // assume 20 ms loop time
+            // use the motor voltage to calculate new position and velocity
+            // using WPILib's DCMotorSim class for physics simulation
+            sim.setInputVoltage(simState.getMotorVoltageMeasure().in(Volts));
+            sim.update(0.020); // assume 20 ms loop time
 
-        // apply the new rotor position and velocity to the TalonFX;
-        // note that this is rotor position/velocity (before gear ratio), but
-        // DCMotorSim returns mechanism position/velocity (after gear ratio)
-        simState.setRawRotorPosition(sim.getAngularPosition().times(Constants.Indexer.GEAR_RATIO));
-        simState.setRotorVelocity(sim.getAngularVelocity().times(Constants.Indexer.GEAR_RATIO));
+            // apply the new rotor position and velocity to the TalonFX;
+            // note that this is rotor position/velocity (before gear ratio), but
+            // DCMotorSim returns mechanism position/velocity (after gear ratio)
+            simState.setRawRotorPosition(sim.getAngularPosition().times(Constants.Indexer.GEAR_RATIO));
+            simState.setRotorVelocity(sim.getAngularVelocity().times(Constants.Indexer.GEAR_RATIO));
+        }
     }
     
     private SysIdRoutine sysId = new SysIdRoutine(
