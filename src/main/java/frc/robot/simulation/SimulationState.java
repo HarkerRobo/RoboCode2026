@@ -1,11 +1,14 @@
 package frc.robot.simulation;
 
+import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.util.Util;
 
 import static frc.robot.Constants.Simulation.*;
 
 
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.RobotController;
@@ -198,6 +201,11 @@ public class SimulationState
         long now = RobotController.getFPGATime();
         double dt = (now - lastTime) * 1e-6;
 
+        Pose2d robotPose = Robot.instance.robotContainer.drivetrain.samplePoseAt(now).get();
+        double RobotX = robotPose.getTranslation().getX();
+        double RobotY = robotPose.getTranslation().getY();
+        double RobotTheta = robotPose.getRotation().getRadians();
+
         fuelsInRobot = 0;
         fuelsInBlueHub = 0;
         fuelsInRedHub = 0;
@@ -229,6 +237,11 @@ public class SimulationState
                     if (lastTime != 0)
                     {
                         BallPhysics.step(fuelPositions[i].state, BALL_CONSTANTS, dt);
+                    }
+
+                    if (fuelPositions[i].state.pose.getY() - RobotY - (fuelPositions[i].state.pose.getX() - RobotX - (Constants.ROBOT_DIAMETER / (2 * Math.sin(RobotTheta))))/Math.tan(RobotTheta) <= 0.1) //Elijah's Formula (will double check with him)
+                    {
+                        fuelPositions[i].location = FieldLocation.Robot;
                     }
 
                     if (Math.abs(fuelPositions[i].state.pose.getZ() - HUB_INTAKE_HEIGHT) <= FUEL_DIAMETER && Util.within(HUB_CONTENTS, fuelPositions[i].state.pose.getTranslation()))

@@ -30,6 +30,7 @@ import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.ShooterIndexer;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeExtension;
 import frc.robot.subsystems.Climb;
@@ -107,8 +108,8 @@ public class Telemetry
     private NetworkTable indexer = table.getSubTable("Indexer");
     private StringPublisher indexerCommand = indexer.getStringTopic("command").publish();
     private DoublePublisher indexerVelocity = indexer.getDoubleTopic("velocity (rps)").publish();
-    private DoublePublisher indexerVoltage = indexer.getDoubleTopic("indexer voltage").publish();
-    //velocity, voltage, position, target 
+    private DoublePublisher indexerVoltage = indexer.getDoubleTopic("voltage (V)").publish();
+    
     private NetworkTable hopper = table.getSubTable("Hopper");
     private StringPublisher hopperCommand = hopper.getStringTopic("command").publish();
     private DoublePublisher hopperVelocity = hopper.getDoubleTopic("velocity (rot per s)").publish();
@@ -116,6 +117,10 @@ public class Telemetry
     private DoublePublisher hopperPosition = hopper.getDoubleTopic("current position (rotations)").publish();
     // private DoublePublisher hopperTarget = hopper.getDoubleTopic("target position (rotations)").publish();
 
+    private NetworkTable shooterIndexer = table.getSubTable("ShooterIndexer");
+    private StringPublisher shooterIndexerCommand = shooterIndexer.getStringTopic("command").publish();
+    private DoublePublisher shooterIndexerVelocity = shooterIndexer.getDoubleTopic("velocity (rps)").publish();
+    private DoublePublisher shooterIndexerVoltage = shooterIndexer.getDoubleTopic("voltage (V)").publish();
     
 
     /* Robot swerve drive state */
@@ -240,6 +245,11 @@ public class Telemetry
         this.indexerCommand.set(indexerCommand == null ? "" : indexerCommand.getName());
         indexerVelocity.set(Indexer.getInstance().getVelocity().in(RotationsPerSecond));
         indexerVoltage.set(Indexer.getInstance().getVoltage().in(Volts));
+
+        Command shooterIndexerCommand = ShooterIndexer.getInstance().getCurrentCommand();
+        this.shooterIndexerCommand.set(shooterIndexerCommand == null ? "" : shooterIndexerCommand.getName());
+        shooterIndexerVelocity.set(ShooterIndexer.getInstance().getVelocity().in(RotationsPerSecond));
+        shooterIndexerVoltage.set(ShooterIndexer.getInstance().getVoltage().in(Volts));
 
 
         /*

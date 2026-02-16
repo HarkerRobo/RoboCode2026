@@ -3,7 +3,8 @@
   "robotLength": 0.9,
   "holonomicMode": true,
   "pathFolders": [
-    "Ferrying"
+    "Ferrying",
+    "DepotClimbLeft"
   ],
   "autoFolders": [],
   "defaultMaxVel": 3.0,
