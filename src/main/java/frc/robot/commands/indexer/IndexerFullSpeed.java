@@ -6,7 +6,8 @@ import frc.robot.subsystems.Indexer;
 
 import static edu.wpi.first.units.Units.*;
 
-public class IndexerFullSpeed extends Command{
+public class IndexerFullSpeed extends Command
+{
     
     public IndexerFullSpeed()
     {

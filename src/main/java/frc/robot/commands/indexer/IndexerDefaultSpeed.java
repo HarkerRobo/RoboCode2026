@@ -6,8 +6,8 @@ import frc.robot.subsystems.Indexer;
 
 import static edu.wpi.first.units.Units.*;
 
-public class IndexerDefaultSpeed extends Command{
-    
+public class IndexerDefaultSpeed extends Command
+{
     public IndexerDefaultSpeed() 
     {
         addRequirements(Indexer.getInstance());

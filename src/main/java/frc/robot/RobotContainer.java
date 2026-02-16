@@ -49,6 +49,8 @@ import frc.robot.commands.intake.RetractIntake;
 import frc.robot.commands.intake.RunIntake;
 import frc.robot.commands.shooter.ShooterDefaultSpeed;
 import frc.robot.commands.shooter.ShooterTargetSpeed;
+import frc.robot.commands.shooterindexer.ShooterIndexerDefaultSpeed;
+import frc.robot.commands.shooterindexer.ShooterIndexerFullSpeed;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.util.Util;
@@ -137,6 +139,8 @@ public class RobotContainer
         testCommandChooser.addOption("Shooter/ShooterTargetSpeed[10]", new ShooterTargetSpeed(10.0));
         testCommandChooser.addOption("Shooter/ShooterTargetSpeed[" + Constants.HARDCODE_VELOCITY + "]", new ShooterTargetSpeed(Constants.HARDCODE_VELOCITY));
         testCommandChooser.addOption("Shooter/ShooterDefaultSpeed", new ShooterDefaultSpeed());
+        testCommandChooser.addOption("ShooterIndexer/ShooterIndexerDefaultSpeed", new ShooterIndexerDefaultSpeed());
+        testCommandChooser.addOption("ShooterIndexer/ShooterIndexerFullSpeed", new ShooterIndexerFullSpeed());
 
         SmartDashboard.putData("Test a Command", testCommandChooser);
         SmartDashboard.putData(CommandScheduler.getInstance());
@@ -164,6 +168,7 @@ public class RobotContainer
 
         intake.setDefaultCommand(new DefaultIntake());
         Indexer.getInstance().setDefaultCommand(new IndexerDefaultSpeed());
+        ShooterIndexer.getInstance().setDefaultCommand(new ShooterIndexerDefaultSpeed());
 
         boolean useDebuggingBindings = false; // mainly for sysid or debugging
         boolean useDefaultBindings = false; // in case ever the official controls don't work, use these as a backup to be able to drive around
@@ -183,6 +188,7 @@ public class RobotContainer
 
     private void configureDebugBindings()
     {
+        /*
         driver.button(1).onTrue(Indexer.getInstance().sysIdQuasistatic(Direction.kForward));
         driver.button(2).onTrue(Indexer.getInstance().sysIdQuasistatic(Direction.kReverse));
         driver.button(3).onTrue(Indexer.getInstance().sysIdDynamic(Direction.kForward));
@@ -192,7 +198,7 @@ public class RobotContainer
         driver.povDown().onTrue(Commands.print("POV DOWN"));
         driver.povLeft().onTrue(Commands.print("POV LEFT"));
         driver.povRight().onTrue(Commands.print("POV RIGHT"));
-        
+        */
     }
 
     private void configureDefaultBindings()

@@ -39,7 +39,7 @@ public class Hopper extends SubsystemBase
 
     private Hopper()
     {
-        master = new TalonFX(Constants.Hopper.MOTOR_ID);
+        master = new TalonFX(Constants.Hopper.ID);
         
         if (Robot.isSimulation())
         {
@@ -199,7 +199,7 @@ public class Hopper extends SubsystemBase
         new SysIdRoutine.Config(), 
         new SysIdRoutine.Mechanism((Voltage v)->setVoltage(v),
             (SysIdRoutineLog l)->l
-                .motor("Shooter")
+                .motor("Hopper")
                 .voltage(getVoltage())
                 .angularPosition(master.getPosition().getValue())
                 .angularVelocity(getVelocity()),

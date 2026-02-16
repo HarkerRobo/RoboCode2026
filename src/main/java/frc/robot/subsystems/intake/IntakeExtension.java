@@ -136,7 +136,7 @@ public class IntakeExtension extends SubsystemBase
         new SysIdRoutine.Config(), 
         new SysIdRoutine.Mechanism((Voltage v)->motor.setControl(new VoltageOut(v)),
             (SysIdRoutineLog l)->l
-                .motor("Intake")
+                .motor("IntakeExtension")
                 .voltage(getVoltage())
                 .angularPosition(motor.getPosition().getValue())
                 .angularVelocity(getVelocity()),
