@@ -198,6 +198,11 @@ public class SimulationState
         long now = RobotController.getFPGATime();
         double dt = (now - lastTime) * 1e-6;
 
+        Pose2d robotPose = Robot.getInstance().RobotContainer.drivetrain.samplePoseAt(now);
+        double RobotX = robotPose.getTranslation().getX();
+        double RobotY = robotPose.getTranslation().getY();
+        double RobotTheta = robotPose.getRotation().getRadians();
+
         fuelsInRobot = 0;
         fuelsInBlueHub = 0;
         fuelsInRedHub = 0;
@@ -229,6 +234,11 @@ public class SimulationState
                     if (lastTime != 0)
                     {
                         BallPhysics.step(fuelPositions[i].state, BALL_CONSTANTS, dt);
+                    }
+
+                    if (fuelPositions[i].state.pose.getY() - RobotY - (fuelPositions[i].state.pose.getX() - RobotX - (Constants.ROBOT_DIAMETER / (2 * Math.sin(RobotTheta))))/Math.tan(RobotTheta) <= 0.1) //Elijah's Formula (will double check with him)
+                    {
+                        fuelPositions[i].location = FieldLocation.Robot;
                     }
 
                     if (Math.abs(fuelPositions[i].state.pose.getZ() - HUB_INTAKE_HEIGHT) <= FUEL_DIAMETER && Util.within(HUB_CONTENTS, fuelPositions[i].state.pose.getTranslation()))
