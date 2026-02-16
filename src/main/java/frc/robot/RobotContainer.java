@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.swerve.SwerveModule.*;
+import com.fasterxml.jackson.databind.ser.std.StdKeySerializers.Default;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
@@ -240,15 +241,15 @@ public class RobotContainer
             new ShooterDefaultSpeed()); // because a command instance cannot be scheduled to independent triggers
 
         // tested in sim
-        Command shoot = 
-        new DriveToPose(drivetrain, ()->AlignConstants.HUB)
-            .alongWith(new AimToAngle(()->Util.calculateShootPitch(drivetrain).in(Degrees) + pitchOffset))
-        .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot(Util.calculateShootVelocity(drivetrain)) && Hood.getInstance().readyToShoot()))
-        .andThen(new IndexerFullSpeed()) // load to shoot
-        .finallyDo(()->{
-            CommandScheduler.getInstance().schedule(stow.get());
-        })
-        .withName("Shoot");
+        // Command shoot = 
+        // new DriveToPose(drivetrain, ()->AlignConstants.HUB)
+        //     .alongWith(new AimToAngle(()->Util.calculateShootPitch(drivetrain).in(Degrees) + pitchOffset))
+        // .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot(Util.calculateShootVelocity(drivetrain)) && Hood.getInstance().readyToShoot()))
+        // .andThen(new IndexerFullSpeed()) // load to shoot
+        // .finallyDo(()->{
+        //     CommandScheduler.getInstance().schedule(stow.get());
+        // })
+        // .withName("Shoot");
         
         // tested in sim
         Command pass = 
@@ -263,7 +264,7 @@ public class RobotContainer
         })
         .withName("Pass");
 
-        driver.rightTrigger().and(()->!mostRecentAim).whileTrue(track(shoot));
+        // driver.rightTrigger().and(()->!mostRecentAim).whileTrue(track(shoot));
         driver.rightTrigger().and(()->mostRecentAim).whileTrue(track(pass));
 
         // tested in sim
@@ -276,15 +277,15 @@ public class RobotContainer
                 {
                     intakeTriggered = false;
                     CommandScheduler.getInstance().schedule(
-                        track(new DefaultIntake().withTimeout(0.01).andThen(new RetractIntake().alongWith(new RetractHopper()))
-                        .withName("UndeployIntake")));
+                        track(new DefaultIntake()
+                        .withName("DeactivateIntake")));
                 }
                 else
                 {
                     intakeTriggered = true;
                     CommandScheduler.getInstance().schedule(
-                        track(new ExtendIntake().alongWith(new ExtendHopper()).andThen(new RunIntake())
-                        .withName("DeployIntake")));
+                        track(new RunIntake()
+                        .withName("ActivateIntake")));
                 }
         })));
         
@@ -339,7 +340,7 @@ public class RobotContainer
         // Zero DT
         operator.x().onTrue(
         drivetrain.runOnce(() -> drivetrain.seedFieldCentric())
-                .andThen(drivetrain.runOnce(() -> drivetrain.resetPose(
+                andThen(drivetrain.runOnce(() -> drivetrain.resetPose(
                             (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) ? 
                             FlippingUtil.flipFieldPose(Constants.ZEROING_POSE) : Constants.ZEROING_POSE)))
                 .withName("ZeroDrivetrain"));

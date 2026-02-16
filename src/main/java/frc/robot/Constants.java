@@ -108,7 +108,7 @@ public class Constants
         public static final double STATOR_CURRENT_LIMIT = 90.0;
         public static final double SUPPLY_CURRENT_LIMIT = 90.0;
 
-        public static final double INTAKE_VOLTAGE = 3.0; //TODO
+        public static final double INTAKE_VOLTAGE = 5.8; //TODO
         public static final double DEFAULT_INTAKE_VOLTAGE = 0.0; //TODO
         public static final double EJECT_VOLTAGE = -2.5; //TODO
 
