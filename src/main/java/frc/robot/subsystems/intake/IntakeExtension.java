@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
+import frc.robot.RobotContainer.SubsystemStatus;
 
 public class IntakeExtension extends SubsystemBase 
 {
@@ -34,10 +35,10 @@ public class IntakeExtension extends SubsystemBase
 
     private IntakeExtension()
     {
-        motor = new TalonFX((RobotContainer.disableIntakeExtension ? 14 : 0) + Constants.IntakeExtension.ID);
+        motor = new TalonFX(Constants.IntakeExtension.ID);
         config();
         
-        if (RobotContainer.simulateIntakeExtension)
+        if (isSimulated())
         {
             motor.getSimState().Orientation = Constants.IntakeExtension.MECHANICAL_ORIENTATION;
             motor.getSimState().setMotorType(TalonFXSimState.MotorType.KrakenX60);
@@ -87,17 +88,31 @@ public class IntakeExtension extends SubsystemBase
    
     public void setVoltage (Voltage voltage)
     {
+        if (isDisabled())
+        {
+            System.out.println("Quashing input to IntakeExtension");
+            return;
+        }
         motor.setControl(new VoltageOut(voltage));
     }
 
     public void setVelocity (AngularVelocity velocity)
     {
-        //System.out.println("Velocity set to " + velocity);
+        if (isDisabled())
+        {
+            System.out.println("Quashing input to IntakeExtension");
+            return;
+        }
         motor.setControl(new VelocityVoltage(velocity));
     }
 
     public void setDutyCycle(double velocity) 
     {
+        if (isDisabled())
+        {
+            System.out.println("Quashing input to IntakeExtension");
+            return;
+        }
         motor.setControl(new DutyCycleOut(velocity));
     }
 
@@ -111,7 +126,7 @@ public class IntakeExtension extends SubsystemBase
     @Override
     public void periodic ()
     {
-        if (RobotContainer.simulateIntakeExtension)
+        if (isSimulated())
         {
             TalonFXSimState simState = motor.getSimState();
 
@@ -132,6 +147,16 @@ public class IntakeExtension extends SubsystemBase
             simState.setRawRotorPosition(sim.getPositionMeters() * Constants.IntakeExtension.GEAR_RATIO);
             simState.setRotorVelocity(sim.getVelocityMetersPerSecond() * Constants.IntakeExtension.GEAR_RATIO);
         }
+    }
+    
+    private boolean isSimulated ()
+    {
+        return Robot.instance.robotContainer.getStatus(RobotContainer.INTAKE_EXTENSION_INDEX) == SubsystemStatus.Simulated;
+    }
+    
+    private boolean isDisabled ()
+    {
+        return Robot.instance.robotContainer.getStatus(RobotContainer.INTAKE_EXTENSION_INDEX) == SubsystemStatus.Disabled;
     }
     
     /*

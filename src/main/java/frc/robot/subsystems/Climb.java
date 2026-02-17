@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
+import frc.robot.RobotContainer.SubsystemStatus;
 
 import static edu.wpi.first.units.Units.*;
 
@@ -47,12 +48,12 @@ public class Climb extends SubsystemBase
     private Climb() 
     {
         targetPosition = Rotations.of(0);
-        elevator = new TalonFX((RobotContainer.disableClimb ? 14 : 0) + Constants.Climb.ELEVATOR_ID);
-        climb = new TalonFX((RobotContainer.disableClimb ? 14 : 0) + Constants.Climb.HINGE_ID);
+        elevator = new TalonFX(Constants.Climb.ELEVATOR_ID);
+        climb = new TalonFX(Constants.Climb.HINGE_ID);
 
         config();
         
-        if (RobotContainer.simulateClimb)
+        if (isSimulated())
         {
             TalonFXSimState elevatorSimState = elevator.getSimState();
             elevatorSimState.Orientation = Constants.Climb.ELEVATOR_MECHANICAL_ORIENTATION;
@@ -123,11 +124,21 @@ public class Climb extends SubsystemBase
 
     public void setElevatorDutyCycle(double velocity) 
     {
+        if (isDisabled())
+        {
+            System.out.println("Quashing input to Climb");
+            return;
+        }
         elevator.setControl(new DutyCycleOut(velocity));
     }
 
     public void setElevatorVelocity(AngularVelocity velocity) 
     {
+        if (isDisabled())
+        {
+            System.out.println("Quashing input to Climb");
+            return;
+        }
         elevator.setControl(new VelocityVoltage(velocity));
     }
 
@@ -153,11 +164,22 @@ public class Climb extends SubsystemBase
 
     public void setElevatorVoltage(Voltage v)
     {
+        if (isDisabled())
+        {
+            System.out.println("Quashing input to Climb");
+            return;
+        }
         elevator.setControl(new VoltageOut(v));
     }
 
     public void setElevatorTargetPosition(Angle tPosition) 
     {
+        if (isDisabled())
+        {
+            System.out.println("Quashing input to Climb");
+            return;
+        }
+
         targetPosition = tPosition;
         //System.out.println("Aiming to " + tPosition.in(Rotations) + ".");
         elevator.setControl(new MotionMagicVoltage(tPosition));
@@ -180,6 +202,11 @@ public class Climb extends SubsystemBase
 
     public void setClimbVoltage(Voltage v)
     {
+        if (isDisabled())
+        {
+            System.out.println("Quashing input to Climb");
+            return;
+        }
         climb.setControl(new VoltageOut(v));
     }
     
@@ -187,7 +214,7 @@ public class Climb extends SubsystemBase
     @Override
     public void periodic()
     {
-        if (RobotContainer.simulateClimb)
+        if (isSimulated())
         {
             TalonFXSimState elevatorSimState = elevator.getSimState();
 
@@ -230,6 +257,16 @@ public class Climb extends SubsystemBase
             climbSimState.setRotorVelocity(
                     climbSim.getAngularVelocity().in(Rotations.per(Second)) * Constants.Climb.CLIMB_GEAR_RATIO);
         }
+    }
+
+    private boolean isSimulated ()
+    {
+        return Robot.instance.robotContainer.getStatus(RobotContainer.CLIMB_INDEX) == SubsystemStatus.Simulated;
+    }
+    
+    private boolean isDisabled ()
+    {
+        return Robot.instance.robotContainer.getStatus(RobotContainer.CLIMB_INDEX) == SubsystemStatus.Disabled;
     }
     
     private SysIdRoutine sysId = new SysIdRoutine(

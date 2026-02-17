@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
+import frc.robot.RobotContainer.SubsystemStatus;
 
 /**
  * controls the balls from intake to indexer
@@ -40,9 +41,9 @@ public class Hopper extends SubsystemBase
 
     private Hopper()
     {
-        master = new TalonFX((RobotContainer.disableHopper ? 14 : 0) + Constants.Hopper.ID);
+        master = new TalonFX(Constants.Hopper.ID);
         
-        if (RobotContainer.simulateHopper)
+        if (isSimulated())
         {
             TalonFXSimState simState = master.getSimState();
             simState.Orientation = Constants.Hopper.MECHANICAL_ORIENTATION;
@@ -132,6 +133,11 @@ public class Hopper extends SubsystemBase
 
     public void setVelocity(AngularVelocity velocity)
     {
+        if (isDisabled())
+        {
+            System.out.println("Quashing input to Hopper");
+            return;
+        }
         master.setControl(new VelocityVoltage(velocity));
     }
 
@@ -140,6 +146,11 @@ public class Hopper extends SubsystemBase
      */
     public void setDutyCycle(double power)
     {
+        if (isDisabled())
+        {
+            System.out.println("Quashing input to Hopper");
+            return;
+        }
         master.setControl(new DutyCycleOut(power));
     }
 
@@ -147,6 +158,11 @@ public class Hopper extends SubsystemBase
     //sets the target & moves there
     public void setDesiredPosition(Angle target)
     {
+        if (isDisabled())
+        {
+            System.out.println("Quashing input to Hopper");
+            return;
+        }
         this.desiredPosition = target.in(Rotations);
         master.setControl(new MotionMagicVoltage(target));
     }
@@ -154,6 +170,11 @@ public class Hopper extends SubsystemBase
 
     public void setVoltage(Voltage voltage)
     {
+        if (isDisabled())
+        {
+            System.out.println("Quashing input to Hopper");
+            return;
+        }
         master.setVoltage(voltage.in(Volts));
     }
 
@@ -175,7 +196,7 @@ public class Hopper extends SubsystemBase
     @Override
     public void periodic()
     {
-        if (RobotContainer.simulateHopper)
+        if (isSimulated())
         {
             TalonFXSimState simState = master.getSimState();
 
@@ -196,6 +217,16 @@ public class Hopper extends SubsystemBase
             simState.setRawRotorPosition(sim.getPositionMeters() * Constants.Hopper.GEAR_RATIO);
             simState.setRotorVelocity(sim.getVelocityMetersPerSecond() * Constants.Hopper.GEAR_RATIO);
         }
+    }
+    
+    private boolean isSimulated ()
+    {
+        return Robot.instance.robotContainer.getStatus(RobotContainer.HOPPER_INDEX) == SubsystemStatus.Simulated;
+    }
+    
+    private boolean isDisabled ()
+    {
+        return Robot.instance.robotContainer.getStatus(RobotContainer.HOPPER_INDEX) == SubsystemStatus.Disabled;
     }
     
     /*

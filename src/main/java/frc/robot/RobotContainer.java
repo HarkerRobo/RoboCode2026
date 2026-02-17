@@ -18,6 +18,8 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.util.FlippingUtil;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -61,8 +63,6 @@ import frc.robot.util.Util;
 
 public class RobotContainer 
 {
-    private final Intake intake = Intake.getInstance();
-
     public double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
@@ -79,8 +79,20 @@ public class RobotContainer
     public final CommandSwerveDrivetrain drivetrain = Modules.createDrivetrain();
 
     public SendableChooser<Command> testCommandChooser = new SendableChooser<>();
+    public ArrayList<SendableChooser<SubsystemStatus>> modeChoosers = new ArrayList<>();
 
     private SendableChooser<Command> autonChooser;
+    public static int INTAKE_INDEX = 0;
+    public static int INTAKE_EXTENSION_INDEX = 1;
+    public static int CLIMB_INDEX = 2;
+    public static int HOOD_INDEX = 3;
+    public static int HOPPER_INDEX = 4;
+    public static int INDEXER_INDEX = 5;
+    public static int SHOOTER_INDEX = 6;
+    public static int SHOOTER_INDEXER_INDEX = 7;
+    public static int INDEXES = 8;
+
+    public enum SubsystemStatus {Enabled, Simulated, Disabled};
 
     private boolean isSlow = false;
     public boolean mostRecentAim = false; // false = shoot; true = pass
@@ -95,39 +107,10 @@ public class RobotContainer
 
     private PassDirection direction = PassDirection.Automatic; // Default
         
-    // tested in sim
-    private Supplier<Command> stow = ()->Commands.runOnce(()->CommandScheduler.getInstance().cancel(commands.toArray(new Command[0]))).andThen(
-            new ShooterDefaultSpeed()); // because a command instance cannot be scheduled to independent triggers
-        
-    // tested in sim
-    private Command shoot = 
-        new DriveToPose(drivetrain, ()->AlignConstants.HUB)
-            .alongWith(new AimToAngle(()->Util.calculateShootPitch(drivetrain).in(Degrees) + pitchOffset))
-        .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot(Util.calculateShootVelocity(drivetrain)) && Hood.getInstance().readyToShoot()))
-        .andThen(new IndexerFullSpeed()) // load to shoot
-        .finallyDo(()->{
-            CommandScheduler.getInstance().schedule(stow.get());
-        })
-        .withName("Shoot");
-        
-    // tested in sim
-    private Command pass = 
-        new DriveToPose(drivetrain, ()->onLeftSize() ? 
-            Constants.PASS_LEFT_TARGET_POSITION.toTranslation2d() : 
-            Constants.PASS_RIGHT_TARGET_POSITION.toTranslation2d())
-            .alongWith(new AimToAngle(()->Util.calculatePassPitch(drivetrain).in(Degrees) + pitchOffset))
-        .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot(Util.calculatePassVelocity(drivetrain)) && Hood.getInstance().readyToShoot()))
-        .andThen(new IndexerFullSpeed()) // load to shoot
-        .finallyDo(()->{
-            CommandScheduler.getInstance().schedule(stow.get());
-        })
-        .withName("Pass");
-
-    private Command hardShoot = new AimToAngle(Constants.HARDCODE_HOOD_PITCH.in(Degrees) + pitchOffset)
-            .alongWith(new ShooterTargetSpeed(()->Constants.HARDCODE_VELOCITY).until(()->Shooter.getInstance().readyToShoot()))
-            .andThen(new IndexerFullSpeed())
-            .withName("HardShoot");
-
+    private Supplier<Command> stow;
+    private Command shoot;
+    private Command pass;
+    private Command hardShoot;
 
     public void setPassDirection(PassDirection newDirection) {
         direction = newDirection;
@@ -137,49 +120,88 @@ public class RobotContainer
         return direction;
     }
 
-    public static boolean simulateIntake = false;
-    public static boolean simulateIntakeExtension = false;
-    public static boolean simulateClimb = false;
-    public static boolean simulateDrivetrain = false;
-    public static boolean simulateHood = false;
-    public static boolean simulateHopper = false;
-    public static boolean simulateIndexer = false;
-    public static boolean simulateShooter = false;
-    public static boolean simulateShooterIndexer = false;
-
-    public static boolean disableIntake = true;
-    public static boolean disableIntakeExtension = true;
-    public static boolean disableClimb = true;
-    public static boolean disableDrivetrain = false;
-    public static boolean disableHood = true;
-    public static boolean disableHopper = true;
-    public static boolean disableIndexer = true;
-    public static boolean disableShooter = true;
-    public static boolean disableShooterIndexer = true;
-
-  
     public boolean onLeftSize()
     {
       if (direction == PassDirection.Left) return false; // not a bug
       if (direction == PassDirection.Right) return true;
       return (Util.onLeftSide(drivetrain));
     }
+
+    public SubsystemStatus getStatus(int subsystem)
+    {
+        return modeChoosers.get(subsystem).getSelected();
+    }
+
+    private static String subsystemName(int subsystem)
+    {
+        return switch(subsystem) {
+            case 0 -> "Intake";
+            case 1 -> "IntakeExtension";
+            case 2 -> "Climb";
+            case 3 -> "Hood";
+            case 4 -> "Hopper";
+            case 5 -> "Indexer";
+            case 6 -> "Shooter";
+            case 7 -> "ShooterIndexer";
+            default -> "";
+        };
+    }
   
         
     public RobotContainer() 
     {
-        if (Robot.isSimulation())
+        for (int i = 0; i < INDEXES; i++)
         {
-            simulateIntake = true;
-            simulateIntakeExtension = true;
-            simulateClimb = true;
-            simulateDrivetrain = true;
-            simulateHood = true;
-            simulateHopper = true;
-            simulateIndexer = true;
-            simulateShooter = true;
-            simulateShooterIndexer = true;
+            SendableChooser<SubsystemStatus> chooser = new SendableChooser<>();
+
+            if (Robot.isSimulation())
+            {
+                chooser.setDefaultOption("Sim", SubsystemStatus.Simulated);
+                chooser.addOption("Off", SubsystemStatus.Disabled);
+            }
+            else
+            {
+                chooser.setDefaultOption("On", SubsystemStatus.Enabled);
+                chooser.addOption("Off", SubsystemStatus.Disabled);
+                chooser.addOption("Sim", SubsystemStatus.Simulated);
+            }
+            modeChoosers.add(chooser);
+            SmartDashboard.putData(subsystemName(i), chooser);
         }
+    }
+
+    public void init()
+    {
+        // tested in sim
+        stow = ()->Commands.runOnce(()->CommandScheduler.getInstance().cancel(commands.toArray(new Command[0]))).andThen(
+            new ShooterDefaultSpeed()); // because a command instance cannot be scheduled to independent triggers
+
+        // tested in sim
+        shoot = new DriveToPose(drivetrain, ()->AlignConstants.HUB)
+            .alongWith(new AimToAngle(()->Util.calculateShootPitch(drivetrain).in(Degrees) + pitchOffset))
+            .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot(Util.calculateShootVelocity(drivetrain)) && Hood.getInstance().readyToShoot()))
+            .andThen(new IndexerFullSpeed()) // load to shoot
+            .finallyDo(()->{
+                CommandScheduler.getInstance().schedule(stow.get());
+            })
+            .withName("Shoot");
+
+        // tested in sim
+        pass = new DriveToPose(drivetrain, ()->AlignConstants.HUB)
+            .alongWith(new AimToAngle(()->Util.calculateShootPitch(drivetrain).in(Degrees) + pitchOffset))
+            .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot(Util.calculateShootVelocity(drivetrain)) && Hood.getInstance().readyToShoot()))
+            .andThen(new IndexerFullSpeed()) // load to shoot
+            .finallyDo(()->{
+                CommandScheduler.getInstance().schedule(stow.get());
+            })
+            .withName("Shoot");
+
+        // tested in sim
+        hardShoot = new AimToAngle(Constants.HARDCODE_HOOD_PITCH.in(Degrees) + pitchOffset)
+            .alongWith(new ShooterTargetSpeed(()->Constants.HARDCODE_VELOCITY).until(()->Shooter.getInstance().readyToShoot()))
+            .andThen(new IndexerFullSpeed())
+            .withName("HardShoot");
+
 
         testCommandChooser.setDefaultOption("None", Commands.none());
         testCommandChooser.addOption("Climb/ClimbToLevel[1]", new ClimbToLevel(1));
@@ -212,8 +234,8 @@ public class RobotContainer
 
         NamedCommands.registerCommand("ExtendIntake", new ExtendIntake());
         NamedCommands.registerCommand("RetractIntake", new RetractIntake());
-        NamedCommands.registerCommand("StartRunIntake", Intake.getInstance().runOnce(()->Intake.getInstance().setMainVoltage(Volts.of(Constants.Intake.INTAKE_VOLTAGE))));
-        NamedCommands.registerCommand("StartDefaultIntake", Intake.getInstance().runOnce(()->Intake.getInstance().setMainVoltage(Volts.of(Constants.Intake.DEFAULT_INTAKE_VOLTAGE))));
+        NamedCommands.registerCommand("StartRunIntake", Intake.getInstance().runOnce(()->Intake.getInstance().setVoltage(Volts.of(Constants.Intake.INTAKE_VOLTAGE))));
+        NamedCommands.registerCommand("StartDefaultIntake", Intake.getInstance().runOnce(()->Intake.getInstance().setVoltage(Volts.of(Constants.Intake.DEFAULT_INTAKE_VOLTAGE))));
         NamedCommands.registerCommand("DefaultIntake", new DefaultIntake());
         NamedCommands.registerCommand("EjectIntake (with timeout)", new EjectIntake().withTimeout(1.0));
         NamedCommands.registerCommand("HardShoot", hardShoot);
@@ -233,7 +255,7 @@ public class RobotContainer
         */
         SmartDashboard.putData("Auton Chooser", autonChooser);
 
-        intake.setDefaultCommand(new DefaultIntake());
+        Intake.getInstance().setDefaultCommand(new DefaultIntake());
         Indexer.getInstance().setDefaultCommand(new IndexerDefaultSpeed());
         ShooterIndexer.getInstance().setDefaultCommand(new ShooterIndexerDefaultSpeed());
 

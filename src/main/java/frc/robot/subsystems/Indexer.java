@@ -12,6 +12,7 @@ import static edu.wpi.first.units.Units.*;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
+import frc.robot.RobotContainer.SubsystemStatus;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
@@ -34,10 +35,10 @@ public class Indexer extends SubsystemBase
         DCMotor.getKrakenX60Foc(1));
 
     private Indexer() { 
-        motor = new TalonFX((RobotContainer.disableIndexer ? 14 : 0) + Constants.Indexer.ID);
+        motor = new TalonFX(Constants.Indexer.ID);
         config();
         
-        if (RobotContainer.simulateIndexer)
+        if (isSimulated())
         {
             motor.getSimState().Orientation = Constants.Indexer.MECHANICAL_ORIENTATION;
             motor.getSimState().setMotorType(TalonFXSimState.MotorType.KrakenX60);
@@ -86,6 +87,11 @@ public class Indexer extends SubsystemBase
     }
 
     public void setVelocity(AngularVelocity velocity) {
+        if (isDisabled())
+        {
+            System.out.println("Quashing input to Indexer");
+            return;
+        }
         motor.set(velocity.in(RotationsPerSecond));
     }
 
@@ -94,6 +100,11 @@ public class Indexer extends SubsystemBase
     }
 
     public void setVoltage(Voltage voltage) {
+        if (isDisabled())
+        {
+            System.out.println("Quashing input to Indexer");
+            return;
+        }
         motor.setVoltage(voltage.in(Volts));
     }
 
@@ -109,7 +120,7 @@ public class Indexer extends SubsystemBase
     @Override
     public void periodic ()
     {
-        if (RobotContainer.simulateIndexer)
+        if (isSimulated())
         {
             TalonFXSimState simState = motor.getSimState();
 
@@ -127,6 +138,16 @@ public class Indexer extends SubsystemBase
             simState.setRawRotorPosition(sim.getAngularPosition().times(Constants.Indexer.GEAR_RATIO));
             simState.setRotorVelocity(sim.getAngularVelocity().times(Constants.Indexer.GEAR_RATIO));
         }
+    }
+
+    private boolean isSimulated ()
+    {
+        return Robot.instance.robotContainer.getStatus(RobotContainer.INDEXER_INDEX) == SubsystemStatus.Simulated;
+    }
+    
+    private boolean isDisabled ()
+    {
+        return Robot.instance.robotContainer.getStatus(RobotContainer.INDEXER_INDEX) == SubsystemStatus.Disabled;
     }
     
     private SysIdRoutine sysId = new SysIdRoutine(

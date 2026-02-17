@@ -152,7 +152,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     {
         super(drivetrainConstants, modules);
         configureAutoBuilder();
-        if (RobotContainer.simulateDrivetrain || Robot.isSimulation()) 
+        if (Robot.isSimulation()) 
         {
             startSimThread();
         }
@@ -181,7 +181,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     {
         super(drivetrainConstants, odometryUpdateFrequency, modules);
         configureAutoBuilder();
-        if (RobotContainer.simulateDrivetrain || Robot.isSimulation()) 
+        if (Robot.isSimulation()) 
         {
             startSimThread();
         }
@@ -216,7 +216,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     {
         super(drivetrainConstants, odometryUpdateFrequency, odometryStandardDeviation, visionStandardDeviation, modules);
         configureAutoBuilder();
-        if (RobotContainer.simulateDrivetrain || Robot.isSimulation()) 
+        if (Robot.isSimulation()) 
         {
             startSimThread();
         }

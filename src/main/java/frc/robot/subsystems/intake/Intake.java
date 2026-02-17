@@ -19,107 +19,131 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
+import frc.robot.RobotContainer.SubsystemStatus;
 
 public class Intake extends SubsystemBase 
 {
     private static Intake instance;
-    private TalonFX main;
+    private TalonFX motor;
 
-    private DCMotorSim mainSim = new DCMotorSim(
+    private DCMotorSim motorSim = new DCMotorSim(
         LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 0.001, Constants.Intake.GEAR_RATIO),
         DCMotor.getKrakenX60Foc(1));
-    
+
    
     private Intake()
     {
-        main = new TalonFX((RobotContainer.disableIntake ? 14 : 0) + Constants.Intake.ID);
+        motor = new TalonFX(Constants.Intake.ID);
         config();
         
-        if (RobotContainer.simulateIntake)
+        if (isSimulated())
         {
-            main.getSimState().Orientation = Constants.Intake.MECHANICAL_ORIENTATION;
-            main.getSimState().setMotorType(TalonFXSimState.MotorType.KrakenX60);
+            motor.getSimState().Orientation = Constants.Intake.MECHANICAL_ORIENTATION;
+            motor.getSimState().setMotorType(TalonFXSimState.MotorType.KrakenX60);
         }
     }
 
     private void config()
     {
-        main.clearStickyFaults();
-        TalonFXConfiguration mainConfig = new TalonFXConfiguration();
+        motor.clearStickyFaults();
+        TalonFXConfiguration motorConfig = new TalonFXConfiguration();
 
-        mainConfig.Feedback.SensorToMechanismRatio = Constants.Intake.GEAR_RATIO;
+        motorConfig.Feedback.SensorToMechanismRatio = Constants.Intake.GEAR_RATIO;
 
-        mainConfig.MotorOutput.Inverted = Constants.Intake.INVERTED;
-        mainConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+        motorConfig.MotorOutput.Inverted = Constants.Intake.INVERTED;
+        motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
-        mainConfig.Slot0.kP = Constants.Intake.KP;
-        mainConfig.Slot0.kI = Constants.Intake.KI;
-        mainConfig.Slot0.kD = Constants.Intake.KD;
-        mainConfig.Slot0.kS = Constants.Intake.KS;
-        mainConfig.Slot0.kV = Constants.Intake.KV;
-        mainConfig.Slot0.kA = Constants.Intake.KA;
+        motorConfig.Slot0.kP = Constants.Intake.KP;
+        motorConfig.Slot0.kI = Constants.Intake.KI;
+        motorConfig.Slot0.kD = Constants.Intake.KD;
+        motorConfig.Slot0.kS = Constants.Intake.KS;
+        motorConfig.Slot0.kV = Constants.Intake.KV;
+        motorConfig.Slot0.kA = Constants.Intake.KA;
 
-        mainConfig.Voltage.PeakForwardVoltage = Constants.MAX_VOLTAGE;
-        mainConfig.Voltage.PeakReverseVoltage = -Constants.MAX_VOLTAGE;
+        motorConfig.Voltage.PeakForwardVoltage = Constants.MAX_VOLTAGE;
+        motorConfig.Voltage.PeakReverseVoltage = -Constants.MAX_VOLTAGE;
 
-        mainConfig.CurrentLimits.StatorCurrentLimit = Constants.Intake.STATOR_CURRENT_LIMIT;
-        mainConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-        mainConfig.CurrentLimits.SupplyCurrentLimit = Constants.Intake.SUPPLY_CURRENT_LIMIT;
-        mainConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+        motorConfig.CurrentLimits.StatorCurrentLimit = Constants.Intake.STATOR_CURRENT_LIMIT;
+        motorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+        motorConfig.CurrentLimits.SupplyCurrentLimit = Constants.Intake.SUPPLY_CURRENT_LIMIT;
+        motorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
-        main.getConfigurator().apply(mainConfig);
+        motor.getConfigurator().apply(motorConfig);
     }
    
-    public Voltage getMainVoltage()
+    public Voltage getVoltage()
     {
-        return main.getMotorVoltage().getValue();
+        return motor.getMotorVoltage().getValue();
     }
     
-    public AngularVelocity getMainVelocity()
+    public AngularVelocity getVelocity()
     {
-        return main.getVelocity().getValue();
+        return motor.getVelocity().getValue();
     }
    
-    public void setMainVoltage (Voltage voltage)
+    public void setVoltage (Voltage voltage)
     {
-        main.setControl(new VoltageOut(voltage));
+        if (isDisabled())
+        {
+            System.out.println("Quashing input to Intake");
+            return;
+        }
+        motor.setControl(new VoltageOut(voltage));
     }
 
-    public void setMainVelocity (AngularVelocity velocity)
+    public void setVelocity (AngularVelocity velocity)
     {
-        //System.out.println("Velocity set to " + velocity);
-        main.setControl(new VelocityVoltage(velocity));
+        if (isDisabled())
+        {
+            System.out.println("Quashing input to Intake");
+            return;
+        }
+        motor.setControl(new VelocityVoltage(velocity));
     }
 
-    public void setMainDutyCycle(double velocity) 
+    public void setDutyCycle(double velocity) 
     {
-        main.setControl(new DutyCycleOut(velocity));
+        if (isDisabled())
+        {
+            System.out.println("Quashing input to Intake");
+            return;
+        }
+        motor.setControl(new DutyCycleOut(velocity));
     }
     
     @Override
     public void periodic ()
     {
-        if (RobotContainer.simulateIntake)
+        if (isSimulated())
         {
-            System.out.println("Running simulate intake");
-            TalonFXSimState simState = main.getSimState();
+            TalonFXSimState simState = motor.getSimState();
 
             // set the supply voltage of the TalonFX
             simState.setSupplyVoltage(RobotController.getBatteryVoltage());
 
             // use the motor voltage to calculate new position and velocity
             // using WPILib's DCMotorSim class for physics simulation
-            mainSim.setInputVoltage(simState.getMotorVoltageMeasure().in(Volts));
-            mainSim.update(0.020); // assume 20 ms loop time
+            motorSim.setInputVoltage(simState.getMotorVoltageMeasure().in(Volts));
+            motorSim.update(0.020); // assume 20 ms loop time
 
             // apply the new rotor position and velocity to the TalonFX;
             // note that this is rotor position/velocity (before gear ratio), but
             // DCMotorSim returns mechanism position/velocity (after gear ratio)
-            simState.setRawRotorPosition(mainSim.getAngularPosition().times(Constants.Intake.GEAR_RATIO));
-            simState.setRotorVelocity(mainSim.getAngularVelocity().times(Constants.Intake.GEAR_RATIO));
+            simState.setRawRotorPosition(motorSim.getAngularPosition().times(Constants.Intake.GEAR_RATIO));
+            simState.setRotorVelocity(motorSim.getAngularVelocity().times(Constants.Intake.GEAR_RATIO));
         }
     }
+   
+    private boolean isSimulated ()
+    {
+        return Robot.instance.robotContainer.getStatus(RobotContainer.INTAKE_INDEX) == SubsystemStatus.Simulated;
+    }
     
+    private boolean isDisabled ()
+    {
+        return Robot.instance.robotContainer.getStatus(RobotContainer.INTAKE_INDEX) == SubsystemStatus.Disabled;
+    }
+     
     /*
     private SysIdRoutine sysId = new SysIdRoutine(
         new SysIdRoutine.Config(), 

@@ -16,7 +16,7 @@ public class EjectIntake extends Command
     @Override
     public void initialize()
     {
-        Intake.getInstance().setMainVoltage(Volts.of(Constants.Intake.EJECT_VOLTAGE));
+        Intake.getInstance().setVoltage(Volts.of(Constants.Intake.EJECT_VOLTAGE));
     }
 
     @Override
@@ -33,6 +33,6 @@ public class EjectIntake extends Command
     @Override
     public void end (boolean interrupted) 
     {
-        Intake.getInstance().setMainVoltage(Volts.of(Constants.Intake.DEFAULT_INTAKE_VOLTAGE));
+        Intake.getInstance().setVoltage(Volts.of(Constants.Intake.DEFAULT_INTAKE_VOLTAGE));
     }
 }

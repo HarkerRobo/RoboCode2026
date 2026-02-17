@@ -12,6 +12,7 @@ import static edu.wpi.first.units.Units.*;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
+import frc.robot.RobotContainer.SubsystemStatus;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
@@ -34,10 +35,10 @@ public class ShooterIndexer extends SubsystemBase
 
     private ShooterIndexer()
     {
-        motor = new TalonFX((RobotContainer.disableShooterIndexer ? 14 : 0) + Constants.ShooterIndexer.ID);
+        motor = new TalonFX(Constants.ShooterIndexer.ID);
         config();
         
-        if (RobotContainer.simulateShooterIndexer)
+        if (isSimulated())
         {
             motor.getSimState().Orientation = Constants.ShooterIndexer.MECHANICAL_ORIENTATION;
             motor.getSimState().setMotorType(TalonFXSimState.MotorType.KrakenX60);
@@ -88,6 +89,11 @@ public class ShooterIndexer extends SubsystemBase
 
     public void setVelocity(AngularVelocity velocity) 
     {
+        if (isDisabled())
+        {
+            System.out.println("Quashing input to ShooterIndexer");
+            return;
+        }
         motor.set(velocity.in(RotationsPerSecond));
     }
 
@@ -114,7 +120,7 @@ public class ShooterIndexer extends SubsystemBase
     @Override
     public void periodic ()
     {
-        if (RobotContainer.simulateShooterIndexer)
+        if (isSimulated())
         {
             TalonFXSimState simState = motor.getSimState();
 
@@ -132,6 +138,16 @@ public class ShooterIndexer extends SubsystemBase
             simState.setRawRotorPosition(sim.getAngularPosition().times(Constants.ShooterIndexer.GEAR_RATIO));
             simState.setRotorVelocity(sim.getAngularVelocity().times(Constants.ShooterIndexer.GEAR_RATIO));
         }
+    }
+
+    private boolean isSimulated ()
+    {
+        return Robot.instance.robotContainer.getStatus(RobotContainer.SHOOTER_INDEXER_INDEX) == SubsystemStatus.Simulated;
+    }
+    
+    private boolean isDisabled ()
+    {
+        return Robot.instance.robotContainer.getStatus(RobotContainer.SHOOTER_INDEXER_INDEX) == SubsystemStatus.Disabled;
     }
     
     private SysIdRoutine sysId = new SysIdRoutine(

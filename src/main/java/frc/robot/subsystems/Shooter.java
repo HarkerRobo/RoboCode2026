@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
+import frc.robot.RobotContainer.SubsystemStatus;
 
 /**
  * This class controls the powering of the flywheels to propel the fuel
@@ -52,14 +53,14 @@ public class Shooter extends SubsystemBase
 
     private Shooter()
     {
-        leftMaster = new TalonFX((RobotContainer.disableShooter ? 14 : 0) + Constants.Shooter.LEFT_MASTER_ID);
-        leftFollower = new TalonFX((RobotContainer.disableShooter ? 14 : 0) +Constants.Shooter.LEFT_FOLLOWER_ID);
-        rightMaster = new TalonFX((RobotContainer.disableShooter ? 14 : 0) + Constants.Shooter.RIGHT_MASTER_ID);
-        rightFollower = new TalonFX((RobotContainer.disableShooter ? 14 : 0) +Constants.Shooter.RIGHT_FOLLOWER_ID);
+        leftMaster = new TalonFX(Constants.Shooter.LEFT_MASTER_ID);
+        leftFollower = new TalonFX(Constants.Shooter.LEFT_FOLLOWER_ID);
+        rightMaster = new TalonFX(Constants.Shooter.RIGHT_MASTER_ID);
+        rightFollower = new TalonFX(Constants.Shooter.RIGHT_FOLLOWER_ID);
 
         config();
         
-        if (RobotContainer.simulateShooter)
+        if (isSimulated())
         {
             leftMaster.getSimState().Orientation = Constants.Shooter.MECHANICAL_ORIENTATION;
             leftMaster.getSimState().setMotorType(TalonFXSimState.MotorType.KrakenX60);
@@ -76,7 +77,7 @@ public class Shooter extends SubsystemBase
 
         TalonFXConfiguration config = new TalonFXConfiguration();
 
-        if (RobotContainer.simulateShooter)
+        if (isSimulated())
         {
             config.CurrentLimits.StatorCurrentLimit = Constants.Shooter.STATOR_CURRENT_LIMIT;
             config.CurrentLimits.StatorCurrentLimitEnable = true;
@@ -136,6 +137,11 @@ public class Shooter extends SubsystemBase
 
     public void setVelocity (AngularVelocity velocity)
     {
+        if (isDisabled())
+        {
+            System.out.println("Quashing input to Shooter");
+            return;
+        }
         leftMaster.setControl(new VelocityVoltage(velocity));
         rightMaster.setControl(new VelocityVoltage(velocity));
         targetVelocity = velocity.in(Rotations.per(Second));
@@ -143,22 +149,42 @@ public class Shooter extends SubsystemBase
 
     public void setLeftVelocity(AngularVelocity velocity)
     {
+        if (isDisabled())
+        {
+            System.out.println("Quashing input to Shooter");
+            return;
+        }
         leftMaster.setControl(new VelocityVoltage(velocity));
     }
 
     public void setRightVelocity(AngularVelocity velocity)
     {
+        if (isDisabled())
+        {
+            System.out.println("Quashing input to Shooter");
+            return;
+        }
         rightMaster.setControl(new VelocityVoltage(velocity));
     }
 
     public void setVoltage (Voltage voltage)
     {
+        if (isDisabled())
+        {
+            System.out.println("Quashing input to Shooter");
+            return;
+        }
         leftMaster.setControl(new VoltageOut(voltage));
         rightMaster.setControl(new VoltageOut(voltage));
     }
 
     public void setDutyCycle (double dutyCycle)
     {
+        if (isDisabled())
+        {
+            System.out.println("Quashing input to Shooter");
+            return;
+        }
         leftMaster.setControl(new DutyCycleOut(dutyCycle));
         rightMaster.setControl(new DutyCycleOut(dutyCycle));
     }
@@ -166,7 +192,7 @@ public class Shooter extends SubsystemBase
     @Override
     public void periodic ()
     {
-        if (RobotContainer.simulateShooter)
+        if (isSimulated())
         {
             TalonFXSimState leftSimState = leftMaster.getSimState();
 
@@ -233,6 +259,16 @@ public class Shooter extends SubsystemBase
     public Command leftSysIdDynamic (SysIdRoutine.Direction direction)
     {
         return leftSysId.dynamic(direction).withName("SysId Q" + (direction == SysIdRoutine.Direction.kForward ? "F" : "R"));
+    }
+
+    private boolean isSimulated ()
+    {
+        return Robot.instance.robotContainer.getStatus(RobotContainer.SHOOTER_INDEX) == SubsystemStatus.Simulated;
+    }
+    
+    private boolean isDisabled ()
+    {
+        return Robot.instance.robotContainer.getStatus(RobotContainer.SHOOTER_INDEX) == SubsystemStatus.Disabled;
     }
     
     private SysIdRoutine rightSysId = new SysIdRoutine(

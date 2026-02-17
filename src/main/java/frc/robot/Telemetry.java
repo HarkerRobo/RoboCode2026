@@ -181,8 +181,8 @@ public class Telemetry
 
         Command intakeCommand = Intake.getInstance().getCurrentCommand();
         this.intakeCommand.set(intakeCommand == null ? "" : intakeCommand.getName());
-        intakeMainVelocity.set(Intake.getInstance().getMainVelocity().in(RotationsPerSecond));
-        intakeMainVoltage.set(Intake.getInstance().getMainVoltage().in(Volts));
+        intakeMainVelocity.set(Intake.getInstance().getVelocity().in(RotationsPerSecond));
+        intakeMainVoltage.set(Intake.getInstance().getVoltage().in(Volts));
         
         Command intakeExtensionCommand = IntakeExtension.getInstance().getCurrentCommand();
         this.intakeExtensionCommand.set(intakeExtensionCommand == null ? "" : intakeExtensionCommand.getName());

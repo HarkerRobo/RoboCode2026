@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
+import frc.robot.RobotContainer.SubsystemStatus;
 
 /**
  * 
@@ -61,12 +62,12 @@ public class Hood extends SubsystemBase
 
     private Hood()
     {
-        master = new TalonFX((RobotContainer.disableHood ? 14 : 0) + Constants.Hood.MASTER_ID);
-        follower = new TalonFX((RobotContainer.disableHood ? 14 : 0) + Constants.Hood.FOLLOWER_ID);
+        master = new TalonFX(Constants.Hood.MASTER_ID);
+        follower = new TalonFX(Constants.Hood.FOLLOWER_ID);
 
         config();
 
-        if (RobotContainer.simulateHood)
+        if (isSimulated())
         {
             TalonFXSimState simState = master.getSimState();
             simState.Orientation = Constants.Hood.MECHANICAL_ORIENTATION;
@@ -80,7 +81,7 @@ public class Hood extends SubsystemBase
         follower.clearStickyFaults();
         TalonFXConfiguration config = new TalonFXConfiguration();
 
-        if (!RobotContainer.simulateHood)
+        if (!isSimulated())
         {
             config.CurrentLimits.StatorCurrentLimit = Constants.Hood.STATOR_CURRENT_LIMIT;
             config.CurrentLimits.StatorCurrentLimitEnable = true;
@@ -137,21 +138,41 @@ public class Hood extends SubsystemBase
 
     public void setPosition(Angle position)
     {
+        if (isDisabled())
+        {
+            System.out.println("Quashing input to Hood");
+            return;
+        }
         master.setPosition(position);
     }
 
     public void setVelocity(AngularVelocity velocity)
     {
+        if (isDisabled())
+        {
+            System.out.println("Quashing input to Hood");
+            return;
+        }
         master.setControl(new VelocityVoltage(velocity));
     }
 
     public void setDutyCycle(double dutyCycle)
     {
+        if (isDisabled())
+        {
+            System.out.println("Quashing input to Hood");
+            return;
+        }
         master.setControl(new DutyCycleOut(dutyCycle));
     }
 
     public void setVoltage(Voltage voltage)
     {
+        if (isDisabled())
+        {
+            System.out.println("Quashing input to Hood");
+            return;
+        }
         master.setVoltage(voltage.in(Volts));
     }
 
@@ -175,7 +196,7 @@ public class Hood extends SubsystemBase
     @Override
     public void periodic()
     {
-        if (RobotContainer.simulateHood)
+        if (isSimulated())
         {
             TalonFXSimState simState = master.getSimState();
 
@@ -200,6 +221,15 @@ public class Hood extends SubsystemBase
         }
     }
 
+    private boolean isSimulated ()
+    {
+        return Robot.instance.robotContainer.getStatus(RobotContainer.HOOD_INDEX) == SubsystemStatus.Simulated;
+    }
+    
+    private boolean isDisabled ()
+    {
+        return Robot.instance.robotContainer.getStatus(RobotContainer.HOOD_INDEX) == SubsystemStatus.Disabled;
+    }
     
     private SysIdRoutine sysId = new SysIdRoutine(
         new SysIdRoutine.Config(Volts.of(0.05).div(Seconds.of(1.)),Volts.of(0.1),Seconds.of(10.0)), 

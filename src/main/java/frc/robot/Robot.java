@@ -39,12 +39,15 @@ public class Robot extends TimedRobot
    }
 
    @Override
-  public void robotInit() {
-      if (Utils.isSimulation()) {
+   public void robotInit() 
+   {
+      robotContainer.init();
+      if (Utils.isSimulation()) 
+      {
          LimelightSimulation limelightSim = new LimelightSimulation(
          Constants.Vision.kCamera1Name, Constants.Vision.kRobotToCam1);
       }
-  }
+   }
       
 
    @Override
