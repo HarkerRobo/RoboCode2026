@@ -3,7 +3,11 @@
   "robotLength": 0.9,
   "holonomicMode": true,
   "pathFolders": [
+    "Climb",
+    "Depot",
     "Ferrying",
+    "Scoring",
+    "Outpost",
     "DepotClimbLeft"
   ],
   "autoFolders": [],

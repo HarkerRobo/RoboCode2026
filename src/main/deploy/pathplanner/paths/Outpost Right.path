@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.848,
-        "y": 2.0
+        "x": 3.5494772727272723,
+        "y": 2.0251704545454547
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.783237924865832,
-        "y": 0.554651162790696
+        "x": 3.5494772727291375,
+        "y": 0.4791477272754081
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.548,
-        "y": 0.555
+        "x": 0.47,
+        "y": 0.65
       },
       "prevControl": {
-        "x": 5.54372450805009,
-        "y": 0.45764758497316727
+        "x": 1.4700000000000002,
+        "y": 0.6499999999999999
       },
       "nextControl": null,
       "isLocked": false,
@@ -45,10 +45,10 @@
     "rotation": 90.0
   },
   "reversed": false,
-  "folder": "Ferrying",
+  "folder": "Outpost",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 90.0
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }
