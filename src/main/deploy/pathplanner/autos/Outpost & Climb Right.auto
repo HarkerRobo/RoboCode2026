@@ -23,9 +23,15 @@
           }
         },
         {
+          "type": "wait",
+          "data": {
+            "waitTime": 3.0
+          }
+        },
+        {
           "type": "named",
           "data": {
-            "name": "ScoreAtHub"
+            "name": "HardShoot"
           }
         },
         {

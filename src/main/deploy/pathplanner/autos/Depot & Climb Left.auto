@@ -11,15 +11,39 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "StartRunIntake"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Depot to Scoring"
           }
         },
         {
+          "type": "wait",
+          "data": {
+            "waitTime": 3.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "HardShoot"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Scoring to Climb Left"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ClimbL1"
           }
         }
       ]

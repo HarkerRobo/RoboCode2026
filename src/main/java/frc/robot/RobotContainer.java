@@ -199,7 +199,7 @@ public class RobotContainer
         // tested in sim
         hardShoot = new AimToAngle(Constants.HARDCODE_HOOD_PITCH.in(Degrees) + pitchOffset)
             .alongWith(new ShooterTargetSpeed(()->Constants.HARDCODE_VELOCITY).until(()->Shooter.getInstance().readyToShoot()))
-            .andThen(new IndexerFullSpeed())
+            .andThen(new IndexerFullSpeed().withTimeout(0.01))
             .withName("HardShoot");
 
 
@@ -240,6 +240,7 @@ public class RobotContainer
         NamedCommands.registerCommand("EjectIntake (with timeout)", new EjectIntake().withTimeout(1.0));
         NamedCommands.registerCommand("HardShoot", hardShoot);
         NamedCommands.registerCommand("ClimbL3", new ClimbToLevel(3).andThen(new RunClimb()));
+        NamedCommands.registerCommand("ClimbL1", new ClimbToLevel(1).andThen(new RunClimb()));
 
         autonChooser = AutoBuilder.buildAutoChooser();
         /*
