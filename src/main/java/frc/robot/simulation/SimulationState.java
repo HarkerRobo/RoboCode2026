@@ -198,71 +198,104 @@ public class SimulationState
     {
         StallSimulator.update();
 
+
         long now = RobotController.getFPGATime();
         double dt = (now - lastTime) * 1e-6;
+
 
         Pose2d robotPose = Robot.instance.robotContainer.drivetrain.getState().Pose;
         double RobotX = robotPose.getTranslation().getX();
         double RobotY = robotPose.getTranslation().getY();
         double RobotTheta = robotPose.getRotation().getRadians();
 
+
         fuelsInRobot = 0;
         fuelsInBlueHub = 0;
         fuelsInRedHub = 0;
         fuelsInBlueOutpost = 0;
         fuelsInRedOutpost = 0;
+        double posX = Robot.instance.robotContainer.drivetrain.getState().Pose.getX();
+        double posY = Robot.instance.robotContainer.drivetrain.getState().Pose.getY();
+        double rot = Robot.instance.robotContainer.drivetrain.getState().Pose.getRotation().getRadians();
+        double endX = posX + Constants.ROBOT_DIAMETER*Math.sqrt(2)/2*Math.cos(rot+Math.PI/4);
+        double endY = posY + Constants.ROBOT_DIAMETER*Math.sqrt(2)/2*Math.sin(rot+Math.PI/4);
+        double startX = posX + Constants.ROBOT_DIAMETER*Math.sqrt(2)/2*Math.cos(rot-Math.PI/4);
+        double startY = posY + Constants.ROBOT_DIAMETER*Math.sqrt(2)/2*Math.sin(rot-Math.PI/4);
+
+        double midPointX = posX + Constants.ROBOT_DIAMETER/2*Math.cos(rot);
+        double midPointY = posY + Constants.ROBOT_DIAMETER/2*Math.sin(rot);
+
+        double vx = startX - endX;
+        double vy = startY - endY;
         for (int i = 0; i < fuelPositions.length; i++)
         {
+            double pointX = fuelPositions[i].state.pose.getX();
+            double pointY = fuelPositions[i].state.pose.getY();
+            double rpx = pointX - midPointX;
+            double rpy = pointY - midPointY;
 
+            double magnitude = Math.sqrt(rpx*rpx+rpy*rpy);
+
+
+            double crossProduct = rpx*vy-rpy*vx;
             switch (fuelPositions[i].location)
             {
-                case Robot: fuelsInRobot++; break;
-                case BlueHub:
-                    fuelPositions[i].state.pose = new Pose3d(Util.packEl(HUB_CONTENTS, 0.0762, FUEL_DIAMETER, fuelsInBlueHub), new Rotation3d());
-                    fuelsInBlueHub++;
-                    break;
-                case RedHub:
-                    fuelPositions[i].state.pose = new Pose3d(Util.packEl(Util.rotate(HUB_CONTENTS), 0.0762, FUEL_DIAMETER, fuelsInRedHub), new Rotation3d());
-                    fuelsInRedHub++;
-                    break;
-                case BlueOutpost:
-                    fuelPositions[i].state.pose = new Pose3d(Util.packEl(OUTPOST, 0.0762, FUEL_DIAMETER, fuelsInBlueOutpost), new Rotation3d());
-                    fuelsInBlueOutpost++;
-                    break;
-                case RedOutpost: 
-                    fuelPositions[i].state.pose = new Pose3d(Util.packEl(Util.rotate(OUTPOST), 0.0762, FUEL_DIAMETER, fuelsInRedOutpost), new Rotation3d());
-                    fuelsInRedOutpost++; 
-                    break;
-                case Field: // if the fuel is in the field, change the position depending on physics and setting the fuel location if the fuel is in the correct position
-                    if (lastTime != 0)
-                    {
-                        BallPhysics.step(fuelPositions[i].state, BALL_CONSTANTS, dt);
-                    }
+            case Robot:
+                fuelsInRobot++;
+                fuelPositions[i].state.pose = new Pose3d(posX, posY, 0, new Rotation3d(Robot.instance.robotContainer.drivetrain.getState().Pose.getRotation()));
+                break;
+            case BlueHub:
+                fuelPositions[i].state.pose = new Pose3d(Util.packEl(HUB_CONTENTS, 0.0762, FUEL_DIAMETER, fuelsInBlueHub), new Rotation3d());
+                fuelsInBlueHub++;
+                break;
+            case RedHub:
+                fuelPositions[i].state.pose = new Pose3d(Util.packEl(Util.rotate(HUB_CONTENTS), 0.0762, FUEL_DIAMETER, fuelsInRedHub), new Rotation3d());
+                fuelsInRedHub++;
+                break;
+            case BlueOutpost:
+                fuelPositions[i].state.pose = new Pose3d(Util.packEl(OUTPOST, 0.0762, FUEL_DIAMETER, fuelsInBlueOutpost), new Rotation3d());
+                fuelsInBlueOutpost++;
+                break;
+            case RedOutpost:
+                fuelPositions[i].state.pose = new Pose3d(Util.packEl(Util.rotate(OUTPOST), 0.0762, FUEL_DIAMETER, fuelsInRedOutpost), new Rotation3d());
+                fuelsInRedOutpost++;
+                break;
+            case Field: // if the fuel is in the field, change the position depending on physics and setting the fuel location if the fuel is in the correct position
+                if (lastTime != 0)
+                {
+                    BallPhysics.step(fuelPositions[i].state, BALL_CONSTANTS, dt);
+                }
 
-                    if (fuelPositions[i].state.pose.getY() - RobotY - (fuelPositions[i].state.pose.getX() - RobotX - (Constants.ROBOT_DIAMETER / (2 * Math.sin(RobotTheta))))/Math.tan(RobotTheta) <= 0.1) //Elijah's Formula (will double check with him)
-                    {
-                        fuelPositions[i].location = FieldLocation.Robot;
-                    }
 
-                    if (Math.abs(fuelPositions[i].state.pose.getZ() - HUB_INTAKE_HEIGHT) <= FUEL_DIAMETER && Util.within(HUB_CONTENTS, fuelPositions[i].state.pose.getTranslation()))
-                    {
-                        fuelPositions[i].location = FieldLocation.BlueHub;
-                    }
-                    
-                    else if (Math.abs(fuelPositions[i].state.pose.getZ() - HUB_INTAKE_HEIGHT) <= FUEL_DIAMETER && Util.within(Util.rotate(HUB_CONTENTS), fuelPositions[i].state.pose.getTranslation()))
-                    {
-                        fuelPositions[i].location = FieldLocation.BlueHub;
-                    }
+                if (Math.abs(fuelPositions[i].state.pose.getZ() - HUB_INTAKE_HEIGHT) <= FUEL_DIAMETER && Util.within(HUB_CONTENTS, fuelPositions[i].state.pose.getTranslation()))
+                {
+                    fuelPositions[i].location = FieldLocation.BlueHub;
+                }
+                
+                else if (Math.abs(fuelPositions[i].state.pose.getZ() - HUB_INTAKE_HEIGHT) <= FUEL_DIAMETER && Util.within(Util.rotate(HUB_CONTENTS), fuelPositions[i].state.pose.getTranslation()))
+                {
+                    fuelPositions[i].location = FieldLocation.BlueHub;
+                }
+                else if(crossProduct < 0.05 && magnitude <= Constants.ROBOT_DIAMETER/3)
+                {
+                    fuelPositions[i].location = FieldLocation.Robot;
+                }
 
-                    break;
-                default: break;
+
+
+
+                break;
+            default: break;
             }
+
 
             fuelPositionsRaw[i] = fuelPositions[i].state.pose.getTranslation();
         }
 
+
         lastTime = now;
     }
+
 
     public int fuelsInRobot ()
     {

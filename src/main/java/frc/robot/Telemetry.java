@@ -265,10 +265,25 @@ public class Telemetry
                               Constants.Simulation.HUB_CONTENTS.getCenter().getY() - 0.5 * Constants.Simulation.HUB_CONTENTS.getYWidth(), 0.0)
         }
                               */
+        double posX = Robot.instance.robotContainer.drivetrain.getState().Pose.getX();
+        double posY = Robot.instance.robotContainer.drivetrain.getState().Pose.getY();
+        double rot = Robot.instance.robotContainer.drivetrain.getState().Pose.getRotation().getRadians();
+        double endX = posX + Constants.ROBOT_DIAMETER*Math.sqrt(2)/2*Math.cos(rot+Math.PI/4);
+        double endY = posY + Constants.ROBOT_DIAMETER*Math.sqrt(2)/2*Math.sin(rot+Math.PI/4);
+        double startX = posX + Constants.ROBOT_DIAMETER*Math.sqrt(2)/2*Math.cos(rot-Math.PI/4);
+        double startY = posY + Constants.ROBOT_DIAMETER*Math.sqrt(2)/2*Math.sin(rot-Math.PI/4);
+
+        double midPointX = posX + Constants.ROBOT_DIAMETER/2*Math.cos(rot);
+        double midPointY = posY + Constants.ROBOT_DIAMETER/2*Math.sin(rot);
+
         test.set(new Translation3d[] 
         {
             new Translation3d(-0.84, 0.331, 0.075),
-            new Translation3d(-0.0708, 1.008, 0.075)
+            new Translation3d(-0.0708, 1.008, 0.075),
+            new Translation3d(posX, posY, 0),
+            new Translation3d(endX, endY, 0),
+            new Translation3d(startX, startY, 0),
+            new Translation3d(midPointX, midPointY, 0)
         }
             );
     }

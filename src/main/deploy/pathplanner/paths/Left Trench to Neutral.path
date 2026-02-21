@@ -3,41 +3,41 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.5082500000000003,
-        "y": 6.230352272727273
+        "x": 4.220199714693295,
+        "y": 7.2890727532097
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.3123506572782815,
-        "y": 6.869539852454665
+        "x": 5.220199714693294,
+        "y": 7.2890727532097
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 0.4677386363607561,
-        "y": 7.4
+        "x": 7.7653922967189715,
+        "y": 7.0
       },
       "prevControl": {
-        "x": 0.4677386363618739,
-        "y": 7.850881924605385
+        "x": 7.7653922967189715,
+        "y": 7.518669246208683
       },
       "nextControl": {
-        "x": 0.46773863635996393,
-        "y": 7.0804886363711095
+        "x": 7.7653922967189715,
+        "y": 5.876495174613078
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 0.4677386363607561,
-        "y": 5.7
+        "x": 7.765,
+        "y": 5.0
       },
       "prevControl": {
-        "x": 0.46773863636075613,
-        "y": 6.153617107811668
+        "x": 7.765,
+        "y": 6.0
       },
       "nextControl": null,
       "isLocked": false,
@@ -46,7 +46,7 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 1.2452830188679285,
+      "waypointRelativePos": 1.0,
       "rotationDegrees": -90.0
     }
   ],
@@ -55,13 +55,7 @@
   "eventMarkers": [
     {
       "name": "StartRunIntake",
-      "waypointRelativePos": 1.2603231597845617,
-      "endWaypointRelativePos": null,
-      "command": null
-    },
-    {
-      "name": "StartDefaultIntake",
-      "waypointRelativePos": 2.0,
+      "waypointRelativePos": 1.0,
       "endWaypointRelativePos": null,
       "command": null
     }
@@ -75,14 +69,14 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 2.5,
-    "rotation": -89.99999999986848
+    "velocity": 0,
+    "rotation": -90.0
   },
   "reversed": false,
-  "folder": "DepotClimbLeft",
+  "folder": "LeftTrenchNeutralClimbLeft",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 0.0
   },
   "useDefaultConstraints": true
 }

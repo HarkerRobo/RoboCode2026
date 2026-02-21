@@ -45,7 +45,7 @@
     "rotation": 91.57746375940845
   },
   "reversed": false,
-  "folder": "Ferrying",
+  "folder": "RightFerry",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 90.0

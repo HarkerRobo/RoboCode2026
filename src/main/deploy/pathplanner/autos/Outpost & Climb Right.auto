@@ -17,21 +17,28 @@
           }
         },
         {
-          "type": "path",
+          "type": "race",
           "data": {
-            "pathName": "Outpost to Scoring"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 3.0
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Outpost to Scoring"
+                }
+              }
+            ]
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "HardShoot"
+            "name": "RevShoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
           }
         },
         {

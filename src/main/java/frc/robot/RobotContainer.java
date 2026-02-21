@@ -57,6 +57,7 @@ import frc.robot.commands.shooterindexer.ShooterIndexerDefaultSpeed;
 import frc.robot.commands.shooterindexer.ShooterIndexerFullSpeed;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.util.IndependentCommand;
 import frc.robot.util.Util;
 
 
@@ -180,7 +181,7 @@ public class RobotContainer
         shoot = new DriveToPose(drivetrain, ()->AlignConstants.HUB)
             .alongWith(new AimToAngle(()->Util.calculateShootPitch(drivetrain).in(Degrees) + pitchOffset))
             .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot(Util.calculateShootVelocity(drivetrain)) && Hood.getInstance().readyToShoot()))
-            .andThen(new IndexerFullSpeed()) // load to shoot
+            .andThen(new ShooterIndexerFullSpeed()) // load to shoot
             .finallyDo(()->{
                 CommandScheduler.getInstance().schedule(stow.get());
             })
@@ -190,7 +191,7 @@ public class RobotContainer
         pass = new DriveToPose(drivetrain, ()->AlignConstants.HUB)
             .alongWith(new AimToAngle(()->Util.calculateShootPitch(drivetrain).in(Degrees) + pitchOffset))
             .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot(Util.calculateShootVelocity(drivetrain)) && Hood.getInstance().readyToShoot()))
-            .andThen(new IndexerFullSpeed()) // load to shoot
+            .andThen(new ShooterIndexerFullSpeed()) // load to shoot
             .finallyDo(()->{
                 CommandScheduler.getInstance().schedule(stow.get());
             })
@@ -198,8 +199,10 @@ public class RobotContainer
 
         // tested in sim
         hardShoot = new AimToAngle(Constants.HARDCODE_HOOD_PITCH.in(Degrees) + pitchOffset)
-            .alongWith(new ShooterTargetSpeed(()->Constants.HARDCODE_VELOCITY).until(()->Shooter.getInstance().readyToShoot()))
-            .andThen(new IndexerFullSpeed().withTimeout(0.01))
+            .alongWith(new IndependentCommand(new ShooterTargetSpeed(()->Constants.HARDCODE_VELOCITY)))
+            .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot()))
+            .andThen(new ShooterIndexerFullSpeed())
+            .finallyDo(()->CommandScheduler.getInstance().schedule(new ShooterDefaultSpeed()))
             .withName("HardShoot");
 
 
@@ -241,7 +244,15 @@ public class RobotContainer
         NamedCommands.registerCommand("HardShoot", hardShoot);
         NamedCommands.registerCommand("ClimbL3", new ClimbToLevel(3).andThen(new RunClimb()));
         NamedCommands.registerCommand("ClimbL1", new ClimbToLevel(1).andThen(new RunClimb()));
-
+        NamedCommands.registerCommand("RevShoot", Commands.runOnce(()->{System.out.println(Util.calculateShootVelocity(drivetrain));}).andThen(Commands.runOnce(()->CommandScheduler.getInstance().schedule(new ShooterTargetSpeed(()->Util.calculateShootVelocity(drivetrain) + flywheelOffset)))));
+        NamedCommands.registerCommand("Shoot", new AimToAngle(()->Util.calculateShootPitch(drivetrain).in(Degrees) + pitchOffset)
+        .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot() && Hood.getInstance().readyToShoot()))
+        .andThen(new ShooterIndexerFullSpeed().withTimeout(5.0)) // load to shoot
+        .finallyDo(()->{
+            CommandScheduler.getInstance().schedule(stow.get());
+        })
+        .withName("Shoot"));
+        
         autonChooser = AutoBuilder.buildAutoChooser();
         /*
         autonChooser = new SendableChooser<>();
@@ -259,6 +270,7 @@ public class RobotContainer
         Intake.getInstance().setDefaultCommand(new DefaultIntake());
         Indexer.getInstance().setDefaultCommand(new IndexerDefaultSpeed());
         ShooterIndexer.getInstance().setDefaultCommand(new ShooterIndexerDefaultSpeed());
+        Shooter.getInstance().setDefaultCommand(new ShooterDefaultSpeed());
 
         boolean useDebuggingBindings = false; // mainly for sysid or debugging
         boolean useDefaultBindings = false; // in case ever the official controls don't work, use these as a backup to be able to drive around
@@ -386,7 +398,8 @@ public class RobotContainer
             .onTrue(track(
                 Commands.runOnce(()->mostRecentAim = false)
             .andThen(
-                new ShooterTargetSpeed(()->Util.calculateShootVelocity(drivetrain) + flywheelOffset).until(()->Shooter.getInstance().readyToShoot()))
+                new IndependentCommand(new ShooterTargetSpeed(()->Util.calculateShootVelocity(drivetrain) + flywheelOffset)))
+            .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot()))
             .andThen(
                 Commands.runOnce(()->driver.setRumble(RumbleType.kBothRumble, 1.0)))
                 .withName("RevShoot")));
@@ -396,7 +409,8 @@ public class RobotContainer
             .onTrue(track(
             Commands.runOnce(()->mostRecentAim = true)
             .andThen(
-                new ShooterTargetSpeed(()->Util.calculatePassVelocity(drivetrain) + flywheelOffset).until(()->Shooter.getInstance().readyToShoot()))
+                new IndependentCommand(new ShooterTargetSpeed(()->Util.calculatePassVelocity(drivetrain) + flywheelOffset)))
+            .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot()))
             .andThen(
                 Commands.runOnce(()->driver.setRumble(RumbleType.kBothRumble, 1.0)))
                 .withName("RevPass")));
@@ -409,7 +423,7 @@ public class RobotContainer
             .withName("Climb L1"))); // TODO: add autoalign
 
         // tested in sim
-        driver.x().onTrue(track(hardShoot));
+        driver.x().whileTrue(track(hardShoot));
         
         // tested (?) in sim
         driver.a().onTrue(track(new UndeployClimb().andThen(stow.get()).withName("Drop")));

@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.4699999999999978,
-        "y": 0.65
+        "x": 1.0868915199260916,
+        "y": 1.200328450651204
       },
       "isLocked": false,
       "linkedName": null
@@ -20,8 +20,8 @@
         "y": 2.5
       },
       "prevControl": {
-        "x": 1.5,
-        "y": 2.5
+        "x": 2.180928059748765,
+        "y": 2.180289000925909
       },
       "nextControl": null,
       "isLocked": false,
@@ -45,7 +45,7 @@
     "rotation": 36.25
   },
   "reversed": false,
-  "folder": "Scoring",
+  "folder": "OutpostClimbRight",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0
