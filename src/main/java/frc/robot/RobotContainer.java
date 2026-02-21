@@ -241,7 +241,15 @@ public class RobotContainer
         NamedCommands.registerCommand("HardShoot", hardShoot);
         NamedCommands.registerCommand("ClimbL3", new ClimbToLevel(3).andThen(new RunClimb()));
         NamedCommands.registerCommand("ClimbL1", new ClimbToLevel(1).andThen(new RunClimb()));
-
+        NamedCommands.registerCommand("RevShoot", Commands.runOnce(()->{System.out.println(Util.calculateShootVelocity(drivetrain));}).andThen(Commands.runOnce(()->CommandScheduler.getInstance().schedule(new ShooterTargetSpeed(()->Util.calculateShootVelocity(drivetrain) + flywheelOffset)))));
+        NamedCommands.registerCommand("Shoot", new AimToAngle(()->Util.calculateShootPitch(drivetrain).in(Degrees) + pitchOffset)
+        .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot() && Hood.getInstance().readyToShoot()))
+        .andThen(new ShooterIndexerFullSpeed().withTimeout(5.0)) // load to shoot
+        .finallyDo(()->{
+            CommandScheduler.getInstance().schedule(stow.get());
+        })
+        .withName("Shoot"));
+        
         autonChooser = AutoBuilder.buildAutoChooser();
         /*
         autonChooser = new SendableChooser<>();

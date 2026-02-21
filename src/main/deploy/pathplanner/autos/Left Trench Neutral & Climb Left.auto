@@ -7,26 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Depot Left"
+            "pathName": "Left Trench to Neutral"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "StartRunIntake"
+            "name": "StartDefaultIntake"
           }
         },
         {
-          "type": "race",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Depot to Mid Scoring"
-                }
-              }
-            ]
+            "pathName": "Neutral to Scoring Left - Bump"
           }
         },
         {
@@ -44,7 +37,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Mid Scoring to Climb Left"
+            "pathName": "Scoring Left to Climb Left"
           }
         },
         {

@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.3229659090909087,
-        "y": 3.0043181818181823
+        "x": 2.222882398062646,
+        "y": 3.1214790391228053
       },
       "isLocked": false,
       "linkedName": null
@@ -20,8 +20,8 @@
         "y": 3.272295454545455
       },
       "prevControl": {
-        "x": 2.0137613636363634,
-        "y": 3.1898409090909094
+        "x": 2.0570230947805985,
+        "y": 3.1632964526433924
       },
       "nextControl": null,
       "isLocked": false,
@@ -45,7 +45,7 @@
     "rotation": 180.0
   },
   "reversed": false,
-  "folder": "Climb",
+  "folder": "OutpostClimbRight",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 36.25
