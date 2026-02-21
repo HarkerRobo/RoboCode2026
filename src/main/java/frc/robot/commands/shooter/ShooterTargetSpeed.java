@@ -27,13 +27,13 @@ public class ShooterTargetSpeed extends Command
     @Override
     public void initialize()
     {
-        targetSpeed = Util.bound(targetSpeedSupplier.getAsDouble(), 0.0, Constants.Shooter.MAX_VELOCITY);
-        Shooter.getInstance().setVelocity(RotationsPerSecond.of(targetSpeed));
     }
 
     @Override
     public void execute()
     {
+        targetSpeed = Util.bound(targetSpeedSupplier.getAsDouble(), 0.0, Constants.Shooter.MAX_VELOCITY);
+        Shooter.getInstance().setVelocity(RotationsPerSecond.of(targetSpeed));
     }
 
     @Override
