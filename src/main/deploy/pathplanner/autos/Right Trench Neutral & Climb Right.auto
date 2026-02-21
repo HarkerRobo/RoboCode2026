@@ -1,0 +1,55 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Right Trench to Neutral"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "StartDefaultIntake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Neutral to Scoring Right - Bump"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "RevShoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Scoring Right to Climb Right"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ClimbL1"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
