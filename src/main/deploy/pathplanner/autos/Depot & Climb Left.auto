@@ -5,15 +5,9 @@
     "data": {
       "commands": [
         {
-          "type": "named",
-          "data": {
-            "name": "ExtendIntake"
-          }
-        },
-        {
           "type": "path",
           "data": {
-            "pathName": "DCL 1"
+            "pathName": "Depot Left"
           }
         },
         {
@@ -25,19 +19,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "DCL 2"
+            "pathName": "Depot to Scoring"
           }
         },
         {
-          "type": "named",
+          "type": "wait",
           "data": {
-            "name": "StartDefaultIntake"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "DCL 3"
+            "waitTime": 3.0
           }
         },
         {
@@ -49,13 +37,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "DCL 4"
+            "pathName": "Scoring to Climb Left"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "ClimbL3"
+            "name": "ClimbL1"
           }
         }
       ]
