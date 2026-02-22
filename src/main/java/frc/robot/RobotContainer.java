@@ -301,6 +301,10 @@ public class RobotContainer
         driver.povLeft().onTrue(Commands.print("POV LEFT"));
         driver.povRight().onTrue(Commands.print("POV RIGHT"));
         */
+        driver.a().whileTrue(Shooter.getInstance().leftSysIdQuasistatic(Direction.kForward));
+        driver.b().whileTrue(Shooter.getInstance().leftSysIdQuasistatic(Direction.kReverse));
+        driver.x().whileTrue(Shooter.getInstance().leftSysIdDynamic(Direction.kForward));
+        driver.y().whileTrue(Shooter.getInstance().leftSysIdDynamic(Direction.kReverse));
     }
 
     private void configureDefaultBindings()
@@ -342,12 +346,6 @@ public class RobotContainer
 
         // tested
         driver.leftTrigger().whileTrue(new StartEndCommand(()->isSlow = true, ()->isSlow = false).withName("ToggleSlow"));
-
-        // tested in sim
-
-        // tested in sim
-        
-        // tested in sim
 
         driver.rightTrigger().and(()->!mostRecentAim).whileTrue(track(shoot));
         driver.rightTrigger().and(()->mostRecentAim).whileTrue(track(pass));

@@ -53,7 +53,6 @@ public class ShooterIndexer extends SubsystemBase
 
         // set slot 0 gains
         var slot0Configs = talonFXConfigs.Slot0;
-        slot0Configs.kG = Constants.ShooterIndexer.KG;
         slot0Configs.kS = Constants.ShooterIndexer.KS;
         slot0Configs.kV = Constants.ShooterIndexer.KV;
         slot0Configs.kA = Constants.ShooterIndexer.KA;

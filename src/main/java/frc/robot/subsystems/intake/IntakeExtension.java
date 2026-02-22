@@ -31,8 +31,6 @@ public class IntakeExtension extends SubsystemBase
         LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60(1), 0.001, Constants.Climb.ELEVATOR_GEAR_RATIO),
             DCMotor.getKrakenX60(1), Constants.IntakeExtension.MIN_HEIGHT, Constants.IntakeExtension.MAX_HEIGHT, false, Constants.IntakeExtension.MIN_HEIGHT);
     
-    //private StallSimulator stallSim = new StallSimulator(()->getPosition().in(Rotations));
-
     private IntakeExtension()
     {
         motor = new TalonFX(Constants.IntakeExtension.ID);

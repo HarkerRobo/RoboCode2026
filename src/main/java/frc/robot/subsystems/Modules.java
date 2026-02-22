@@ -11,12 +11,8 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import frc.robot.RobotContainer;
 
 import static frc.robot.Constants.TunerConstants.*;
-
-import java.util.function.DoubleSupplier;
-import java.util.function.IntSupplier;
 
 public class Modules
 {

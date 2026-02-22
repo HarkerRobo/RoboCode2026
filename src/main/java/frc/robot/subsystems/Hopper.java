@@ -79,7 +79,6 @@ public class Hopper extends SubsystemBase
         masterConfig.Slot0.kD = Constants.Hopper.KD;
 
         masterConfig.Slot0.kG = Constants.Hopper.KS;
-        masterConfig.Slot0.kG = Constants.Hopper.KG;
         masterConfig.Slot0.kV = Constants.Hopper.KV;
         masterConfig.Slot0.kV = Constants.Hopper.KA;
 

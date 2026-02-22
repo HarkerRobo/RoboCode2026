@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 
 import static edu.wpi.first.units.Units.*;
 
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
@@ -95,13 +96,6 @@ public class Shooter extends SubsystemBase
         config.MotorOutput.Inverted = Constants.Shooter.INVERTED;
         config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
-        config.Slot0.kP = Constants.Shooter.KP;
-        config.Slot0.kI = Constants.Shooter.KI;
-        config.Slot0.kD = Constants.Shooter.KD;
-        config.Slot0.kS = Constants.Shooter.KS;
-        config.Slot0.kG = Constants.Shooter.KG;
-        config.Slot0.kV = Constants.Shooter.KV;
-        config.Slot0.kA = Constants.Shooter.KA;
 
         config.Voltage.PeakForwardVoltage = Constants.MAX_VOLTAGE;
         config.Voltage.PeakReverseVoltage = -Constants.MAX_VOLTAGE;
@@ -110,6 +104,24 @@ public class Shooter extends SubsystemBase
         leftFollower.getConfigurator().apply(config);
         rightMaster.getConfigurator().apply(config);
         rightFollower.getConfigurator().apply(config);
+
+        Slot0Configs leftConfig = new Slot0Configs();
+        leftConfig.kP = Constants.Shooter.LEFT_KP;
+        leftConfig.kI = Constants.Shooter.LEFT_KP;
+        leftConfig.kD = Constants.Shooter.LEFT_KP;
+        leftConfig.kS = Constants.Shooter.LEFT_KS;
+        leftConfig.kV = Constants.Shooter.LEFT_KV;
+        leftConfig.kA = Constants.Shooter.LEFT_KA;
+        leftMaster.getConfigurator().apply(leftConfig);
+        
+        Slot0Configs rightConfig = new Slot0Configs();
+        rightConfig.kP = Constants.Shooter.RIGHT_KP;
+        rightConfig.kI = Constants.Shooter.RIGHT_KP;
+        rightConfig.kD = Constants.Shooter.RIGHT_KP;
+        rightConfig.kS = Constants.Shooter.RIGHT_KS;
+        rightConfig.kV = Constants.Shooter.RIGHT_KV;
+        rightConfig.kA = Constants.Shooter.RIGHT_KA;
+        rightMaster.getConfigurator().apply(rightConfig);
 
         leftFollower.setControl(new Follower(Constants.Shooter.LEFT_MASTER_ID, MotorAlignmentValue.Aligned));
         rightFollower.setControl(new Follower(Constants.Shooter.RIGHT_MASTER_ID, MotorAlignmentValue.Aligned));
@@ -261,15 +273,6 @@ public class Shooter extends SubsystemBase
         return leftSysId.dynamic(direction).withName("SysId Q" + (direction == SysIdRoutine.Direction.kForward ? "F" : "R"));
     }
 
-    private boolean isSimulated ()
-    {
-        return Robot.instance.robotContainer.getStatus(RobotContainer.SHOOTER_INDEX) == SubsystemStatus.Simulated;
-    }
-    
-    private boolean isDisabled ()
-    {
-        return Robot.instance.robotContainer.getStatus(RobotContainer.SHOOTER_INDEX) == SubsystemStatus.Disabled;
-    }
     
     private SysIdRoutine rightSysId = new SysIdRoutine(
         new SysIdRoutine.Config(), 
@@ -290,6 +293,16 @@ public class Shooter extends SubsystemBase
     public Command rightSysIdDynamic (SysIdRoutine.Direction direction)
     {
         return rightSysId.dynamic(direction).withName("SysId Q" + (direction == SysIdRoutine.Direction.kForward ? "F" : "R"));
+    }
+    
+    private boolean isSimulated ()
+    {
+        return Robot.instance.robotContainer.getStatus(RobotContainer.SHOOTER_INDEX) == SubsystemStatus.Simulated;
+    }
+    
+    private boolean isDisabled ()
+    {
+        return Robot.instance.robotContainer.getStatus(RobotContainer.SHOOTER_INDEX) == SubsystemStatus.Disabled;
     }
     
     public static Shooter getInstance()

@@ -52,7 +52,6 @@ public class Indexer extends SubsystemBase
 
         // set slot 0 gains
         var slot0Configs = talonFXConfigs.Slot0;
-        slot0Configs.kG = Constants.Indexer.KG;
         slot0Configs.kS = Constants.Indexer.KS;
         slot0Configs.kV = Constants.Indexer.KV;
         slot0Configs.kA = Constants.Indexer.KA;
