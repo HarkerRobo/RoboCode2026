@@ -30,6 +30,7 @@ import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
 import frc.robot.RobotContainer.SubsystemStatus;
+import frc.robot.simulation.StallSimulator;
 
 /**
  * 
@@ -59,6 +60,8 @@ public class Hood extends SubsystemBase
         );
 
 
+    StallSimulator stallSimulator;
+
 
     private Hood()
     {
@@ -72,6 +75,7 @@ public class Hood extends SubsystemBase
             TalonFXSimState simState = master.getSimState();
             simState.Orientation = Constants.Hood.MECHANICAL_ORIENTATION;
             simState.setMotorType(TalonFXSimState.MotorType.KrakenX60);
+            stallSimulator = new StallSimulator(()->master.getPosition().getValueAsDouble());
         }
     }
 
@@ -189,6 +193,7 @@ public class Hood extends SubsystemBase
     
     public boolean isStalling()
     {
+        if (isSimulated() && stallSimulator.get()) return true;
         return Math.abs(master.getStatorCurrent().getValueAsDouble()) >= Constants.Hood.STALLING_CURRENT;
     }
 

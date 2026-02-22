@@ -29,10 +29,9 @@ public class ZeroHoodSoft extends Command
     @Override
     public void end(boolean interrupted)
     {
-        Hood.getInstance().setVoltage(Volts.of(Constants.Hood.KG));
-
         if (!interrupted)
         {
+            System.out.println("Soft zero done");
             Hood.getInstance().setPosition(Degrees.of(Constants.Hood.MIN_ANGLE));
         }
     }

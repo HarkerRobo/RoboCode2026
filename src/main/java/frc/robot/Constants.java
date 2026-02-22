@@ -229,12 +229,12 @@ public class Constants
         public static final double MOMENT_OF_INERTIA = 0.001; // TODO (kg m^2)
 
         public static final double LENGTH = 0.5; // TODO meters
-        public static final double MIN_ANGLE = 5.0; // TODO degrees
-        public static final double MAX_ANGLE = 70.0; // TODO degrees
+        public static final double MIN_ANGLE = 60.0; // TODO degrees
+        public static final double MAX_ANGLE = 75.0; // TODO degrees
     
-        public static final double STALLING_CURRENT = 50.0;
+        public static final double STALLING_CURRENT = 50.0; // TODO
 
-        public static final double ZEROING_VOLTAGE = -1.0; // TODO
+        public static final double ZEROING_VOLTAGE = -0.2; // TODO
     }
 
     /*

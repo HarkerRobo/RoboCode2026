@@ -17,23 +17,27 @@ public class ZeroHood extends Command
     @Override
     public void initialize()
     {
+        Hood.getInstance().moveToPosition(Degrees.of(Constants.Hood.MIN_ANGLE));
     }
 
     @Override
     public void execute()
     {
-        Hood.getInstance().moveToPosition(Degrees.of(Constants.Hood.MIN_ANGLE));
     }
 
     @Override
     public boolean isFinished()
     {
-        return Hood.getInstance().isStalling();
+        return Hood.getInstance().isStalling() || Hood.getInstance().readyToShoot();
     }
 
     @Override
     public void end(boolean interrupted)
     {
-        Hood.getInstance().setPosition(Degrees.of(Constants.Hood.MIN_ANGLE));
+        if (!interrupted)
+        {
+            System.out.println("Zeroing Hood");
+            Hood.getInstance().setPosition(Degrees.of(Constants.Hood.MIN_ANGLE));
+        }
     }
 }
