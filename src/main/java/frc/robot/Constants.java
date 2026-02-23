@@ -81,7 +81,7 @@ public class Constants
 		public static final double MM_JERK = 240.0;
 		public static final InvertedValue INVERTED = InvertedValue.CounterClockwise_Positive;
         
-        public static final double GEAR_RATIO = 0.6; // TODO
+        public static final double GEAR_RATIO = 0.5; // TODO
 
 		public static final double LEFT_KP = 0.042562; // TODO
 		public static final double LEFT_KI = 0.0; // TODO
