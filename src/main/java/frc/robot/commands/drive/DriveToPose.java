@@ -24,7 +24,6 @@ public class DriveToPose extends Command{
     private final CommandSwerveDrivetrain drivetrain;
     private Pose2d targetPose;
     private Command pathCommand;
-    private double aprilTagId;
 
     public DriveToPose(CommandSwerveDrivetrain drivetrain) {
         this.drivetrain = drivetrain;
@@ -46,7 +45,6 @@ public class DriveToPose extends Command{
         }
 
         SmartDashboard.putString("Drive/direction", Robot.instance.robotContainer.getAlignDirection().toString());
-        SmartDashboard.putNumber("Drive/aprilTagId", aprilTagId);
     }
 
     @Override
@@ -62,14 +60,9 @@ public class DriveToPose extends Command{
             pathCommand = null; 
             return;
         }
-        aprilTagId = LimelightHelpers.getFiducialID(Constants.Vision.kCamera1Name);
+
+        targetPose = getTargetPose();
         
-        if (aprilTagId == -1) {
-            System.out.println("No valid AprilTag detected.");
-            return;
-        } else {
-            targetPose = getTargetPose((int) aprilTagId);
-        }
 
         // Flip pose if we're on the red alliance
         if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) targetPose = FlippingUtil.flipFieldPose(targetPose);
@@ -118,25 +111,12 @@ public class DriveToPose extends Command{
         }
     }
 
-    private Pose2d getTargetPose(int aprilTagId) {
+    private Pose2d getTargetPose() {
 
         return switch (Robot.instance.robotContainer.getAlignDirection()) {
-            case Center -> switch (aprilTagId) {
-                case 15, 31 -> AlignConstants.CLIMB_CENTER;
-                
-                default -> {
-                    System.out.println("Unknown AprilTag ID for center: " + aprilTagId);
-                    yield drivetrain.getState().Pose;
-                }
-            };
-            case Right -> switch (aprilTagId) {
-                case 16, 32 -> AlignConstants.CLIMB_CENTER;
-                
-                default -> {
-                    System.out.println("Unknown AprilTag ID for right: " + aprilTagId);
-                    yield drivetrain.getState().Pose;
-                }
-            };
+            case Center -> AlignConstants.CLIMB.plus(AlignConstants.CENTER_OFFSET);
+            case Right -> AlignConstants.CLIMB.plus(AlignConstants.LEFT_OFFSET);
+            case Left -> AlignConstants.CLIMB.plus(AlignConstants.RIGHT_OFFSET);
             default -> drivetrain.getState().Pose;
         };
     }

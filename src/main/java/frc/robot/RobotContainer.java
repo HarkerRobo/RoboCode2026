@@ -69,7 +69,8 @@ public class RobotContainer
     public enum AlignDirection
     {
         Center,
-        Right
+        Right,
+        Left
     }
     
     public double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
