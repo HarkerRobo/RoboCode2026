@@ -7,7 +7,7 @@ public class AlignConstants {
     //public static final Translation2d HUB_RED = new Translation2d(11.979, 4.044);
 
 
-    public static final Pose2d CLIMB_CENTER = new Pose2d(0, 0, new Rotation2d(0));
+    public static final Pose2d CLIMB_CENTER = new Pose2d(0, 0, new Rotation2d(0)); //TODO
     public static final Pose2d CLIMB_RIGHT = new Pose2d(0, 0, new Rotation2d(0));
 
 }

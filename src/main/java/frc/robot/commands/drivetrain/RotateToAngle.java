@@ -19,7 +19,7 @@ import com.pathplanner.lib.path.GoalEndState;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class DriveToPoseCommand extends Command {
+public class RotateToAngle extends Command {
     /*
     private final Drivetrain drivetrain;
     private Pose2d targetPose;

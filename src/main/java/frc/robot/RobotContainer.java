@@ -34,6 +34,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.TunerConstants;
+import frc.robot.RobotContainer.PassDirection;
 import frc.robot.commands.climb.ClimbToLevel;
 import frc.robot.commands.climb.MoveDownUntilStall;
 import frc.robot.commands.climb.RunClimb;
@@ -64,9 +65,15 @@ import frc.robot.util.Util;
 
 public class RobotContainer 
 {
+    public enum AlignDirection
+    {
+        Center,
+        Right
+    }
+    
     public double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
-
+    private AlignDirection alignDirection = AlignDirection.Center;
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
         .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
@@ -511,6 +518,16 @@ public class RobotContainer
                 Math.max(Constants.Shooter.DEFAULT_VELOCITY, 
                 -Constants.Shooter.INCREASE_VELOCITY + Shooter.getInstance().getRightVelocity().in(RotationsPerSecond))))));             
     }
+
+    public AlignDirection getAlignDirection ()
+    {
+        return alignDirection;
+    }
+
+    public void setAlignDirection (AlignDirection direction)
+    {
+        this.alignDirection = direction;
+    } 
 
     public Command track(Command command)
     {
