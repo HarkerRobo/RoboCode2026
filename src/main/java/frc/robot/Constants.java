@@ -48,6 +48,8 @@ public class Constants
     public static final double TRANSLATION_SLOW_MULTIPLIER = 0.2;
     public static final double ROTATION_SLOW_MULTIPLIER = 0.4;
 
+    public static final double G = 9.81;
+
     public class Vision {
         public static final String kCamera1Name = "limelight";
         public static final Transform3d kRobotToCam1 = new Transform3d(
@@ -230,7 +232,7 @@ public class Constants
 
         public static final double LENGTH = 0.5; // TODO meters
         public static final double MIN_ANGLE = 5.0; // TODO degrees
-        public static final double MAX_ANGLE = 70.0; // TODO degrees
+        public static final double MAX_ANGLE = 75.0; // degrees
     
         public static final double STALLING_CURRENT = 50.0;
 
@@ -570,7 +572,7 @@ public class Constants
         Simulation.HUB_CONTENTS.getCenter().getTranslation().getX(),
         Simulation.HUB_INTAKE_HEIGHT);
 
-    public static final double HOOD_BASE_HEIGHT = 0.10; // TODO
+    public static final double HOOD_BASE_HEIGHT = 0.34; // TODO
 
     public static final Translation3d PASS_LEFT_TARGET_POSITION = new Translation3d(2.010664, 2.010664, 1.0);
     public static final Translation3d PASS_RIGHT_TARGET_POSITION = new Translation3d(2.010664, Simulation.FIELD_HEIGHT - 2.010664, 1.0);
@@ -580,5 +582,7 @@ public class Constants
 
     public static final double PITCH_OFFSET_UNIT = 5.0; // TODO
     public static final double FLYWHEEL_OFFSET_UNIT = 2.5; // TODO
+
+    public static final double DISTANCE_SHOOTVELO_RATIO = 0.7400067;
 
 }

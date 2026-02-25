@@ -12,6 +12,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Radians;
 
+import com.pathplanner.lib.util.FlippingUtil;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import frc.robot.Constants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -83,27 +85,41 @@ public class Util
         return new Rectangle2d(new Pose2d(new Translation2d(Constants.Simulation.ROTATE_X.apply(r.getCenter().getX()), Constants.Simulation.ROTATE_Y.apply(r.getCenter().getY())), new Rotation2d()), r.getXWidth(), r.getYWidth());
     }
     
-    public static Angle calculatePitch(Translation3d position, Translation3d target)
+    public static Angle calculatePitch(Translation3d position, Translation3d target, double shootVelocity)
     {
         double dx = target.getX() - position.getX();
         double dy = target.getY() - position.getY();
-        double base = Math.sqrt(dx * dx + dy * dy);
-        double height = target.getZ() - position.getZ();
-        double idealAngle = Math.atan2(height, base);
-        return Radians.of(idealAngle).plus(Degrees.of(10.0)); // TODO make this real
+        double db = Math.sqrt(dx * dx + dy * dy);
+        double dz = target.getZ() - position.getZ();
+        double s = shootVelocity;
+        double g = Constants.G;
+        System.out.println("\n\tdb: " + db + "\tdz: " + dz + "\ts: " + s);
+        double idealAngle = Math.atan((Math.pow(s,2.0) + 
+            Math.sqrt(Math.pow(s,4.0)
+                - g * (g * Math.pow(db,2.0) + 2.0 * dz * Math.pow(s,2.0))))
+            / (g * db));
+        return Radians.of(idealAngle);
     }
 
     public static double calculateVelocity(Translation3d position, Translation3d target)
     {
-        return 10.0; // TODO make this real
+        double dx = target.getX() - position.getX();
+        double dy = target.getY() - position.getY();
+        double db = Math.sqrt(dx * dx + dy * dy);
+        return Constants.DISTANCE_SHOOTVELO_RATIO * (db - Constants.Simulation.HUB_CONTENTS.getXWidth() / 2.0 - 6.0) + 10.0;
     }
 
     public static Angle calculateShootPitch(CommandSwerveDrivetrain drivetrain)
     {
+        
         return Util.calculatePitch(new Translation3d(
                 drivetrain.getState().Pose.getTranslation().getX(),
                 drivetrain.getState().Pose.getTranslation().getY(),
-                Constants.HOOD_BASE_HEIGHT), Constants.HUB_TARGET_POSITION);
+                Constants.HOOD_BASE_HEIGHT), 
+                (DriverStation.getAlliance().get() == Alliance.Blue) ? 
+                    Constants.HUB_TARGET_POSITION : 
+                    new Translation3d(FlippingUtil.flipFieldPosition(Constants.HUB_TARGET_POSITION.toTranslation2d()).getX(), FlippingUtil.flipFieldPosition(Constants.HUB_TARGET_POSITION.toTranslation2d()).getY(), Constants.HUB_TARGET_POSITION.getZ()), 
+                calculateShootVelocity(drivetrain));
     }
 
     public static double calculateShootVelocity(CommandSwerveDrivetrain drivetrain)
@@ -111,7 +127,10 @@ public class Util
         return Util.calculateVelocity(new Translation3d(
                 drivetrain.getState().Pose.getTranslation().getX(),
                 drivetrain.getState().Pose.getTranslation().getY(),
-                Constants.HOOD_BASE_HEIGHT), Constants.HUB_TARGET_POSITION);
+                Constants.HOOD_BASE_HEIGHT),
+                (DriverStation.getAlliance().get() == Alliance.Blue) ? 
+                    Constants.HUB_TARGET_POSITION : 
+                    new Translation3d(FlippingUtil.flipFieldPosition(Constants.HUB_TARGET_POSITION.toTranslation2d()).getX(), FlippingUtil.flipFieldPosition(Constants.HUB_TARGET_POSITION.toTranslation2d()).getY(), Constants.HUB_TARGET_POSITION.getZ()));
     }
     
     public static Angle calculatePassPitch(CommandSwerveDrivetrain drivetrain)
@@ -121,8 +140,9 @@ public class Util
                 drivetrain.getState().Pose.getTranslation().getY(),
                 Constants.HOOD_BASE_HEIGHT),
                 (drivetrain.getState().Pose.getY() < Constants.Simulation.FIELD_HEIGHT / 2.0) ?
-                    Constants.PASS_LEFT_TARGET_POSITION :
-                    Constants.PASS_RIGHT_TARGET_POSITION);
+                    (DriverStation.getAlliance().get()==Alliance.Blue) ? Constants.PASS_LEFT_TARGET_POSITION : new Translation3d(FlippingUtil.flipFieldPosition(Constants.PASS_LEFT_TARGET_POSITION.toTranslation2d()).getX(), FlippingUtil.flipFieldPosition(Constants.PASS_LEFT_TARGET_POSITION.toTranslation2d()).getY(), Constants.PASS_LEFT_TARGET_POSITION.getZ()) :
+                    (DriverStation.getAlliance().get()==Alliance.Blue) ? Constants.PASS_RIGHT_TARGET_POSITION : new Translation3d(FlippingUtil.flipFieldPosition(Constants.PASS_RIGHT_TARGET_POSITION.toTranslation2d()).getX(), FlippingUtil.flipFieldPosition(Constants.PASS_RIGHT_TARGET_POSITION.toTranslation2d()).getY(), Constants.PASS_RIGHT_TARGET_POSITION.getZ()) ,
+                calculatePassVelocity(drivetrain));
     }
     
     public static double calculatePassVelocity(CommandSwerveDrivetrain drivetrain)
@@ -132,8 +152,8 @@ public class Util
                 drivetrain.getState().Pose.getTranslation().getY(),
                 Constants.HOOD_BASE_HEIGHT),
                 (drivetrain.getState().Pose.getY() < Constants.Simulation.FIELD_HEIGHT / 2.0) ?
-                    Constants.PASS_LEFT_TARGET_POSITION :
-                    Constants.PASS_RIGHT_TARGET_POSITION);
+                    (DriverStation.getAlliance().get()==Alliance.Blue) ? Constants.PASS_LEFT_TARGET_POSITION : new Translation3d(FlippingUtil.flipFieldPosition(Constants.PASS_LEFT_TARGET_POSITION.toTranslation2d()).getX(), FlippingUtil.flipFieldPosition(Constants.PASS_LEFT_TARGET_POSITION.toTranslation2d()).getY(), Constants.PASS_LEFT_TARGET_POSITION.getZ()) :
+                    (DriverStation.getAlliance().get()==Alliance.Blue) ? Constants.PASS_RIGHT_TARGET_POSITION : new Translation3d(FlippingUtil.flipFieldPosition(Constants.PASS_RIGHT_TARGET_POSITION.toTranslation2d()).getX(), FlippingUtil.flipFieldPosition(Constants.PASS_RIGHT_TARGET_POSITION.toTranslation2d()).getY(), Constants.PASS_RIGHT_TARGET_POSITION.getZ()));
     }
 
     public static double bound(double value, double min, double max)
