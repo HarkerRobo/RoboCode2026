@@ -100,8 +100,8 @@ public class Shooter extends SubsystemBase
 
         TalonFXConfiguration leftConfig = new TalonFXConfiguration();
         leftConfig.Slot0.kP = Constants.Shooter.LEFT_KP;
-        leftConfig.Slot0.kI = Constants.Shooter.LEFT_KP;
-        leftConfig.Slot0.kD = Constants.Shooter.LEFT_KP;
+        leftConfig.Slot0.kI = Constants.Shooter.LEFT_KI;
+        leftConfig.Slot0.kD = Constants.Shooter.LEFT_KD;
         leftConfig.Slot0.kS = Constants.Shooter.LEFT_KS;
         leftConfig.Slot0.kV = Constants.Shooter.LEFT_KV;
         leftConfig.Slot0.kA = Constants.Shooter.LEFT_KA;
@@ -111,8 +111,8 @@ public class Shooter extends SubsystemBase
         
         TalonFXConfiguration rightConfig = new TalonFXConfiguration();
         rightConfig.Slot0.kP = Constants.Shooter.RIGHT_KP;
-        rightConfig.Slot0.kI = Constants.Shooter.RIGHT_KP;
-        rightConfig.Slot0.kD = Constants.Shooter.RIGHT_KP;
+        rightConfig.Slot0.kI = Constants.Shooter.RIGHT_KI;
+        rightConfig.Slot0.kD = Constants.Shooter.RIGHT_KD;
         rightConfig.Slot0.kS = Constants.Shooter.RIGHT_KS;
         rightConfig.Slot0.kV = Constants.Shooter.RIGHT_KV;
         rightConfig.Slot0.kA = Constants.Shooter.RIGHT_KA;
