@@ -8,6 +8,7 @@ import static edu.wpi.first.units.Units.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.swerve.SwerveModule.*;
@@ -90,6 +91,16 @@ public class RobotContainer
 
     public SendableChooser<Command> testCommandChooser = new SendableChooser<>();
     public ArrayList<SendableChooser<SubsystemStatus>> modeChoosers = new ArrayList<>();
+
+    Function<RobotContainer.AlignDirection, Command> setDirectionFactory = ((AlignDirection direction) ->
+        
+        new Command() {
+            public void execute () {System.out.println(direction); Robot.instance.robotContainer.setAlignDirection(direction);}
+            public boolean isFinished () {return true;}});
+
+    Command alignLeft = setDirectionFactory.apply(AlignDirection.Left);
+    Command alignCenter = setDirectionFactory.apply(AlignDirection.Center);
+    Command alignRight = setDirectionFactory.apply(AlignDirection.Right);
 
     private SendableChooser<Command> autonChooser;
     public static int INTAKE_INDEX = 0;
@@ -316,6 +327,8 @@ public class RobotContainer
         driver.y().whileTrue(Shooter.getInstance().leftSysIdDynamic(Direction.kReverse));
 
         driver.button(1).onTrue(new DriveToPose(drivetrain));
+        driver.button(2).onTrue(alignLeft);
+        driver.button(3).onTrue(alignRight);
 
         drivetrain.setDefaultCommand(
                 // Drivetrain will execute this command periodically

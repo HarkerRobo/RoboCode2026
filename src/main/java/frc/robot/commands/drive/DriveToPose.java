@@ -28,7 +28,7 @@ public class DriveToPose extends Command{
     public DriveToPose(CommandSwerveDrivetrain drivetrain) {
         this.drivetrain = drivetrain;
         addRequirements(drivetrain);
-}
+    }
 
     @Override
     public void initialize() {
@@ -63,7 +63,6 @@ public class DriveToPose extends Command{
 
         targetPose = getTargetPose();
         
-
         // Flip pose if we're on the red alliance
         if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) targetPose = FlippingUtil.flipFieldPose(targetPose);
         
@@ -114,9 +113,9 @@ public class DriveToPose extends Command{
     private Pose2d getTargetPose() {
 
         return switch (Robot.instance.robotContainer.getAlignDirection()) {
-            case Center -> AlignConstants.CLIMB.plus(AlignConstants.CENTER_OFFSET);
-            case Right -> AlignConstants.CLIMB.plus(AlignConstants.LEFT_OFFSET);
-            case Left -> AlignConstants.CLIMB.plus(AlignConstants.RIGHT_OFFSET);
+            case Center -> AlignConstants.CLIMB_CENTER;
+            case Right -> AlignConstants.CLIMB_CENTER.plus(AlignConstants.LEFT_OFFSET);
+            case Left -> AlignConstants.CLIMB_CENTER.plus(AlignConstants.RIGHT_OFFSET);
             default -> drivetrain.getState().Pose;
         };
     }
