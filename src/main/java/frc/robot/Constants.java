@@ -37,13 +37,14 @@ import frc.robot.simulation.BallConstants;
 
 public class Constants 
 {
-    public static final double MAX_VOLTAGE = 12.0;
+   
+    public static final double MAX_VOLTAGE = 12.0; //volts
     
     public static final double EPSILON = 0.1;
+    
+    public static final double ROBOT_DIAMETER = 0.889; //meters
 
-    public static final double ROBOT_DIAMETER = 0.889;
-
-    public static final Pose2d ZEROING_POSE = new Pose2d(4.028649 - ROBOT_DIAMETER / 2.0, 4.034536, new Rotation2d(0.0));
+    public static final Pose2d ZEROING_POSE = new Pose2d(4.028649 - ROBOT_DIAMETER / 2.0, 4.034536, new Rotation2d(0.0)); 
 
     public static final double TRANSLATION_SLOW_MULTIPLIER = 0.2;
     public static final double ROTATION_SLOW_MULTIPLIER = 0.4;
@@ -73,12 +74,12 @@ public class Constants
         public static final int RIGHT_MASTER_ID = 21;
         public static final int RIGHT_FOLLOWER_ID = 22;
         
-        public static final double STATOR_CURRENT_LIMIT = 90.0;
-        public static final double SUPPLY_CURRENT_LIMIT = 90.0;
+        public static final double STATOR_CURRENT_LIMIT = 90.0;//amps
+        public static final double SUPPLY_CURRENT_LIMIT = 90.0;//amps
 
-        public static final double MM_CRUISE_VELOCITY = 60.0;
-		public static final double MM_ACCELERATION = 60.0;
-		public static final double MM_JERK = 240.0;
+        public static final double MM_CRUISE_VELOCITY = 60.0;//rotations per second
+		public static final double MM_ACCELERATION = 60.0;//rotations per second^2
+		public static final double MM_JERK = 240.0;//rotations per second^3
 		public static final InvertedValue INVERTED = InvertedValue.CounterClockwise_Positive;
         
         public static final double GEAR_RATIO = 0.5; // TODO
@@ -97,11 +98,14 @@ public class Constants
         public static final double RIGHT_KV = 0.11931; // TODO
         public static final double RIGHT_KA = 0.0059936; // TODO
 
-        public static final double DEFAULT_VELOCITY = 0.1; // TODO rotations per second (nonzero to decrease startup time)
-        public static final double SHOOT_VELOCITY = 10.0; // TODO rotations per second 
+        public static final double DEFAULT_VELOCITY = 0.1; // TODO meters per seconds
+        public static final double SHOOT_VELOCITY = 10.0; // TODO meters per seconds
 
-        public static final double INCREASE_VELOCITY = 0.5; // TODO
-        public static final double MAX_VELOCITY = 20.0; // TODO
+        /**
+         * meters/second
+         */
+        public static final double INCREASE_VELOCITY = 0.5; // TODO meters per seconds
+        public static final double MAX_VELOCITY = 20.0; // TODO meters per seconds
         
         public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
     }
@@ -110,12 +114,13 @@ public class Constants
     {
         public static int ID = 23;
 
-        public static final double STATOR_CURRENT_LIMIT = 90.0;
-        public static final double SUPPLY_CURRENT_LIMIT = 90.0;
+        public static final double STATOR_CURRENT_LIMIT = 90.0; //amps
+        public static final double SUPPLY_CURRENT_LIMIT = 90.0; //amps
 
-        public static final double INTAKE_VOLTAGE = 5.8;
-        public static final double DEFAULT_INTAKE_VOLTAGE = 0.0;
-        public static final double EJECT_VOLTAGE = -2.5;
+       
+        public static final double INTAKE_VOLTAGE = 5.8; //volts
+        public static final double DEFAULT_INTAKE_VOLTAGE = 0.0;//volts
+        public static final double EJECT_VOLTAGE = -2.5;//volts
 
         public static final double KP = 0.0023821;
 		public static final double KI = 0.0;
@@ -136,11 +141,13 @@ public class Constants
     {
         public static int ID = 24;
 
-        public static final double STATOR_CURRENT_LIMIT = 90.0;
-        public static final double SUPPLY_CURRENT_LIMIT = 90.0;
+        
+        public static final double STATOR_CURRENT_LIMIT = 90.0;//amps
+        public static final double SUPPLY_CURRENT_LIMIT = 90.0;//amps
 
-        public static final double EXTENDING_VOLTAGE = 2.5;
-        public static final double RETRACTING_VOLTAGE = -2.5;
+     
+        public static final double EXTENDING_VOLTAGE = 2.5;//volts
+        public static final double RETRACTING_VOLTAGE = -2.5;//volts
 
         public static final double KP = 0.0023821;
 		public static final double KI = 0.0;
@@ -158,16 +165,16 @@ public class Constants
 
         public static final double STALLING_CURRENT = 44;
 
-        public static final double MIN_HEIGHT = 0.0; // TODO
-        public static final double MAX_HEIGHT = 1.0; // TODO
+        public static final double MIN_HEIGHT = 0.0; // TODO rotations
+        public static final double MAX_HEIGHT = 1.0; // TODO rotations
     }
 
     public class Hopper
     {
         public static final int ID = 25;
-        
-        public static final double STATOR_CURRENT_LIMIT = 90.0;
-        public static final double SUPPLY_CURRENT_LIMIT = 90.0;
+       
+        public static final double STATOR_CURRENT_LIMIT = 90.0;//amps
+        public static final double SUPPLY_CURRENT_LIMIT = 90.0;//amps
 
         /*
         public static final double MM_CRUISE_VELOCITY = 60.0;
@@ -189,10 +196,11 @@ public class Constants
         public static final double MIN_POSITION = 0.1; // TODO min hopper position (rotations) for simulation
         public static final double MAX_POSITION = 10.0; // TODO max hopper position (rotations) for simulation
  
-        public static final double FORWARD_VOLTAGE = 1.0; // TODO
-        public static final double BACKWARD_VOLTAGE = -1.0; // TODO
-
-        public static final double STALLING_CURRENT = 50;
+       
+        public static final double FORWARD_VOLTAGE = 1.0; // TODO volts
+        public static final double BACKWARD_VOLTAGE = -1.0; // TODO volts
+        
+        public static final double STALLING_CURRENT = 50;//amps
 
         public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
     }
@@ -202,12 +210,12 @@ public class Constants
         public static final int MASTER_ID = 26;
         public static final int FOLLOWER_ID = 27;
         
-        public static final double STATOR_CURRENT_LIMIT = 90.0;
-        public static final double SUPPLY_CURRENT_LIMIT = 90.0;
+        public static final double STATOR_CURRENT_LIMIT = 90.0;//amps
+        public static final double SUPPLY_CURRENT_LIMIT = 90.0;//amps
 
-        public static final double MM_CRUISE_VELOCITY = 1.0; // TODO
-		public static final double MM_ACCELERATION = 4.0;  // TODO
-		public static final double MM_JERK = 8.0; // TODO
+        public static final double MM_CRUISE_VELOCITY = 1.0; // TODO rotations per second
+		public static final double MM_ACCELERATION = 4.0;  // TODO rotations per second^2
+		public static final double MM_JERK = 8.0; // TODO TODO rotations per second^3
 		public static final InvertedValue INVERTED = InvertedValue.CounterClockwise_Positive;
         
         public static final double GEAR_RATIO = 0.12; // TODO
@@ -232,9 +240,11 @@ public class Constants
         public static final double MIN_ANGLE = 60.0; // TODO degrees
         public static final double MAX_ANGLE = 75.0; // TODO degrees
     
-        public static final double STALLING_CURRENT = 50.0; // TODO
+        
+        public static final double STALLING_CURRENT = 50.0; // TODO amps
 
-        public static final double ZEROING_VOLTAGE = -0.2; // TODO
+        
+        public static final double ZEROING_VOLTAGE = -0.2; // TODO volts
     }
 
     /*
@@ -270,8 +280,8 @@ public class Constants
 
     public class Simulation
     {
-        public static final double FIELD_HEIGHT = 8.069326;
-        public static final double FIELD_WIDTH = 16.540988;
+        public static final double FIELD_HEIGHT = 8.069326;//meters
+        public static final double FIELD_WIDTH = 16.540988;//meters
 
         // excluding steel barrier
         public static final Rectangle2d DEPOT = new Rectangle2d(
@@ -286,9 +296,9 @@ public class Constants
         public static final Translation2d CENTER_UPPER_REFERENCE = new Translation2d(FIELD_CENTER.getX(), FIELD_CENTER.getY() + 0.0254);
         public static final Translation2d CENTER_LOWER_REFERENCE = new Translation2d(FIELD_CENTER.getX(), FIELD_CENTER.getY() - 0.0254);
 
-        public static final double FUEL_DIAMETER = 0.15;
-        public static final double MIN_FUEL_MASS = 0.203;
-        public static final double MAX_FUEL_MASS = 0.227;
+        public static final double FUEL_DIAMETER = 0.15;//meters
+        public static final double MIN_FUEL_MASS = 0.203;//meters
+        public static final double MAX_FUEL_MASS = 0.227;//meters
 
         public static final int TOTAL_FUEL = 504;
         public static final int FUELS_TAKEN_BY_OTHER_ROBOTS = 0;
@@ -306,7 +316,7 @@ public class Constants
             (MAX_FUEL_MASS + MIN_FUEL_MASS) / 2.0,
             FUEL_DIAMETER / 2.0, 1.2, 0.30, 1.2, 0.35, 9.81, 20);
 
-        public static final double HUB_INTAKE_HEIGHT = 1.8288;
+        public static final double HUB_INTAKE_HEIGHT = 1.8288;//meters
     }
     public static final class Climb 
     {
@@ -329,9 +339,9 @@ public class Constants
         public static final double KD_ELEVATOR = 0.0; //TODO
         public static final double KD_CLIMB = 0.037935; // TODO
 
-        public static final Current STATOR_CURRENT_LIMIT = Amps.of(100 + 40); // TODO
-        public static final Current ELEVATOR_STALLING_CURRENT = Amps.of(100);
-        public static final Current SUPPLY_CURRENT_LIMIT = Amps.of(100 + 20); // TODO
+        public static final Current STATOR_CURRENT_LIMIT = Amps.of(100 + 40); // TODO amps
+        public static final Current ELEVATOR_STALLING_CURRENT = Amps.of(100);//amps
+        public static final Current SUPPLY_CURRENT_LIMIT = Amps.of(100 + 20); // TODO amps
 
         public static final Angle CLIMB_POSITION_LEVEL_1 = Rotations.of(2.0);  // rotations // TODO
         public static final Angle CLIMB_POSITION_LEVEL_2 = Rotations.of(4.0);  // rotations // TODO
@@ -343,16 +353,16 @@ public class Constants
 		public static final double KG = 0.016529; // TODO
         public static final Angle MAX_ERROR = Rotations.of(0.1);
 
-        public static final Voltage ELEVATOR_GO_DOWN_VOLTAGE = Volts.of(-2.0); //TODO
-        public static final Voltage CLIMB_DEPLOY_VOLTAGE = Volts.of(1.0); // TODO
-        public static final Voltage CLIMB_UNDEPLOY_VOLTAGE = Volts.of(-1.0); // TODO
+        public static final Voltage ELEVATOR_GO_DOWN_VOLTAGE = Volts.of(-2.0); //TODO volts
+        public static final Voltage CLIMB_DEPLOY_VOLTAGE = Volts.of(1.0); // TODO volts
+        public static final Voltage CLIMB_UNDEPLOY_VOLTAGE = Volts.of(-1.0); // TODO volts
 
-        public static final double ELEVATOR_MIN_HEIGHT = 0.0;
-        public static final double ELEVATOR_MAX_HEIGHT = 10.0;
+        public static final double ELEVATOR_MIN_HEIGHT = 0.0;//rotations
+        public static final double ELEVATOR_MAX_HEIGHT = 10.0;//rotations
 
-        public static final double MM_CRUISE_VELOCITY = 6.0;
-		public static final double MM_ACCELERATION = 5.0;
-		public static final double MM_JERK = 24.0;
+        public static final double MM_CRUISE_VELOCITY = 6.0;//rotations per second
+		public static final double MM_ACCELERATION = 5.0;//rotations per second^2
+		public static final double MM_JERK = 24.0;//rotations per second^3
     }
 
     public class Indexer {
@@ -360,8 +370,8 @@ public class Constants
         public static final int ID = 31;
 
         public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive; // TODO
-        public static final double STATOR_CURRENT_LIMIT = 80.0;
-        public static final double SUPPLY_CURRENT_LIMIT = 80.0;
+        public static final double STATOR_CURRENT_LIMIT = 80.0;//amps
+        public static final double SUPPLY_CURRENT_LIMIT = 80.0;//amps
 
         public static final double KS = 0.0048438; //TODO
         public static final double KV = 0.12361; //TODO
@@ -378,6 +388,9 @@ public class Constants
         public static final double MM_JERK = 0.0;
         */
 
+        /**
+         * meters/second
+         */
         public static final double MAX_VELOCITY = 1.0; // TODO rotations per second
         public static final double DEFAULT_VELOCITY = 0.0; // TODO rotations per second
 
@@ -391,11 +404,12 @@ public class Constants
         public static final int ID = 32;
 
         public static final InvertedValue INVERTED = InvertedValue.CounterClockwise_Positive;
-        public static final double STATOR_CURRENT_LIMIT = 80.0;
-        public static final double SUPPLY_CURRENT_LIMIT = 80.0;
+        public static final double STATOR_CURRENT_LIMIT = 80.0;//amps
+        public static final double SUPPLY_CURRENT_LIMIT = 80.0;//amps
 
-        public static final double DEFAULT_VOLTAGE = 0.0;
-        public static final double INTAKE_VOLTAGE = 1.0; // TODO
+       
+        public static final double DEFAULT_VOLTAGE = 0.0;//volts
+        public static final double INTAKE_VOLTAGE = 1.0; // TODO//volts
         
         public static final double KS = 0.0048438; // TODO
         public static final double KV = 0.12361; // TODO
@@ -570,15 +584,15 @@ public class Constants
         Simulation.HUB_CONTENTS.getCenter().getTranslation().getX(),
         Simulation.HUB_INTAKE_HEIGHT);
 
-    public static final double HOOD_BASE_HEIGHT = 0.10; // TODO
+    public static final double HOOD_BASE_HEIGHT = 0.10; // TODO meters
 
     public static final Translation3d PASS_LEFT_TARGET_POSITION = new Translation3d(2.010664, 2.010664, 1.0);
     public static final Translation3d PASS_RIGHT_TARGET_POSITION = new Translation3d(2.010664, Simulation.FIELD_HEIGHT - 2.010664, 1.0);
 
     public static final Angle HARDCODE_HOOD_PITCH = Degrees.of(20.0);
-    public static final double HARDCODE_VELOCITY = 5.0;
+    public static final double HARDCODE_VELOCITY = 5.0;//meters per second
 
-    public static final double PITCH_OFFSET_UNIT = 5.0; // TODO
-    public static final double FLYWHEEL_OFFSET_UNIT = 2.5; // TODO
+    public static final double PITCH_OFFSET_UNIT = 5.0; // TODO meters
+    public static final double FLYWHEEL_OFFSET_UNIT = 2.5; // TODO meters
 
 }
