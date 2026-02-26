@@ -52,6 +52,8 @@ public class Constants
 
     public static final String CAN_SUPERSTRUCTURE = "Superstructure";
 
+    public static final double G = 9.81;
+
     public class Vision {
         public static final String kCamera1Name = "limelight";
         public static final Transform3d kRobotToCam1 = new Transform3d(
@@ -577,7 +579,7 @@ public class Constants
         Simulation.HUB_CONTENTS.getCenter().getTranslation().getX(),
         Simulation.HUB_INTAKE_HEIGHT);
 
-    public static final double HOOD_BASE_HEIGHT = 0.10; // TODO
+    public static final double HOOD_BASE_HEIGHT = 0.34; // TODO
 
     public static final Translation3d PASS_LEFT_TARGET_POSITION = new Translation3d(2.010664, 2.010664, 1.0);
     public static final Translation3d PASS_RIGHT_TARGET_POSITION = new Translation3d(2.010664, Simulation.FIELD_HEIGHT - 2.010664, 1.0);
@@ -587,5 +589,7 @@ public class Constants
 
     public static final double PITCH_OFFSET_UNIT = 5.0; // TODO
     public static final double FLYWHEEL_OFFSET_UNIT = 2.5; // TODO
+
+    public static final double DISTANCE_SHOOTVELO_RATIO = 0.7400067;
 
 }
