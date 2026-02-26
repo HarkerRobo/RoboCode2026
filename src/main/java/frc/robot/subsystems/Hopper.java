@@ -41,7 +41,7 @@ public class Hopper extends SubsystemBase
 
     private Hopper()
     {
-        master = new TalonFX(Constants.Hopper.ID);
+        master = new TalonFX(Constants.Hopper.ID, Constants.CAN_CHAIN);
         
         if (isSimulated())
         {

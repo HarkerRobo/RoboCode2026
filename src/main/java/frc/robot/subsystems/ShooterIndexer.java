@@ -35,7 +35,7 @@ public class ShooterIndexer extends SubsystemBase
 
     private ShooterIndexer()
     {
-        motor = new TalonFX(Constants.ShooterIndexer.ID);
+        motor = new TalonFX(Constants.ShooterIndexer.ID, Constants.CAN_SUPERSTRUCTURE);
         config();
         
         if (isSimulated())

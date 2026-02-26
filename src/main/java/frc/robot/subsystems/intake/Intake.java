@@ -33,7 +33,7 @@ public class Intake extends SubsystemBase
    
     private Intake()
     {
-        motor = new TalonFX(Constants.Intake.ID);
+        motor = new TalonFX(Constants.Intake.ID, Constants.CAN_CHAIN);
         config();
         
         if (isSimulated())

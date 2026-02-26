@@ -51,8 +51,8 @@ public class Shooter extends SubsystemBase
 
     private Shooter()
     {
-        left = new TalonFX(Constants.Shooter.LEFT_ID);
-        right = new TalonFX(Constants.Shooter.RIGHT_ID);
+        left = new TalonFX(Constants.Shooter.LEFT_ID, Constants.CAN_SUPERSTRUCTURE);
+        right = new TalonFX(Constants.Shooter.RIGHT_ID, Constants.CAN_SUPERSTRUCTURE);
 
         config();
         
@@ -139,6 +139,16 @@ public class Shooter extends SubsystemBase
         return right.getVelocity().getValue();
     }
 
+    public LinearVelocity getLeftEffectiveVelocity()
+    {
+        return MetersPerSecond.of(getLeftVelocity().in(RotationsPerSecond) * Constants.Shooter.FLYWHEEL_CIRCUMFERANCE);
+    }
+    
+    public LinearVelocity getRightEffectiveVelocity()
+    {
+        return MetersPerSecond.of(getRightVelocity().in(RotationsPerSecond) * Constants.Shooter.FLYWHEEL_CIRCUMFERANCE);
+    }
+
     public void setVelocity (AngularVelocity velocity)
     {
         if (isDisabled())
@@ -170,6 +180,18 @@ public class Shooter extends SubsystemBase
         }
         right.setControl(new VelocityVoltage(velocity));
     }
+    
+    public void setEffectiveVelocity (LinearVelocity velocity)
+    {
+        if (isDisabled())
+        {
+            System.out.println("Quashing input to Shooter");
+            return;
+        }
+        left.setControl(new VelocityVoltage(velocity.in(MetersPerSecond) / Constants.Shooter.FLYWHEEL_CIRCUMFERANCE));
+        right.setControl(new VelocityVoltage(velocity.in(MetersPerSecond) / Constants.Shooter.FLYWHEEL_CIRCUMFERANCE));
+        targetVelocity = velocity.in(MetersPerSecond) / Constants.Shooter.FLYWHEEL_CIRCUMFERANCE;
+    }
 
     public void setVoltage (Voltage voltage)
     {
@@ -192,6 +214,7 @@ public class Shooter extends SubsystemBase
         left.setControl(new DutyCycleOut(dutyCycle));
         right.setControl(new DutyCycleOut(dutyCycle));
     }
+    
     
     @Override
     public void periodic ()

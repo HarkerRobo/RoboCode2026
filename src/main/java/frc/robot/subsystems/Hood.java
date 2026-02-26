@@ -40,7 +40,6 @@ public class Hood extends SubsystemBase
     private static Hood instance;
 
     private static TalonFX motor;
-    private static TalonFX follower;
 
     private double desiredPosition; // rotations
     
@@ -65,7 +64,7 @@ public class Hood extends SubsystemBase
 
     private Hood()
     {
-        motor = new TalonFX(Constants.Hood.ID);
+        motor = new TalonFX(Constants.Hood.ID, Constants.CAN_SUPERSTRUCTURE);
 
         config();
 
@@ -81,7 +80,6 @@ public class Hood extends SubsystemBase
     private void config()
     {
         motor.clearStickyFaults();
-        follower.clearStickyFaults();
         TalonFXConfiguration config = new TalonFXConfiguration();
 
         if (!isSimulated())
@@ -117,7 +115,6 @@ public class Hood extends SubsystemBase
         config.Voltage.PeakReverseVoltage = -Constants.MAX_VOLTAGE;
 
         motor.getConfigurator().apply(config);
-        follower.getConfigurator().apply(config);
 
     }
 

@@ -48,8 +48,8 @@ public class Climb extends SubsystemBase
     private Climb() 
     {
         targetPosition = Rotations.of(0);
-        elevator = new TalonFX(Constants.Climb.ELEVATOR_ID);
-        climb = new TalonFX(Constants.Climb.HINGE_ID);
+        elevator = new TalonFX(Constants.Climb.ELEVATOR_ID, Constants.CAN_CHAIN);
+        climb = new TalonFX(Constants.Climb.HINGE_ID, Constants.CAN_CHAIN);
 
         config();
         
