@@ -36,14 +36,14 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
 
 public class TelemetryUtil {
+
     static NetworkTableInstance netTableInstance = NetworkTableInstance.getDefault();
     static NetworkTable table = netTableInstance.getTable("telemetry");
 
-    
-    static List<DoublePublisher> doublePublishers =  new ArrayList<>();
+    static List<DoublePublisher> doublePublishers = new ArrayList<>();
     static List<DoubleSupplier> doublePublisherSuppliers = new ArrayList<>();
 
-    static List<BooleanPublisher> booleanPublishers =  new ArrayList<>();
+    static List<BooleanPublisher> booleanPublishers = new ArrayList<>();
     static List<BooleanSupplier> booleanPublisherSuppliers = new ArrayList<>();
 
     static List<StringPublisher> stringPublishers = new ArrayList<>();
@@ -58,76 +58,90 @@ public class TelemetryUtil {
     static List<StructArrayPublisher<?>> structArrayPublishers = new ArrayList<>();
     static List<Supplier<?>> structArrayPublisherSuppliers = new ArrayList<>();
 
-
+    /**
+     * Registers a double topic and stores its supplier.
+     * Value is pushed every periodic() call.
+     */
     public static void addDouble(String name, DoubleSupplier supplier)
     {
         doublePublishers.add(table.getDoubleTopic(name).publish());
         doublePublisherSuppliers.add(supplier);
     }
 
+    /**
+     * Registers a boolean topic and stores its supplier.
+     * Value is pushed every periodic() call.
+     */
     public static void addBoolean(String name, BooleanSupplier supplier)
     {
         booleanPublishers.add(table.getBooleanTopic(name).publish());
         booleanPublisherSuppliers.add(supplier);
     }
-    
+
+    /**
+     * Registers a string topic and stores its supplier.
+     * Value is pushed every periodic() call.
+     */
     public static void addString(String name, Supplier<String> supplier) 
     { 
         stringPublishers.add(table.getStringTopic(name).publish());
         stringPublisherSuppliers.add(supplier);
     }
 
+    /**
+     * Registers an integer topic and stores its supplier.
+     * Value is pushed every periodic() call.
+     */
     public static void addInteger(String name, IntSupplier supplier) 
     { 
         integerPublishers.add(table.getIntegerTopic(name).publish());
         integerPublisherSuppliers.add(supplier);
     }
 
+    /**
+     * Registers a struct topic and stores its supplier.
+     * Value is pushed every periodic() call.
+     */
     public static <T> void addStruct(String name, Struct<T> type, Supplier<T> supplier) 
     { 
         structPublishers.add(table.getStructTopic(name, type).publish());
         structPublisherSuppliers.add(supplier);
     }
 
+    /**
+     * Registers a struct array topic and stores its supplier.
+     * Value is pushed every periodic() call.
+     */
     public static <T> void addStructArray(String name, Struct<T> type, Supplier<T[]> supplier)
     {
         structArrayPublishers.add(table.getStructArrayTopic(name, type).publish());
         structArrayPublisherSuppliers.add(supplier);
     }
 
-
-    
+    /**
+     * Pushes all stored supplier values into their NetworkTables publishers.
+     * Runs once per robot loop to keep telemetry updated.
+     */
     public static void periodic()
     {
-        for(int i=0; i < doublePublishers.size(); i++)
-        {
+        for (int i = 0; i < doublePublishers.size(); i++)
             doublePublishers.get(i).set(doublePublisherSuppliers.get(i).getAsDouble());
-        }   
 
-        for(int i=0; i < booleanPublishers.size(); i++)
-        {
+        for (int i = 0; i < booleanPublishers.size(); i++)
             booleanPublishers.get(i).set(booleanPublisherSuppliers.get(i).getAsBoolean());
-        }   
 
-        for(int i=0; i < stringPublishers.size(); i++)
-        {
+        for (int i = 0; i < stringPublishers.size(); i++)
             stringPublishers.get(i).set(stringPublisherSuppliers.get(i).get());
-        }   
 
-        for(int i=0; i < integerPublishers.size(); i++)
-        {
+        for (int i = 0; i < integerPublishers.size(); i++)
             integerPublishers.get(i).set(integerPublisherSuppliers.get(i).getAsInt());
-        }   
 
-        for (int i = 0; i < structPublishers.size(); i++) 
-        {
-            ((StructPublisher<Object>) structPublishers.get(i)).set(((Supplier<Object>) structPublisherSuppliers.get(i)).get());
-        }
+        for (int i = 0; i < structPublishers.size(); i++)
+            ((StructPublisher<Object>) structPublishers.get(i))
+                .set(((Supplier<Object>) structPublisherSuppliers.get(i)).get());
 
         for (int i = 0; i < structArrayPublishers.size(); i++)
-        {
-            ((StructArrayPublisher<Object>) structArrayPublishers.get(i)).set((Object[]) structArrayPublisherSuppliers.get(i).get());
-        }
-
+            ((StructArrayPublisher<Object>) structArrayPublishers.get(i))
+                .set((Object[]) structArrayPublisherSuppliers.get(i).get());
     }
 }

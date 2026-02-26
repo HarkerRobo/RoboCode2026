@@ -12,24 +12,38 @@ public class ClimbToLevel extends Command
 {
     int level;
     Angle targetAngle;
-    public ClimbToLevel (int level)
+
+    /**
+     * Creates a climb command that moves the elevator to a preset level.
+     * Stores the level index and claims the Climb subsystem.
+     */
+    public ClimbToLevel(int level)
     {
         addRequirements(Climb.getInstance());
-        this.level=level;
+        this.level = level;
     }
 
+    /**
+     * Selects the target angle based on the requested level.
+     * Defaults to zero rotations if the level is invalid.
+     */
     @Override
-    public void initialize ()
+    public void initialize()
     {
         targetAngle = switch (level) {
             case 1 -> Constants.Climb.CLIMB_POSITION_LEVEL_1;
             case 2 -> Constants.Climb.CLIMB_POSITION_LEVEL_2;
             case 3 -> Constants.Climb.CLIMB_POSITION_LEVEL_3;
-            default -> Rotations.zero();};
+            default -> Rotations.zero();
+        };
     }
 
+    /**
+     * Sends the target elevator position to the Climb subsystem.
+     * Runs every cycle until the elevator reaches the target.
+     */
     @Override
-    public void execute ()
+    public void execute()
     {
         Climb.getInstance().setElevatorTargetPosition(targetAngle);
         //Climb.getInstance().setElevatorVoltage(Volts.of(
@@ -37,19 +51,32 @@ public class ClimbToLevel extends Command
             //* Math.signum(levelHeights[level].minus(Climb.getInstance().getElevatorPosition()).in(Rotations))));
     }
 
+    /**
+     * Finishes when the elevator is within the allowed tolerance of the target.
+     * Uses the isNear check on the position.
+     */
     @Override
-    public boolean isFinished ()
+    public boolean isFinished()
     {
-        // return false;
-        return Climb.getInstance().getElevatorPosition().isNear(targetAngle, Rotations.of(Constants.EPSILON));
+        return Climb.getInstance()
+                .getElevatorPosition()
+                .isNear(targetAngle, Rotations.of(Constants.EPSILON));
     }
 
+    /**
+     * No cleanup required when the command ends.
+     * Method kept for consistency with Command API.
+     */
     @Override
-    public void end (boolean interrupted)
+    public void end(boolean interrupted)
     {
         
     }
 
+    /**
+     * Returns a readable name including the target level.
+     * debugging and command tracing.
+     */
     @Override
     public String getName()
     {

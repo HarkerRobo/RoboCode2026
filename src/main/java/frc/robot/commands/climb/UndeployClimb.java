@@ -10,11 +10,19 @@ import frc.robot.subsystems.Climb;
 public class UndeployClimb extends Command
 {
     Timer timer = new Timer();
+
+    /**
+     * Claims the Climb subsystem.
+     */
     public UndeployClimb()
     {
         addRequirements(Climb.getInstance());
     }
 
+    /**
+     * Resets the timer and applies the undeploy voltage.
+     * Starts retracting the climb mechanism.
+     */
     @Override
     public void initialize()
     {
@@ -22,17 +30,29 @@ public class UndeployClimb extends Command
         Climb.getInstance().setClimbVoltage(Constants.Climb.CLIMB_UNDEPLOY_VOLTAGE);
     }
 
+    /**
+     * No repeated action required during execution.
+     * Voltage is held from initialize() until the timer expires.
+     */
     @Override
     public void execute()
     {
     }
 
+    /**
+     * Finishes once the configured time has elapsed.
+     * Uses 5‑second timeout to end the command.
+     */
     @Override
     public boolean isFinished()
     {
         return timer.hasElapsed(5.0);
     }
 
+    /**
+     * Stops the climb motor by setting voltage to zero.
+     * Runs whether the command ends normally or is interrupted.
+     */
     @Override
     public void end(boolean interrupted)
     {

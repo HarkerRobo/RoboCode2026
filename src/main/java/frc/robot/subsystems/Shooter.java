@@ -69,6 +69,7 @@ public class Shooter extends SubsystemBase
         
     }
 
+    
     private void config()
     {
         leftMaster.clearStickyFaults();

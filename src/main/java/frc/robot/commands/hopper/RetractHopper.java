@@ -8,32 +8,47 @@ import frc.robot.subsystems.Hopper;
 
 public class RetractHopper extends Command
 {
+    /**
+     * Claims the Hopper subsystem.
+     */
     public RetractHopper()
     {
         addRequirements(Hopper.getInstance());
     }
 
+    /**
+     * Applies the backward voltage to retract the hopper.
+     */
     @Override
-    public void initialize ()
+    public void initialize()
     {
         Hopper.getInstance().setVoltage(Volts.of(Constants.Hopper.BACKWARD_VOLTAGE));
     }
 
+    /**
+     * No repeated action is required.
+     */
     @Override
-    public void execute ()
+    public void execute()
     {
 
     }
 
+    /**
+     * Finishes when the hopper stalls against its mechanical stop.
+     */
     @Override
-    public boolean isFinished ()
+    public boolean isFinished()
     {
         return Hopper.getInstance().isStalling();
     }
 
+    /**
+     * No cleanup is required.
+     */
     @Override
-    public void end (boolean interrupted)
+    public void end(boolean interrupted)
     {
-        
+
     }
 }

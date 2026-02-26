@@ -13,30 +13,45 @@ import frc.robot.subsystems.intake.Intake;
  */
 public class DefaultIntake extends Command 
 {
-    public DefaultIntake () 
+    /**
+     * Claims the Intake subsystem.
+     */
+    public DefaultIntake() 
     {
         addRequirements(Intake.getInstance());
     }
 
+    /**
+     * Applies the default intake voltage.
+     */
     @Override
     public void initialize()
     {
         Intake.getInstance().setVoltage(Volts.of(Constants.Intake.DEFAULT_INTAKE_VOLTAGE));
     }
 
+    /**
+     * No repeated action is required.
+     */
     @Override
-    public void execute () 
+    public void execute() 
     {
     }
 
+    /**
+     * This command never finishes on its own.
+     */
     @Override
-    public boolean isFinished () 
+    public boolean isFinished() 
     {
         return false;
     }
 
+    /**
+     * Sets the intake voltage to zero when the command ends.
+     */
     @Override
-    public void end (boolean interrupted) 
+    public void end(boolean interrupted) 
     {
         Intake.getInstance().setVoltage(Volts.of(0.0));
     }

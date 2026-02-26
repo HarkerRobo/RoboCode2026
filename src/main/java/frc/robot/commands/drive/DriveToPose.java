@@ -18,40 +18,54 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import frc.robot.Constants;
 
-public class DriveToPose extends Command{
+public class DriveToPose extends Command {
     CommandSwerveDrivetrain dt;
 
-    private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
+    private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
     private Supplier<Translation2d> targetSupplier;
     private Translation2d target;
 
+    /**
+     * Claims the drivetrain and stores the target supplier.
+     */
     public DriveToPose(CommandSwerveDrivetrain drivetrain, Supplier<Translation2d> targetSupplier) {
         dt = drivetrain;
         addRequirements(dt);
         this.targetSupplier = targetSupplier;
     }
 
+    /**
+     * Reads the target position and flips it for red alliance.
+     * Stores the final field‑relative target for angle calculation.
+     */
     @Override
-    public void initialize() 
-    {
+    public void initialize() {
         Translation2d rawTarget = targetSupplier.get();
         boolean red = DriverStation.getAlliance().get() == DriverStation.Alliance.Red;
         if (red) target = FlippingUtil.flipFieldPosition(rawTarget);
         else target = rawTarget;
     }
 
+    /**
+     * Computes the angle from the robot to the target position.
+     * Returns a Rotation2d pointing directly at the target.
+     */
     private Rotation2d calcAngle() {
         double xdiff = target.getX() - dt.getState().Pose.getX();
         double ydiff = target.getY() - dt.getState().Pose.getY();
-        double angle = Math.atan(ydiff/xdiff) + Math.PI;
+        double angle = Math.atan(ydiff / xdiff) + Math.PI;
         if (xdiff < 0) angle = Math.PI + angle;
         return new Rotation2d(angle);
     }
 
+    /**
+     * Commands the drivetrain to rotate toward the target angle.
+     * Holds zero translational velocity while steering to face the point.
+     */
     @Override
     public void execute() {
-        
+
         double xSpeed = -Robot.instance.robotContainer.driver.getLeftY();
         double ySpeed = -Robot.instance.robotContainer.driver.getLeftX();
 
@@ -60,14 +74,14 @@ public class DriveToPose extends Command{
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
         dt.setControl(drive
-            .withHeadingPID(Constants.TunerConstants.steerGains.kP, Constants.TunerConstants.steerGains.kI, Constants.TunerConstants.steerGains.kD)
+            .withHeadingPID(Constants.TunerConstants.steerGains.kP,
+                            Constants.TunerConstants.steerGains.kI,
+                            Constants.TunerConstants.steerGains.kD)
             .withTargetDirection(calcAngle())
             .withMaxAbsRotationalRate(MaxAngularRate)
             .withVelocityX(0.0)
-            .withVelocityY(0.0)
-            /*.withVelocityX(xSpeed * MaxSpeed)
-            .withVelocityY(ySpeed * MaxSpeed)*/);
-        
+            .withVelocityY(0.0));
+
         System.out.println("Rotating to target...");
         System.out.println("Current angle: " + dt.getState().Pose.getRotation());
         System.out.println("Target rotation: " + calcAngle());
@@ -75,15 +89,22 @@ public class DriveToPose extends Command{
         System.out.println("X- and Y- Speeds: " + (xSpeed * MaxSpeed) + ", " + (ySpeed * MaxSpeed));
     }
 
+    /**
+     * Finishes when the robot’s heading is within tolerance of the target angle.
+     * Uses modular rotation math to handle wraparound.
+     */
     @Override
     public boolean isFinished() {
         return (dt.getState().Pose.getRotation().getRotations() + 0.5 - calcAngle().getRotations()) % 1 <= 0.01;
     }
 
+    /**
+     * Applies a braking request when the command ends.
+     * Stops rotation whether interrupted or completed.
+     */
     @Override
-    public void end (boolean interrupted)
-    {
+    public void end(boolean interrupted) {
         SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-        dt.applyRequest(()->brake);
+        dt.applyRequest(() -> brake);
     }
 }

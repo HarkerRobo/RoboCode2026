@@ -31,6 +31,10 @@ public class Intake extends SubsystemBase
         DCMotor.getKrakenX60Foc(1));
 
    
+    /**
+     * Initializes the intake motor and applies all configuration settings.
+     * If running in simulation, sets up the TalonFX sim state so the virtual motor behaves correctly.
+     */
     private Intake()
     {
         motor = new TalonFX(Constants.Intake.ID);
@@ -43,6 +47,10 @@ public class Intake extends SubsystemBase
         }
     }
 
+    /**
+     * Sets up the TalonFX with all the intake’s settings:
+     * inversion, PID values, current limits, voltage limits, and sensor ratio.
+     */
     private void config()
     {
         motor.clearStickyFaults();
@@ -71,16 +79,28 @@ public class Intake extends SubsystemBase
         motor.getConfigurator().apply(motorConfig);
     }
    
+    /**
+    * Returns the voltage currently applied to the motor.
+    * Useful for getting the voltage.
+    */
     public Voltage getVoltage()
     {
         return motor.getMotorVoltage().getValue();
     }
     
+    /**
+    * Returns the current angular velocity.
+    * Used if you need the velocity.
+    */
     public AngularVelocity getVelocity()
     {
         return motor.getVelocity().getValue();
     }
    
+    /**
+    * Pushes a specific voltage into the motor.
+    * Blocked if disabled
+    */
     public void setVoltage (Voltage voltage)
     {
         if (isDisabled())
@@ -91,6 +111,10 @@ public class Intake extends SubsystemBase
         motor.setControl(new VoltageOut(voltage));
     }
 
+    /**
+    * Commands to hold a target velocity.
+    * Automatically does feedforward and PID.
+    */
     public void setVelocity (AngularVelocity velocity)
     {
         if (isDisabled())
@@ -100,7 +124,10 @@ public class Intake extends SubsystemBase
         }
         motor.setControl(new VelocityVoltage(velocity));
     }
-
+    /**
+     * Drives the intake motor with a raw percent output.
+     * If the subsystem is disabled, the command is ignored.
+     */
     public void setDutyCycle(double velocity) 
     {
         if (isDisabled())
@@ -111,6 +138,10 @@ public class Intake extends SubsystemBase
         motor.setControl(new DutyCycleOut(velocity));
     }
     
+    /**
+     * When running in simulation, updates the DCMotorSim.
+     * Pushes the new rotor position and velocity into the TalonFX sim state.
+     */
     @Override
     public void periodic ()
     {
@@ -134,11 +165,19 @@ public class Intake extends SubsystemBase
         }
     }
    
+    /**
+     * Returns true if the subsystem is marked as simulated in RobotContainer.
+     * Used to decide whether to run physics simulation.
+     */
     private boolean isSimulated ()
     {
         return Robot.instance.robotContainer.getStatus(RobotContainer.INTAKE_INDEX) == SubsystemStatus.Simulated;
     }
     
+    /**
+     * Returns true if the subsystem is disabled in RobotContainer.
+     * Prevents motors from moving
+     */
     private boolean isDisabled ()
     {
         return Robot.instance.robotContainer.getStatus(RobotContainer.INTAKE_INDEX) == SubsystemStatus.Disabled;
@@ -167,6 +206,9 @@ public class Intake extends SubsystemBase
     }
         */
 
+    /**
+     * singleton code
+     */
     public static Intake getInstance()
     {
         if(instance == null) instance = new Intake();

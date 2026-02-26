@@ -45,6 +45,10 @@ public class Climb extends SubsystemBase
         LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60(1),0.001, Constants.Climb.CLIMB_GEAR_RATIO),
         DCMotor.getKrakenX60(1));
 
+    /**
+     * Initializes the elevator + climb motors, simulation models, and default target position.
+     * Also applies mechanical orientation and motor type when running in simulation.
+     */
     private Climb() 
     {
         targetPosition = Rotations.of(0);
@@ -65,7 +69,11 @@ public class Climb extends SubsystemBase
         }
     }
 
-    //configurates the subsystem
+    /**
+     * Applies all TalonFX configs (PID, current limits, inversion, Motion Magic, etc.) to both motor
+     * Makes the subsystem boots into a fully‑configured state.
+     */
+    
     private void config() 
     {
 
@@ -121,7 +129,10 @@ public class Climb extends SubsystemBase
 
         climb.getConfigurator().apply(climbConfig);
     }
-
+    /**
+     * Directly drives the elevator motor with a raw duty cycle percentage.
+     * Disabled when the subsystem is marked “Disabled”.
+    */
     public void setElevatorDutyCycle(double velocity) 
     {
         if (isDisabled())
@@ -132,6 +143,10 @@ public class Climb extends SubsystemBase
         elevator.setControl(new DutyCycleOut(velocity));
     }
 
+    /**
+    * Commands the elevator to hold a target velocity.
+    * Automatically handles feedforward and closed‑loop control.
+    */
     public void setElevatorVelocity(AngularVelocity velocity) 
     {
         if (isDisabled())
@@ -142,26 +157,46 @@ public class Climb extends SubsystemBase
         elevator.setControl(new VelocityVoltage(velocity));
     }
 
+    /**
+     * Returns the current measured elevator angular velocity.
+     * Useful for telemetry, tuning, or SysId logging .
+     */
     public AngularVelocity getElevatorVelocity() 
     {
         return elevator.getVelocity().getValue();
     }
 
+    /**
+     * Returns the current elevator position in rotations.
+     * Used for Motion Magic, soft limits, and state estimation.
+     */
     public Angle getElevatorPosition()
     {
         return elevator.getPosition().getValue();
     }
 
+    /**
+     * Returns the last commanded Motion Magic target position.
+     * Allows commands/telemetry to know where the elevator is trying to go.
+     */
     public Angle getElevatorTargetPosition() 
     {
         return targetPosition;
     }
 
+    /**
+     * Returns the motor voltage being applied to the elevator.
+     * Useful for SysId, debugging, and simulation.
+     */
     public Voltage getElevatorVoltage()
     {
         return elevator.getMotorVoltage().getValue();
     }
 
+    /**
+     * Applies a direct voltage command to the elevator motor.
+     * Used for SysId routines and physics‑accurate simulation.
+     */
     public void setElevatorVoltage(Voltage v)
     {
         if (isDisabled())
@@ -172,6 +207,10 @@ public class Climb extends SubsystemBase
         elevator.setControl(new VoltageOut(v));
     }
 
+    /**
+     * Commands the elevator to move to a position using Motion Magic.
+     * Stores the target and sends a MotionMagicVoltage request to the TalonFX.
+     */
     public void setElevatorTargetPosition(Angle tPosition) 
     {
         if (isDisabled())
@@ -185,21 +224,37 @@ public class Climb extends SubsystemBase
         elevator.setControl(new MotionMagicVoltage(tPosition));
     }
 
+    /**
+     * Checks if the elevator stator current exceeds the stall threshold.
+     * Useful for detecting jams probably maybe.
+     */
     public boolean isElevatorStalling()
     {
         return Math.abs(elevator.getStatorCurrent().getValueAsDouble()) >= Constants.Climb.ELEVATOR_STALLING_CURRENT.in(Amps);
     }
 
+    /**
+     * Drives the climb hinge motor with a duty cycle.
+     * Used for manual control
+     */
     public void setClimbDutyCycle(double velocity) 
     {
         climb.setControl(new DutyCycleOut(velocity));
     }
 
+    /**
+     * Returns the voltage currently applied to the climb motor.
+     * Useful for telemetry and SysId.
+     */
     public Voltage getClimbVoltage()
     {
         return climb.getMotorVoltage().getValue();
     }
 
+    /**
+     * Applies a direct voltage to the climb motor
+     * Used for SysId or simulation‑accurate testing. 
+     */
     public void setClimbVoltage(Voltage v)
     {
         if (isDisabled())
@@ -210,7 +265,10 @@ public class Climb extends SubsystemBase
         climb.setControl(new VoltageOut(v));
     }
     
-    
+    /**
+     * When in simulation, updates both elevator and climb physics.
+     * Feeds simulated rotor position/velocity back into the TalonFXSimState.
+     */
     @Override
     public void periodic()
     {
@@ -259,11 +317,19 @@ public class Climb extends SubsystemBase
         }
     }
 
+    /**
+     * Returns true if the subsystem is marked as simulated in RobotContainer.
+     * Used to decide whether to run physics simulation.
+     */
     private boolean isSimulated ()
     {
         return Robot.instance.robotContainer.getStatus(RobotContainer.CLIMB_INDEX) == SubsystemStatus.Simulated;
     }
     
+    /**
+     * Returns true if the subsystem is disabled in RobotContainer.
+     * Prevents motors from moving
+     */
     private boolean isDisabled ()
     {
         return Robot.instance.robotContainer.getStatus(RobotContainer.CLIMB_INDEX) == SubsystemStatus.Disabled;
@@ -280,15 +346,24 @@ public class Climb extends SubsystemBase
         this)
     );
 
+    /**
+     * Runs a SysId test on the elevator to characterize (or something like that) kS and kV.
+     * Returns a command that logs voltage, position, and velocity.
+     */
     public Command sysIdQuasistatic (SysIdRoutine.Direction direction)
     {
         return sysId.quasistatic(direction).withName("SysId Q" + (direction == SysIdRoutine.Direction.kForward ? "F" : "R"));
     }
     
+    /**
+     * Runs a SysId test to characterize acceleration‑related constants.
+     * logs elevator motion for system identification.
+     */
     public Command sysIdDynamic (SysIdRoutine.Direction direction)
     {
         return sysId.dynamic(direction).withName("SysId Q" + (direction == SysIdRoutine.Direction.kForward ? "F" : "R"));
     }
+    
     
     //returns the instance of the subsystem
     public static Climb getInstance() 

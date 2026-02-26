@@ -1,4 +1,5 @@
 package frc.robot.subsystems;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -34,6 +35,10 @@ public class Indexer extends SubsystemBase
         LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 0.001, Constants.Indexer.GEAR_RATIO),
         DCMotor.getKrakenX60Foc(1));
 
+    /**
+     * Creates the indexer motor and applies all configuration settings.
+     * If running in simulation, sets up the TalonFX sim state so the virtual motor behaves correctly.
+     */
     private Indexer() { 
         motor = new TalonFX(Constants.Indexer.ID);
         config();
@@ -45,6 +50,10 @@ public class Indexer extends SubsystemBase
         }
     }
 
+    /**
+     * Applies all TalonFX settings: PID values, current limits, inversion, voltage limits, and sensor ratio.
+     * Ensures the indexer motor starts with the correct behavior before anything commands it.
+     */
     private void config() {
         motor.clearStickyFaults();
 
@@ -85,6 +94,10 @@ public class Indexer extends SubsystemBase
         motor.getConfigurator().apply(talonFXConfigs);
     }
 
+    /**
+     * Commands the motor to spin at the given velocity.
+     * If the subsystem is disabled, the command is ignored.
+     */
     public void setVelocity(AngularVelocity velocity) {
         if (isDisabled())
         {
@@ -94,10 +107,18 @@ public class Indexer extends SubsystemBase
         motor.set(velocity.in(RotationsPerSecond));
     }
 
+    /**
+     * Returns the motor’s current angular velocity.
+     * Check how fast the indexer is actually moving.
+     */
     public AngularVelocity getVelocity() {
         return motor.getVelocity().getValue();
     }
 
+    /**
+     * Sends a specific voltage to the motor.
+     * Ignored when the subsystem is disabled.
+     */
     public void setVoltage(Voltage voltage) {
         if (isDisabled())
         {
@@ -107,15 +128,27 @@ public class Indexer extends SubsystemBase
         motor.setVoltage(voltage.in(Volts));
     }
 
+    /**
+     * Returns the voltage currently applied to the motor.
+     * Check what the controller is outputting.
+     */
     public Voltage getVoltage() {
         return motor.getMotorVoltage().getValue();
     }
 
+    /**
+     * Returns the raw percent output
+     * the motor is running at.
+     */
     public double getDutyCycle()
     {
         return motor.getDutyCycle().getValueAsDouble();
     }
     
+    /**
+     * When in simulation, updates the DCMotorSim and 
+     * writes the new rotor state into the TalonFX sim.
+     */
     @Override
     public void periodic ()
     {
@@ -139,11 +172,19 @@ public class Indexer extends SubsystemBase
         }
     }
 
+    /**
+     * Checks RobotContainer to see if this subsystem is running in simulation mode.
+     * Controls whether the sim model runs.
+     */
     private boolean isSimulated ()
     {
         return Robot.instance.robotContainer.getStatus(RobotContainer.INDEXER_INDEX) == SubsystemStatus.Simulated;
     }
     
+    /**
+     * Checks if the subsystem is marked disabled.
+     * Blocks all motor commands when it is.
+     */
     private boolean isDisabled ()
     {
         return Robot.instance.robotContainer.getStatus(RobotContainer.INDEXER_INDEX) == SubsystemStatus.Disabled;
@@ -160,18 +201,27 @@ public class Indexer extends SubsystemBase
         this)
     );
 
+    /**
+     * Creates a SysId ramp test.
+     * Logs voltage, position, and velocity for tuning.
+     */
     public Command sysIdQuasistatic (SysIdRoutine.Direction direction)
     {
         return sysId.quasistatic(direction).withName("SysId Q" + (direction == SysIdRoutine.Direction.kForward ? "F" : "R"));
     }
     
+    /**
+     * Creates a fast SysId acceleration test.
+     * Data for motor model tuning.
+     */
     public Command sysIdDynamic (SysIdRoutine.Direction direction)
     {
         return sysId.dynamic(direction).withName("SysId Q" + (direction == SysIdRoutine.Direction.kForward ? "F" : "R"));
     }
 
     /**
-     * Singleton code
+     * Returns the single Indexer instance.
+     * Prevents multiple copies from being created.
      */
     public static Indexer getInstance() {
         if (instance == null) instance = new Indexer();

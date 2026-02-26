@@ -32,9 +32,7 @@ import frc.robot.RobotContainer;
 import frc.robot.RobotContainer.SubsystemStatus;
 import frc.robot.simulation.StallSimulator;
 
-/**
- * 
- */
+
 public class Hood extends SubsystemBase
 {
     private static Hood instance;
@@ -63,6 +61,10 @@ public class Hood extends SubsystemBase
     StallSimulator stallSimulator;
 
 
+    /**
+     * Initializes the master/follower TalonFX motors and applies configuration.
+     * If simulated, sets up motor orientation and initializes the stall simulator.
+    */
     private Hood()
     {
         master = new TalonFX(Constants.Hood.MASTER_ID);
@@ -79,6 +81,10 @@ public class Hood extends SubsystemBase
         }
     }
 
+    /**
+     * Clears sticky faults on master and follower. 
+     * Makes both motors start in a fully‑configured state I guess.
+     */
     private void config()
     {
         master.clearStickyFaults();
@@ -118,6 +124,10 @@ public class Hood extends SubsystemBase
 
     }
 
+    /**
+    * Tells the hood to head toward a specific angle using Motion Magic.
+    * Also remembers that angle so other code can check where it was told to go.
+    */
     public void moveToPosition(Angle desiredPosition)
     {
         //System.out.println("Moving to position: " + desiredPosition.in(Degrees) + "°");
@@ -125,21 +135,37 @@ public class Hood extends SubsystemBase
         master.setControl(new MotionMagicVoltage(desiredPosition));
     }
     
+    /**
+    * Grabs the hood’s current angle straight from the motor sensor.
+    * Good for anything that needs to know where the hood actually is.
+    */
     public Angle getPosition()
     {
         return master.getPosition().getValue();
     }
     
+    /**
+    * Returns the voltage currently applied to the hood motor.
+    * Useful for getting the voltage.
+    */
     public Voltage getVoltage()
     {
         return master.getMotorVoltage().getValue();
     }
     
+    /**
+    * Returns the hood’s current angular velocity.
+    * Used if you need the velocity.
+    */
     public AngularVelocity getVelocity()
     {
         return master.getVelocity().getValue();
     }
 
+    /**
+    * Directly sets the internal motor position value.
+    * Only runs when the subsystem isn’t disabled.
+    */
     public void setPosition(Angle position)
     {
         if (isDisabled())
@@ -150,6 +176,10 @@ public class Hood extends SubsystemBase
         master.setPosition(position);
     }
 
+    /**
+    * Commands the hood to hold a target velocity.
+    * Automatically does feedforward and PID.
+    */
     public void setVelocity(AngularVelocity velocity)
     {
         if (isDisabled())
@@ -160,6 +190,10 @@ public class Hood extends SubsystemBase
         master.setControl(new VelocityVoltage(velocity));
     }
 
+    /**
+    * Drives the motor with a raw percent output.
+    * Blocked when disabled.
+    */
     public void setDutyCycle(double dutyCycle)
     {
         if (isDisabled())
@@ -170,6 +204,10 @@ public class Hood extends SubsystemBase
         master.setControl(new DutyCycleOut(dutyCycle));
     }
 
+    /**
+    * Pushes a specific voltage into the motor.
+    * Blocked if disabled
+    */
     public void setVoltage(Voltage voltage)
     {
         if (isDisabled())
@@ -181,16 +219,28 @@ public class Hood extends SubsystemBase
     }
 
     
+    /**
+    * Checks if the hood is at the angle it was told to reach.
+    * Returns true when it’s there.
+    */
     public boolean readyToShoot ()
     {
         return Math.abs(master.getPosition().getValue().in(Rotations) - desiredPosition) < Constants.EPSILON;
     }
     
+    /**
+    * Returns the last commanded hood angle.
+    * See where what its aiming for
+    */
     public Angle getDesiredPosition()
     {
         return Rotations.of(desiredPosition);
     }
     
+    /**
+    * Detects whether the hood is drawing stall‑level current.
+    * In simulation, also checks the StallSimulator for virtual stalls.
+    */
     public boolean isStalling()
     {
         if (isSimulated() && stallSimulator.get()) return true;
@@ -198,6 +248,10 @@ public class Hood extends SubsystemBase
     }
 
 
+    /**
+    * Updates the simulated hood physics when running in simulation mode.
+    * Feeds simulated rotor position/velocity back into the TalonFXSimState.
+    */
     @Override
     public void periodic()
     {
@@ -226,11 +280,19 @@ public class Hood extends SubsystemBase
         }
     }
 
+    /**
+    * Returns true if the subsystem is marked
+    * as simulated in RobotContainer.
+    */
     private boolean isSimulated ()
     {
         return Robot.instance.robotContainer.getStatus(RobotContainer.HOOD_INDEX) == SubsystemStatus.Simulated;
     }
     
+    /**
+    * Checks if the subsystem is
+    * marked as disabled. 
+    */
     private boolean isDisabled ()
     {
         return Robot.instance.robotContainer.getStatus(RobotContainer.HOOD_INDEX) == SubsystemStatus.Disabled;
@@ -247,17 +309,29 @@ public class Hood extends SubsystemBase
         this)
     );
 
+    /** 
+     * Creates ramp test for SysId characterization.
+     * Gather data for feedforward tuning.
+     */
     public Command sysIdQuasistatic (SysIdRoutine.Direction direction)
     {
         return sysId.quasistatic(direction).withName("SysId Q" + (direction == SysIdRoutine.Direction.kForward ? "F" : "R"));
     }
     
+    /**
+    * Creates an acceleration test 
+    * for SysId.
+    */
     public Command sysIdDynamic (SysIdRoutine.Direction direction)
     {
         return sysId.dynamic(direction).withName("SysId Q" + (direction == SysIdRoutine.Direction.kForward ? "F" : "R"));
     }
     
 
+    /**
+    * Returns the Hood subsystem instance.
+    * Makes sure there isnt a second created
+    */
     public static Hood getInstance()
     {
         if (instance == null) instance = new Hood();

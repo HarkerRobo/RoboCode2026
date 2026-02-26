@@ -17,16 +17,20 @@ public class DriveToPoseCommand {
     private Command pathCommand;
     private double aprilTagId;
 
-    /** Updates the target pose dynamically based on AprilTag ID */
+    /**
+     * Updates the target pose based on the currently detected AprilTag.
+     * Flips the pose for red alliance and clears the path if already at target.
+     */
     private void updateTargetPose() {
 
         if (targetPose != null && drivetrain.getState().Pose.equals(targetPose)) {
             System.out.println("Already at target pose. No path needed.");
-            pathCommand = null; 
+            pathCommand = null;
             return;
         }
+
         aprilTagId = LimelightHelpers.getFiducialID(Constants.Vision.kCamera1Name);
-        
+
         if (aprilTagId == -1) {
             System.out.println("No valid AprilTag detected.");
             return;
@@ -35,10 +39,14 @@ public class DriveToPoseCommand {
         }
 
         // Flip pose if we're on the red alliance
-        if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) targetPose = FlippingUtil.flipFieldPose(targetPose);
-        
+        if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red)
+            targetPose = FlippingUtil.flipFieldPose(targetPose);
     }
 
+    /**
+     * Returns the alignment pose associated with the given AprilTag ID.
+     * Defaults to the robot’s current pose if the tag is not mapped.
+     */
     private Pose2d getTargetPose(int tagId) {
         return switch (tagId) {
             case 31, 15 -> AlignConstants.CLIMB_CENTER;

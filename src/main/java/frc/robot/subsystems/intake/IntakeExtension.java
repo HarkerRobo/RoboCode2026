@@ -1,4 +1,5 @@
 package frc.robot.subsystems.intake;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
@@ -30,7 +31,11 @@ public class IntakeExtension extends SubsystemBase
     private ElevatorSim sim = new ElevatorSim(
         LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60(1), 0.001, Constants.Climb.ELEVATOR_GEAR_RATIO),
             DCMotor.getKrakenX60(1), Constants.IntakeExtension.MIN_HEIGHT, Constants.IntakeExtension.MAX_HEIGHT, false, Constants.IntakeExtension.MIN_HEIGHT);
-    
+
+    /**
+     * Creates the extension motor and applies all configuration settings.
+     * If running in simulation, sets up the TalonFX sim state so the virtual mechanism behaves correctly.
+     */
     private IntakeExtension()
     {
         motor = new TalonFX(Constants.IntakeExtension.ID);
@@ -43,6 +48,10 @@ public class IntakeExtension extends SubsystemBase
         }
     }
 
+    /**
+     * Applies all TalonFX settings: inversion, PID values, current limits, voltage limits, and sensor ratio.
+     * Makes sure that the extension motor starts with the correct behavior before anything commands it.
+     */
     private void config()
     {
         motor.clearStickyFaults();
@@ -68,22 +77,38 @@ public class IntakeExtension extends SubsystemBase
 
         motor.getConfigurator().apply(extensionConfig);
     }
-    
+
+    /**
+     * Returns the voltage
+     * currently being applied to the motor.
+     */
     public Voltage getVoltage()
     {
         return motor.getMotorVoltage().getValue();
     }
-    
+
+    /**
+     * Returns the motor’s current angular velocity.
+     * Lets you see how fast the extension is moving.
+     */
     public AngularVelocity getVelocity()
     {
         return motor.getVelocity().getValue();
     }
 
+    /**
+     * Returns the motor’s current position reading.
+     * Gives you the extension height.
+     */
     public Angle getPosition()
     {
         return motor.getPosition().getValue();
     }
-   
+
+    /**
+     * Sends a specific voltage to the motor.
+     * Ignored if the subsystem is disabled.
+     */
     public void setVoltage (Voltage voltage)
     {
         if (isDisabled())
@@ -94,6 +119,10 @@ public class IntakeExtension extends SubsystemBase
         motor.setControl(new VoltageOut(voltage));
     }
 
+    /**
+     * Commands the motor to hold a specific speed.
+     * Blocked when the subsystem is disabled.
+     */
     public void setVelocity (AngularVelocity velocity)
     {
         if (isDisabled())
@@ -104,6 +133,10 @@ public class IntakeExtension extends SubsystemBase
         motor.setControl(new VelocityVoltage(velocity));
     }
 
+    /**
+     * Drives the motor with a raw percent output.
+     * If the subsystem is disabled, the command is ignored.
+     */
     public void setDutyCycle(double velocity) 
     {
         if (isDisabled())
@@ -114,13 +147,20 @@ public class IntakeExtension extends SubsystemBase
         motor.setControl(new DutyCycleOut(velocity));
     }
 
+    /**
+     * Checks the stator current.
+     * Returns true when the current crosses the configured threshold.
+     */
     public boolean isStalling()
     {
-    //    if (Robot.isSimulation()) return stallSim.get();
         System.out.println("Stator Current: " + motor.getStatorCurrent().getValueAsDouble());
         return Math.abs(motor.getStatorCurrent().getValueAsDouble()) >= Constants.IntakeExtension.STALLING_CURRENT;
     }
-    
+
+    /**
+     * When in simulation, updates the ElevatorSim and
+     * writes the new rotor position and velocity into the TalonFX sim state.
+     */
     @Override
     public void periodic ()
     {
@@ -147,16 +187,24 @@ public class IntakeExtension extends SubsystemBase
         }
     }
     
+    /**
+     * Checks RobotContainer to see if
+     * this subsystem is running in simulation mode.
+     */
     private boolean isSimulated ()
     {
         return Robot.instance.robotContainer.getStatus(RobotContainer.INTAKE_EXTENSION_INDEX) == SubsystemStatus.Simulated;
     }
-    
+
+    /**
+     * Checks if the subsystem is marked disabled.
+     * Blocks all motor commands when it is.
+     */
     private boolean isDisabled ()
     {
         return Robot.instance.robotContainer.getStatus(RobotContainer.INTAKE_EXTENSION_INDEX) == SubsystemStatus.Disabled;
     }
-    
+
     /*
     private SysIdRoutine sysId = new SysIdRoutine(
         new SysIdRoutine.Config(), 
