@@ -183,7 +183,7 @@ public class Constants
         */
 		public static final InvertedValue INVERTED = InvertedValue.CounterClockwise_Positive;
         
-        public static final double GEAR_RATIO = 1.0; // TODO
+        public static final double GEAR_RATIO = 0.75;
 
 		public static final double KP = 0.24194; // TODO
 		public static final double KI = 0.0; // TODO
