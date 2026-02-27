@@ -366,19 +366,19 @@ public class Constants
 
     public class Indexer {
 
-        public static final int ID = 31;
+        public static final int MAIN_ID = 31;
 
-        public static final InvertedValue INVERTED = InvertedValue.CounterClockwise_Positive; // TODO
-        public static final double STATOR_CURRENT_LIMIT = 80.0;
-        public static final double SUPPLY_CURRENT_LIMIT = 80.0;
+        public static final InvertedValue MAIN_INVERTED = InvertedValue.CounterClockwise_Positive;
+        public static final double MAIN_STATOR_CURRENT_LIMIT = 80.0;
+        public static final double MAIN_SUPPLY_CURRENT_LIMIT = 80.0;
 
-        public static final double KS = 0.0048438; //TODO
-        public static final double KV = 0.12361; //TODO
-        public static final double KA = 0.0089587; //TODO
+        public static final double MAIN_KS = 0.0048438; //TODO
+        public static final double MAIN_KV = 0.12361; //TODO
+        public static final double MAIN_KA = 0.0089587; //TODO
         
-        public static final double KP = 0.093687; //TODO
-        public static final double KI = 0.0; //TODO
-        public static final double KD = 0.0; //TODO
+        public static final double MAIN_KP = 0.093687; //TODO
+        public static final double MAIN_KI = 0.0; //TODO
+        public static final double MAIN_KD = 0.0; //TODO
 
         
         /*
@@ -387,12 +387,33 @@ public class Constants
         public static final double MM_JERK = 0.0;
         */
 
-        public static final double MAX_VELOCITY = 0.1; // TODO rotations per second
-        public static final double DEFAULT_VELOCITY = 0.0; // TODO rotations per second
+        public static final double MAIN_MAX_VELOCITY = 0.1; // TODO rotations per second
+        public static final double MAIN_DEFAULT_VELOCITY = 0.0; // TODO rotations per second
 
-        public static final double GEAR_RATIO = 1.0; // TODO
+        public static final double MAIN_GEAR_RATIO = 1.0; // TODO
 
-        public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.Clockwise_Positive;
+        public static final ChassisReference MAIN_MECHANICAL_ORIENTATION = ChassisReference.Clockwise_Positive;
+        
+        public static final int SIDE_ID = 39; // TODO
+
+        public static final InvertedValue SIDE_INVERTED = InvertedValue.CounterClockwise_Positive; // TODO
+        public static final double SIDE_STATOR_CURRENT_LIMIT = 80.0;
+        public static final double SIDE_SUPPLY_CURRENT_LIMIT = 80.0;
+
+        public static final double SIDE_KS = 0.0048438; //TODO
+        public static final double SIDE_KV = 0.12361; //TODO
+        public static final double SIDE_KA = 0.0089587; //TODO
+        
+        public static final double SIDE_KP = 0.093687; //TODO
+        public static final double SIDE_KI = 0.0; //TODO
+        public static final double SIDE_KD = 0.0; //TODO
+
+        public static final double SIDE_MAX_VELOCITY = 0.1; // TODO rotations per second
+        public static final double SIDE_DEFAULT_VELOCITY = 0.0; // TODO rotations per second
+
+        public static final double SIDE_GEAR_RATIO = 1.0; // TODO
+
+        public static final ChassisReference SIDE_MECHANICAL_ORIENTATION = ChassisReference.Clockwise_Positive;
     }
 
     public class ShooterIndexer

@@ -21,56 +21,66 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 
 public class Indexer extends SubsystemBase
 {
     private static Indexer instance;
 
-    private static TalonFX motor;
+    private static TalonFX main;
+    private static TalonFX side;
     
-    private DCMotorSim sim = new DCMotorSim(
-        LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 0.001, Constants.Indexer.GEAR_RATIO),
+    private DCMotorSim mainSim = new DCMotorSim(
+        LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 0.001, Constants.Indexer.MAIN_GEAR_RATIO),
+        DCMotor.getKrakenX60Foc(1));
+    
+    private DCMotorSim sideSim = new DCMotorSim(
+        LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 0.001, Constants.Indexer.SIDE_GEAR_RATIO),
         DCMotor.getKrakenX60Foc(1));
 
     private Indexer() { 
-        motor = new TalonFX(Constants.Indexer.ID, Constants.CAN_CHAIN);
+        main = new TalonFX(Constants.Indexer.MAIN_ID, Constants.CAN_CHAIN);
+        side = new TalonFX(Constants.Indexer.SIDE_ID, Constants.CAN_CHAIN);
         config();
         
         if (isSimulated())
         {
-            motor.getSimState().Orientation = Constants.Indexer.MECHANICAL_ORIENTATION;
-            motor.getSimState().setMotorType(TalonFXSimState.MotorType.KrakenX60);
+            main.getSimState().Orientation = Constants.Indexer.MAIN_MECHANICAL_ORIENTATION;
+            main.getSimState().setMotorType(TalonFXSimState.MotorType.KrakenX60);
+            
+            side.getSimState().Orientation = Constants.Indexer.SIDE_MECHANICAL_ORIENTATION;
+            side.getSimState().setMotorType(TalonFXSimState.MotorType.KrakenX60);
         }
     }
 
     private void config() {
-        motor.clearStickyFaults();
+        main.clearStickyFaults();
 
-        var talonFXConfigs = new TalonFXConfiguration();
+        var mainConfigs = new TalonFXConfiguration();
 
         // set slot 0 gains
-        var slot0Configs = talonFXConfigs.Slot0;
-        slot0Configs.kS = Constants.Indexer.KS;
-        slot0Configs.kV = Constants.Indexer.KV;
-        slot0Configs.kA = Constants.Indexer.KA;
-        slot0Configs.kP = Constants.Indexer.KP;
-        slot0Configs.kI = Constants.Indexer.KI;
-        slot0Configs.kD = Constants.Indexer.KD;
+        var mainSlot0Configs = mainConfigs.Slot0;
+        mainSlot0Configs.kS = Constants.Indexer.MAIN_KS;
+        mainSlot0Configs.kV = Constants.Indexer.MAIN_KV;
+        mainSlot0Configs.kA = Constants.Indexer.MAIN_KA;
+        mainSlot0Configs.kP = Constants.Indexer.MAIN_KP;
+        mainSlot0Configs.kI = Constants.Indexer.MAIN_KI;
+        mainSlot0Configs.kD = Constants.Indexer.MAIN_KD;
 
-        talonFXConfigs.CurrentLimits.StatorCurrentLimit = Constants.Indexer.STATOR_CURRENT_LIMIT;
-        talonFXConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
+        mainConfigs.CurrentLimits.StatorCurrentLimit = Constants.Indexer.MAIN_STATOR_CURRENT_LIMIT;
+        mainConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
         
-        talonFXConfigs.CurrentLimits.SupplyCurrentLimit = Constants.Indexer.SUPPLY_CURRENT_LIMIT;
-        talonFXConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
+        mainConfigs.CurrentLimits.SupplyCurrentLimit = Constants.Indexer.MAIN_SUPPLY_CURRENT_LIMIT;
+        mainConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
 
-        talonFXConfigs.MotorOutput.Inverted = Constants.Indexer.INVERTED;
-        talonFXConfigs.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+        mainConfigs.MotorOutput.Inverted = Constants.Indexer.MAIN_INVERTED;
+        mainConfigs.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
-        talonFXConfigs.Voltage.PeakForwardVoltage = Constants.MAX_VOLTAGE;
-        talonFXConfigs.Voltage.PeakReverseVoltage = -Constants.MAX_VOLTAGE;
+        mainConfigs.Voltage.PeakForwardVoltage = Constants.MAX_VOLTAGE;
+        mainConfigs.Voltage.PeakReverseVoltage = -Constants.MAX_VOLTAGE;
 
-        talonFXConfigs.Feedback.SensorToMechanismRatio = Constants.Indexer.GEAR_RATIO;
+        mainConfigs.Feedback.SensorToMechanismRatio = Constants.Indexer.MAIN_GEAR_RATIO;
 
 
         /* // add if necessary
@@ -81,38 +91,108 @@ public class Indexer extends SubsystemBase
         motionMagicConfigs.MotionMagicJerk = Constants.Indexer.MM_JERK;
         */
 
-        motor.getConfigurator().apply(talonFXConfigs);
+        main.getConfigurator().apply(mainConfigs);
+        
+        side.clearStickyFaults();
+
+        var sideConfigs = new TalonFXConfiguration();
+
+        // set slot 0 gains
+        var sideSlot0Configs = sideConfigs.Slot0;
+        sideSlot0Configs.kS = Constants.Indexer.SIDE_KS;
+        sideSlot0Configs.kV = Constants.Indexer.SIDE_KV;
+        sideSlot0Configs.kA = Constants.Indexer.SIDE_KA;
+        sideSlot0Configs.kP = Constants.Indexer.SIDE_KP;
+        sideSlot0Configs.kI = Constants.Indexer.SIDE_KI;
+        sideSlot0Configs.kD = Constants.Indexer.SIDE_KD;
+
+        sideConfigs.CurrentLimits.StatorCurrentLimit = Constants.Indexer.SIDE_STATOR_CURRENT_LIMIT;
+        sideConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
+        
+        sideConfigs.CurrentLimits.SupplyCurrentLimit = Constants.Indexer.SIDE_SUPPLY_CURRENT_LIMIT;
+        sideConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
+
+        sideConfigs.MotorOutput.Inverted = Constants.Indexer.SIDE_INVERTED;
+        sideConfigs.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+
+        sideConfigs.Voltage.PeakForwardVoltage = Constants.MAX_VOLTAGE;
+        sideConfigs.Voltage.PeakReverseVoltage = -Constants.MAX_VOLTAGE;
+
+        sideConfigs.Feedback.SensorToMechanismRatio = Constants.Indexer.SIDE_GEAR_RATIO;
+
+        side.getConfigurator().apply(sideConfigs);
     }
 
-    public void setVelocity(AngularVelocity velocity) {
-        if (isDisabled())
-        {
-            System.out.println("Quashing input to Indexer");
-            return;
-        }
-        motor.set(velocity.in(RotationsPerSecond));
-    }
-
-    public AngularVelocity getVelocity() {
-        return motor.getVelocity().getValue();
-    }
-
-    public void setVoltage(Voltage voltage) {
-        if (isDisabled())
-        {
-            System.out.println("Quashing input to Indexer");
-            return;
-        }
-        motor.setVoltage(voltage.in(Volts));
-    }
-
-    public Voltage getVoltage() {
-        return motor.getMotorVoltage().getValue();
-    }
-
-    public double getDutyCycle()
+    public void setMainVelocity(AngularVelocity velocity) 
     {
-        return motor.getDutyCycle().getValueAsDouble();
+        if (isDisabled())
+        {
+            System.out.println("Quashing input to Indexer");
+            return;
+        }
+        main.setControl(new VelocityVoltage(velocity));
+    }
+
+
+    public void setMainVoltage(Voltage voltage) 
+    {
+        if (isDisabled())
+        {
+            System.out.println("Quashing input to Indexer");
+            return;
+        }
+        main.setVoltage(voltage.in(Volts));
+    }
+    
+    public void setSideVelocity(AngularVelocity velocity) 
+    {
+        if (isDisabled())
+        {
+            System.out.println("Quashing input to Indexer");
+            return;
+        }
+        side.setControl(new VelocityVoltage(velocity));
+    }
+
+
+    public void setSideVoltage(Voltage voltage) 
+    {
+        if (isDisabled())
+        {
+            System.out.println("Quashing input to Indexer");
+            return;
+        }
+        side.setVoltage(voltage.in(Volts));
+    }
+    
+    public AngularVelocity getMainVelocity() 
+    {
+        return main.getVelocity().getValue();
+    }
+
+    public Voltage getMainVoltage() 
+    {
+        return main.getMotorVoltage().getValue();
+    }
+
+    public double getMainDutyCycle()
+    {
+        return main.getDutyCycle().getValueAsDouble();
+    }
+    
+    public AngularVelocity getSideVelocity() 
+    {
+        return side.getVelocity().getValue();
+    }
+    
+    public Voltage getSideVoltage() 
+    {
+        return side.getMotorVoltage().getValue();
+    }
+
+    public double getSideDutyCycle()
+    {
+        return side.getDutyCycle().getValueAsDouble();
     }
     
     @Override
@@ -120,21 +200,37 @@ public class Indexer extends SubsystemBase
     {
         if (isSimulated())
         {
-            TalonFXSimState simState = motor.getSimState();
+            TalonFXSimState mainSimState = main.getSimState();
 
             // set the supply voltage of the TalonFX
-            simState.setSupplyVoltage(RobotController.getBatteryVoltage());
+            mainSimState.setSupplyVoltage(RobotController.getBatteryVoltage());
 
             // use the motor voltage to calculate new position and velocity
             // using WPILib's DCMotorSim class for physics simulation
-            sim.setInputVoltage(simState.getMotorVoltageMeasure().in(Volts));
-            sim.update(0.020); // assume 20 ms loop time
+            mainSim.setInputVoltage(mainSimState.getMotorVoltageMeasure().in(Volts));
+            mainSim.update(0.020); // assume 20 ms loop time
 
             // apply the new rotor position and velocity to the TalonFX;
             // note that this is rotor position/velocity (before gear ratio), but
             // DCMotorSim returns mechanism position/velocity (after gear ratio)
-            simState.setRawRotorPosition(sim.getAngularPosition().times(Constants.Indexer.GEAR_RATIO));
-            simState.setRotorVelocity(sim.getAngularVelocity().times(Constants.Indexer.GEAR_RATIO));
+            mainSimState.setRawRotorPosition(mainSim.getAngularPosition().times(Constants.Indexer.MAIN_GEAR_RATIO));
+            mainSimState.setRotorVelocity(mainSim.getAngularVelocity().times(Constants.Indexer.MAIN_GEAR_RATIO));
+            
+            TalonFXSimState sideSimState = main.getSimState();
+
+            // set the supply voltage of the TalonFX
+            sideSimState.setSupplyVoltage(RobotController.getBatteryVoltage());
+
+            // use the motor voltage to calculate new position and velocity
+            // using WPILib's DCMotorSim class for physics simulation
+            sideSim.setInputVoltage(sideSimState.getMotorVoltageMeasure().in(Volts));
+            sideSim.update(0.020); // assume 20 ms loop time
+
+            // apply the new rotor position and velocity to the TalonFX;
+            // note that this is rotor position/velocity (before gear ratio), but
+            // DCMotorSim returns mechanism position/velocity (after gear ratio)
+            sideSimState.setRawRotorPosition(mainSim.getAngularPosition().times(Constants.Indexer.SIDE_GEAR_RATIO));
+            sideSimState.setRotorVelocity(mainSim.getAngularVelocity().times(Constants.Indexer.SIDE_GEAR_RATIO));
         }
     }
 
@@ -148,13 +244,14 @@ public class Indexer extends SubsystemBase
         return Robot.instance.robotContainer.getStatus(RobotContainer.INDEXER_INDEX) == SubsystemStatus.Disabled;
     }
     
+    /*
     private SysIdRoutine sysId = new SysIdRoutine(
         new SysIdRoutine.Config(), 
-        new SysIdRoutine.Mechanism((Voltage v)->motor.setControl(new VoltageOut(v)),
+        new SysIdRoutine.Mechanism((Voltage v)->main.setControl(new VoltageOut(v)),
             (SysIdRoutineLog l)->l
                 .motor("Indexer")
                 .voltage(getVoltage())
-                .angularPosition(motor.getPosition().getValue())
+                .angularPosition(main.getPosition().getValue())
                 .angularVelocity(getVelocity()),
         this)
     );
@@ -168,6 +265,7 @@ public class Indexer extends SubsystemBase
     {
         return sysId.dynamic(direction).withName("SysId Q" + (direction == SysIdRoutine.Direction.kForward ? "F" : "R"));
     }
+    */
 
     /**
      * Singleton code
