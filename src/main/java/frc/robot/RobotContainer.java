@@ -111,7 +111,9 @@ public class RobotContainer
     private PassDirection direction = PassDirection.Automatic; // Default
         
     private Supplier<Command> stow;
+    private Supplier<Command> revShoot;
     private Command shoot;
+    private Supplier<Command> revPass;
     private Command pass;
     private Command hardShoot;
 
@@ -179,9 +181,27 @@ public class RobotContainer
         stow = ()->Commands.runOnce(()->CommandScheduler.getInstance().cancel(commands.toArray(new Command[0]))).andThen(
             new ShooterDefaultSpeed()); // because a command instance cannot be scheduled to independent triggers
 
+
+        revShoot = () -> Commands.runOnce(()->mostRecentAim = false)
+            .andThen(
+            new IndependentCommand(new ShooterTargetSpeed(()->Util.calculateShootVelocity(drivetrain) + flywheelOffset)))
+            .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot()))
+            .andThen(
+            Commands.runOnce(()->driver.setRumble(RumbleType.kBothRumble, 1.0)))
+            .withName("RevShoot");
+
+        revPass = () -> Commands.runOnce(()->mostRecentAim = true)
+            .andThen(
+            new IndependentCommand(new ShooterTargetSpeed(()->Util.calculatePassVelocity(drivetrain) + flywheelOffset)))
+            .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot()))
+            .andThen(
+            Commands.runOnce(()->driver.setRumble(RumbleType.kBothRumble, 1.0)))
+            .withName("RevPass");
+
         // tested in sim
         shoot = new DriveToPose(drivetrain, ()->AlignConstants.HUB)
             .alongWith(new AimToAngle(()->Util.calculateShootPitch(drivetrain).in(Degrees) + pitchOffset))
+            .alongWith(revShoot.get())
             .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot(Util.calculateShootVelocity(drivetrain)) && Hood.getInstance().readyToShoot()))
             .andThen(new ShooterIndexerFullSpeed()) // load to shoot
             .finallyDo(()->{
@@ -192,12 +212,13 @@ public class RobotContainer
         // tested in sim
         pass = new DriveToPose(drivetrain, ()->AlignConstants.HUB)
             .alongWith(new AimToAngle(()->Util.calculateShootPitch(drivetrain).in(Degrees) + pitchOffset))
+            .alongWith(revPass.get())
             .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot(Util.calculateShootVelocity(drivetrain)) && Hood.getInstance().readyToShoot()))
             .andThen(new ShooterIndexerFullSpeed()) // load to shoot
             .finallyDo(()->{
                 CommandScheduler.getInstance().schedule(stow.get());
             })
-            .withName("Shoot");
+            .withName("Pass");
 
         // tested in sim
         hardShoot = new AimToAngle(Constants.HARDCODE_HOOD_PITCH.in(Degrees) + pitchOffset)
@@ -206,7 +227,8 @@ public class RobotContainer
             .andThen(new ShooterIndexerFullSpeed())
             .finallyDo(()->CommandScheduler.getInstance().schedule(new ShooterDefaultSpeed()))
             .withName("HardShoot");
-
+        
+        
 
         testCommandChooser.setDefaultOption("None", Commands.none());
         testCommandChooser.addOption("Climb/ClimbToLevel[1]", new ClimbToLevel(1));
@@ -397,25 +419,11 @@ public class RobotContainer
         
         // tested in sim
         driver.button(7) // home button/left paddle
-            .onTrue(track(
-                Commands.runOnce(()->mostRecentAim = false)
-            .andThen(
-                new IndependentCommand(new ShooterTargetSpeed(()->Util.calculateShootVelocity(drivetrain) + flywheelOffset)))
-            .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot()))
-            .andThen(
-                Commands.runOnce(()->driver.setRumble(RumbleType.kBothRumble, 1.0)))
-                .withName("RevShoot")));
+            .onTrue(track(revShoot.get()));
         
         // tested in sim
         driver.button(8) // menu button/right paddle
-            .onTrue(track(
-            Commands.runOnce(()->mostRecentAim = true)
-            .andThen(
-                new IndependentCommand(new ShooterTargetSpeed(()->Util.calculatePassVelocity(drivetrain) + flywheelOffset)))
-            .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot()))
-            .andThen(
-                Commands.runOnce(()->driver.setRumble(RumbleType.kBothRumble, 1.0)))
-                .withName("RevPass")));
+            .onTrue(track(revPass.get()));
 
         // tested in sim
         driver.y().onTrue(track(new ClimbToLevel(3).andThen(new RunClimb())

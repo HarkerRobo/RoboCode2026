@@ -79,6 +79,8 @@ public class Telemetry
     private DoublePublisher shooterLeftVoltage = shooter.getDoubleTopic("left voltage (V)").publish();
     private DoublePublisher shooterRightVelocity = shooter.getDoubleTopic("right velocity (rot per s)").publish();
     private DoublePublisher shooterRightVoltage = shooter.getDoubleTopic("right voltage (V)").publish();
+    private DoublePublisher shooterEffectiveRightVelocity = shooter.getDoubleTopic("right effective velocity (rot per s)").publish();
+    private DoublePublisher shooterEffectiveLeftVelocity = shooter.getDoubleTopic("left effective velocity (rot per s)").publish();
 
     private NetworkTable climb = table.getSubTable("Climb");
     private StringPublisher climbCommand = climb.getStringTopic("command").publish();
@@ -214,6 +216,8 @@ public class Telemetry
         shooterLeftVoltage.set(Shooter.getInstance().getLeftVoltage().in(Volts));
         shooterRightVelocity.set(Shooter.getInstance().getRightVelocity().in(RotationsPerSecond));
         shooterRightVoltage.set(Shooter.getInstance().getRightVoltage().in(Volts));
+        shooterEffectiveLeftVelocity.set(Shooter.getInstance().getLeftEffectiveVelocity().in(MetersPerSecond));
+        shooterEffectiveRightVelocity.set(Shooter.getInstance().getRightEffectiveVelocity().in(MetersPerSecond));
         
         Command hopperCommand = Hopper.getInstance().getCurrentCommand();
         this.hopperCommand.set(hopperCommand == null ? "" : hopperCommand.getName());
