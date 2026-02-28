@@ -335,10 +335,10 @@ public class RobotContainer
         driver.povLeft().onTrue(Commands.print("POV LEFT"));
         driver.povRight().onTrue(Commands.print("POV RIGHT"));
         */
-        driver.a().whileTrue(Shooter.getInstance().leftSysIdQuasistatic(Direction.kForward));
-        driver.b().whileTrue(Shooter.getInstance().leftSysIdQuasistatic(Direction.kReverse));
-        driver.x().whileTrue(Shooter.getInstance().leftSysIdDynamic(Direction.kForward));
-        driver.y().whileTrue(Shooter.getInstance().leftSysIdDynamic(Direction.kReverse));
+        driver.a().whileTrue(Hood.getInstance().sysIdQuasistatic(Direction.kForward));
+        driver.b().whileTrue(Hood.getInstance().sysIdQuasistatic(Direction.kReverse));
+        driver.x().whileTrue(Hood.getInstance().sysIdDynamic(Direction.kForward));
+        driver.y().whileTrue(Hood.getInstance().sysIdDynamic(Direction.kReverse));
     }
 
     private void configureDefaultBindings()
