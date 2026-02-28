@@ -17,8 +17,8 @@ public class IndexerFullSpeed extends Command
     @Override
     public void initialize() 
     {
-        Indexer.getInstance().setMainVelocity(RotationsPerSecond.of(Constants.Indexer.MAIN_MAX_VELOCITY));
-        Indexer.getInstance().setSideVelocity(RotationsPerSecond.of(Constants.Indexer.SIDE_MAX_VELOCITY));
+        Indexer.getInstance().setMainVoltage(Volts.of(Constants.Indexer.MAIN_MAX_VOLTAGE));
+        Indexer.getInstance().setSideVoltage(Volts.of(Constants.Indexer.SIDE_MAX_VOLTAGE));
     }
 
     @Override

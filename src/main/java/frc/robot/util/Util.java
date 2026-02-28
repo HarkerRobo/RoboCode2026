@@ -116,7 +116,7 @@ public class Util
                 drivetrain.getState().Pose.getTranslation().getX(),
                 drivetrain.getState().Pose.getTranslation().getY(),
                 Constants.HOOD_BASE_HEIGHT), 
-                (DriverStation.getAlliance().get() == Alliance.Blue) ? 
+                (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue) ? 
                     Constants.HUB_TARGET_POSITION : 
                     new Translation3d(FlippingUtil.flipFieldPosition(Constants.HUB_TARGET_POSITION.toTranslation2d()).getX(), FlippingUtil.flipFieldPosition(Constants.HUB_TARGET_POSITION.toTranslation2d()).getY(), Constants.HUB_TARGET_POSITION.getZ()), 
                 calculateShootVelocity(drivetrain));
@@ -128,7 +128,7 @@ public class Util
                 drivetrain.getState().Pose.getTranslation().getX(),
                 drivetrain.getState().Pose.getTranslation().getY(),
                 Constants.HOOD_BASE_HEIGHT),
-                (DriverStation.getAlliance().get() == Alliance.Blue) ? 
+                (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue) ? 
                     Constants.HUB_TARGET_POSITION : 
                     new Translation3d(FlippingUtil.flipFieldPosition(Constants.HUB_TARGET_POSITION.toTranslation2d()).getX(), FlippingUtil.flipFieldPosition(Constants.HUB_TARGET_POSITION.toTranslation2d()).getY(), Constants.HUB_TARGET_POSITION.getZ()));
     }
@@ -140,8 +140,8 @@ public class Util
                 drivetrain.getState().Pose.getTranslation().getY(),
                 Constants.HOOD_BASE_HEIGHT),
                 (drivetrain.getState().Pose.getY() < Constants.Simulation.FIELD_HEIGHT / 2.0) ?
-                    (DriverStation.getAlliance().get()==Alliance.Blue) ? Constants.PASS_LEFT_TARGET_POSITION : new Translation3d(FlippingUtil.flipFieldPosition(Constants.PASS_LEFT_TARGET_POSITION.toTranslation2d()).getX(), FlippingUtil.flipFieldPosition(Constants.PASS_LEFT_TARGET_POSITION.toTranslation2d()).getY(), Constants.PASS_LEFT_TARGET_POSITION.getZ()) :
-                    (DriverStation.getAlliance().get()==Alliance.Blue) ? Constants.PASS_RIGHT_TARGET_POSITION : new Translation3d(FlippingUtil.flipFieldPosition(Constants.PASS_RIGHT_TARGET_POSITION.toTranslation2d()).getX(), FlippingUtil.flipFieldPosition(Constants.PASS_RIGHT_TARGET_POSITION.toTranslation2d()).getY(), Constants.PASS_RIGHT_TARGET_POSITION.getZ()) ,
+                    (DriverStation.getAlliance().orElse(Alliance.Blue)==Alliance.Blue) ? Constants.PASS_LEFT_TARGET_POSITION : new Translation3d(FlippingUtil.flipFieldPosition(Constants.PASS_LEFT_TARGET_POSITION.toTranslation2d()).getX(), FlippingUtil.flipFieldPosition(Constants.PASS_LEFT_TARGET_POSITION.toTranslation2d()).getY(), Constants.PASS_LEFT_TARGET_POSITION.getZ()) :
+                    (DriverStation.getAlliance().orElse(Alliance.Blue)==Alliance.Blue) ? Constants.PASS_RIGHT_TARGET_POSITION : new Translation3d(FlippingUtil.flipFieldPosition(Constants.PASS_RIGHT_TARGET_POSITION.toTranslation2d()).getX(), FlippingUtil.flipFieldPosition(Constants.PASS_RIGHT_TARGET_POSITION.toTranslation2d()).getY(), Constants.PASS_RIGHT_TARGET_POSITION.getZ()) ,
                 calculatePassVelocity(drivetrain));
     }
     
@@ -152,8 +152,8 @@ public class Util
                 drivetrain.getState().Pose.getTranslation().getY(),
                 Constants.HOOD_BASE_HEIGHT),
                 (drivetrain.getState().Pose.getY() < Constants.Simulation.FIELD_HEIGHT / 2.0) ?
-                    (DriverStation.getAlliance().get()==Alliance.Blue) ? Constants.PASS_LEFT_TARGET_POSITION : new Translation3d(FlippingUtil.flipFieldPosition(Constants.PASS_LEFT_TARGET_POSITION.toTranslation2d()).getX(), FlippingUtil.flipFieldPosition(Constants.PASS_LEFT_TARGET_POSITION.toTranslation2d()).getY(), Constants.PASS_LEFT_TARGET_POSITION.getZ()) :
-                    (DriverStation.getAlliance().get()==Alliance.Blue) ? Constants.PASS_RIGHT_TARGET_POSITION : new Translation3d(FlippingUtil.flipFieldPosition(Constants.PASS_RIGHT_TARGET_POSITION.toTranslation2d()).getX(), FlippingUtil.flipFieldPosition(Constants.PASS_RIGHT_TARGET_POSITION.toTranslation2d()).getY(), Constants.PASS_RIGHT_TARGET_POSITION.getZ()));
+                    (DriverStation.getAlliance().orElse(Alliance.Blue)==Alliance.Blue) ? Constants.PASS_LEFT_TARGET_POSITION : new Translation3d(FlippingUtil.flipFieldPosition(Constants.PASS_LEFT_TARGET_POSITION.toTranslation2d()).getX(), FlippingUtil.flipFieldPosition(Constants.PASS_LEFT_TARGET_POSITION.toTranslation2d()).getY(), Constants.PASS_LEFT_TARGET_POSITION.getZ()) :
+                    (DriverStation.getAlliance().orElse(Alliance.Blue)==Alliance.Blue) ? Constants.PASS_RIGHT_TARGET_POSITION : new Translation3d(FlippingUtil.flipFieldPosition(Constants.PASS_RIGHT_TARGET_POSITION.toTranslation2d()).getX(), FlippingUtil.flipFieldPosition(Constants.PASS_RIGHT_TARGET_POSITION.toTranslation2d()).getY(), Constants.PASS_RIGHT_TARGET_POSITION.getZ()));
     }
 
     public static double bound(double value, double min, double max)

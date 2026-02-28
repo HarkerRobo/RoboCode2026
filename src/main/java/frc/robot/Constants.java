@@ -102,11 +102,11 @@ public class Constants
         public static final double RIGHT_KV = 0.11931; // TODO
         public static final double RIGHT_KA = 0.0059936; // TODO
 
-        public static final double DEFAULT_VELOCITY = 0.1; // TODO rotations per second (nonzero to decrease startup time)
+        public static final double DEFAULT_VELOCITY = 3.0; // TODO rotations per second (nonzero to decrease startup time)
         public static final double SHOOT_VELOCITY = 10.0; // TODO rotations per second 
 
         public static final double INCREASE_VELOCITY = 0.5; // TODO
-        public static final double MAX_VELOCITY = 20.0; // TODO
+        public static final double MAX_VELOCITY = 10.0; // TODO
 
         public static final ChassisReference LEFT_MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
         public static final ChassisReference RIGHT_MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
@@ -387,16 +387,16 @@ public class Constants
         public static final double MM_JERK = 0.0;
         */
 
-        public static final double MAIN_MAX_VELOCITY = 0.15; // TODO rotations per second
-        public static final double MAIN_DEFAULT_VELOCITY = 0.0; // TODO rotations per second
+        public static final double MAIN_MAX_VOLTAGE = 4.0; // TODO volts
+        public static final double MAIN_DEFAULT_VOLTAGE = 1.0; // TODO volts
 
         public static final double MAIN_GEAR_RATIO = 1.0; // TODO
 
         public static final ChassisReference MAIN_MECHANICAL_ORIENTATION = ChassisReference.Clockwise_Positive;
         
-        public static final int SIDE_ID = 39; // TODO
+        public static final int SIDE_ID = 25;
 
-        public static final InvertedValue SIDE_INVERTED = InvertedValue.CounterClockwise_Positive; // TODO
+        public static final InvertedValue SIDE_INVERTED = InvertedValue.Clockwise_Positive;
         public static final double SIDE_STATOR_CURRENT_LIMIT = 80.0;
         public static final double SIDE_SUPPLY_CURRENT_LIMIT = 80.0;
 
@@ -408,8 +408,8 @@ public class Constants
         public static final double SIDE_KI = 0.0; //TODO
         public static final double SIDE_KD = 0.0; //TODO
 
-        public static final double SIDE_MAX_VELOCITY = 0.1; // TODO rotations per second
-        public static final double SIDE_DEFAULT_VELOCITY = 0.0; // TODO rotations per second
+        public static final double SIDE_MAX_VOLTAGE = 4.0; // TODO volts
+        public static final double SIDE_DEFAULT_VOLTAGE = 1.0; // TODO volts
 
         public static final double SIDE_GEAR_RATIO = 1.0; // TODO
 
@@ -424,8 +424,8 @@ public class Constants
         public static final double STATOR_CURRENT_LIMIT = 80.0;
         public static final double SUPPLY_CURRENT_LIMIT = 80.0;
 
-        public static final double DEFAULT_VOLTAGE = 0.0;
-        public static final double INTAKE_VOLTAGE = 2.0; // TODO
+        public static final double DEFAULT_VOLTAGE = 1.0;
+        public static final double INTAKE_VOLTAGE = 4.0; // TODO
         
         public static final double KS = 0.0048438; // TODO
         public static final double KV = 0.12361; // TODO
@@ -605,8 +605,8 @@ public class Constants
     public static final Translation3d PASS_LEFT_TARGET_POSITION = new Translation3d(2.010664, 2.010664, 1.0);
     public static final Translation3d PASS_RIGHT_TARGET_POSITION = new Translation3d(2.010664, Simulation.FIELD_HEIGHT - 2.010664, 1.0);
 
-    public static final Angle HARDCODE_HOOD_PITCH = Degrees.of(20.0);
-    public static final double HARDCODE_VELOCITY = 5.0;
+    public static final Angle HARDCODE_HOOD_PITCH = Degrees.of(75.0);
+    public static final double HARDCODE_VELOCITY = 7.0;
 
     public static final double PITCH_OFFSET_UNIT = 5.0; // TODO
     public static final double FLYWHEEL_OFFSET_UNIT = 2.5; // TODO
