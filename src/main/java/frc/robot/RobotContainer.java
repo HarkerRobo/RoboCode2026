@@ -114,6 +114,8 @@ public class RobotContainer
     private Command shoot;
     private Command pass;
     private Command hardShoot;
+    private Command revShoot;
+    private Command revPass;
 
     public void setPassDirection(PassDirection newDirection) {
         direction = newDirection;
@@ -181,8 +183,9 @@ public class RobotContainer
 
         // tested in sim
         shoot = //new DriveToPose(drivetrain, ()->AlignConstants.HUB)
-        Commands.none()
+            Commands.none()
             .alongWith(new AimToAngle(()->Util.calculateShootPitch(drivetrain).in(Degrees) + pitchOffset))
+            .andThen(new IndependentCommand(new ShooterTargetSpeed(Util.calculateShootVelocity(drivetrain) + flywheelOffset)))
             .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot(Util.calculateShootVelocity(drivetrain)) && Hood.getInstance().readyToShoot()))
             .andThen(new ShooterIndexerFullSpeed()) // load to shoot
             .finallyDo(()->{
@@ -191,23 +194,48 @@ public class RobotContainer
             .withName("Shoot");
 
         // tested in sim
-        pass = //new DriveToPose(drivetrain, ()->AlignConstants.HUB)
-        Commands.none()
-            .alongWith(new AimToAngle(()->Util.calculateShootPitch(drivetrain).in(Degrees) + pitchOffset))
-            .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot(Util.calculateShootVelocity(drivetrain)) && Hood.getInstance().readyToShoot()))
-            .andThen(new ShooterIndexerFullSpeed()) // load to shoot
-            .finallyDo(()->{
+        pass = /*new DriveToPose(drivetrain,
+            () -> onLeftSize() ? Constants.PASS_LEFT_TARGET_POSITION.toTranslation2d()
+                               : Constants.PASS_RIGHT_TARGET_POSITION.toTranslation2d())*/
+            Commands.none()
+            .alongWith(new AimToAngle(() -> Util.calculatePassPitch(drivetrain).in(Degrees) + pitchOffset))
+            .andThen(new IndependentCommand(new ShooterTargetSpeed(Util.calculatePassVelocity(drivetrain) + flywheelOffset)))
+            .andThen(new WaitUntilCommand(
+                    () -> Shooter.getInstance().readyToShoot(Util.calculatePassVelocity(drivetrain))
+                            && Hood.getInstance().readyToShoot()))
+            .andThen(new ShooterIndexerFullSpeed()) // load to pass
+            .finallyDo(() -> {
                 CommandScheduler.getInstance().schedule(stow.get());
             })
-            .withName("Shoot");
+            .withName("Pass");
 
         // tested in sim
-        hardShoot = new AimToAngle(Constants.HARDCODE_HOOD_PITCH.in(Degrees) + pitchOffset)
+        hardShoot = new AimToAngle(Constants.HARDCODE_HOOD_PITCH.in(Degrees))
             .alongWith(new IndependentCommand(new ShooterTargetSpeed(()->Constants.HARDCODE_VELOCITY)))
             .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot()))
             .andThen(new ShooterIndexerFullSpeed())
             .finallyDo(()->CommandScheduler.getInstance().schedule(new ShooterDefaultSpeed()))
             .withName("HardShoot");
+
+        revShoot = 
+                Commands.runOnce(()->mostRecentAim = false)
+            .andThen(new IndependentCommand(new ShooterIndexerDefaultSpeed()))
+            .andThen(
+                new IndependentCommand(new ShooterTargetSpeed(()->Util.calculateShootVelocity(drivetrain) + flywheelOffset)))
+            .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot()))
+            .andThen(
+                Commands.runOnce(()->driver.setRumble(RumbleType.kBothRumble, 1.0)))
+                .withName("RevShoot");
+
+        revPass = 
+                Commands.runOnce(()->mostRecentAim = true)
+            .andThen(new IndependentCommand(new ShooterIndexerDefaultSpeed()))
+            .andThen(
+                new IndependentCommand(new ShooterTargetSpeed(()->Util.calculatePassVelocity(drivetrain) + flywheelOffset)))
+            .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot()))
+            .andThen(
+                Commands.runOnce(()->driver.setRumble(RumbleType.kBothRumble, 1.0)))
+                .withName("RevPass");
 
 
         testCommandChooser.setDefaultOption("None", Commands.none());
@@ -279,7 +307,7 @@ public class RobotContainer
         Shooter.getInstance().setDefaultCommand(new ShooterDefaultSpeed());
 
         boolean useDebuggingBindings = false; // mainly for sysid or debugging
-        boolean useDefaultBindings = true; // in case ever the official controls don't work, use these as a backup to be able to drive around
+        boolean useDefaultBindings = false; // in case ever the official controls don't work, use these as a backup to be able to drive around
         if (useDebuggingBindings) configureDebugBindings();
         else if (useDefaultBindings)
         {
@@ -307,10 +335,10 @@ public class RobotContainer
         driver.povLeft().onTrue(Commands.print("POV LEFT"));
         driver.povRight().onTrue(Commands.print("POV RIGHT"));
         */
-        driver.a().whileTrue(Shooter.getInstance().leftSysIdQuasistatic(Direction.kForward));
-        driver.b().whileTrue(Shooter.getInstance().leftSysIdQuasistatic(Direction.kReverse));
-        driver.x().whileTrue(Shooter.getInstance().leftSysIdDynamic(Direction.kForward));
-        driver.y().whileTrue(Shooter.getInstance().leftSysIdDynamic(Direction.kReverse));
+        driver.a().whileTrue(Hood.getInstance().sysIdQuasistatic(Direction.kForward));
+        driver.b().whileTrue(Hood.getInstance().sysIdQuasistatic(Direction.kReverse));
+        driver.x().whileTrue(Hood.getInstance().sysIdDynamic(Direction.kForward));
+        driver.y().whileTrue(Hood.getInstance().sysIdDynamic(Direction.kReverse));
     }
 
     private void configureDefaultBindings()
@@ -328,7 +356,7 @@ public class RobotContainer
         driver.x().onTrue(Indexer.getInstance().run(()->Indexer.getInstance().setSideVoltage(Volts.of(3.0))));
         driver.b().toggleOnTrue(new IndexerFullSpeed());
         driver.a().toggleOnTrue(new ShooterIndexerFullSpeed());
-        driver.y().toggleOnTrue(new ShooterTargetSpeed(Constants.Shooter.SHOOT_VELOCITY + flywheelOffset));
+        driver.y().toggleOnTrue(new ShooterTargetSpeed(Constants.HARDCODE_VELOCITY + flywheelOffset));
 
         driver.povUp().whileTrue(new HoodManualUp());
         driver.povDown().whileTrue(new HoodManualDown());
@@ -361,21 +389,21 @@ public class RobotContainer
                 }
         })));
         
+        driver.povLeft().onTrue(Commands.runOnce(()->flywheelOffset += Constants.FLYWHEEL_OFFSET_UNIT));
+        driver.povRight().onTrue(Commands.runOnce(()->flywheelOffset -= Constants.FLYWHEEL_OFFSET_UNIT));
+        
         operator.x().onTrue(new RetractIntake()
             .andThen(Commands.runOnce(()->
             {
                 intakeExtended = false;
             }
             )));
-        
         operator.b().onTrue(new ExtendIntake()
             .andThen(Commands.runOnce(()->
             {
                 intakeExtended = true;
             })));
         
-        driver.povLeft().onTrue(Commands.runOnce(()->flywheelOffset += Constants.FLYWHEEL_OFFSET_UNIT));
-        driver.povRight().onTrue(Commands.runOnce(()->flywheelOffset -= Constants.FLYWHEEL_OFFSET_UNIT));
     }
    
 
@@ -440,25 +468,11 @@ public class RobotContainer
         
         // tested in sim
         driver.button(7) // home button/left paddle
-            .onTrue(track(
-                Commands.runOnce(()->mostRecentAim = false)
-            .andThen(
-                new IndependentCommand(new ShooterTargetSpeed(()->Util.calculateShootVelocity(drivetrain) + flywheelOffset)))
-            .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot()))
-            .andThen(
-                Commands.runOnce(()->driver.setRumble(RumbleType.kBothRumble, 1.0)))
-                .withName("RevShoot")));
+            .onTrue(track(revShoot));
         
         // tested in sim
         driver.button(8) // menu button/right paddle
-            .onTrue(track(
-            Commands.runOnce(()->mostRecentAim = true)
-            .andThen(
-                new IndependentCommand(new ShooterTargetSpeed(()->Util.calculatePassVelocity(drivetrain) + flywheelOffset)))
-            .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot()))
-            .andThen(
-                Commands.runOnce(()->driver.setRumble(RumbleType.kBothRumble, 1.0)))
-                .withName("RevPass")));
+            .onTrue(track(revPass));
 
         // tested in sim
         driver.y().onTrue(track(new ClimbToLevel(3).andThen(new RunClimb())

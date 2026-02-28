@@ -1,25 +1,70 @@
 package frc.robot.util;
 
 
-import edu.wpi.first.math.geometry.Rectangle2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.math.geometry.Translation2d;
-
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.Rotations;
+
+import java.util.Comparator;
 
 import com.pathplanner.lib.util.FlippingUtil;
 
+import edu.wpi.first.math.Pair;
+import edu.wpi.first.math.geometry.Rectangle2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
+import edu.wpi.first.math.interpolation.Interpolator;
+import edu.wpi.first.math.interpolation.InverseInterpolator;
+import edu.wpi.first.units.AngleUnit;
+import edu.wpi.first.units.LinearVelocityUnit;
+import edu.wpi.first.units.Measure;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import frc.robot.Constants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 public class Util 
 {
+
+    private static Interpolator<Pair<LinearVelocity, Angle>> interpolator = new Interpolator<>() {
+        @Override
+        public Pair<LinearVelocity, Angle> interpolate(Pair<LinearVelocity, Angle> startValue, 
+                                                                         Pair<LinearVelocity, Angle> endValue, double t)
+        {
+            double v0 = startValue.getFirst().in(MetersPerSecond);
+            double v1 = endValue.getFirst().in(MetersPerSecond);
+            LinearVelocity vx = MetersPerSecond.of(v0 * (1.0 - t) + v1 * t);
+
+            double th0 = startValue.getSecond().in(Rotations);
+            double th1 = endValue.getSecond().in(Rotations);
+            Angle thx = Rotations.of(th0 * (1.0 - t) + th1 * t);
+
+            return Pair.of(vx, thx);
+        }
+    };
+
+    private static InverseInterpolator<Double> inverseInterpolator = InverseInterpolator.forDouble();
+    
+    private static InterpolatingTreeMap<Double, Pair<LinearVelocity, Angle>> interpolatingTreeMap = new InterpolatingTreeMap<>(inverseInterpolator, interpolator);
+
+    private static void addData(double distanceMeters, double velocityMetersPerSecond, double angleDegrees)
+    {
+        interpolatingTreeMap.put(distanceMeters, Pair.of(MetersPerSecond.of(velocityMetersPerSecond), Degrees.of(angleDegrees)));
+    }
+
+    public static void init ()
+    {
+        addData(0.5, 7.0, 75.0);
+    }
+
     public static double bottomLeftX (Rectangle2d r)
     {
         return r.getCenter().getX() - 0.5 * r.getXWidth();
@@ -84,6 +129,47 @@ public class Util
     {
         return new Rectangle2d(new Pose2d(new Translation2d(Constants.Simulation.ROTATE_X.apply(r.getCenter().getX()), Constants.Simulation.ROTATE_Y.apply(r.getCenter().getY())), new Rotation2d()), r.getXWidth(), r.getYWidth());
     }
+
+    public static Translation3d translation2dTo3d(Translation2d translation2d, double z)
+    {
+        return new Translation3d(translation2d.getX(), translation2d.getY(), z);
+    }
+
+    public static Translation3d applyAlliance(Translation3d translation3d)
+    {
+        return (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue) ? 
+                translation3d : 
+                translation2dTo3d(FlippingUtil.flipFieldPosition(translation3d.toTranslation2d()), translation3d.getZ());
+    }
+
+    public static Translation3d getShootStartingPoint(CommandSwerveDrivetrain drivetrain)
+    {
+        Translation3d rawPose = translation2dTo3d(drivetrain.getState().Pose.getTranslation(), 0.0);
+        return new Pose3d(rawPose, Rotation3d.kZero).transformBy(Constants.ROBOT_TO_HOOD).getTranslation();
+    }
+
+    public static Translation3d getShootEndingPoint()
+    {
+        return applyAlliance(Constants.HUB_TARGET_POSITION);
+    }
+
+    public static Translation3d getPassEndingPoint(CommandSwerveDrivetrain drivetrain)
+    {
+        return onLeftSide(drivetrain) ?
+                applyAlliance(Constants.PASS_LEFT_TARGET_POSITION) : 
+                applyAlliance(Constants.PASS_RIGHT_TARGET_POSITION);
+    }
+
+    public static double calculateShootDistance(CommandSwerveDrivetrain drivetrain)
+    {
+        Translation2d drivetrainPose = drivetrain.getState().Pose.getTranslation();
+        
+        Translation2d targetPose = (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue) ? 
+                    Constants.HUB_TARGET_POSITION.toTranslation2d() : 
+                    FlippingUtil.flipFieldPosition(Constants.HUB_TARGET_POSITION.toTranslation2d());
+
+        return drivetrainPose.getDistance(targetPose);
+    }
     
     public static Angle calculatePitch(Translation3d position, Translation3d target, double shootVelocity)
     {
@@ -111,49 +197,48 @@ public class Util
 
     public static Angle calculateShootPitch(CommandSwerveDrivetrain drivetrain)
     {
-        
-        return Util.calculatePitch(new Translation3d(
-                drivetrain.getState().Pose.getTranslation().getX(),
-                drivetrain.getState().Pose.getTranslation().getY(),
-                Constants.HOOD_BASE_HEIGHT), 
-                (DriverStation.getAlliance().get() == Alliance.Blue) ? 
-                    Constants.HUB_TARGET_POSITION : 
-                    new Translation3d(FlippingUtil.flipFieldPosition(Constants.HUB_TARGET_POSITION.toTranslation2d()).getX(), FlippingUtil.flipFieldPosition(Constants.HUB_TARGET_POSITION.toTranslation2d()).getY(), Constants.HUB_TARGET_POSITION.getZ()), 
-                calculateShootVelocity(drivetrain));
+        if (Constants.INTERPOLATE_VALUES)
+        {
+            Pair<LinearVelocity, Angle> value = interpolatingTreeMap.get(calculateShootDistance(drivetrain));
+            if (value != null)
+            {
+                Angle output = value.getSecond();
+                System.out.printf("Calculated angle with interpolation: %f degrees\n", output.in(Degrees));
+                return output;
+            }
+            System.out.println("Interpolation failed - no value found. Reverting to math");
+        }
+        Angle output = Util.calculatePitch(getShootStartingPoint(drivetrain), getShootEndingPoint(), calculateShootVelocity(drivetrain));
+        System.out.printf("Calculated angle: %f degrees\n", output.in(Degrees));
+        return output;
     }
 
     public static double calculateShootVelocity(CommandSwerveDrivetrain drivetrain)
     {
-        return Util.calculateVelocity(new Translation3d(
-                drivetrain.getState().Pose.getTranslation().getX(),
-                drivetrain.getState().Pose.getTranslation().getY(),
-                Constants.HOOD_BASE_HEIGHT),
-                (DriverStation.getAlliance().get() == Alliance.Blue) ? 
-                    Constants.HUB_TARGET_POSITION : 
-                    new Translation3d(FlippingUtil.flipFieldPosition(Constants.HUB_TARGET_POSITION.toTranslation2d()).getX(), FlippingUtil.flipFieldPosition(Constants.HUB_TARGET_POSITION.toTranslation2d()).getY(), Constants.HUB_TARGET_POSITION.getZ()));
+        if (Constants.INTERPOLATE_VALUES)
+        {
+            Pair<LinearVelocity, Angle> value = interpolatingTreeMap.get(calculateShootDistance(drivetrain));
+            if (value != null)
+            {
+                double output = value.getFirst().in(MetersPerSecond);
+                System.out.printf("Calculated velocity with interpolation: %f\n", output);
+                return output;
+            }
+            System.out.println("Interpolation failed - no value found. Reverting to math");
+        }
+        double output = Util.calculateVelocity(getShootStartingPoint(drivetrain), getShootEndingPoint());
+        System.out.printf("Calculated velocity: %f\n", output);
+        return output;
     }
     
     public static Angle calculatePassPitch(CommandSwerveDrivetrain drivetrain)
     {
-        return Util.calculatePitch(new Translation3d(
-                drivetrain.getState().Pose.getTranslation().getX(),
-                drivetrain.getState().Pose.getTranslation().getY(),
-                Constants.HOOD_BASE_HEIGHT),
-                (drivetrain.getState().Pose.getY() < Constants.Simulation.FIELD_HEIGHT / 2.0) ?
-                    (DriverStation.getAlliance().get()==Alliance.Blue) ? Constants.PASS_LEFT_TARGET_POSITION : new Translation3d(FlippingUtil.flipFieldPosition(Constants.PASS_LEFT_TARGET_POSITION.toTranslation2d()).getX(), FlippingUtil.flipFieldPosition(Constants.PASS_LEFT_TARGET_POSITION.toTranslation2d()).getY(), Constants.PASS_LEFT_TARGET_POSITION.getZ()) :
-                    (DriverStation.getAlliance().get()==Alliance.Blue) ? Constants.PASS_RIGHT_TARGET_POSITION : new Translation3d(FlippingUtil.flipFieldPosition(Constants.PASS_RIGHT_TARGET_POSITION.toTranslation2d()).getX(), FlippingUtil.flipFieldPosition(Constants.PASS_RIGHT_TARGET_POSITION.toTranslation2d()).getY(), Constants.PASS_RIGHT_TARGET_POSITION.getZ()) ,
-                calculatePassVelocity(drivetrain));
+        return Util.calculatePitch(getShootStartingPoint(drivetrain), getPassEndingPoint(drivetrain), calculatePassVelocity(drivetrain));
     }
     
     public static double calculatePassVelocity(CommandSwerveDrivetrain drivetrain)
     {
-        return Util.calculateVelocity(new Translation3d(
-                drivetrain.getState().Pose.getTranslation().getX(),
-                drivetrain.getState().Pose.getTranslation().getY(),
-                Constants.HOOD_BASE_HEIGHT),
-                (drivetrain.getState().Pose.getY() < Constants.Simulation.FIELD_HEIGHT / 2.0) ?
-                    (DriverStation.getAlliance().get()==Alliance.Blue) ? Constants.PASS_LEFT_TARGET_POSITION : new Translation3d(FlippingUtil.flipFieldPosition(Constants.PASS_LEFT_TARGET_POSITION.toTranslation2d()).getX(), FlippingUtil.flipFieldPosition(Constants.PASS_LEFT_TARGET_POSITION.toTranslation2d()).getY(), Constants.PASS_LEFT_TARGET_POSITION.getZ()) :
-                    (DriverStation.getAlliance().get()==Alliance.Blue) ? Constants.PASS_RIGHT_TARGET_POSITION : new Translation3d(FlippingUtil.flipFieldPosition(Constants.PASS_RIGHT_TARGET_POSITION.toTranslation2d()).getX(), FlippingUtil.flipFieldPosition(Constants.PASS_RIGHT_TARGET_POSITION.toTranslation2d()).getY(), Constants.PASS_RIGHT_TARGET_POSITION.getZ()));
+        return Util.calculateVelocity(getShootStartingPoint(drivetrain), getPassEndingPoint(drivetrain));
     }
 
     public static double bound(double value, double min, double max)
