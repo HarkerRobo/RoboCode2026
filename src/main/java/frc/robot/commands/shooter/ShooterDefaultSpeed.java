@@ -1,5 +1,6 @@
 package frc.robot.commands.shooter;
 
+import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 
@@ -17,7 +18,7 @@ public class ShooterDefaultSpeed extends Command
     @Override
     public void initialize()
     {
-        Shooter.getInstance().setVelocity(RotationsPerSecond.of(Constants.Shooter.DEFAULT_VELOCITY));
+        Shooter.getInstance().setEffectiveVelocity(MetersPerSecond.of(Constants.Shooter.DEFAULT_VELOCITY));
     }
 
     @Override

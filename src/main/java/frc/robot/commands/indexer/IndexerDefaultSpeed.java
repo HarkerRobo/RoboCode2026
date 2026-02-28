@@ -16,8 +16,10 @@ public class IndexerDefaultSpeed extends Command
     @Override
     public void initialize() 
     {
-        Indexer.getInstance().setMainVelocity(RotationsPerSecond.of(Constants.Indexer.MAIN_DEFAULT_VELOCITY));
-        Indexer.getInstance().setSideVelocity(RotationsPerSecond.of(Constants.Indexer.SIDE_DEFAULT_VELOCITY));
+        Indexer.getInstance().setMainVoltage(Volts.of(2.0));
+        Indexer.getInstance().setSideVoltage(Volts.of(2.0));
+        //Indexer.getInstance().setMainVelocity(RotationsPerSecond.of(Constants.Indexer.MAIN_DEFAULT_VELOCITY));
+        //Indexer.getInstance().setSideVelocity(RotationsPerSecond.of(Constants.Indexer.SIDE_DEFAULT_VELOCITY));
     }
 
     @Override

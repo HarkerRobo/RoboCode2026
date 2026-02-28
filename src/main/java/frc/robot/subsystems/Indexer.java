@@ -41,7 +41,7 @@ public class Indexer extends SubsystemBase
 
     private Indexer() { 
         main = new TalonFX(Constants.Indexer.MAIN_ID, Constants.CAN_CHAIN);
-        side = new TalonFX(Constants.Indexer.SIDE_ID, Constants.CAN_CHAIN);
+        side = new TalonFX(Constants.Indexer.SIDE_ID, Constants.CAN_SUPERSTRUCTURE);
         config();
         
         if (isSimulated())

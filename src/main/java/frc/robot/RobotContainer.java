@@ -180,7 +180,8 @@ public class RobotContainer
             new ShooterDefaultSpeed()); // because a command instance cannot be scheduled to independent triggers
 
         // tested in sim
-        shoot = new DriveToPose(drivetrain, ()->AlignConstants.HUB)
+        shoot = //new DriveToPose(drivetrain, ()->AlignConstants.HUB)
+        Commands.none()
             .alongWith(new AimToAngle(()->Util.calculateShootPitch(drivetrain).in(Degrees) + pitchOffset))
             .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot(Util.calculateShootVelocity(drivetrain)) && Hood.getInstance().readyToShoot()))
             .andThen(new ShooterIndexerFullSpeed()) // load to shoot
@@ -190,7 +191,8 @@ public class RobotContainer
             .withName("Shoot");
 
         // tested in sim
-        pass = new DriveToPose(drivetrain, ()->AlignConstants.HUB)
+        pass = //new DriveToPose(drivetrain, ()->AlignConstants.HUB)
+        Commands.none()
             .alongWith(new AimToAngle(()->Util.calculateShootPitch(drivetrain).in(Degrees) + pitchOffset))
             .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot(Util.calculateShootVelocity(drivetrain)) && Hood.getInstance().readyToShoot()))
             .andThen(new ShooterIndexerFullSpeed()) // load to shoot
@@ -323,12 +325,16 @@ public class RobotContainer
                         .withRotationalRate(-driver.getRightX() * MaxAngularRate * (isSlow ? Constants.ROTATION_SLOW_MULTIPLIER : 1.0)) // Drive counterclockwise with negative X (left)
                     ).withName("SwerveManual"));
 
+        driver.x().onTrue(Indexer.getInstance().run(()->Indexer.getInstance().setSideVoltage(Volts.of(3.0))));
         driver.b().toggleOnTrue(new IndexerFullSpeed());
         driver.a().toggleOnTrue(new ShooterIndexerFullSpeed());
-        driver.y().toggleOnTrue(new ShooterTargetSpeed(10.0));
+        driver.y().toggleOnTrue(new ShooterTargetSpeed(Constants.Shooter.SHOOT_VELOCITY + flywheelOffset));
 
         driver.povUp().whileTrue(new HoodManualUp());
         driver.povDown().whileTrue(new HoodManualDown());
+
+        //driver.povLeft().whileTrue(new ExtendHopper());
+        //driver.povRight().whileTrue(new RetractHopper());
 
         driver.start().onTrue(
                 drivetrain.runOnce(() -> drivetrain.seedFieldCentric())
@@ -336,6 +342,40 @@ public class RobotContainer
                             (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) ? 
                             FlippingUtil.flipFieldPose(Constants.ZEROING_POSE) : Constants.ZEROING_POSE)))
                 .withName("ZeroDrivetrain"));
+        
+        driver.rightBumper().onTrue(track(
+            Commands.runOnce(()->{
+                if (intakeTriggered)
+                {
+                    intakeTriggered = false;
+                    CommandScheduler.getInstance().schedule(
+                        track(new DefaultIntake()
+                        .withName("DeactivateIntake")));
+                }
+                else if (intakeExtended)
+                {
+                    intakeTriggered = true;
+                    CommandScheduler.getInstance().schedule(
+                        track(new RunIntake()
+                        .withName("ActivateIntake")));
+                }
+        })));
+        
+        operator.x().onTrue(new RetractIntake()
+            .andThen(Commands.runOnce(()->
+            {
+                intakeExtended = false;
+            }
+            )));
+        
+        operator.b().onTrue(new ExtendIntake()
+            .andThen(Commands.runOnce(()->
+            {
+                intakeExtended = true;
+            })));
+        
+        driver.povLeft().onTrue(Commands.runOnce(()->flywheelOffset += Constants.FLYWHEEL_OFFSET_UNIT));
+        driver.povRight().onTrue(Commands.runOnce(()->flywheelOffset -= Constants.FLYWHEEL_OFFSET_UNIT));
     }
    
 
