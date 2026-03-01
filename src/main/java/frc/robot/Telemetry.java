@@ -28,7 +28,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.simulation.SimulationState;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Indexer;
-import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.ShooterIndexer;
 import frc.robot.subsystems.intake.Intake;
@@ -114,13 +113,6 @@ public class Telemetry
     private DoublePublisher indexerSideVelocity = indexer.getDoubleTopic("side velocity (rps)").publish();
     private DoublePublisher indexerSideVoltage = indexer.getDoubleTopic("side voltage (V)").publish();
     
-    private NetworkTable hopper = table.getSubTable("Hopper");
-    private StringPublisher hopperCommand = hopper.getStringTopic("command").publish();
-    private DoublePublisher hopperVelocity = hopper.getDoubleTopic("velocity (rot per s)").publish();
-    private DoublePublisher hopperVoltage = hopper.getDoubleTopic("voltage (V)").publish();
-    private DoublePublisher hopperPosition = hopper.getDoubleTopic("current position (rotations)").publish();
-    // private DoublePublisher hopperTarget = hopper.getDoubleTopic("target position (rotations)").publish();
-
     private NetworkTable shooterIndexer = table.getSubTable("ShooterIndexer");
     private StringPublisher shooterIndexerCommand = shooterIndexer.getStringTopic("command").publish();
     private DoublePublisher shooterIndexerVelocity = shooterIndexer.getDoubleTopic("velocity (rps)").publish();
@@ -221,13 +213,6 @@ public class Telemetry
         shooterEffectiveRightVelocity.set(Shooter.getInstance().getRightEffectiveVelocity().in(MetersPerSecond));
         shooterRightVoltage.set(Shooter.getInstance().getRightVoltage().in(Volts));
         
-        Command hopperCommand = Hopper.getInstance().getCurrentCommand();
-        this.hopperCommand.set(hopperCommand == null ? "" : hopperCommand.getName());
-        hopperPosition.set(Hopper.getInstance().getPosition().in(Rotations));
-        hopperVelocity.set(Hopper.getInstance().getVelocity().in(RotationsPerSecond));
-        hopperVoltage.set(Hopper.getInstance().getVoltage().in(Volts));
-        // hopperTarget.set(Hopper.getInstance().getDesiredPosition().in(Rotations));
-
         Command climbCommand = Climb.getInstance().getCurrentCommand();
         this.climbCommand.set(climbCommand == null ? "" : climbCommand.getName());
         climbElevatorVelocity.set(Climb.getInstance().getElevatorVelocity().in(RotationsPerSecond));

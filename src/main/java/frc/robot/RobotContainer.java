@@ -45,8 +45,6 @@ import frc.robot.commands.hood.HoodManualDown;
 import frc.robot.commands.hood.HoodManualUp;
 import frc.robot.commands.hood.ZeroHood;
 import frc.robot.commands.hood.ZeroHoodSoft;
-import frc.robot.commands.hopper.ExtendHopper;
-import frc.robot.commands.hopper.RetractHopper;
 import frc.robot.commands.indexer.IndexerDefaultSpeed;
 import frc.robot.commands.indexer.IndexerFullSpeed;
 import frc.robot.commands.intake.DefaultIntake;
@@ -260,8 +258,6 @@ public class RobotContainer
         testCommandChooser.addOption("Hood/ZeroHoodSoft", new ZeroHoodSoft());
         testCommandChooser.addOption("Hood/HoodManualUp", new HoodManualUp());
         testCommandChooser.addOption("Hood/HoodManualDown", new HoodManualDown());
-        testCommandChooser.addOption("Hopper/ExtendHopper", new ExtendHopper());
-        testCommandChooser.addOption("Hopper/RetractHopper", new RetractHopper());
         testCommandChooser.addOption("Indexer/IndexerDefaultSpeed", new IndexerDefaultSpeed());
         testCommandChooser.addOption("Indexer/IndexerFullSpeed", new IndexerFullSpeed());
         testCommandChooser.addOption("Intake/DefaultIntake", new DefaultIntake());
@@ -316,7 +312,7 @@ public class RobotContainer
         Shooter.getInstance().setDefaultCommand(new ShooterDefaultSpeed());
         //Hood.getInstance().setDefaultCommand(new ZeroHood());
 
-        boolean useDebuggingBindings = false; // mainly for sysid or debugging
+        boolean useDebuggingBindings = true; // mainly for sysid or debugging
         boolean useDefaultBindings = false; // in case ever the official controls don't work, use these as a backup to be able to drive around
         if (useDebuggingBindings) configureDebugBindings();
         else if (useDefaultBindings)
@@ -538,12 +534,18 @@ public class RobotContainer
                 .withName("ZeroDrivetrain")));
 
         operator.back().onTrue(track(new ZeroHood()
-            .alongWith(new ShooterDefaultSpeed())));
+            .alongWith(new ShooterDefaultSpeed())
+            .withName("ZeroHood+Shooter")));
 
-        operator.leftTrigger().onTrue(track(new EjectIntake()));
+        operator.leftTrigger().onTrue(track(new EjectIntake().andThen(Commands.runOnce(()->{
+            if (intakeTriggered) CommandScheduler.getInstance().schedule(new RunIntake());   
+        })).withName("EjectIntake")));
+
         operator.rightTrigger().whileTrue(track(new IndependentCommand(new ShooterTargetSpeed(Constants.Shooter.SOFT_PASS_VELOCITY))
             .andThen(new IndependentCommand(new IndexerFullSpeed()))
-            .andThen(new ShooterIndexerFullSpeed())));
+            .andThen(new ShooterIndexerFullSpeed())
+            .andThen(stow.get())
+            .withName("SoftPass")));
 
         operator.leftBumper().onTrue(Commands.runOnce(()->
         {

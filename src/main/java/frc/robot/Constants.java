@@ -160,7 +160,6 @@ public class Constants
         public static final double KV = 0.12364;
         public static final double KA = 0.0078492;
         public static final InvertedValue INVERTED = InvertedValue.CounterClockwise_Positive;
-
         
         public static final double GEAR_RATIO = 6.25;
         
@@ -172,41 +171,6 @@ public class Constants
         public static final double MAX_HEIGHT = 1.0; // TODO
     }
 
-    public class Hopper
-    {
-        public static final int ID = 63;
-        
-        public static final double STATOR_CURRENT_LIMIT = 90.0;
-        public static final double SUPPLY_CURRENT_LIMIT = 90.0;
-
-        /*
-        public static final double MM_CRUISE_VELOCITY = 60.0;
-		public static final double MM_ACCELERATION = 60.0;
-		public static final double MM_JERK = 240.0;
-        */
-		public static final InvertedValue INVERTED = InvertedValue.CounterClockwise_Positive;
-        
-        public static final double GEAR_RATIO = 1.0;
-
-		public static final double KP = 0.24194; // sim
-		public static final double KI = 0.0; // sim
-		public static final double KD = 0.0022479; // sim
-		
-        public static final double KS = 0.0041693; // sim
-        public static final double KV = 0.019146; // sim
-        public static final double KA = 0.0018688; // sim
-
-        public static final double MIN_POSITION = 0.1; // sim
-        public static final double MAX_POSITION = 10.0; // sim
- 
-        public static final double FORWARD_VOLTAGE = 1.0; // TODO
-        public static final double BACKWARD_VOLTAGE = -1.0; // TODO
-
-        public static final double STALLING_CURRENT = 50;
-
-        public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
-    }
-    
     public class Hood
     {
         public static final int ID = 26;
@@ -222,20 +186,20 @@ public class Constants
         public static final double GEAR_RATIO = 0.12;
 
 		public static final double KP = 1.0; // TODO
-		public static final double KI = 0.9; // TODO
+		public static final double KI = 0.0; // TODO
 		public static final double KD = 0.038151; // TODO
 		
-        public static final double KS = 0.44797; // TODO
+        public static final double KS = 0.0; //0.44797; // TODO
         public static final double KV = 0.0; // TODO
         public static final double KA = 0.0; // TODO
-		public static final double KG = 0.06144; // TODO
+		public static final double KG = 0.0; //0.06144; // TODO
 
         public static final double FORWARD_SOFTWARE_LIMIT_THRESHOLD = 4.82; // TODO
 		public static final double REVERSE_SOFTWARE_LIMIT_THRESHOLD = -0.01; // TODO
         
         public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
 
-        public static final double MOMENT_OF_INERTIA = 0.001; // TODO (kg m^2)
+        public static final double MOMENT_OF_INERTIA = 20.0; // TODO (kg m^2)
 
         public static final double LENGTH = 0.5; // TODO meters
         public static final double MIN_ANGLE = 60.0; // degrees
