@@ -59,7 +59,7 @@ public class Hood extends SubsystemBase
         );
 
 
-    StallSimulator stallSimulator;
+    //StallSimulator stallSimulator;
 
 
     private Hood()
@@ -73,7 +73,7 @@ public class Hood extends SubsystemBase
             TalonFXSimState simState = motor.getSimState();
             simState.Orientation = Constants.Hood.MECHANICAL_ORIENTATION;
             simState.setMotorType(TalonFXSimState.MotorType.KrakenX60);
-            stallSimulator = new StallSimulator(()->motor.getPosition().getValueAsDouble());
+            //stallSimulator = new StallSimulator(()->motor.getPosition().getValueAsDouble());
         }
     }
 
@@ -193,7 +193,7 @@ public class Hood extends SubsystemBase
     
     public boolean isStalling()
     {
-        if (isSimulated() && stallSimulator.get()) return true;
+        //if (isSimulated() && stallSimulator.get()) return true;
         return Math.abs(motor.getStatorCurrent().getValueAsDouble()) >= Constants.Hood.STALLING_CURRENT;
     }
 
@@ -237,7 +237,7 @@ public class Hood extends SubsystemBase
     }
     
     private SysIdRoutine sysId = new SysIdRoutine(
-        new SysIdRoutine.Config(Volts.of(0.05).div(Seconds.of(1.)),Volts.of(0.1),Seconds.of(10.0)), 
+        new SysIdRoutine.Config(Volts.of(0.1).div(Seconds.of(1.)),Volts.of(0.6),Seconds.of(5.0)), 
         new SysIdRoutine.Mechanism((Voltage v)->motor.setControl(new VoltageOut(v)),
             (SysIdRoutineLog l)->l
                 .motor("Hood")

@@ -89,25 +89,26 @@ public class Constants
         
         public static final double GEAR_RATIO = 0.6; // TODO
 
-		public static final double LEFT_KP = 0.042562; // TODO
+		public static final double LEFT_KP = 0.015; // TODO
 		public static final double LEFT_KI = 0.0; // TODO
-		public static final double LEFT_KD = 0.0; // TODO
-        public static final double LEFT_KS = 0.0022734; // TODO
-        public static final double LEFT_KV = 0.11931; // TODO
-        public static final double LEFT_KA = 0.0059936; // TODO
+		public static final double LEFT_KD = 0.0054; // TODO
+        public static final double LEFT_KS = 0.21795; // TODO
+        public static final double LEFT_KV = 0.11737; // TODO
+        public static final double LEFT_KA = 0.0055121; // TODO
 		
-        public static final double RIGHT_KP = 0.042562; // TODO
+        public static final double RIGHT_KP = 0.015; // TODO
 		public static final double RIGHT_KI = 0.0; // TODO
-		public static final double RIGHT_KD = 0.0; // TODO
-        public static final double RIGHT_KS = 0.0022734; // TODO
-        public static final double RIGHT_KV = 0.11931; // TODO
-        public static final double RIGHT_KA = 0.0059936; // TODO
+		public static final double RIGHT_KD = 0.0054; // TODO
+        public static final double RIGHT_KS = 0.13518; // TODO
+        public static final double RIGHT_KV = 0.1154; // TODO
+        public static final double RIGHT_KA = 0.0057192; // TODO
 
-        public static final double DEFAULT_VELOCITY = 3.0; // TODO meters per second (nonzero to decrease startup time)
-        public static final double SHOOT_VELOCITY = 7.0; // TODO meters per second 
+        public static final double DEFAULT_VELOCITY = 0.0; // TODO meters per second (nonzero to decrease startup time)
+        public static final double SHOOT_VELOCITY = 5.0; // TODO meters per second 
+        public static final double SOFT_PASS_VELOCITY = 5.0; // TODO meters per second
 
         public static final double INCREASE_VELOCITY = 0.5; // TODO
-        public static final double MAX_VELOCITY = 7.0; // TODO
+        public static final double MAX_VELOCITY = 14.0; // TODO
 
         public static final ChassisReference LEFT_MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
         public static final ChassisReference RIGHT_MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
@@ -165,7 +166,7 @@ public class Constants
         
         public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
 
-        public static final double STALLING_CURRENT = 44;
+        public static final double STALLING_CURRENT = 21;
 
         public static final double MIN_HEIGHT = 0.0; // TODO
         public static final double MAX_HEIGHT = 1.0; // TODO
@@ -224,10 +225,10 @@ public class Constants
 		public static final double KI = 0.9; // TODO
 		public static final double KD = 0.038151; // TODO
 		
-        public static final double KS = 0.0024809; // TODO
-        public static final double KV = 0.1205; // TODO
-        public static final double KA = 0.0042197; // TODO
-		public static final double KG = 0.017908; // TODO
+        public static final double KS = 0.44797; // TODO
+        public static final double KV = 0.0; // TODO
+        public static final double KA = 0.0; // TODO
+		public static final double KG = 0.06144; // TODO
 
         public static final double FORWARD_SOFTWARE_LIMIT_THRESHOLD = 4.82; // TODO
 		public static final double REVERSE_SOFTWARE_LIMIT_THRESHOLD = -0.01; // TODO
@@ -388,8 +389,8 @@ public class Constants
         public static final double MM_JERK = 0.0;
         */
 
-        public static final double MAIN_MAX_VOLTAGE = 4.0; // TODO volts
-        public static final double MAIN_DEFAULT_VOLTAGE = 1.0; // TODO volts
+        public static final double MAIN_MAX_VOLTAGE = 3.5; // TODO volts
+        public static final double MAIN_DEFAULT_VOLTAGE = 0.0; // TODO volts
 
         public static final double MAIN_GEAR_RATIO = 1.0; // TODO
 
@@ -409,8 +410,8 @@ public class Constants
         public static final double SIDE_KI = 0.0; //TODO
         public static final double SIDE_KD = 0.0; //TODO
 
-        public static final double SIDE_MAX_VOLTAGE = 4.0; // TODO volts
-        public static final double SIDE_DEFAULT_VOLTAGE = 1.0; // TODO volts
+        public static final double SIDE_MAX_VOLTAGE = 3.5; // TODO volts
+        public static final double SIDE_DEFAULT_VOLTAGE = 0.0; // TODO volts
 
         public static final double SIDE_GEAR_RATIO = 1.0; // TODO
 
@@ -425,8 +426,8 @@ public class Constants
         public static final double STATOR_CURRENT_LIMIT = 80.0;
         public static final double SUPPLY_CURRENT_LIMIT = 80.0;
 
-        public static final double DEFAULT_VOLTAGE = 2.0;
-        public static final double INTAKE_VOLTAGE = 4.0; // TODO
+        public static final double DEFAULT_VOLTAGE = 0.0;
+        public static final double INTAKE_VOLTAGE = 5.5; // TODO
         
         public static final double KS = 0.0048438; // TODO
         public static final double KV = 0.12361; // TODO
