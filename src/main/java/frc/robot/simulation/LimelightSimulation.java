@@ -59,7 +59,7 @@ public class LimelightSimulation {
 
         // Load the AprilTag field layout
         try {
-            aprilTagFieldLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2025ReefscapeWelded.m_resourceFile);
+            aprilTagFieldLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2026RebuiltWelded.m_resourceFile);
         } catch (IOException e) {
             // Fall back to the default field
             try {

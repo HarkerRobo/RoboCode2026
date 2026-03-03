@@ -8,6 +8,7 @@ import static edu.wpi.first.units.Units.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.swerve.SwerveModule.*;
@@ -35,11 +36,13 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.TunerConstants;
+import frc.robot.RobotContainer.PassDirection;
 import frc.robot.commands.climb.ClimbToLevel;
 import frc.robot.commands.climb.MoveDownUntilStall;
 import frc.robot.commands.climb.RunClimb;
 import frc.robot.commands.climb.UndeployClimb;
 import frc.robot.commands.drive.DriveToPose;
+import frc.robot.commands.drive.RotateToAngle;
 import frc.robot.commands.hood.AimToAngle;
 import frc.robot.commands.hood.HoodManualDown;
 import frc.robot.commands.hood.HoodManualUp;
@@ -65,9 +68,16 @@ import frc.robot.util.Util;
 
 public class RobotContainer 
 {
+    public enum AlignDirection
+    {
+        Center,
+        Right,
+        Left
+    }
+    
     public double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
-
+    private AlignDirection alignDirection = AlignDirection.Center;
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
         .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
@@ -82,6 +92,16 @@ public class RobotContainer
 
     public SendableChooser<Command> testCommandChooser = new SendableChooser<>();
     public ArrayList<SendableChooser<SubsystemStatus>> modeChoosers = new ArrayList<>();
+
+    Function<RobotContainer.AlignDirection, Command> setDirectionFactory = ((AlignDirection direction) ->
+        
+        new Command() {
+            public void execute () {System.out.println(direction); Robot.instance.robotContainer.setAlignDirection(direction);}
+            public boolean isFinished () {return true;}});
+
+    Command alignLeft = setDirectionFactory.apply(AlignDirection.Left);
+    Command alignCenter = setDirectionFactory.apply(AlignDirection.Center);
+    Command alignRight = setDirectionFactory.apply(AlignDirection.Right);
 
     private SendableChooser<Command> autonChooser;
     public static int INTAKE_INDEX = 0;
@@ -181,6 +201,12 @@ public class RobotContainer
             new ShooterDefaultSpeed()); // because a command instance cannot be scheduled to independent triggers
 
         // tested in sim
+<<<<<<< alignClimb
+        shoot = new RotateToAngle(drivetrain, ()->AlignConstants.HUB)
+            .alongWith(new AimToAngle(()->Util.calculateShootPitch(drivetrain).in(Degrees) + pitchOffset))
+            .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot(Util.calculateShootVelocity(drivetrain)) && Hood.getInstance().readyToShoot()))
+            .andThen(new ShooterIndexerFullSpeed()) // load to shoot
+=======
         shoot = //new DriveToPose(drivetrain, ()->AlignConstants.HUB)
             Commands.none()
             // .alongWith(new AimToAngle(()->Util.calculateShootPitch(drivetrain).in(Degrees) + pitchOffset))
@@ -194,12 +220,20 @@ public class RobotContainer
 
             // i gave up on adding indexerfullspeed as its separate thing
             .andThen(track(new ShooterIndexerFullSpeed())) // load to shoot
+>>>>>>> main
             .finallyDo(()->{
                 CommandScheduler.getInstance().schedule(stow.get());
             })
             .withName("Shoot");
 
         // tested in sim
+<<<<<<< alignClimb
+        pass = new RotateToAngle(drivetrain, ()->AlignConstants.HUB)
+            .alongWith(new AimToAngle(()->Util.calculateShootPitch(drivetrain).in(Degrees) + pitchOffset))
+            .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot(Util.calculateShootVelocity(drivetrain)) && Hood.getInstance().readyToShoot()))
+            .andThen(new ShooterIndexerFullSpeed()) // load to shoot
+            .finallyDo(()->{
+=======
         pass = /*new DriveToPose(drivetrain,
             () -> onLeftSize() ? Constants.PASS_LEFT_TARGET_POSITION.toTranslation2d()
                                : Constants.PASS_RIGHT_TARGET_POSITION.toTranslation2d())*/
@@ -211,6 +245,7 @@ public class RobotContainer
             //                && Hood.getInstance().readyToShoot()))
             .andThen(new ShooterIndexerFullSpeed()) // load to pass
             .finallyDo(() -> {
+>>>>>>> main
                 CommandScheduler.getInstance().schedule(stow.get());
             })
             .withName("Pass");
@@ -341,6 +376,24 @@ public class RobotContainer
         driver.povLeft().onTrue(Commands.print("POV LEFT"));
         driver.povRight().onTrue(Commands.print("POV RIGHT"));
         */
+<<<<<<< alignClimb
+        driver.a().whileTrue(Shooter.getInstance().leftSysIdQuasistatic(Direction.kForward));
+        driver.b().whileTrue(Shooter.getInstance().leftSysIdQuasistatic(Direction.kReverse));
+        driver.x().whileTrue(Shooter.getInstance().leftSysIdDynamic(Direction.kForward));
+        driver.y().whileTrue(Shooter.getInstance().leftSysIdDynamic(Direction.kReverse));
+
+        driver.button(1).onTrue(new DriveToPose(drivetrain));
+        driver.button(2).onTrue(alignLeft);
+        driver.button(3).onTrue(alignRight);
+
+        drivetrain.setDefaultCommand(
+                // Drivetrain will execute this command periodically
+                drivetrain.applyRequest(() -> 
+                        drive.withVelocityX(-driver.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+                        .withVelocityY(-driver.getLeftX() * MaxSpeed * (isSlow ? Constants.TRANSLATION_SLOW_MULTIPLIER : 1.0)) // Drive left with negative X (left)
+                        .withRotationalRate(-driver.getRightX() * MaxAngularRate * (isSlow ? Constants.ROTATION_SLOW_MULTIPLIER : 1.0)) // Drive counterclockwise with negative X (left)
+                    ).withName("SwerveManual"));
+=======
         driver.a().whileTrue(Hood.getInstance().sysIdQuasistatic(Direction.kForward));
         driver.b().whileTrue(Hood.getInstance().sysIdQuasistatic(Direction.kReverse));
         driver.x().whileTrue(Hood.getInstance().sysIdDynamic(Direction.kForward));
@@ -351,6 +404,7 @@ public class RobotContainer
         driver.x().whileTrue(Shooter.getInstance().rightSysIdQuasistatic(Direction.kReverse));
         driver.y().whileTrue(Shooter.getInstance().rightSysIdDynamic(Direction.kReverse));
         */
+>>>>>>> main
     }
 
     private void configureDefaultBindings()
@@ -594,6 +648,16 @@ public class RobotContainer
                 Math.max(Constants.Shooter.DEFAULT_VELOCITY, 
                 -Constants.Shooter.INCREASE_VELOCITY + Shooter.getInstance().getRightVelocity().in(RotationsPerSecond)))))));             
     }
+
+    public AlignDirection getAlignDirection ()
+    {
+        return alignDirection;
+    }
+
+    public void setAlignDirection (AlignDirection direction)
+    {
+        this.alignDirection = direction;
+    } 
 
     public Command track(Command command)
     {

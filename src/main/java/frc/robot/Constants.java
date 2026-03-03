@@ -19,6 +19,7 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants.DriveMotorArrangement;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerFeedbackType;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
 import com.ctre.phoenix6.swerve.SwerveModuleConstantsFactory;
+import com.pathplanner.lib.path.PathConstraints;
 
 import edu.wpi.first.math.geometry.Rectangle2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -29,6 +30,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -61,10 +64,23 @@ public class Constants
                 new Translation3d(Units.inchesToMeters(5.472), Units.inchesToMeters(-10.5), Units.inchesToMeters(7.482)),
                 new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(26.1), 0)); // TODO bc this is copied from 2025 code
 
+        public static final String kCamera2Name = "limelight";
+        public static final Transform3d kRobotToCam2 = new Transform3d(
+                new Translation3d(Units.inchesToMeters(5.472), Units.inchesToMeters(-10.5), Units.inchesToMeters(7.482)),
+                new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(26.1), 0)); // TODO bc this is copied from 2025 code
+
         public static final double linTagStdDevs = 0.1;
         public static final double angTagStdDevs = 999999;
         public static final Matrix<N3, N1> kTagStdDevs = VecBuilder.fill(0.1, 0.1, 99999);
         public static final Matrix<N3, N1> stateStdDevs = VecBuilder.fill(0.05, 0.05, 0.1);
+
+        // The layout of the AprilTags on the field
+        public static final AprilTagFieldLayout kTagLayout = AprilTagFieldLayout
+                .loadField(AprilTagFields.kDefaultField);
+
+        public static final PathConstraints constraints = new PathConstraints(
+        6.0, 3.15,
+            Units.degreesToRadians(360), Units.degreesToRadians(540)); //to be updated
     }
 
     public class Drivetrain 
