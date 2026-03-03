@@ -1,5 +1,6 @@
 package frc.robot.commands.shooter;
 
+import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import java.util.function.DoubleSupplier;
@@ -33,7 +34,7 @@ public class ShooterTargetSpeed extends Command
     public void execute()
     {
         targetSpeed = Util.bound(targetSpeedSupplier.getAsDouble(), 0.0, Constants.Shooter.MAX_VELOCITY);
-        Shooter.getInstance().setVelocity(RotationsPerSecond.of(targetSpeed));
+        Shooter.getInstance().setEffectiveVelocity(MetersPerSecond.of(targetSpeed));
     }
 
     @Override

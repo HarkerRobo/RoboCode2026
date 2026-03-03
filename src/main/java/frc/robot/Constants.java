@@ -24,6 +24,7 @@ import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.geometry.Rectangle2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -50,6 +51,12 @@ public class Constants
 
     public static final double TRANSLATION_SLOW_MULTIPLIER = 0.2;
     public static final double ROTATION_SLOW_MULTIPLIER = 0.4;
+
+    public static final String CAN_CHAIN = "rio";
+
+    public static final String CAN_SUPERSTRUCTURE = "Superstructure";
+
+    public static final double G = 9.81;
 
     public class Vision {
         public static final String kCamera1Name = "limelight";
@@ -84,10 +91,8 @@ public class Constants
 
     public class Shooter
     {
-        public static final int LEFT_MASTER_ID = 19;
-        public static final int LEFT_FOLLOWER_ID = 20;
-        public static final int RIGHT_MASTER_ID = 21;
-        public static final int RIGHT_FOLLOWER_ID = 22;
+        public static final int LEFT_ID = 21;
+        public static final int RIGHT_ID = 19;
         
         public static final double STATOR_CURRENT_LIMIT = 90.0;
         public static final double SUPPLY_CURRENT_LIMIT = 90.0;
@@ -95,31 +100,36 @@ public class Constants
         public static final double MM_CRUISE_VELOCITY = 60.0;
 		public static final double MM_ACCELERATION = 60.0;
 		public static final double MM_JERK = 240.0;
-		public static final InvertedValue INVERTED = InvertedValue.CounterClockwise_Positive;
+		public static final InvertedValue LEFT_INVERTED = InvertedValue.Clockwise_Positive;
+		public static final InvertedValue RIGHT_INVERTED = InvertedValue.CounterClockwise_Positive;
         
         public static final double GEAR_RATIO = 0.6; // TODO
 
-		public static final double LEFT_KP = 0.042562; // TODO
+		public static final double LEFT_KP = 0.015; // TODO
 		public static final double LEFT_KI = 0.0; // TODO
-		public static final double LEFT_KD = 0.0; // TODO
-        public static final double LEFT_KS = 0.0022734; // TODO
-        public static final double LEFT_KV = 0.11931; // TODO
-        public static final double LEFT_KA = 0.0059936; // TODO
+		public static final double LEFT_KD = 0.0054; // TODO
+        public static final double LEFT_KS = 0.21795; // TODO
+        public static final double LEFT_KV = 0.11737; // TODO
+        public static final double LEFT_KA = 0.0055121; // TODO
 		
-        public static final double RIGHT_KP = 0.042562; // TODO
+        public static final double RIGHT_KP = 0.015; // TODO
 		public static final double RIGHT_KI = 0.0; // TODO
-		public static final double RIGHT_KD = 0.0; // TODO
-        public static final double RIGHT_KS = 0.0022734; // TODO
-        public static final double RIGHT_KV = 0.11931; // TODO
-        public static final double RIGHT_KA = 0.0059936; // TODO
+		public static final double RIGHT_KD = 0.0054; // TODO
+        public static final double RIGHT_KS = 0.13518; // TODO
+        public static final double RIGHT_KV = 0.1154; // TODO
+        public static final double RIGHT_KA = 0.0057192; // TODO
 
-        public static final double DEFAULT_VELOCITY = 0.1; // TODO rotations per second (nonzero to decrease startup time)
-        public static final double SHOOT_VELOCITY = 10.0; // TODO rotations per second 
+        public static final double DEFAULT_VELOCITY = 0.0; // TODO meters per second (nonzero to decrease startup time)
+        public static final double SHOOT_VELOCITY = 5.0; // TODO meters per second 
+        public static final double SOFT_PASS_VELOCITY = 5.0; // TODO meters per second
 
         public static final double INCREASE_VELOCITY = 0.5; // TODO
-        public static final double MAX_VELOCITY = 20.0; // TODO
-        
-        public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
+        public static final double MAX_VELOCITY = 14.0; // TODO
+
+        public static final ChassisReference LEFT_MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
+        public static final ChassisReference RIGHT_MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
+
+        public static final double FLYWHEEL_CIRCUMFERANCE = Inches.of(2.0).times(Math.PI).in(Meters);
     }
 
     public class Intake
@@ -166,57 +176,20 @@ public class Constants
         public static final double KV = 0.12364;
         public static final double KA = 0.0078492;
         public static final InvertedValue INVERTED = InvertedValue.CounterClockwise_Positive;
-
         
         public static final double GEAR_RATIO = 6.25;
         
         public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
 
-        public static final double STALLING_CURRENT = 44;
+        public static final double STALLING_CURRENT = 21;
 
         public static final double MIN_HEIGHT = 0.0; // TODO
         public static final double MAX_HEIGHT = 1.0; // TODO
     }
 
-    public class Hopper
-    {
-        public static final int ID = 25;
-        
-        public static final double STATOR_CURRENT_LIMIT = 90.0;
-        public static final double SUPPLY_CURRENT_LIMIT = 90.0;
-
-        /*
-        public static final double MM_CRUISE_VELOCITY = 60.0;
-		public static final double MM_ACCELERATION = 60.0;
-		public static final double MM_JERK = 240.0;
-        */
-		public static final InvertedValue INVERTED = InvertedValue.CounterClockwise_Positive;
-        
-        public static final double GEAR_RATIO = 1.0; // TODO
-
-		public static final double KP = 0.24194; // TODO
-		public static final double KI = 0.0; // TODO
-		public static final double KD = 0.0022479; // TODO
-		
-        public static final double KS = 0.0041693; // TODO
-        public static final double KV = 0.019146; // TODO
-        public static final double KA = 0.0018688; // TODO
-
-        public static final double MIN_POSITION = 0.1; // TODO min hopper position (rotations) for simulation
-        public static final double MAX_POSITION = 10.0; // TODO max hopper position (rotations) for simulation
- 
-        public static final double FORWARD_VOLTAGE = 1.0; // TODO
-        public static final double BACKWARD_VOLTAGE = -1.0; // TODO
-
-        public static final double STALLING_CURRENT = 50;
-
-        public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
-    }
-    
     public class Hood
     {
-        public static final int MASTER_ID = 26;
-        public static final int FOLLOWER_ID = 27;
+        public static final int ID = 26;
         
         public static final double STATOR_CURRENT_LIMIT = 90.0;
         public static final double SUPPLY_CURRENT_LIMIT = 90.0;
@@ -226,30 +199,32 @@ public class Constants
 		public static final double MM_JERK = 8.0; // TODO
 		public static final InvertedValue INVERTED = InvertedValue.CounterClockwise_Positive;
         
-        public static final double GEAR_RATIO = 0.12; // TODO
+        public static final double GEAR_RATIO = 0.12;
 
 		public static final double KP = 1.0; // TODO
-		public static final double KI = 0.9; // TODO
+		public static final double KI = 0.0; // TODO
 		public static final double KD = 0.038151; // TODO
 		
-        public static final double KS = 0.0024809; // TODO
-        public static final double KV = 0.1205; // TODO
-        public static final double KA = 0.0042197; // TODO
-		public static final double KG = 0.017908; // TODO
+        public static final double KS = 0.0; //0.44797; // TODO
+        public static final double KV = 0.0; // TODO
+        public static final double KA = 0.0; // TODO
+		public static final double KG = 0.0; //0.06144; // TODO
 
         public static final double FORWARD_SOFTWARE_LIMIT_THRESHOLD = 4.82; // TODO
 		public static final double REVERSE_SOFTWARE_LIMIT_THRESHOLD = -0.01; // TODO
         
         public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
 
-        public static final double MOMENT_OF_INERTIA = 0.001; // TODO (kg m^2)
+        public static final double MOMENT_OF_INERTIA = 20.0; // TODO (kg m^2)
 
         public static final double LENGTH = 0.5; // TODO meters
-        public static final double MIN_ANGLE = 60.0; // TODO degrees
-        public static final double MAX_ANGLE = 75.0; // TODO degrees
+        public static final double MIN_ANGLE = 60.0; // degrees
+        public static final double MAX_ANGLE = 75.0; // degrees
     
         public static final double STALLING_CURRENT = 50.0; // TODO
 
+        public static final double MANUAL_UP_VOLTAGE = 0.5; // TODO
+        public static final double MANUAL_DOWN_VOLTAGE = -0.5; // TODO
         public static final double ZEROING_VOLTAGE = -0.2; // TODO
     }
 
@@ -373,19 +348,19 @@ public class Constants
 
     public class Indexer {
 
-        public static final int ID = 31;
+        public static final int MAIN_ID = 31;
 
-        public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive; // TODO
-        public static final double STATOR_CURRENT_LIMIT = 80.0;
-        public static final double SUPPLY_CURRENT_LIMIT = 80.0;
+        public static final InvertedValue MAIN_INVERTED = InvertedValue.CounterClockwise_Positive;
+        public static final double MAIN_STATOR_CURRENT_LIMIT = 80.0;
+        public static final double MAIN_SUPPLY_CURRENT_LIMIT = 80.0;
 
-        public static final double KS = 0.0048438; //TODO
-        public static final double KV = 0.12361; //TODO
-        public static final double KA = 0.0089587; //TODO
+        public static final double MAIN_KS = 0.0048438; //TODO
+        public static final double MAIN_KV = 0.12361; //TODO
+        public static final double MAIN_KA = 0.0089587; //TODO
         
-        public static final double KP = 0.093687; //TODO
-        public static final double KI = 0.0; //TODO
-        public static final double KD = 0.0; //TODO
+        public static final double MAIN_KP = 0.093687; //TODO
+        public static final double MAIN_KI = 0.0; //TODO
+        public static final double MAIN_KD = 0.0; //TODO
 
         
         /*
@@ -394,12 +369,33 @@ public class Constants
         public static final double MM_JERK = 0.0;
         */
 
-        public static final double MAX_VELOCITY = 1.0; // TODO rotations per second
-        public static final double DEFAULT_VELOCITY = 0.0; // TODO rotations per second
+        public static final double MAIN_MAX_VOLTAGE = 3.5; // TODO volts
+        public static final double MAIN_DEFAULT_VOLTAGE = 0.0; // TODO volts
 
-        public static final double GEAR_RATIO = 1.0; // TODO
+        public static final double MAIN_GEAR_RATIO = 1.0; // TODO
 
-        public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.Clockwise_Positive;
+        public static final ChassisReference MAIN_MECHANICAL_ORIENTATION = ChassisReference.Clockwise_Positive;
+        
+        public static final int SIDE_ID = 25; // TODO
+
+        public static final InvertedValue SIDE_INVERTED = InvertedValue.Clockwise_Positive;
+        public static final double SIDE_STATOR_CURRENT_LIMIT = 80.0;
+        public static final double SIDE_SUPPLY_CURRENT_LIMIT = 80.0;
+
+        public static final double SIDE_KS = 0.0048438; //TODO
+        public static final double SIDE_KV = 0.12361; //TODO
+        public static final double SIDE_KA = 0.0089587; //TODO
+        
+        public static final double SIDE_KP = 0.093687; //TODO
+        public static final double SIDE_KI = 0.0; //TODO
+        public static final double SIDE_KD = 0.0; //TODO
+
+        public static final double SIDE_MAX_VOLTAGE = 3.5; // TODO volts
+        public static final double SIDE_DEFAULT_VOLTAGE = 0.0; // TODO volts
+
+        public static final double SIDE_GEAR_RATIO = 1.0; // TODO
+
+        public static final ChassisReference SIDE_MECHANICAL_ORIENTATION = ChassisReference.Clockwise_Positive;
     }
 
     public class ShooterIndexer
@@ -411,7 +407,7 @@ public class Constants
         public static final double SUPPLY_CURRENT_LIMIT = 80.0;
 
         public static final double DEFAULT_VOLTAGE = 0.0;
-        public static final double INTAKE_VOLTAGE = 1.0; // TODO
+        public static final double INTAKE_VOLTAGE = 5.5; // TODO
         
         public static final double KS = 0.0048438; // TODO
         public static final double KV = 0.12361; // TODO
@@ -586,15 +582,18 @@ public class Constants
         Simulation.HUB_CONTENTS.getCenter().getTranslation().getX(),
         Simulation.HUB_INTAKE_HEIGHT);
 
-    public static final double HOOD_BASE_HEIGHT = 0.10; // TODO
+    public static final Transform3d ROBOT_TO_HOOD = new Transform3d(0.3, 0.0, 0.34, Rotation3d.kZero); // TODO
 
-    public static final Translation3d PASS_LEFT_TARGET_POSITION = new Translation3d(2.010664, 2.010664, 1.0);
-    public static final Translation3d PASS_RIGHT_TARGET_POSITION = new Translation3d(2.010664, Simulation.FIELD_HEIGHT - 2.010664, 1.0);
+    public static final Translation3d PASS_LEFT_TARGET_POSITION = new Translation3d(2.010664, 2.010664, 0.0);
+    public static final Translation3d PASS_RIGHT_TARGET_POSITION = new Translation3d(2.010664, Simulation.FIELD_HEIGHT - 2.010664, 0.0);
 
-    public static final Angle HARDCODE_HOOD_PITCH = Degrees.of(20.0);
-    public static final double HARDCODE_VELOCITY = 5.0;
+    public static final Angle HARDCODE_HOOD_PITCH = Degrees.of(75.0);
+    public static final double HARDCODE_VELOCITY = 10.0;
 
     public static final double PITCH_OFFSET_UNIT = 5.0; // TODO
     public static final double FLYWHEEL_OFFSET_UNIT = 2.5; // TODO
 
+    public static final double DISTANCE_SHOOTVELO_RATIO = 0.7400067;
+
+    public static final boolean INTERPOLATE_VALUES = true;
 }

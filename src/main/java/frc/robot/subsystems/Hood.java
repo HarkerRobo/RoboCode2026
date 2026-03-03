@@ -31,6 +31,7 @@ import frc.robot.Robot;
 import frc.robot.RobotContainer;
 import frc.robot.RobotContainer.SubsystemStatus;
 import frc.robot.simulation.StallSimulator;
+import frc.robot.util.Util;
 
 /**
  * 
@@ -39,50 +40,50 @@ public class Hood extends SubsystemBase
 {
     private static Hood instance;
 
-    private static TalonFX master;
-    private static TalonFX follower;
+    private static TalonFX motor;
 
     private double desiredPosition; // rotations
     
+    private final DCMotorSim sim = new DCMotorSim(
+        LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX44(1), 1.0, Constants.Hood.GEAR_RATIO),
+        DCMotor.getKrakenX44(1));
+
+        /*
     private final SingleJointedArmSim motorSimModel = new SingleJointedArmSim(
         new DCMotorSim(
             LinearSystemId.createDCMotorSystem(
-                    DCMotor.getKrakenX60Foc(2), 0.001, Constants.Hood.GEAR_RATIO),
-            DCMotor.getKrakenX60Foc(2)).getGearbox(),
+                    DCMotor.getKrakenX44Foc(1), 0.001, Constants.Hood.GEAR_RATIO),
+            DCMotor.getKrakenX44Foc(1)).getGearbox(),
         Constants.Hood.GEAR_RATIO,
         Constants.Hood.MOMENT_OF_INERTIA,
         Constants.Hood.LENGTH,
         Units.degreesToRadians(Constants.Hood.MIN_ANGLE),
         Units.degreesToRadians(Constants.Hood.MAX_ANGLE),
-        true,
+        false,
         Units.degreesToRadians(10.0)
         // no std devs -> no noise simulated
         );
+        */
 
-
-    StallSimulator stallSimulator;
 
 
     private Hood()
     {
-        master = new TalonFX(Constants.Hood.MASTER_ID);
-        follower = new TalonFX(Constants.Hood.FOLLOWER_ID);
+        motor = new TalonFX(Constants.Hood.ID, Constants.CAN_SUPERSTRUCTURE);
 
         config();
 
         if (isSimulated())
         {
-            TalonFXSimState simState = master.getSimState();
+            TalonFXSimState simState = motor.getSimState();
             simState.Orientation = Constants.Hood.MECHANICAL_ORIENTATION;
             simState.setMotorType(TalonFXSimState.MotorType.KrakenX60);
-            stallSimulator = new StallSimulator(()->master.getPosition().getValueAsDouble());
         }
     }
 
     private void config()
     {
-        master.clearStickyFaults();
-        follower.clearStickyFaults();
+        motor.clearStickyFaults();
         TalonFXConfiguration config = new TalonFXConfiguration();
 
         if (!isSimulated())
@@ -101,43 +102,45 @@ public class Hood extends SubsystemBase
         config.MotionMagic.MotionMagicJerk = Constants.Hood.MM_JERK;
 
         config.MotorOutput.Inverted = Constants.Hood.INVERTED;
-        config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+        config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
         config.Slot0.kP = Constants.Hood.KP;
         config.Slot0.kI = Constants.Hood.KI;
         config.Slot0.kD = Constants.Hood.KD;
-        config.Slot0.kG = Constants.Hood.KG;
+        
+        config.Slot0.kS = Constants.Hood.KS;
         config.Slot0.kV = Constants.Hood.KV;
-        config.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
+        config.Slot0.kA = Constants.Hood.KA;
+        config.Slot0.kG = Constants.Hood.KG;
+
+        //config.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
 
         config.Voltage.PeakForwardVoltage = Constants.MAX_VOLTAGE;
         config.Voltage.PeakReverseVoltage = -Constants.MAX_VOLTAGE;
 
-        master.getConfigurator().apply(config);
-        follower.getConfigurator().apply(config);
-
+        motor.getConfigurator().apply(config);
     }
 
     public void moveToPosition(Angle desiredPosition)
     {
         //System.out.println("Moving to position: " + desiredPosition.in(Degrees) + "°");
         this.desiredPosition = desiredPosition.in(Rotations);
-        master.setControl(new MotionMagicVoltage(desiredPosition));
+        motor.setControl(new MotionMagicVoltage(desiredPosition));
     }
     
     public Angle getPosition()
     {
-        return master.getPosition().getValue();
+        return motor.getPosition().getValue();
     }
     
     public Voltage getVoltage()
     {
-        return master.getMotorVoltage().getValue();
+        return motor.getMotorVoltage().getValue();
     }
     
     public AngularVelocity getVelocity()
     {
-        return master.getVelocity().getValue();
+        return motor.getVelocity().getValue();
     }
 
     public void setPosition(Angle position)
@@ -147,7 +150,7 @@ public class Hood extends SubsystemBase
             System.out.println("Quashing input to Hood");
             return;
         }
-        master.setPosition(position);
+        motor.setPosition(position);
     }
 
     public void setVelocity(AngularVelocity velocity)
@@ -157,7 +160,7 @@ public class Hood extends SubsystemBase
             System.out.println("Quashing input to Hood");
             return;
         }
-        master.setControl(new VelocityVoltage(velocity));
+        motor.setControl(new VelocityVoltage(velocity));
     }
 
     public void setDutyCycle(double dutyCycle)
@@ -167,7 +170,7 @@ public class Hood extends SubsystemBase
             System.out.println("Quashing input to Hood");
             return;
         }
-        master.setControl(new DutyCycleOut(dutyCycle));
+        motor.setControl(new DutyCycleOut(dutyCycle));
     }
 
     public void setVoltage(Voltage voltage)
@@ -177,13 +180,13 @@ public class Hood extends SubsystemBase
             System.out.println("Quashing input to Hood");
             return;
         }
-        master.setVoltage(voltage.in(Volts));
+        motor.setVoltage(voltage.in(Volts));
     }
 
     
     public boolean readyToShoot ()
     {
-        return Math.abs(master.getPosition().getValue().in(Rotations) - desiredPosition) < Constants.EPSILON;
+        return Math.abs(motor.getPosition().getValue().in(Rotations) - desiredPosition) < Constants.EPSILON;
     }
     
     public Angle getDesiredPosition()
@@ -193,17 +196,22 @@ public class Hood extends SubsystemBase
     
     public boolean isStalling()
     {
-        if (isSimulated() && stallSimulator.get()) return true;
-        return Math.abs(master.getStatorCurrent().getValueAsDouble()) >= Constants.Hood.STALLING_CURRENT;
+        //if (isSimulated() && stallSimulator.get()) return true;
+        return Math.abs(motor.getStatorCurrent().getValueAsDouble()) >= Constants.Hood.STALLING_CURRENT;
     }
 
+    public long lastTime = System.currentTimeMillis();
 
     @Override
     public void periodic()
     {
         if (isSimulated())
         {
-            TalonFXSimState simState = master.getSimState();
+            long newTime = System.currentTimeMillis();
+            System.out.println("Loop time: " + (newTime - lastTime) / 1000.0 + "s");
+            lastTime = newTime;
+
+            TalonFXSimState simState = motor.getSimState();
 
             // set the supply voltage of the TalonFX
             simState.setSupplyVoltage(RobotController.getBatteryVoltage());
@@ -213,16 +221,20 @@ public class Hood extends SubsystemBase
 
             // use the motor voltage to calculate new position and velocity
             // using WPILib's DCMotorSim class for physics simulation
-            motorSimModel.setInputVoltage(motorVoltage.in(Volts));
-            motorSimModel.update(0.020); // assume 20 ms loop time
+            sim.setInputVoltage(motorVoltage.in(Volts));
+            sim.update(0.020); // assume 20 ms loop time
+
+            Angle simAngle = sim.getAngularPosition();
+            Angle clampedAngle = Degrees.of(Util.bound(simAngle.in(Degrees), Constants.Hood.MIN_ANGLE, Constants.Hood.MAX_ANGLE));
+            System.out.printf("simAngle: %f degrees\n", simAngle.in(Degrees));
+            System.out.printf("clampedA: %f degrees\n", clampedAngle.in(Degrees));
+            sim.setAngle(clampedAngle.in(Radians));
 
             // apply the new rotor position and velocity to the TalonFX;
             // note that this is rotor position/velocity (before gear ratio), but
             // DCMotorSim returns mechanism position/velocity (after gear ratio)
-            simState.setRawRotorPosition(
-                    Units.radiansToRotations(motorSimModel.getAngleRads()) * Constants.Hood.GEAR_RATIO);
-            simState.setRotorVelocity(
-                    Units.radiansToRotations(motorSimModel.getVelocityRadPerSec()) * Constants.Hood.GEAR_RATIO);
+            simState.setRawRotorPosition(clampedAngle.times(Constants.Hood.GEAR_RATIO));
+            simState.setRotorVelocity(sim.getAngularVelocity().times(Constants.Hood.GEAR_RATIO));
         }
     }
 
@@ -237,8 +249,8 @@ public class Hood extends SubsystemBase
     }
     
     private SysIdRoutine sysId = new SysIdRoutine(
-        new SysIdRoutine.Config(Volts.of(0.05).div(Seconds.of(1.)),Volts.of(0.1),Seconds.of(10.0)), 
-        new SysIdRoutine.Mechanism((Voltage v)->master.setControl(new VoltageOut(v)),
+        new SysIdRoutine.Config(Volts.of(0.05).div(Seconds.of(1.)),Volts.of(0.3),Seconds.of(5.0)), 
+        new SysIdRoutine.Mechanism((Voltage v)->motor.setControl(new VoltageOut(v)),
             (SysIdRoutineLog l)->l
                 .motor("Hood")
                 .voltage(getVoltage())
@@ -254,7 +266,7 @@ public class Hood extends SubsystemBase
     
     public Command sysIdDynamic (SysIdRoutine.Direction direction)
     {
-        return sysId.dynamic(direction).withName("SysId Q" + (direction == SysIdRoutine.Direction.kForward ? "F" : "R"));
+        return sysId.dynamic(direction).withName("SysId D" + (direction == SysIdRoutine.Direction.kForward ? "F" : "R"));
     }
     
 

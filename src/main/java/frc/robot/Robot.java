@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.simulation.LimelightSimulation;
 import frc.robot.simulation.SimulationState;
+import frc.robot.util.Util;
 
 public class Robot extends TimedRobot 
 {
@@ -43,6 +44,7 @@ public class Robot extends TimedRobot
    public void robotInit() 
    {
       robotContainer.init();
+      Util.init();
       if (Utils.isSimulation()) 
       {
          LimelightSimulation limelightSim = new LimelightSimulation(

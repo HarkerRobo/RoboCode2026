@@ -31,7 +31,6 @@ import frc.robot.Constants.Simulation;
 import frc.robot.simulation.SimulationState;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Indexer;
-import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
 
