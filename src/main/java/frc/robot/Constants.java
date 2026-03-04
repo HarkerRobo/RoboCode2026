@@ -62,8 +62,8 @@ public class Constants
     public class Vision {
         public static final String kCamera1Name = "limelight";
         public static final Transform3d kRobotToCam1 = new Transform3d(
-                new Translation3d(Units.inchesToMeters(-10.5238), Units.inchesToMeters(9.5396), Units.inchesToMeters(9.2734)),
-                new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(112.7732), Units.degreesToRadians(31.0351)));
+                new Translation3d(Units.inchesToMeters(-10.5238), Units.inchesToMeters(-9.5396), Units.inchesToMeters(9.2734)),
+                new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(112.7732 - 90.0), Units.degreesToRadians(90.0 + 31.0351)));
 
         /*
         public static final String kCamera2Name = "limelight";
@@ -142,7 +142,7 @@ public class Constants
         public static final double STATOR_CURRENT_LIMIT = 90.0;
         public static final double SUPPLY_CURRENT_LIMIT = 90.0;
 
-        public static final double INTAKE_VOLTAGE = 5.8;
+        public static final double INTAKE_VOLTAGE = 6.4;
         public static final double DEFAULT_INTAKE_VOLTAGE = 0.0;
         public static final double EJECT_VOLTAGE = -2.5;
 
@@ -184,7 +184,8 @@ public class Constants
         
         public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
 
-        public static final double STALLING_CURRENT = 21;
+        public static final double STALLING_CURRENT_EXTEND = 20;
+        public static final double STALLING_CURRENT_RETRACT = 20;
 
         public static final double MIN_HEIGHT = 0.0; // TODO
         public static final double MAX_HEIGHT = 1.0; // TODO
@@ -208,9 +209,9 @@ public class Constants
 		public static final double KI = 0.0; // TODO
 		public static final double KD = 0.038151; // TODO
 		
-        public static final double KS = 0.10056; //0.44797; // TODO
-        public static final double KV = 0.010435; // TODO
-        public static final double KA = 0.00053474; // TODO
+        public static final double KS = 0.0;//0.10056; //0.44797; // TODO
+        public static final double KV = 0.0;//0.010435; // TODO
+        public static final double KA = 0.0;//0.00053474; // TODO
 		public static final double KG = 0.0; //0.06144; // TODO
 
         public static final double FORWARD_SOFTWARE_LIMIT_THRESHOLD = 4.82; // TODO
@@ -221,14 +222,15 @@ public class Constants
         public static final double MOMENT_OF_INERTIA = 20.0; // TODO (kg m^2)
 
         public static final double LENGTH = 0.5; // TODO meters
-        public static final double MIN_ANGLE = 60.0; // degrees
-        public static final double MAX_ANGLE = 75.0; // degrees
+
+        public static final double MIN_ANGLE = Degrees.of(462.832).in(Rotations);
+        public static final double MAX_ANGLE = Degrees.of(18701.630859).in(Rotations);
     
-        public static final double STALLING_CURRENT = 50.0; // TODO
+        public static final double STALLING_CURRENT = 30.0; // TODO
 
         public static final double MANUAL_UP_VOLTAGE = 0.5; // TODO
         public static final double MANUAL_DOWN_VOLTAGE = -0.5; // TODO
-        public static final double ZEROING_VOLTAGE = -0.2; // TODO
+        public static final double ZEROING_VOLTAGE = -1.0; // TODO
     }
 
     /*

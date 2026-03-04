@@ -1,6 +1,7 @@
 package frc.robot.commands.hood;
 
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Rotation;
 import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -32,7 +33,8 @@ public class ZeroHoodSoft extends Command
         if (!interrupted)
         {
             System.out.println("Soft zero done");
-            Hood.getInstance().setPosition(Degrees.of(Constants.Hood.MIN_ANGLE));
+            Hood.getInstance().setPosition(Rotation.of(0.0));
         }
+        Hood.getInstance().setVoltage(Volts.of(0.0));
     }
 }

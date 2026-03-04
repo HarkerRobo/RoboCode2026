@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -123,9 +124,8 @@ public class Hood extends SubsystemBase
 
     public void moveToPosition(Angle desiredPosition)
     {
-        //System.out.println("Moving to position: " + desiredPosition.in(Degrees) + "°");
         this.desiredPosition = desiredPosition.in(Rotations);
-        motor.setControl(new MotionMagicVoltage(desiredPosition));
+        motor.setControl(new PositionVoltage(desiredPosition));
     }
     
     public Angle getPosition()
@@ -197,8 +197,13 @@ public class Hood extends SubsystemBase
     
     public boolean isStalling()
     {
-        System.out.println("Hood stalling");
+        System.out.println("Stator Current: " + motor.getStatorCurrent().getValueAsDouble());
         return Math.abs(motor.getStatorCurrent().getValueAsDouble()) >= Constants.Hood.STALLING_CURRENT;
+    }
+
+    public double getStatorCurrent()
+    {
+        return motor.getStatorCurrent().getValueAsDouble();
     }
 
     public long lastTime = System.currentTimeMillis();
@@ -226,15 +231,13 @@ public class Hood extends SubsystemBase
             sim.update(0.020); // assume 20 ms loop time
 
             Angle simAngle = sim.getAngularPosition();
-            Angle clampedAngle = Degrees.of(Util.bound(simAngle.in(Degrees), Constants.Hood.MIN_ANGLE, Constants.Hood.MAX_ANGLE));
             System.out.printf("simAngle: %f degrees\n", simAngle.in(Degrees));
-            System.out.printf("clampedA: %f degrees\n", clampedAngle.in(Degrees));
-            sim.setAngle(clampedAngle.in(Radians));
+            sim.setAngle(simAngle.in(Radians));
 
             // apply the new rotor position and velocity to the TalonFX;
             // note that this is rotor position/velocity (before gear ratio), but
             // DCMotorSim returns mechanism position/velocity (after gear ratio)
-            simState.setRawRotorPosition(clampedAngle.times(Constants.Hood.GEAR_RATIO));
+            simState.setRawRotorPosition(simAngle.times(Constants.Hood.GEAR_RATIO));
             simState.setRotorVelocity(sim.getAngularVelocity().times(Constants.Hood.GEAR_RATIO));
         }
     }

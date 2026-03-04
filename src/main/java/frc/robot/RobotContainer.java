@@ -270,10 +270,10 @@ public class RobotContainer
         testCommandChooser.addOption("Climb/ClimbToLevel[2]", new ClimbToLevel(2));
         testCommandChooser.addOption("Climb/ClimbToLevel[3]", new ClimbToLevel(3));
         testCommandChooser.addOption("Climb/MoveDownUntilStall", new MoveDownUntilStall());
-        testCommandChooser.addOption("Hood/AimToAngle[" + Constants.Hood.MIN_ANGLE + "°]", new AimToAngle(Constants.Hood.MIN_ANGLE));
-        testCommandChooser.addOption("Hood/AimToAngle[65°]", new AimToAngle(65.0));
-        testCommandChooser.addOption("Hood/AimToAngle[70°]", new AimToAngle(70.0));
-        testCommandChooser.addOption("Hood/AimToAngle[" + Constants.Hood.MAX_ANGLE + "°]", new AimToAngle(Constants.Hood.MAX_ANGLE));
+        testCommandChooser.addOption("Hood/AimToAngle[0]", new AimToAngle(0.0));
+        testCommandChooser.addOption("Hood/AimToAngle[1]", new AimToAngle(1.0));
+        testCommandChooser.addOption("Hood/AimToAngle[2]", new AimToAngle(2.0));
+        testCommandChooser.addOption("Hood/AimToAngle[3", new AimToAngle(4.0));
         testCommandChooser.addOption("Hood/ZeroHood", new ZeroHood());
         testCommandChooser.addOption("Hood/ZeroHoodSoft", new ZeroHoodSoft());
         testCommandChooser.addOption("Hood/HoodManualUp", new HoodManualUp());
@@ -332,7 +332,7 @@ public class RobotContainer
         Shooter.getInstance().setDefaultCommand(new ShooterDefaultSpeed());
         //Hood.getInstance().setDefaultCommand(new ZeroHood());
 
-        boolean useDebuggingBindings = true; // mainly for sysid or debugging
+        boolean useDebuggingBindings = false; // mainly for sysid or debugging
         boolean useDefaultBindings = false; // in case ever the official controls don't work, use these as a backup to be able to drive around
         if (useDebuggingBindings) configureDebugBindings();
         else if (useDefaultBindings)
@@ -564,8 +564,8 @@ public class RobotContainer
                             FlippingUtil.flipFieldPose(Constants.ZEROING_POSE) : Constants.ZEROING_POSE)))
                 .withName("ZeroDrivetrain")));
 
-        operator.back().onTrue(track(new ZeroHood()
-            .alongWith(new ShooterDefaultSpeed())
+        operator.back().onTrue(track(new ZeroHoodSoft()
+            //.alongWith(new ShooterDefaultSpeed())
             .withName("ZeroHood+Shooter")));
 
         operator.leftTrigger().onTrue(track(new EjectIntake().andThen(Commands.runOnce(()->{
@@ -589,8 +589,8 @@ public class RobotContainer
             else direction = PassDirection.Right;
         }));
 
-        operator.y().onTrue(track(new AimToAngle(Constants.Hood.MAX_ANGLE)));
-        operator.x().onTrue(track(new IndependentCommand(new RunIntake())
+        //operator.y().onTrue(track(new AimToAngle(Constants.Hood.MAX_ANGLE)));
+        operator.x().onTrue(track(new IndependentCommand(new RunIntake().withTimeout(1.5))
             .andThen(Commands.runOnce(()->intakeTriggered = true))
             .andThen(new RetractIntake())
             .andThen(Commands.runOnce(()->
@@ -598,7 +598,7 @@ public class RobotContainer
                 intakeExtended = false;
             }
             ))));
-        operator.a().onTrue(track(new AimToAngle(Constants.Hood.MIN_ANGLE)));
+        //operator.a().onTrue(track(new AimToAngle(Constants.Hood.MIN_ANGLE)));
         operator.b().onTrue(track(new ExtendIntake()
             .andThen(Commands.runOnce(()->
             {

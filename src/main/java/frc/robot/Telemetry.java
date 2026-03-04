@@ -71,6 +71,7 @@ public class Telemetry
     private DoublePublisher hoodVelocity = hood.getDoubleTopic("velocity (° per s)").publish();
     private DoublePublisher hoodVoltage = hood.getDoubleTopic("voltage (V)").publish();
     private BooleanPublisher hoodReadyToShoot = hood.getBooleanTopic("ready to shoot?").publish();
+    private DoublePublisher hoodStatorCurrent = hood.getDoubleTopic("stator current (A)").publish();
     
     private NetworkTable shooter = table.getSubTable("Shooter");
     private StringPublisher shooterCommand = shooter.getStringTopic("command").publish();
@@ -203,6 +204,7 @@ public class Telemetry
         hoodVelocity.set(Hood.getInstance().getVelocity().in(DegreesPerSecond));
         hoodVoltage.set(Hood.getInstance().getVoltage().in(Volts));
         hoodReadyToShoot.set(Hood.getInstance().readyToShoot());
+        hoodStatorCurrent.set(Hood.getInstance().getStatorCurrent());
 
         Command shooterCommand = Shooter.getInstance().getCurrentCommand();
         this.shooterCommand.set(shooterCommand == null ? "" : shooterCommand.getName());
@@ -280,6 +282,10 @@ public class Telemetry
             new Translation3d(midPointX, midPointY, 0)
         }
             */;
+        test.set(new Translation3d[]
+        {
+            //Util.Robot.instance.robotContainer.drivetrain.getState().Pose.getTranslation()
+        });
     }
     /** Accept the swerve drive state and telemeterize it to SmartDashboard and SignalLogger. */
     public void telemeterize(SwerveDriveState state) 
