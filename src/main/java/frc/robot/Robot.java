@@ -15,12 +15,18 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.simulation.LimelightSimulation;
 import frc.robot.simulation.SimulationState;
 
+/**
+ * Main robot entry point that manages the robot mode lifecycle and scheduling
+ */
 public class Robot extends TimedRobot 
 {
    private Command autonomousCommand;
    public RobotContainer robotContainer;
    public static Robot instance;
-
+   /**
+    * Constructs the robot
+    * and initializes logging configuration
+    */
    public Robot() 
    {
       instance = this;
@@ -37,7 +43,10 @@ public class Robot extends TimedRobot
          DriverStation.startDataLog(DataLogManager.getLog());
       }
    }
-
+   /**
+    * Called when the robot starts
+    * Initiailizes RobotContainer bindings and constructs a LimelightSimulation if in simulation
+    */
    @Override
    public void robotInit() 
    {
@@ -49,7 +58,10 @@ public class Robot extends TimedRobot
       }
    }
       
-
+   /**
+    * Called periodically in all robot modes
+    * Runs the command scheduler, schedules selected test commands, and updates telemetry
+    */
    @Override
    public void robotPeriodic() 
    {
@@ -59,7 +71,10 @@ public class Robot extends TimedRobot
 
       Telemetry.getInstance().update();
    }
-
+   /**
+    * Called when entering disabled mode
+    * Stops SignalLogger if on real hardware
+    */
    @Override
    public void disabledInit() 
    {
@@ -68,10 +83,17 @@ public class Robot extends TimedRobot
          SignalLogger.stop();
       }
    }
-
+   /**
+    * Called periodically while disabled
+    * No actions are required
+    */
    @Override
    public void disabledPeriodic() {}
 
+   /**
+    * Called when exiting disabled mode
+    * Re-starts SignalLogger if on real hardware
+    */
    @Override
    public void disabledExit() 
    {
@@ -80,7 +102,10 @@ public class Robot extends TimedRobot
          SignalLogger.start();
       }
    }
-
+   /**
+    * Called when entering autonomous mode
+    * Grabs the selected autonomous command and schedules it if it exists
+    */
    @Override
    public void autonomousInit() 
    {
@@ -91,13 +116,23 @@ public class Robot extends TimedRobot
          CommandScheduler.getInstance().schedule(autonomousCommand);
       }
    }
-
+   /**
+    * Called periodically during autonomous mode
+    * No logic is required
+    */
    @Override
    public void autonomousPeriodic() {}
 
+   /**
+    * Called when exiting autonomous mode
+    * No actions are required
+    */
    @Override
    public void autonomousExit() {}
-
+   /**
+    * Called when entering teleoperated mode
+    * If an autonomous command is still running, it is canceled
+    */
    @Override
    public void teleopInit() 
    {
@@ -106,33 +141,54 @@ public class Robot extends TimedRobot
          autonomousCommand.cancel();
       }
    }
-
+   /**
+    * Called periodically during teleoperated mode
+    * No logic is required
+    */
    @Override
    public void teleopPeriodic() {}
-
+   /**
+    * Called when exiting teleoperated mode
+    * No actions are required
+    */
    @Override
    public void teleopExit() {}
-
+   /**
+    * Called when entering test mode
+    * All running commands are canceled
+    */
    @Override
    public void testInit() 
    {
       CommandScheduler.getInstance().cancelAll();
    }
-
+   /**
+    * Called periodically during test mode
+    * No logic is required
+    */
    @Override
    public void testPeriodic() {}
-
+   /**
+    * Called when exiting test mode
+    * All running commands are canceled
+    */
    @Override
    public void testExit() 
    {
       CommandScheduler.getInstance().cancelAll();
    }
-
+   /**
+    * Called when entering simulation mode
+    * No simulation initialization is required here
+    */
    @Override
    public void simulationInit() 
    {
    }
-
+   /**
+    * Called periodically during simulation mode
+    * Updates the simulation state each loop
+    */
    @Override
    public void simulationPeriodic()
    {

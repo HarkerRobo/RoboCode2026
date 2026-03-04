@@ -61,10 +61,18 @@ import frc.robot.util.IndependentCommand;
 import frc.robot.util.Util;
 
 
-
+/**
+ * Central hub for robot subsystems, commands, and controller bindings
+ */
 public class RobotContainer 
 {
+    /**
+     * Meters per second
+     */
     public double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
+    /**
+     * Radians per second
+     */
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
     /* Setting up bindings for necessary control of the swerve drive platform */
@@ -112,27 +120,44 @@ public class RobotContainer
     private Command shoot;
     private Command pass;
     private Command hardShoot;
-
+    /**
+     * Sets the desired pass direction mode
+     * @param newDirection  New pass direction mode
+     */
     public void setPassDirection(PassDirection newDirection) {
         direction = newDirection;
     }
-
+    /**
+     * Returns the current pass direction mode
+     * @return  Current pass direction mode
+     */
     public PassDirection getPassDirection() {
         return direction;
     }
-
+    /**
+     * Determines if the robot treats itself as on the left side
+     * @return  True if the robot treats itself as on the left side; false otherwise
+     */
     public boolean onLeftSize()
     {
       if (direction == PassDirection.Left) return false; // not a bug
       if (direction == PassDirection.Right) return true;
       return (Util.onLeftSide(drivetrain));
     }
-
+    /**
+     * Returns the selected mode status for the given subsystem index
+     * @param subsystem the subsystem index
+     * @return  the selected subsystem status
+     */
     public SubsystemStatus getStatus(int subsystem)
     {
         return modeChoosers.get(subsystem).getSelected();
     }
-
+    /**
+     * Returns the name for the given subsystem index
+     * @param subsystem the subsystem index
+     * @return  the name of the subsystem based on the given subsystem index
+     */
     private static String subsystemName(int subsystem)
     {
         return switch(subsystem) {
@@ -147,8 +172,10 @@ public class RobotContainer
             default -> "";
         };
     }
-  
-        
+    /**
+     * Constructs the RobotContainer 
+     * and initializes subsystem mode choosers
+     */
     public RobotContainer() 
     {
         for (int i = 0; i < INDEXES; i++)
@@ -170,7 +197,11 @@ public class RobotContainer
             SmartDashboard.putData(subsystemName(i), chooser);
         }
     }
-
+    /**
+     * Post-construction initialization
+     * Builds commands, registers PathPlanner NamedCommands, configures default subsystem commands, 
+     * selects control binding layout and publishes choosers to SmartDashBoard
+     */
     public void init()
     {
         // tested in sim
@@ -287,7 +318,10 @@ public class RobotContainer
         
         drivetrain.registerTelemetry(Telemetry.getInstance()::telemeterize);
     }
-
+    /**
+     * Configures debugging bindings
+     * Used during development, not for match play
+     */
     private void configureDebugBindings()
     {
         /*
@@ -306,7 +340,10 @@ public class RobotContainer
         driver.x().whileTrue(Shooter.getInstance().leftSysIdDynamic(Direction.kForward));
         driver.y().whileTrue(Shooter.getInstance().leftSysIdDynamic(Direction.kReverse));
     }
-
+    /**
+     * Configures default driver binding
+     * Allow basic driving even when main bindings are unavailable
+     */
     private void configureDefaultBindings()
     {
         // Note that X is defined as forward according to WPILib convention,
@@ -331,7 +368,10 @@ public class RobotContainer
                 .withName("ZeroDrivetrain"));
     }
    
-
+    /**
+     * Configures primary driver bindings
+     * Intended for match play
+     */
     private void configureDriverBindings() 
     {
         // Note that X is defined as forward according to WPILib convention,
@@ -450,7 +490,10 @@ public class RobotContainer
                 .withName("ZeroDrivetrain"));
                 */
     }
-
+    /**
+     * Configures operator bindings for mechanism control
+     * Also used for override adjustments
+     */
     public void configureOperatorBindings()
     {
         operator.start().onTrue(
@@ -511,13 +554,21 @@ public class RobotContainer
                 Math.max(Constants.Shooter.DEFAULT_VELOCITY, 
                 -Constants.Shooter.INCREASE_VELOCITY + Shooter.getInstance().getRightVelocity().in(RotationsPerSecond))))));             
     }
-
+    /**
+     * Tracks a command 
+     * @param command   the Command to track 
+     * @return  the Command to track
+     */
     public Command track(Command command)
     {
         commands.add(command);
         return command;
     }
-
+    /**
+     * Returns the command selected by the autonomous chooser
+     * 
+     * @return  selected autonomous command
+     */
     public Command getAutonomousCommand() 
     {
         return autonChooser.getSelected();

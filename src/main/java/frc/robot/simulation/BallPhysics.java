@@ -12,7 +12,7 @@ import frc.robot.Constants;
  */
 public final class BallPhysics {
     public static final double GRAVITY = 9.81;
-
+    
     public record ShotSolution(
             double launchPitchRad,
             double launchSpeed,

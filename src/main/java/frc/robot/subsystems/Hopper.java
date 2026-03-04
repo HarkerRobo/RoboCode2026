@@ -21,7 +21,7 @@ import frc.robot.RobotContainer;
 import frc.robot.RobotContainer.SubsystemStatus;
 
 /**
- * controls the balls from intake to indexer
+ * Controls the balls from intake to indexer
  */
 public class Hopper extends SubsystemBase
 {
@@ -30,7 +30,9 @@ public class Hopper extends SubsystemBase
     /*
     private double desiredPosition; // rotations
     */
-
+    /**
+     * WPILib simulation for the hopper mechanism
+     */
     private ElevatorSim sim = new ElevatorSim(
         LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60(1), 0.001, Constants.Hopper.GEAR_RATIO),
         DCMotor.getKrakenX60(1), 
@@ -38,7 +40,9 @@ public class Hopper extends SubsystemBase
         Constants.Hopper.MAX_POSITION, 
         false, 
         Constants.Hopper.MIN_POSITION);
-
+    /**
+     * Constructs the hopper subsystem and initializes the motor state
+     */
     private Hopper()
     {
         master = new TalonFX(Constants.Hopper.ID);
@@ -52,7 +56,9 @@ public class Hopper extends SubsystemBase
 
         config();
     }
-
+    /**
+     * Applies TalonFX configuration values for feedback, current limits, gains, and output behavior
+     */
     private void config()
     {
         master.clearStickyFaults();
@@ -92,6 +98,8 @@ public class Hopper extends SubsystemBase
 
 
     /**
+     * Returns the current hopper mechanism position
+     * 
      * @return rotations
      */
     public Angle getPosition() 
@@ -100,6 +108,8 @@ public class Hopper extends SubsystemBase
     }
     
     /**
+     * Returns the current hopper mechanism velocity
+     * 
      * @return rotations per second
      */
     public AngularVelocity getVelocity()
@@ -108,6 +118,8 @@ public class Hopper extends SubsystemBase
     }
 
     /**
+     * Returns the current motor voltage
+     * 
      * @return voltage
      */
     public Voltage getVoltage()
@@ -129,7 +141,11 @@ public class Hopper extends SubsystemBase
         master.setPosition(position);
     }
     */
-
+    /**
+     * Controls the hopper motor's velocity
+     * 
+     * @param velocity  desired hopper velocity in angular units
+     */
     public void setVelocity(AngularVelocity velocity)
     {
         if (isDisabled())
@@ -141,6 +157,8 @@ public class Hopper extends SubsystemBase
     }
 
     /**
+     * Controls the hopper motor's duty cycle output
+     * 
      * @param power variable between [-1, 1]
      */
     public void setDutyCycle(double power)
@@ -166,7 +184,11 @@ public class Hopper extends SubsystemBase
         master.setControl(new MotionMagicVoltage(target));
     }
     */
-
+    /**
+     * Controls the hopper motor's voltage output
+     * 
+     * @param voltage   Controled motor voltage
+     */
     public void setVoltage(Voltage voltage)
     {
         if (isDisabled())
@@ -178,7 +200,11 @@ public class Hopper extends SubsystemBase
     }
 
 
-
+    /**
+     * Determines whether the hoppor motor is stalling based on stator current
+     * 
+     * @return True if stator current is at or above the stalling threshold; false otherwise
+     */
     public boolean isStalling()
     {
         return Math.abs(master.getStatorCurrent().getValueAsDouble()) >= Constants.Hopper.STALLING_CURRENT;
@@ -191,7 +217,9 @@ public class Hopper extends SubsystemBase
     }
     */
 
-    
+    /**
+     * Runs the subsystem periodic updates
+     */
     @Override
     public void periodic()
     {
@@ -217,12 +245,20 @@ public class Hopper extends SubsystemBase
             simState.setRotorVelocity(sim.getVelocityMetersPerSecond() * Constants.Hopper.GEAR_RATIO);
         }
     }
-    
+    /**
+     * Returns whether the hopper subsystem is configured to run in simulation mode
+     * 
+     * @return True if the hopper subsystem status is simulated; False otherwise
+     */
     private boolean isSimulated ()
     {
         return Robot.instance.robotContainer.getStatus(RobotContainer.HOPPER_INDEX) == SubsystemStatus.Simulated;
     }
-    
+    /**
+     * Returns whether the hopper subsystem is currently configured to be disabled
+     * 
+     * @return True if the hopper subsystem status is disabled; False otherwise
+     */
     private boolean isDisabled ()
     {
         return Robot.instance.robotContainer.getStatus(RobotContainer.HOPPER_INDEX) == SubsystemStatus.Disabled;
@@ -251,7 +287,11 @@ public class Hopper extends SubsystemBase
     }
         */
 
-
+    /**
+     * Returns the singleton instance of the hopper subsystem
+     * 
+     * @return Singleton hopper subsystem instance
+     */
     public static Hopper getInstance() 
     {
         if (instance == null) {
