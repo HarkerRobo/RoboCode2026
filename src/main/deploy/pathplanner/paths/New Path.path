@@ -1,0 +1,70 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 3.46599681712963,
+        "y": 7.268352647569444
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 4.465996817129632,
+        "y": 7.268352647569444
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 7.929284505208335,
+        "y": 6.821413700810186
+      },
+      "prevControl": {
+        "x": 7.860524667245372,
+        "y": 7.836605468750001
+      },
+      "nextControl": {
+        "x": 7.998044343171298,
+        "y": 5.80622193287037
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 7.928300347222223,
+        "y": 6.854809461805555
+      },
+      "prevControl": {
+        "x": 7.96317234519676,
+        "y": 6.330515697337963
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "reversed": false,
+  "folder": "Far First Double Sweep",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "useDefaultConstraints": true
+}
