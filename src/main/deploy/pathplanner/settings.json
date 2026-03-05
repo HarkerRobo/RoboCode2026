@@ -5,10 +5,15 @@
   "pathFolders": [
     "DepotClimbLeft",
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     "LeftTrenchNeutralClimbLeft",
     "RightTrenchNeutralClimbRight",
     "OutpostClimbRight",
     "RightFerry"
+=======
+    "Far First Double Sweep",
+    "Ferrying"
+>>>>>>> Stashed changes
 =======
     "Far First Double Sweep",
     "Ferrying"
