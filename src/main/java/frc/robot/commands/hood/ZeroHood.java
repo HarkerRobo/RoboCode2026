@@ -17,7 +17,7 @@ public class ZeroHood extends Command
     @Override
     public void initialize()
     {
-        Hood.getInstance().moveToPosition(Degrees.of(0.0));
+        Hood.getInstance().moveToPosition(Degrees.of(Constants.Hood.MIN_ANGLE));
     }
 
     @Override
@@ -37,7 +37,7 @@ public class ZeroHood extends Command
         if (!interrupted)
         {
             System.out.println("Zeroing Hood");
-            Hood.getInstance().setPosition(Degrees.of(0.0));
+            Hood.getInstance().setPosition(Degrees.of(Constants.Hood.MIN_ANGLE));
         }
     }
 }

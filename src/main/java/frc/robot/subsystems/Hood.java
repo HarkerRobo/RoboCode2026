@@ -49,25 +49,6 @@ public class Hood extends SubsystemBase
         LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX44(1), 0.001, Constants.Hood.GEAR_RATIO),
         DCMotor.getKrakenX44(1));
 
-        /*
-    private final SingleJointedArmSim motorSimModel = new SingleJointedArmSim(
-        new DCMotorSim(
-            LinearSystemId.createDCMotorSystem(
-                    DCMotor.getKrakenX44Foc(1), 0.001, Constants.Hood.GEAR_RATIO),
-            DCMotor.getKrakenX44Foc(1)).getGearbox(),
-        Constants.Hood.GEAR_RATIO,
-        Constants.Hood.MOMENT_OF_INERTIA,
-        Constants.Hood.LENGTH,
-        Units.degreesToRadians(Constants.Hood.MIN_ANGLE),
-        Units.degreesToRadians(Constants.Hood.MAX_ANGLE),
-        false,
-        Units.degreesToRadians(10.0)
-        // no std devs -> no noise simulated
-        );
-        */
-
-
-
     private Hood()
     {
         motor = new TalonFX(Constants.Hood.ID, Constants.CAN_SUPERSTRUCTURE);
@@ -128,11 +109,6 @@ public class Hood extends SubsystemBase
         motor.setControl(new PositionVoltage(desiredPosition));
     }
 
-    public void moveToEffectivePosition(Angle desiredPosition)
-    {
-        moveToPosition(effectiveToMechanism(desiredPosition));
-    }
-    
     public Angle getPosition()
     {
         return motor.getPosition().getValue();
@@ -270,25 +246,5 @@ public class Hood extends SubsystemBase
     {
         if (instance == null) instance = new Hood();
         return instance;
-    }
-
-    public static Angle effectiveToMechanism(Angle effectivePitch)
-    {
-        return Degrees.of(75.0).minus(effectivePitch);
-    }
-
-    public static Angle mechanismToEffective(Angle mechanismPitch)
-    {
-        return Degrees.of(75.0).minus(mechanismPitch);
-    }
-
-    public static double effectiveToMechanism(double effectivePitchDegrees)
-    {
-        return 75.0 - effectivePitchDegrees;
-    }
-
-    public static double mechanismToEffective(double mechanismPitchDegrees)
-    {
-        return 75.0 - mechanismPitchDegrees;
     }
 }

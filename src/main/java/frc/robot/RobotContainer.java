@@ -269,12 +269,12 @@ public class RobotContainer
         testCommandChooser.addOption("Climb/ClimbToLevel[2]", new ClimbToLevel(2));
         testCommandChooser.addOption("Climb/ClimbToLevel[3]", new ClimbToLevel(3));
         testCommandChooser.addOption("Climb/MoveDownUntilStall", new MoveDownUntilStall());
-        testCommandChooser.addOption("Hood/AimToAngle[" + Hood.mechanismToEffective(Constants.Hood.MIN_ANGLE) + "°]", 
-            new AimToAngle(Hood.mechanismToEffective(Constants.Hood.MIN_ANGLE)));
+        testCommandChooser.addOption("Hood/AimToAngle[" + Constants.Hood.MIN_ANGLE + "°]", 
+            new AimToAngle(Constants.Hood.MIN_ANGLE));
         testCommandChooser.addOption("Hood/AimToAngle[65°]", new AimToAngle(65.0));
         testCommandChooser.addOption("Hood/AimToAngle[70°]", new AimToAngle(70.0));
-        testCommandChooser.addOption("Hood/AimToAngle[" + Hood.mechanismToEffective(Constants.Hood.MAX_ANGLE) + "°]", 
-            new AimToAngle(Hood.mechanismToEffective(Constants.Hood.MAX_ANGLE)));
+        testCommandChooser.addOption("Hood/AimToAngle[" + Constants.Hood.MAX_ANGLE + "°]", 
+            new AimToAngle(Constants.Hood.MAX_ANGLE));
         testCommandChooser.addOption("Hood/ZeroHood", new ZeroHood());
         testCommandChooser.addOption("Hood/ZeroHoodSoft", new ZeroHoodSoft());
         testCommandChooser.addOption("Hood/HoodManualUp", new HoodManualUp());

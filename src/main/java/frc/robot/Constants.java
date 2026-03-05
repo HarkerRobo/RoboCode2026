@@ -201,7 +201,7 @@ public class Constants
         public static final double MM_CRUISE_VELOCITY = 2.0; // TODO
 		public static final double MM_ACCELERATION = 8.0;  // TODO
 		public static final double MM_JERK = 16.0; // TODO
-		public static final InvertedValue INVERTED = InvertedValue.CounterClockwise_Positive;
+		public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive;
         
         public static final double GEAR_RATIO = 137.67; // sensor to hood angle
 
@@ -220,14 +220,14 @@ public class Constants
 
         public static final double LENGTH = 0.5; // TODO meters
 
-        public static final double MIN_ANGLE = 0.0; // in motor direction - equivalent to 75 degree pitch for fuel trajectory
-        public static final double MAX_ANGLE = 15.0; // equivalent to 60 degree pitch
+        public static final double MIN_ANGLE = 75.0; // in fuel trajectory - zeroing target
+        public static final double MAX_ANGLE = 60.0; // in fuel trajectory
     
         public static final double STALLING_CURRENT = 30.0; // TODO
 
-        public static final double MANUAL_UP_VOLTAGE = 0.5; // TODO
-        public static final double MANUAL_DOWN_VOLTAGE = -0.5; // TODO
-        public static final double ZEROING_VOLTAGE = -1.0; // TODO
+        public static final double MANUAL_UP_VOLTAGE = -0.5; // TODO
+        public static final double MANUAL_DOWN_VOLTAGE = 0.5; // TODO
+        public static final double ZEROING_VOLTAGE = 1.0; // TODO
     }
 
     /*
@@ -589,7 +589,7 @@ public class Constants
     public static final Translation3d PASS_LEFT_TARGET_POSITION = new Translation3d(2.010664, 2.010664, 0.0);
     public static final Translation3d PASS_RIGHT_TARGET_POSITION = new Translation3d(2.010664, Simulation.FIELD_HEIGHT - 2.010664, 0.0);
 
-    public static final Angle HARDCODE_HOOD_PITCH = Degrees.of(75.0);
+    public static final Angle HARDCODE_HOOD_PITCH = Degrees.of(74.0);
     public static final double HARDCODE_VELOCITY = 10.0;
 
     public static final double PITCH_OFFSET_UNIT = 5.0; // TODO
