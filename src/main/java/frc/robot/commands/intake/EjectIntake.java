@@ -1,5 +1,6 @@
 package frc.robot.commands.intake;
 
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -16,7 +17,7 @@ public class EjectIntake extends Command
     @Override
     public void initialize()
     {
-        Intake.getInstance().setVoltage(Volts.of(Constants.Intake.EJECT_VOLTAGE));
+        Intake.getInstance().setVelocity(RotationsPerSecond.of(Constants.Intake.EJECT_VELOCITY));
     }
 
     @Override
@@ -33,6 +34,6 @@ public class EjectIntake extends Command
     @Override
     public void end (boolean interrupted) 
     {
-        Intake.getInstance().setVoltage(Volts.of(Constants.Intake.DEFAULT_INTAKE_VOLTAGE));
+        Intake.getInstance().setVelocity(RotationsPerSecond.zero());
     }
 }

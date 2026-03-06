@@ -303,9 +303,9 @@ public class RobotContainer
 
         NamedCommands.registerCommand("ExtendIntake", new ExtendIntake());
         NamedCommands.registerCommand("RetractIntake", new RetractIntake());
-        NamedCommands.registerCommand("StartRunIntake", Intake.getInstance().runOnce(()->Intake.getInstance().setVoltage(Volts.of(Constants.Intake.INTAKE_VOLTAGE))));
-        NamedCommands.registerCommand("StartDefaultIntake", Intake.getInstance().runOnce(()->Intake.getInstance().setVoltage(Volts.of(Constants.Intake.DEFAULT_INTAKE_VOLTAGE))));
-        NamedCommands.registerCommand("DefaultIntake", new DefaultIntake());
+        NamedCommands.registerCommand("StartRunIntake", new IndependentCommand(new RunIntake()));
+        NamedCommands.registerCommand("StartDefaultIntake", new IndependentCommand(new DefaultIntake()));
+        NamedCommands.registerCommand("StartDefaultIntake", new IndependentCommand(new DefaultIntake()));
         NamedCommands.registerCommand("EjectIntake (with timeout)", new EjectIntake().withTimeout(1.0));
         NamedCommands.registerCommand("HardShoot", hardShoot);
         NamedCommands.registerCommand("ClimbL3", new ClimbToLevel(3).andThen(new RunClimb()));
@@ -504,23 +504,6 @@ public class RobotContainer
                         .withName("ActivateIntake")));
                 }
         })));
-        // driver.rightBumper().onTrue(track(
-        //     Commands.runOnce(()->{
-        //         if (intakeTriggered)
-        //         {
-        //             intakeTriggered = false;
-        //             CommandScheduler.getInstance().schedule(
-        //                 track(new DefaultIntake().withTimeout(0.01).andThen(new RetractIntake().alongWith(new RetractHopper()))
-        //                 .withName("UndeployIntake")));
-        //         }
-        //         else
-        //         {
-        //             intakeTriggered = true;
-        //             CommandScheduler.getInstance().schedule(
-        //                 track(new ExtendIntake().alongWith(new ExtendHopper()).andThen(new RunIntake())
-        //                 .withName("DeployIntake")));
-        //         }
-        // })));
         
         
         // tested in sim

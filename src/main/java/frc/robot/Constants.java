@@ -142,17 +142,17 @@ public class Constants
         public static final double STATOR_CURRENT_LIMIT = 90.0;
         public static final double SUPPLY_CURRENT_LIMIT = 90.0;
 
-        public static final double INTAKE_VOLTAGE = 5.5;
-        public static final double DEFAULT_INTAKE_VOLTAGE = 0.0;
-        public static final double EJECT_VOLTAGE = -2.5;
+        public static final double INTAKE_VELOCITY = 1.0;
+        public static final double DEFAULT_INTAKE_VELOCITY = 0.0;
+        public static final double EJECT_VELOCITY = -0.5;
 
-        public static final double KP = 0.0023821;
+        public static final double KP = 0.1;
 		public static final double KI = 0.0;
 		public static final double KD = 0.0;
 		
-        public static final double KS = 0.0017035;
-        public static final double KV = 0.12364;
-        public static final double KA = 0.0078492;
+        public static final double KS = 0.0;//0.0017035;
+        public static final double KV = 0.0;//0.12364;
+        public static final double KA = 0.0;//0.0078492;
         public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive;
 
         

@@ -21,7 +21,7 @@ public class DefaultIntake extends Command
     @Override
     public void initialize()
     {
-        Intake.getInstance().setVoltage(Volts.of(Constants.Intake.DEFAULT_INTAKE_VOLTAGE));
+        Intake.getInstance().setVelocity(RotationsPerSecond.of(Constants.Intake.DEFAULT_INTAKE_VELOCITY));
     }
 
     @Override
@@ -38,6 +38,6 @@ public class DefaultIntake extends Command
     @Override
     public void end (boolean interrupted) 
     {
-        Intake.getInstance().setVoltage(Volts.of(0.0));
+        Intake.getInstance().setVelocity(RotationsPerSecond.zero());
     }
 }
