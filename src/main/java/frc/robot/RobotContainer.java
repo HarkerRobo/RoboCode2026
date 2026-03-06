@@ -203,10 +203,10 @@ public class RobotContainer
         // tested in sim
         shoot = //new RotateToAngle(drivetrain, ()->AlignConstants.HUB)
             Commands.none()
-            // .alongWith(new AimToAngle(()->Util.calculateShootPitch(drivetrain).in(Degrees) + pitchOffset))
+            //.alongWith(new AimToAngle(()->Util.calculateShootPitch(drivetrain).in(Degrees) + pitchOffset))
             // .alongWith(new IndependentCommand(new ShooterTargetSpeed(Util.calculateShootVelocity(drivetrain) + flywheelOffset)))
-            .alongWith(new AimToAngle(75.0))
-            .alongWith(new IndependentCommand(new ShooterTargetSpeed(8.0)))
+            // .alongWith(new AimToAngle(75.0))
+            .alongWith(new IndependentCommand(new ShooterTargetSpeed(()->8.0 + flywheelOffset)))
             // .andThen(new WaitUntilCommand(
             //     ()->Shooter.getInstance().readyToShoot(Util.calculateShootVelocity(drivetrain))
             //      && Hood.getInstance().readyToShoot()
@@ -246,8 +246,8 @@ public class RobotContainer
                 Commands.runOnce(()->mostRecentAim = false)
             .andThen(new IndependentCommand(new ShooterIndexerDefaultSpeed()))
             .andThen(
-                new IndependentCommand(new ShooterTargetSpeed(()->Util.calculateShootVelocity(drivetrain) + flywheelOffset)))
-                //new IndependentCommand(new ShooterTargetSpeed(5.0)))
+                //new IndependentCommand(new ShooterTargetSpeed(()->Util.calculateShootVelocity(drivetrain) + flywheelOffset)))
+                new IndependentCommand(new ShooterTargetSpeed(()->8.0 + flywheelOffset)))
             .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot()))
             //.andThen(
             //     Commands.runOnce(()->driver.setRumble(RumbleType.kBothRumble, 1.0)))

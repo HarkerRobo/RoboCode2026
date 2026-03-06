@@ -392,7 +392,7 @@ public class Constants
         public static final double SIDE_KI = 0.0; //TODO
         public static final double SIDE_KD = 0.0; //TODO
 
-        public static final double SIDE_MAX_VOLTAGE = 3.5; // TODO volts
+        public static final double SIDE_MAX_VOLTAGE = 3.5 * 0.75; // TODO volts
         public static final double SIDE_DEFAULT_VOLTAGE = 0.0; // TODO volts
 
         public static final double SIDE_GEAR_RATIO = 1.0; // TODO
@@ -589,11 +589,11 @@ public class Constants
     public static final Translation3d PASS_LEFT_TARGET_POSITION = new Translation3d(2.010664, 2.010664, 0.0);
     public static final Translation3d PASS_RIGHT_TARGET_POSITION = new Translation3d(2.010664, Simulation.FIELD_HEIGHT - 2.010664, 0.0);
 
-    public static final Angle HARDCODE_HOOD_PITCH = Degrees.of(75.0);
+    public static final Angle HARDCODE_HOOD_PITCH = Degrees.of(74.5);
     public static final double HARDCODE_VELOCITY = 10.0;
 
     public static final double PITCH_OFFSET_UNIT = 5.0; // TODO
-    public static final double FLYWHEEL_OFFSET_UNIT = 1.0; // TODO
+    public static final double FLYWHEEL_OFFSET_UNIT = 0.5; // TODO
 
     public static final double DISTANCE_SHOOTVELO_RATIO = 0.7400067;
 

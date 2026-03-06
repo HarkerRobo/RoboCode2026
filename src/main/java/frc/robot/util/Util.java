@@ -30,6 +30,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import frc.robot.Constants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Hood;
 
 public class Util 
 {
@@ -53,6 +54,7 @@ public class Util
 
     private static InverseInterpolator<Double> inverseInterpolator = InverseInterpolator.forDouble();
     
+    // angles are effective
     private static InterpolatingTreeMap<Double, Pair<LinearVelocity, Angle>> interpolatingTreeMap = new InterpolatingTreeMap<>(inverseInterpolator, interpolator);
 
     private static void addData(double distanceMeters, double velocityMetersPerSecond, double angleDegrees)
@@ -62,7 +64,10 @@ public class Util
 
     public static void init ()
     {
-        // addData(0.5, 7.0, 75.0);
+        addData(1.86, 8.0, Hood.mechanismToEffective(2.55));
+        addData(2.484, 8.0, Hood.mechanismToEffective(3.51));
+        addData(2.946, 8.0, Hood.mechanismToEffective(6.94));
+        addData(2.806, 9.0, Hood.mechanismToEffective(6.59));
     }
 
     public static double bottomLeftX (Rectangle2d r)
