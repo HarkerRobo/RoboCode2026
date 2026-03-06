@@ -216,7 +216,7 @@ public class SimulationState
         double startY = posY + Constants.ROBOT_HEIGHT*Math.sqrt(2)/2*Math.sin(rot-Math.PI/4);
 
         double midPointX = posX + Constants.ROBOT_WIDTH/2*Math.cos(rot);
-        double midPointY = posY + Constants.ROBOT_HEIGH/2*Math.sin(rot);
+        double midPointY = posY + Constants.ROBOT_HEIGHT/2*Math.sin(rot);
 
         double vx = startX - endX;
         double vy = startY - endY;
