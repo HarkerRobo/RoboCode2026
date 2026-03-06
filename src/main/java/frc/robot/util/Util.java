@@ -118,6 +118,29 @@ public class Util
         return new Translation3d(x0 + (xN + 1) * dx, y0 + (yN + 1) * dy, z0 + zN * dz);
     }
 
+    public static Translation3d packElWithRot (double x, double y, double bottomZ, double rad, double xside, double yside, double sphereDiameter, int num)
+    {
+        double x0 = x + 3*Math.cos(Math.PI/4 + rad) * Math.sqrt(2*sphereDiameter*sphereDiameter/4); // Starting x of first fuel in robot
+        double y0 = y + 3*Math.sin(Math.PI/4 + rad) * Math.sqrt(2*sphereDiameter*sphereDiameter/4); // Starting y of first fuel in robot
+        double z0 = bottomZ; // Starting z of first fuel
+
+        int xn = (int) (xside / sphereDiameter) - 1; // num of fuel that can fit in x direction 
+        int yn = (int) (yside / sphereDiameter) - 1; // num of fuel that can fit in y direction
+
+        int zN = num / (xn * yn); // layer number for current fuel
+
+        double nx = num % xn; // number of fuel in x direction in current row
+        double ny = (num % (xn * yn)) / xn; // number of fuel in y direction in current column
+
+        double ix = Math.cos(rad) * sphereDiameter; // x increment for each fuel in row
+        double iy = Math.sin(rad) * sphereDiameter; // y increment for each fuel in row
+
+        double xc = x0 + nx * ix + ny * Math.cos(Math.PI/2 + rad) * sphereDiameter; // x coordinate of fuel based on number of fuel and increments
+        double yc = y0 + nx * iy + ny * Math.sin(Math.PI/2 + rad) * sphereDiameter; // y coordinate of fuel based on number of fuel and increments
+        
+        return new Translation3d(xc + Math.sin(rad)*Constants.ROBOT_WIDTH/2, yc - Math.cos(rad)*Constants.ROBOT_HEIGHT/2, z0 + zN * sphereDiameter);
+    }
+
     public static boolean within (Rectangle2d r, Translation3d t)
     {
         return 
