@@ -43,7 +43,7 @@ public class Constants
 {
     public static final double MAX_VOLTAGE = 12.0;
     
-    public static final double EPSILON = 0.1;
+    public static final double EPSILON = 0.3;
 
     public static final double ROBOT_HEIGHT = 0.89535; // y direction when bot is faced in the positive x direction; that is, parallel to the intake face
     public static final double ROBOT_WIDTH = 0.84455;
@@ -142,11 +142,11 @@ public class Constants
         public static final double STATOR_CURRENT_LIMIT = 90.0;
         public static final double SUPPLY_CURRENT_LIMIT = 90.0;
 
-        public static final double INTAKE_VELOCITY = 1.0;
+        public static final double INTAKE_VELOCITY = 40.0; // rot/s
         public static final double DEFAULT_INTAKE_VELOCITY = 0.0;
-        public static final double EJECT_VELOCITY = -0.5;
+        public static final double EJECT_VELOCITY = -25.0; // rot/s
 
-        public static final double KP = 0.1;
+        public static final double KP = 7.0;
 		public static final double KI = 0.0;
 		public static final double KD = 0.0;
 		
@@ -169,7 +169,7 @@ public class Constants
         public static final double SUPPLY_CURRENT_LIMIT = 90.0;
 
         public static final double EXTENDING_VOLTAGE = 2.5;
-        public static final double RETRACTING_VOLTAGE = -1.75;
+        public static final double RETRACTING_VOLTAGE = -2.5;
 
         public static final double KP = 0.0023821;
 		public static final double KI = 0.0;
@@ -185,7 +185,7 @@ public class Constants
         public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
 
         public static final double STALLING_CURRENT_EXTEND = 16;
-        public static final double STALLING_CURRENT_RETRACT = 20;
+        public static final double STALLING_CURRENT_RETRACT = 25;
 
         public static final double MIN_HEIGHT = 0.0; // TODO
         public static final double MAX_HEIGHT = 1.0; // TODO

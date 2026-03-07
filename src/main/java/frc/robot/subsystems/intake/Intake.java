@@ -12,6 +12,7 @@ import static edu.wpi.first.units.Units.*;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
@@ -79,6 +80,11 @@ public class Intake extends SubsystemBase
     public AngularVelocity getVelocity()
     {
         return motor.getVelocity().getValue();
+    }
+
+    public Current getStatorCurrent()
+    {
+        return motor.getStatorCurrent().getValue();
     }
    
     public void setVoltage (Voltage voltage)

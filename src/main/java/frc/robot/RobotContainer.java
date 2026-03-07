@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -60,6 +61,8 @@ import frc.robot.commands.shooter.ShooterTargetSpeed;
 import frc.robot.commands.shooterindexer.ShooterIndexerDefaultSpeed;
 import frc.robot.commands.shooterindexer.ShooterIndexerFullSpeed;
 import frc.robot.subsystems.*;
+import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
+import frc.robot.subsystems.drivetrain.Modules;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.util.IndependentCommand;
 import frc.robot.util.Util;
@@ -75,6 +78,26 @@ public class RobotContainer
         Left
     }
     
+    /**
+     * This is necessary because shoot, pass, revshoot, revpass, and hardshoot all call shooter
+     * independently, meaning that the shooter subsystem is not added as a requirement, nor can it
+     * be manually added or else the calling of the independentcommand would schedule a new command
+     * which cancels the original command; since we actually want to prevent conflict between shoot,
+     * pass, revshoot, revpass, and hardshoot, and because this is quite important (or else revpass
+     * will not cancel revshoot) a possibility would be to manually cancel all of the other commands
+     * when a single command in the list is running, but there is no method that I am aware of for
+     * determining which of the commands was scheduled most recently, meaning that the resolution
+     * of conflicts could devolve into an arbitrary choice which causes more problems (such as
+     * preventing revPass from being scheduled if revShoot has already been scheduled, or vice
+     * versa, depending on how the code is implemented). Instead, we create a subsystem mimic which
+     * persuades the command scheduler to cancel all commands that are a commandgroup including
+     * a command on "shooterCommandFakeSubsystem" which does nothing but nicely adds a common 
+     * requirement to the same instance of the same subsystem, so that the most recent command 
+     * "requiring" the shooterCommandFakeSubsystem "subsystem" cancels all other running ones in a 
+     * consistent and expectable manner.
+     */
+    private Subsystem shooterCommandFakeSubsystem = new SubsystemBase() {};
+
     public double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
     private AlignDirection alignDirection = AlignDirection.Center;
@@ -203,28 +226,31 @@ public class RobotContainer
         
 
         // tested in sim
-        shoot = //new RotateToAngle(drivetrain, ()->AlignConstants.HUB)
-            Commands.none()
-            //.alongWith(new AimToAngle(()->Util.calculateShootPitch(drivetrain).in(Degrees) + pitchOffset))
-            // .alongWith(new IndependentCommand(new ShooterTargetSpeed(Util.calculateShootVelocity(drivetrain) + flywheelOffset)))
+        shoot = new RotateToAngle(drivetrain, ()->AlignConstants.HUB)
+            //Commands.none()
+            .alongWith(new AimToAngle(()->Util.calculateShootPitch(drivetrain).in(Degrees)))
+            .alongWith(new IndependentCommand(new ShooterTargetSpeed(Util.calculateShootVelocity(drivetrain))))
             // .alongWith(new AimToAngle(75.0))
-            .alongWith(new IndependentCommand(new ShooterTargetSpeed(()->8.0 + leftFlywheelOffset, ()->8.0 + rightFlywheelOffset)))
-            // .andThen(new WaitUntilCommand(
-            //     ()->Shooter.getInstance().readyToShoot(Util.calculateShootVelocity(drivetrain))
-            //      && Hood.getInstance().readyToShoot()
-            //     ))
+            // .alongWith(new IndependentCommand(new ShooterTargetSpeed(()->8.0 + leftFlywheelOffset, ()->8.0 + rightFlywheelOffset)))
+            .andThen(new WaitUntilCommand(
+                ()->
+                // Shooter.getInstance().readyToShoot(Util.calculateShootVelocity(drivetrain))
+                //  && 
+                 Hood.getInstance().readyToShoot()
+                ))
             .andThen(new IndependentCommand(track(new IndexerFullSpeed())))
             .andThen(track(new ShooterIndexerFullSpeed())) // load to shoot
             .finallyDo(()->{
                 CommandScheduler.getInstance().schedule(stow.get());
             })
+            .andThen(shooterCommandFakeSubsystem.runOnce(()->{}))
             .withName("Shoot");
-
+        
         // tested in sim
-        pass = /*new RotateToAngle(drivetrain,
-            () -> onLeftSize() ? Constants.PASS_LEFT_TARGET_POSITION.toTranslation2d()
-                               : Constants.PASS_RIGHT_TARGET_POSITION.toTranslation2d())*/
-            Commands.none()
+        pass = new RotateToAngle(drivetrain,
+            () -> onLeftSide() ? Constants.PASS_LEFT_TARGET_POSITION.toTranslation2d()
+                               : Constants.PASS_RIGHT_TARGET_POSITION.toTranslation2d())
+            //Commands.none()
             .alongWith(new AimToAngle(() -> Util.calculatePassPitch(drivetrain).in(Degrees) + pitchOffset))
             .andThen(new IndependentCommand(new ShooterTargetSpeed(
                 ()->Util.calculatePassVelocity(drivetrain) + leftFlywheelOffset,
@@ -233,10 +259,12 @@ public class RobotContainer
                     () -> Shooter.getInstance().readyToShoot(Util.calculatePassVelocity(drivetrain))
                             && Hood.getInstance().readyToShoot()))
             .andThen(new ShooterIndexerFullSpeed()) // load to pass
+            .andThen(shooterCommandFakeSubsystem.runOnce(()->{}))
             .finallyDo(() -> {
                 CommandScheduler.getInstance().schedule(stow.get());
             })
             .withName("Pass");
+        
 
         // tested in sim
         hardShoot = new AimToAngle(Constants.HARDCODE_HOOD_PITCH.in(Degrees))
@@ -244,18 +272,20 @@ public class RobotContainer
             .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot()))
             .andThen(new ShooterIndexerFullSpeed())
             .finallyDo(()->CommandScheduler.getInstance().schedule(new ShooterDefaultSpeed()))
+            .andThen(shooterCommandFakeSubsystem.runOnce(()->{}))
             .withName("HardShoot");
 
         revShoot = 
                 Commands.runOnce(()->mostRecentAim = false)
             .andThen(new IndependentCommand(new ShooterIndexerDefaultSpeed()))
             .andThen(
-                //new IndependentCommand(new ShooterTargetSpeed(()->Util.calculateShootVelocity(drivetrain) + flywheelOffset)))
-                new IndependentCommand(new ShooterTargetSpeed(()->8.0 + leftFlywheelOffset, ()->8.0 + rightFlywheelOffset)))
+                new IndependentCommand(new ShooterTargetSpeed(()->Util.calculateShootVelocity(drivetrain))))
+                // new IndependentCommand(new ShooterTargetSpeed(()->8.0 + leftFlywheelOffset, ()->8.0 + rightFlywheelOffset)))
             .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot()))
             //.andThen(
             //     Commands.runOnce(()->driver.setRumble(RumbleType.kBothRumble, 1.0)))
-                .withName("RevShoot");
+            .andThen(shooterCommandFakeSubsystem.runOnce(()->{}))
+            .withName("RevShoot");
 
         revPass = 
                 Commands.runOnce(()->mostRecentAim = true)
@@ -265,9 +295,10 @@ public class RobotContainer
                     ()->Util.calculatePassVelocity(drivetrain) + leftFlywheelOffset,
                     ()->Util.calculatePassVelocity(drivetrain) + rightFlywheelOffset)))
             .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot()))
-             .andThen(
-                 Commands.runOnce(()->driver.setRumble(RumbleType.kBothRumble, 1.0)))
-                .withName("RevPass");
+            //.andThen(
+            //     Commands.runOnce(()->driver.setRumble(RumbleType.kBothRumble, 1.0)))
+            .andThen(shooterCommandFakeSubsystem.runOnce(()->{}))
+            .withName("RevPass");
 
 
         testCommandChooser.setDefaultOption("None", Commands.none());
@@ -356,6 +387,7 @@ public class RobotContainer
         }
         drivetrain.registerTelemetry(Telemetry.getInstance()::telemeterize);
     }
+
 
     private void configureDebugBindings()
     {
@@ -471,7 +503,7 @@ public class RobotContainer
         drivetrain.setDefaultCommand(
                 // Drivetrain will execute this command periodically
                 drivetrain.applyRequest(() -> 
-                        drive.withVelocityX(-driver.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+                        drive.withVelocityX(-driver.getLeftY() * MaxSpeed * (isSlow ? Constants.TRANSLATION_SLOW_MULTIPLIER : 1.0)) // Drive forward with negative Y (forward)
                         .withVelocityY(-driver.getLeftX() * MaxSpeed * (isSlow ? Constants.TRANSLATION_SLOW_MULTIPLIER : 1.0)) // Drive left with negative X (left)
                         .withRotationalRate(-driver.getRightX() * MaxAngularRate * (isSlow ? Constants.ROTATION_SLOW_MULTIPLIER : 1.0)) // Drive counterclockwise with negative X (left)
                     ).withName("SwerveManual"));

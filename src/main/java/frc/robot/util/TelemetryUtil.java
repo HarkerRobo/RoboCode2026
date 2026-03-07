@@ -32,7 +32,6 @@ import frc.robot.simulation.SimulationState;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.Turret;
 
 public class TelemetryUtil {
     static NetworkTableInstance netTableInstance = NetworkTableInstance.getDefault();

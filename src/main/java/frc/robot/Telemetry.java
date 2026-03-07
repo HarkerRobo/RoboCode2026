@@ -37,11 +37,11 @@ import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.ShooterIndexer;
+import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeExtension;
 import frc.robot.util.Util;
 import frc.robot.subsystems.Climb;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 public class Telemetry 
 {
@@ -59,6 +59,7 @@ public class Telemetry
     private StringPublisher intakeCommand = intake.getStringTopic("main command").publish();
     private DoublePublisher intakeMainVelocity = intake.getDoubleTopic("main velocity (rot per s)").publish();
     private DoublePublisher intakeMainVoltage = intake.getDoubleTopic("main voltage (V)").publish();
+    private DoublePublisher intakeMainCurrent = intake.getDoubleTopic("main current (A) ").publish();
 
     private StringPublisher intakeExtensionCommand = intake.getStringTopic("extension command").publish();
     private DoublePublisher intakeExtensionPosition = intake.getDoubleTopic("extension position (rot)").publish();
@@ -97,6 +98,7 @@ public class Telemetry
     private DoublePublisher shooterRightVoltage = shooter.getDoubleTopic("right voltage (V)").publish();
     private DoublePublisher shooterRightTargetVelocity = shooter.getDoubleTopic("right target velocity (rot per s)").publish();
     private DoublePublisher shooterRightEffectiveTargetVelocity = shooter.getDoubleTopic("right effective target velocity (m per s)").publish();
+    private BooleanPublisher shooterReadyToShoot = shooter.getBooleanTopic("ready to shoot?").publish();
 
     private NetworkTable climb = table.getSubTable("Climb");
     private StringPublisher climbCommand = climb.getStringTopic("command").publish();
@@ -199,6 +201,7 @@ public class Telemetry
         this.intakeCommand.set(intakeCommand == null ? "" : intakeCommand.getName());
         intakeMainVelocity.set(Intake.getInstance().getVelocity().in(RotationsPerSecond));
         intakeMainVoltage.set(Intake.getInstance().getVoltage().in(Volts));
+        intakeMainCurrent.set(Intake.getInstance().getStatorCurrent().in(Amps));
         
         Command intakeExtensionCommand = IntakeExtension.getInstance().getCurrentCommand();
         this.intakeExtensionCommand.set(intakeExtensionCommand == null ? "" : intakeExtensionCommand.getName());
@@ -238,6 +241,7 @@ public class Telemetry
         shooterRightTargetVelocity.set(Shooter.getInstance().getRightTargetVelocity().in(RotationsPerSecond));
         shooterRightEffectiveTargetVelocity.set(Shooter.getInstance().getRightEffectiveTargetVelocity().in(MetersPerSecond));
         shooterRightVoltage.set(Shooter.getInstance().getRightVoltage().in(Volts));
+        shooterReadyToShoot.set(Shooter.getInstance().readyToShoot());
         
         Command climbCommand = Climb.getInstance().getCurrentCommand();
         this.climbCommand.set(climbCommand == null ? "" : climbCommand.getName());

@@ -18,7 +18,7 @@ import frc.robot.LimelightHelpers;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
 import frc.robot.RobotContainer.AlignDirection;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
 
 public class DriveToPose extends Command{
     private final CommandSwerveDrivetrain drivetrain;

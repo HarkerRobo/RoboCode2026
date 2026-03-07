@@ -6,8 +6,6 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Rotations;
 
-import java.util.Comparator;
-
 import com.pathplanner.lib.util.FlippingUtil;
 
 import edu.wpi.first.math.Pair;
@@ -19,9 +17,6 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
 import edu.wpi.first.math.interpolation.Interpolator;
 import edu.wpi.first.math.interpolation.InverseInterpolator;
-import edu.wpi.first.units.AngleUnit;
-import edu.wpi.first.units.LinearVelocityUnit;
-import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -29,8 +24,8 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import frc.robot.Constants;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Hood;
+import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
 
 public class Util 
 {
@@ -64,10 +59,9 @@ public class Util
 
     public static void init ()
     {
-        addData(1.86, 8.0, Hood.mechanismToEffective(2.55));
-        addData(2.484, 8.0, Hood.mechanismToEffective(3.51));
-        addData(2.946, 8.0, Hood.mechanismToEffective(6.94));
-        addData(2.806, 9.0, Hood.mechanismToEffective(6.59));
+        addData(1.86, 8.0, Hood.mechanismToEffective(0.5));
+        addData(2.484, 8.0, Hood.mechanismToEffective(1.51));
+        addData(2.946, 8.0, Hood.mechanismToEffective(4.94));
     }
 
     public static double bottomLeftX (Rectangle2d r)

@@ -17,6 +17,7 @@ public class EjectIntake extends Command
     @Override
     public void initialize()
     {
+        // Intake.getInstance().setVoltage(Volts.of(-2.5));
         Intake.getInstance().setVelocity(RotationsPerSecond.of(Constants.Intake.EJECT_VELOCITY));
     }
 
@@ -34,6 +35,7 @@ public class EjectIntake extends Command
     @Override
     public void end (boolean interrupted) 
     {
-        Intake.getInstance().setVelocity(RotationsPerSecond.zero());
+        Intake.getInstance().setVoltage(Volts.zero());
+        // Intake.getInstance().setVelocity(RotationsPerSecond.zero());
     }
 }

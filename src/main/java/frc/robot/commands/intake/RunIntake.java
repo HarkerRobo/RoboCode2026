@@ -18,6 +18,7 @@ public class RunIntake extends Command
     @Override
     public void initialize()
     {
+        // Intake.getInstance().setVoltage(Volts.of(5.5));
         Intake.getInstance().setVelocity(RotationsPerSecond.of(Constants.Intake.INTAKE_VELOCITY));
     }
 
@@ -35,6 +36,7 @@ public class RunIntake extends Command
     @Override
     public void end (boolean interrupted) 
     {
-        Intake.getInstance().setVelocity(RotationsPerSecond.zero());
+        Intake.getInstance().setVoltage(Volts.zero());
+        // Intake.getInstance().setVelocity(RotationsPerSecond.zero());
     }
 }
