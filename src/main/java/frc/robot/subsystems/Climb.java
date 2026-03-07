@@ -33,34 +33,34 @@ public class Climb extends SubsystemBase
 
     private Angle targetPosition;
 
-    private TalonFX elevator;
-    private TalonFX climb;
+    private TalonFX climbWheels;
+    private TalonFX spooling;
 
     private ElevatorSim elevatorSim = new ElevatorSim(
-        LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60(1), 0.001, Constants.Climb.ELEVATOR_GEAR_RATIO),
-            DCMotor.getKrakenX60(1), Constants.Climb.ELEVATOR_MIN_HEIGHT, Constants.Climb.ELEVATOR_MAX_HEIGHT, true, Constants.Climb.ELEVATOR_MIN_HEIGHT);
+        LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60(1), 0.001, Constants.Climb.CLIMBWHEELS_GEAR_RATIO),
+            DCMotor.getKrakenX60(1), Constants.Climb.CLIMBWHEELS_MIN_HEIGHT, Constants.Climb.CLIMBWHEELS_MAX_HEIGHT, true, Constants.Climb.CLIMBWHEELS_MIN_HEIGHT);
 
 
     private DCMotorSim climbSim = new DCMotorSim(
-        LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60(1),0.001, Constants.Climb.CLIMB_GEAR_RATIO),
+        LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60(1),0.001, Constants.Climb.SPOOLING_GEAR_RATIO),
         DCMotor.getKrakenX60(1));
 
     private Climb() 
     {
         targetPosition = Rotations.of(0);
-        elevator = new TalonFX(Constants.Climb.ELEVATOR_ID, Constants.CAN_CHAIN);
-        climb = new TalonFX(Constants.Climb.HINGE_ID, Constants.CAN_CHAIN);
+        climbWheels = new TalonFX(Constants.Climb.CLIMBWHEELS_ID, Constants.CAN_CHAIN);
+        spooling = new TalonFX(Constants.Climb.SPOOLING_ID, Constants.CAN_CHAIN);
 
         config();
         
         if (isSimulated())
         {
-            TalonFXSimState elevatorSimState = elevator.getSimState();
-            elevatorSimState.Orientation = Constants.Climb.ELEVATOR_MECHANICAL_ORIENTATION;
+            TalonFXSimState elevatorSimState = climbWheels.getSimState();
+            elevatorSimState.Orientation = Constants.Climb.CLIMBWHEELS_MECHANICAL_ORIENTATION;
             elevatorSimState.setMotorType(TalonFXSimState.MotorType.KrakenX60);
             
-            TalonFXSimState climbSimState = climb.getSimState();
-            climbSimState.Orientation = Constants.Climb.CLIMB_MECHANICAL_ORIENTATION;
+            TalonFXSimState climbSimState = spooling.getSimState();
+            climbSimState.Orientation = Constants.Climb.SPOOLING_MECHANICAL_ORIENTATION;
             climbSimState.setMotorType(TalonFXSimState.MotorType.KrakenX60);
         }
     }
@@ -69,110 +69,110 @@ public class Climb extends SubsystemBase
     private void config() 
     {
 
-        elevator.clearStickyFaults();
-        climb.clearStickyFaults();
+        climbWheels.clearStickyFaults();
+        spooling.clearStickyFaults();
 
-        TalonFXConfiguration elevatorConfig = new TalonFXConfiguration();
+        TalonFXConfiguration climbWheelsConfig = new TalonFXConfiguration();
 
-        elevatorConfig.MotorOutput.Inverted = Constants.Climb.ELEVATOR_INVERTED;
+        climbWheelsConfig.MotorOutput.Inverted = Constants.Climb.CLIMBWHEELS_INVERTED;
 
-        elevatorConfig.Feedback.SensorToMechanismRatio = Constants.Climb.ELEVATOR_GEAR_RATIO;
+        climbWheelsConfig.Feedback.SensorToMechanismRatio = Constants.Climb.CLIMBWHEELS_GEAR_RATIO;
         
-        elevatorConfig.CurrentLimits.StatorCurrentLimit = Constants.Climb.STATOR_CURRENT_LIMIT.in(Amps);
-        elevatorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+        climbWheelsConfig.CurrentLimits.StatorCurrentLimit = Constants.Climb.STATOR_CURRENT_LIMIT.in(Amps);
+        climbWheelsConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
-        elevatorConfig.CurrentLimits.SupplyCurrentLimit = Constants.Climb.SUPPLY_CURRENT_LIMIT.in(Amps);
-        elevatorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+        climbWheelsConfig.CurrentLimits.SupplyCurrentLimit = Constants.Climb.SUPPLY_CURRENT_LIMIT.in(Amps);
+        climbWheelsConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         
-        elevatorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        climbWheelsConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-        elevatorConfig.Slot0.kP = Constants.Climb.KP_ELEVATOR;
-        elevatorConfig.Slot0.kI = Constants.Climb.KI_ELEVATOR;
-        elevatorConfig.Slot0.kD = Constants.Climb.KD_ELEVATOR;
+        climbWheelsConfig.Slot0.kP = Constants.Climb.KP_CLIMBWHEELS;
+        climbWheelsConfig.Slot0.kI = Constants.Climb.KP_CLIMBWHEELS;
+        climbWheelsConfig.Slot0.kD = Constants.Climb.KP_CLIMBWHEELS;
 
-        elevatorConfig.Slot0.kG = Constants.Climb.KG;
-        elevatorConfig.Slot0.kS = Constants.Climb.KS;
-        elevatorConfig.Slot0.kV = Constants.Climb.KV;
-        elevatorConfig.Slot0.kA = Constants.Climb.KA;
+        climbWheelsConfig.Slot0.kG = Constants.Climb.KG;
+        climbWheelsConfig.Slot0.kS = Constants.Climb.KS;
+        climbWheelsConfig.Slot0.kV = Constants.Climb.KV;
+        climbWheelsConfig.Slot0.kA = Constants.Climb.KA;
 
-        elevatorConfig.MotionMagic.MotionMagicCruiseVelocity = Constants.Climb.MM_CRUISE_VELOCITY;
-        elevatorConfig.MotionMagic.MotionMagicAcceleration = Constants.Climb.MM_ACCELERATION;
-        elevatorConfig.MotionMagic.MotionMagicJerk = Constants.Climb.MM_JERK;
+        climbWheelsConfig.MotionMagic.MotionMagicCruiseVelocity = Constants.Climb.MM_CRUISE_VELOCITY;
+        climbWheelsConfig.MotionMagic.MotionMagicAcceleration = Constants.Climb.MM_ACCELERATION;
+        climbWheelsConfig.MotionMagic.MotionMagicJerk = Constants.Climb.MM_JERK;
 
-        elevator.getConfigurator().apply(elevatorConfig);
+        climbWheels.getConfigurator().apply(climbWheelsConfig);
 
-        TalonFXConfiguration climbConfig = new TalonFXConfiguration();
+        TalonFXConfiguration spoolingConfig = new TalonFXConfiguration();
 
-        climbConfig.MotorOutput.Inverted = Constants.Climb.CLIMB_INVERTED;
+        spoolingConfig.MotorOutput.Inverted = Constants.Climb.SPOOLING_INVERTED;
 
-        climbConfig.Feedback.SensorToMechanismRatio = Constants.Climb.CLIMB_GEAR_RATIO;
+        spoolingConfig.Feedback.SensorToMechanismRatio = Constants.Climb.SPOOLING_GEAR_RATIO;
         
-        climbConfig.CurrentLimits.StatorCurrentLimit = Constants.Climb.STATOR_CURRENT_LIMIT.in(Amps);
-        climbConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+        spoolingConfig.CurrentLimits.StatorCurrentLimit = Constants.Climb.STATOR_CURRENT_LIMIT.in(Amps);
+        spoolingConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
-        climbConfig.CurrentLimits.SupplyCurrentLimit = Constants.Climb.SUPPLY_CURRENT_LIMIT.in(Amps);
-        climbConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+        spoolingConfig.CurrentLimits.SupplyCurrentLimit = Constants.Climb.SUPPLY_CURRENT_LIMIT.in(Amps);
+        spoolingConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         
-        climbConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        spoolingConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-        climbConfig.Slot0.kP = Constants.Climb.KP_CLIMB;
-        climbConfig.Slot0.kI = Constants.Climb.KI_CLIMB;
-        climbConfig.Slot0.kD = Constants.Climb.KD_CLIMB;
+        spoolingConfig.Slot0.kP = Constants.Climb.KP_SPOOLING;
+        spoolingConfig.Slot0.kI = Constants.Climb.KI_SPOOLING;
+        spoolingConfig.Slot0.kD = Constants.Climb.KD_SPOOLING;
 
-        climb.getConfigurator().apply(climbConfig);
+        spooling.getConfigurator().apply(spoolingConfig);
     }
 
-    public void setElevatorDutyCycle(double velocity) 
+    public void setClimbWheelsDutyCycle(double velocity) 
     {
         if (isDisabled())
         {
             System.out.println("Quashing input to Climb");
             return;
         }
-        elevator.setControl(new DutyCycleOut(velocity));
+        climbWheels.setControl(new DutyCycleOut(velocity));
     }
 
-    public void setElevatorVelocity(AngularVelocity velocity) 
+    public void setClimbWheelsVelocity(AngularVelocity velocity) 
     {
         if (isDisabled())
         {
             System.out.println("Quashing input to Climb");
             return;
         }
-        elevator.setControl(new VelocityVoltage(velocity));
+        climbWheels.setControl(new VelocityVoltage(velocity));
     }
 
-    public AngularVelocity getElevatorVelocity() 
+    public AngularVelocity getClimbWheelsVelocity() 
     {
-        return elevator.getVelocity().getValue();
+        return climbWheels.getVelocity().getValue();
     }
 
-    public Angle getElevatorPosition()
+    public Angle getClimbWheelsPosition()
     {
-        return elevator.getPosition().getValue();
+        return climbWheels.getPosition().getValue();
     }
 
-    public Angle getElevatorTargetPosition() 
+    public Angle getClimbWheelsTargetPosition() 
     {
         return targetPosition;
     }
 
-    public Voltage getElevatorVoltage()
+    public Voltage getClimbWheelsVoltage()
     {
-        return elevator.getMotorVoltage().getValue();
+        return climbWheels.getMotorVoltage().getValue();
     }
 
-    public void setElevatorVoltage(Voltage v)
+    public void setClimbWheelsVoltage(Voltage v)
     {
         if (isDisabled())
         {
             System.out.println("Quashing input to Climb");
             return;
         }
-        elevator.setControl(new VoltageOut(v));
+        climbWheels.setControl(new VoltageOut(v));
     }
 
-    public void setElevatorTargetPosition(Angle tPosition) 
+    public void setClimbWheelsTargetPosition(Angle tPosition) 
     {
         if (isDisabled())
         {
@@ -182,32 +182,32 @@ public class Climb extends SubsystemBase
 
         targetPosition = tPosition;
         //System.out.println("Aiming to " + tPosition.in(Rotations) + ".");
-        elevator.setControl(new MotionMagicVoltage(tPosition));
+        climbWheels.setControl(new MotionMagicVoltage(tPosition));
     }
 
-    public boolean isElevatorStalling()
+    public boolean isSpoolingStalling()
     {
-        return Math.abs(elevator.getStatorCurrent().getValueAsDouble()) >= Constants.Climb.ELEVATOR_STALLING_CURRENT.in(Amps);
+        return Math.abs(spooling.getStatorCurrent().getValueAsDouble()) >= Constants.Climb.SPOOLING_STALLING_CURRENT.in(Amps);
     }
 
-    public void setClimbDutyCycle(double velocity) 
+    public void setSpoolingDutyCycle(double velocity) 
     {
-        climb.setControl(new DutyCycleOut(velocity));
+        spooling.setControl(new DutyCycleOut(velocity));
     }
 
-    public Voltage getClimbVoltage()
+    public Voltage getSpoolingVoltage()
     {
-        return climb.getMotorVoltage().getValue();
+        return spooling.getMotorVoltage().getValue();
     }
 
-    public void setClimbVoltage(Voltage v)
+    public void setSpoolingVoltage(Voltage v)
     {
         if (isDisabled())
         {
             System.out.println("Quashing input to Climb");
             return;
         }
-        climb.setControl(new VoltageOut(v));
+        spooling.setControl(new VoltageOut(v));
     }
     
     
@@ -216,27 +216,27 @@ public class Climb extends SubsystemBase
     {
         if (isSimulated())
         {
-            TalonFXSimState elevatorSimState = elevator.getSimState();
+            TalonFXSimState climbWheelsSimState = climbWheels.getSimState();
 
             // set the supply voltage of the TalonFX
-            elevatorSimState.setSupplyVoltage(RobotController.getBatteryVoltage());
+            climbWheelsSimState.setSupplyVoltage(RobotController.getBatteryVoltage());
 
             // get the motor voltage of the TalonFX
-            Voltage elevatorMotorVoltage = elevatorSimState.getMotorVoltageMeasure();
+            Voltage climbWheelsMotorVoltage = climbWheelsSimState.getMotorVoltageMeasure();
 
             // use the motor voltage to calculate new position and velocity
             // using WPILib's DCMotorSim class for physics simulation
-            elevatorSim.setInputVoltage(elevatorMotorVoltage.in(Volts));
+            elevatorSim.setInputVoltage(climbWheelsMotorVoltage.in(Volts));
             elevatorSim.update(0.020); // assume 20 ms loop time
 
             // apply the new rotor position and velocity to the TalonFX;
             // note that this is rotor position/velocity (before gear ratio), but
             // DCMotorSim returns mechanism position/velocity (after gear ratio)
-            elevatorSimState.setRawRotorPosition(elevatorSim.getPositionMeters() * Constants.Climb.ELEVATOR_GEAR_RATIO);
-            elevatorSimState
-                    .setRotorVelocity(elevatorSim.getVelocityMetersPerSecond() * Constants.Climb.ELEVATOR_GEAR_RATIO);
+            climbWheelsSimState.setRawRotorPosition(elevatorSim.getPositionMeters() * Constants.Climb.CLIMBWHEELS_GEAR_RATIO);
+            climbWheelsSimState
+                    .setRotorVelocity(elevatorSim.getVelocityMetersPerSecond() * Constants.Climb.CLIMBWHEELS_GEAR_RATIO);
 
-            TalonFXSimState climbSimState = climb.getSimState();
+            TalonFXSimState climbSimState = spooling.getSimState();
 
             // set the supply voltage of the TalonFX
             climbSimState.setSupplyVoltage(RobotController.getBatteryVoltage());
@@ -253,9 +253,9 @@ public class Climb extends SubsystemBase
             // note that this is rotor position/velocity (before gear ratio), but
             // DCMotorSim returns mechanism position/velocity (after gear ratio)
             climbSimState.setRawRotorPosition(
-                    climbSim.getAngularPosition().in(Rotations) * Constants.Climb.CLIMB_GEAR_RATIO);
+                    climbSim.getAngularPosition().in(Rotations) * Constants.Climb.SPOOLING_GEAR_RATIO);
             climbSimState.setRotorVelocity(
-                    climbSim.getAngularVelocity().in(Rotations.per(Second)) * Constants.Climb.CLIMB_GEAR_RATIO);
+                    climbSim.getAngularVelocity().in(Rotations.per(Second)) * Constants.Climb.SPOOLING_GEAR_RATIO);
         }
     }
 
@@ -271,12 +271,12 @@ public class Climb extends SubsystemBase
     
     private SysIdRoutine sysId = new SysIdRoutine(
         new SysIdRoutine.Config(Volts.per(Second).of(0.1),Volts.of(0.5),Seconds.of(10.0)), 
-        new SysIdRoutine.Mechanism((Voltage v)->setElevatorVoltage(v),
+        new SysIdRoutine.Mechanism((Voltage v)->setClimbWheelsVoltage(v),
             (SysIdRoutineLog l)->l
                 .motor("Climb")
-                .voltage(getElevatorVoltage())
-                .angularPosition(elevator.getPosition().getValue())
-                .angularVelocity(getElevatorVelocity()),
+                .voltage(getClimbWheelsVoltage())
+                .angularPosition(climbWheels.getPosition().getValue())
+                .angularVelocity(getClimbWheelsVelocity()),
         this)
     );
 

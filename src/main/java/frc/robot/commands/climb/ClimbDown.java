@@ -2,15 +2,13 @@ package frc.robot.commands.climb;
 
 import static edu.wpi.first.units.Units.*;
 
-import edu.wpi.first.units.measure.*;
-import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.Climb;
 
-public class ElevatorUp extends Command
+public class ClimbDown extends Command
 {
-    public ElevatorUp ()
+    public ClimbDown ()
     {
         addRequirements(Climb.getInstance());
     }
@@ -24,7 +22,7 @@ public class ElevatorUp extends Command
     @Override
     public void execute ()
     {
-        Climb.getInstance().setElevatorVoltage(Volts.of(2.0));
+        Climb.getInstance().setClimbWheelsVoltage(Constants.Climb.CLIMB_DOWN_VOLTAGE);
     }
 
     @Override
@@ -36,6 +34,6 @@ public class ElevatorUp extends Command
     @Override
     public void end (boolean interrupted)
     {
-        Climb.getInstance().setElevatorVoltage(Volts.of(0.0));
+        Climb.getInstance().setClimbWheelsVoltage(Volts.of(0.0));
     }
 }

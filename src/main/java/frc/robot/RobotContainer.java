@@ -12,15 +12,12 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.swerve.SwerveModule.*;
-import com.fasterxml.jackson.databind.ser.std.StdKeySerializers.Default;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.util.FlippingUtil;
 
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.util.sendable.Sendable;
-import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -38,10 +35,10 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.TunerConstants;
 import frc.robot.RobotContainer.PassDirection;
-import frc.robot.commands.climb.ClimbToLevel;
-import frc.robot.commands.climb.MoveDownUntilStall;
-import frc.robot.commands.climb.RunClimb;
-import frc.robot.commands.climb.UndeployClimb;
+import frc.robot.commands.climb.ClimbDown;
+import frc.robot.commands.climb.ClimbUp;
+import frc.robot.commands.climb.Unspool;
+import frc.robot.commands.climb.SpoolUntilStall;
 import frc.robot.commands.drive.DriveToPose;
 import frc.robot.commands.drive.RotateToAngle;
 import frc.robot.commands.hood.AimToAngle;
@@ -305,10 +302,7 @@ public class RobotContainer
 
 
         testCommandChooser.setDefaultOption("None", Commands.none());
-        testCommandChooser.addOption("Climb/ClimbToLevel[1]", new ClimbToLevel(1));
-        testCommandChooser.addOption("Climb/ClimbToLevel[2]", new ClimbToLevel(2));
-        testCommandChooser.addOption("Climb/ClimbToLevel[3]", new ClimbToLevel(3));
-        testCommandChooser.addOption("Climb/MoveDownUntilStall", new MoveDownUntilStall());
+        testCommandChooser.addOption("Climb/ClimbUpUntilStall", new ClimbUp());
         testCommandChooser.addOption("Hood/AimToAngle[" + Hood.mechanismToEffective(Constants.Hood.MIN_ANGLE) + "°]", 
             new AimToAngle(Hood.mechanismToEffective(Constants.Hood.MIN_ANGLE)));
         testCommandChooser.addOption("Hood/AimToAngle[65°]", new AimToAngle(65.0));
@@ -342,8 +336,6 @@ public class RobotContainer
         NamedCommands.registerCommand("StartDefaultIntake", new IndependentCommand(new DefaultIntake()));
         NamedCommands.registerCommand("EjectIntake (with timeout)", new EjectIntake().withTimeout(1.0));
         NamedCommands.registerCommand("HardShoot", hardShoot);
-        NamedCommands.registerCommand("ClimbL3", new ClimbToLevel(3).andThen(new RunClimb()));
-        NamedCommands.registerCommand("ClimbL1", new ClimbToLevel(1).andThen(new RunClimb()));
         NamedCommands.registerCommand("RevShoot", Commands.runOnce(()->{System.out.println(Util.calculateShootVelocity(drivetrain));})
             .andThen(Commands.runOnce(()->CommandScheduler.getInstance().schedule(new ShooterTargetSpeed(
                 ()->Util.calculateShootVelocity(drivetrain) + leftFlywheelOffset,
@@ -376,8 +368,11 @@ public class RobotContainer
         Shooter.getInstance().setDefaultCommand(new ShooterDefaultSpeed());
         // Hood.getInstance().setDefaultCommand(new ZeroHood());
 
+        // CHANGING CONTROLS HERE!!!!
+
         boolean useDebuggingBindings = false; // mainly for sysid or debugging
         boolean useDefaultBindings = false; // in case ever the official controls don't work, use these as a backup to be able to drive around
+        
         if (useDebuggingBindings) configureDebugBindings();
         else if (useDefaultBindings)
         {
@@ -394,10 +389,15 @@ public class RobotContainer
 
     private void configureDebugBindings()
     {
-        driver.button(1).onTrue(Hood.getInstance().sysIdQuasistatic(Direction.kForward));
-        driver.button(2).onTrue(Hood.getInstance().sysIdQuasistatic(Direction.kReverse));
-        driver.button(3).onTrue(Hood.getInstance().sysIdDynamic(Direction.kForward));
-        driver.button(4).onTrue(Hood.getInstance().sysIdDynamic(Direction.kReverse));
+        driver.y().whileTrue(new ClimbUp());
+        driver.a().whileTrue(new ClimbDown());
+        driver.x().whileTrue(new SpoolUntilStall());
+        driver.b().whileTrue(new Unspool());
+
+        // driver.button(1).onTrue(Hood.getInstance().sysIdQuasistatic(Direction.kForward));
+        // driver.button(2).onTrue(Hood.getInstance().sysIdQuasistatic(Direction.kReverse));
+        // driver.button(3).onTrue(Hood.getInstance().sysIdDynamic(Direction.kForward));
+        // driver.button(4).onTrue(Hood.getInstance().sysIdDynamic(Direction.kReverse));
 
         /*
         driver.povUp().onTrue(Commands.print("POV UP"));
@@ -405,10 +405,10 @@ public class RobotContainer
         driver.povLeft().onTrue(Commands.print("POV LEFT"));
         driver.povRight().onTrue(Commands.print("POV RIGHT"));
         */
-        driver.a().whileTrue(Hood.getInstance().sysIdQuasistatic(Direction.kForward));
-        driver.b().whileTrue(Hood.getInstance().sysIdQuasistatic(Direction.kReverse));
-        driver.x().whileTrue(Hood.getInstance().sysIdDynamic(Direction.kForward));
-        driver.y().whileTrue(Hood.getInstance().sysIdDynamic(Direction.kReverse));
+        // driver.a().whileTrue(Hood.getInstance().sysIdQuasistatic(Direction.kForward));
+        // driver.b().whileTrue(Hood.getInstance().sysIdQuasistatic(Direction.kReverse));
+        // driver.x().whileTrue(Hood.getInstance().sysIdDynamic(Direction.kForward));
+        // driver.y().whileTrue(Hood.getInstance().sysIdDynamic(Direction.kReverse));
         /*
         driver.a().whileTrue(Hood.getInstance().sysIdQuasistatic(Direction.kForward));
         driver.b().whileTrue(Hood.getInstance().sysIdQuasistatic(Direction.kReverse));
@@ -550,17 +550,18 @@ public class RobotContainer
             .onTrue(track(revShoot));
 
         // tested in sim
-        driver.y().onTrue(track(new ClimbToLevel(3).andThen(new RunClimb())
-            .withName("Climb L3"))); // TODO: add autoalign
-        // tested in sim
-        driver.b().onTrue(track(new ClimbToLevel(1).andThen(new RunClimb())
-            .withName("Climb L1"))); // TODO: add autoalign
+        // THIS ALL NEEDS TO BE CHANGED BASED ON WHAT DRIVE TEAM WANTS
+        // driver.y().onTrue(track(new ClimbToLevel(3).andThen(new RunClimb())
+        //     .withName("Climb L3"))); // TODO: add autoalign
+        // // tested in sim
+        // driver.b().onTrue(track(new ClimbToLevel(1).andThen(new RunClimb())
+        //     .withName("Climb L1"))); // TODO: add autoalign
 
         // tested in sim
         driver.x().whileTrue(track(hardShoot));
         
         // tested (?) in sim
-        driver.a().onTrue(track(new UndeployClimb().andThen(stow.get()).withName("Drop")));
+        driver.a().onTrue(track(new Unspool().andThen(stow.get()).withName("Drop")));
         
         // tested in sim
         driver.povUp().onTrue(Commands.runOnce(()->pitchOffset += Constants.PITCH_OFFSET_UNIT));

@@ -14,7 +14,6 @@ import static edu.wpi.first.units.Units.*;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Pose2d;
 
 import com.pathplanner.lib.util.FlippingUtil;
 
@@ -31,16 +30,13 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StringPublisher;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.Drivetrain;
 import frc.robot.simulation.SimulationState;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.ShooterIndexer;
-import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeExtension;
-import frc.robot.util.Util;
 import frc.robot.subsystems.Climb;
 
 public class Telemetry 
@@ -104,11 +100,9 @@ public class Telemetry
 
     private NetworkTable climb = table.getSubTable("Climb");
     private StringPublisher climbCommand = climb.getStringTopic("command").publish();
-    private DoublePublisher climbElevatorVelocity = climb.getDoubleTopic("elevator velocity (rot per s)").publish();
-    private DoublePublisher climbElevatorVoltage = climb.getDoubleTopic("elevator voltage (V)").publish();
-    private DoublePublisher climbElevatorPosition = climb.getDoubleTopic("elevator position (rot)").publish();
-    private DoublePublisher climbElevatorTarget = climb.getDoubleTopic("elevator target (rot)").publish();
-    private DoublePublisher climbClimbVoltage = climb.getDoubleTopic("climb voltage (V)").publish();
+    private DoublePublisher climbClimbWheelsVelocity = climb.getDoubleTopic("climb wheels velocity (rot per s)").publish();
+    private DoublePublisher climbClimbWheelsVoltage = climb.getDoubleTopic("climb wheels voltage (V)").publish();
+    private DoublePublisher climbSpoolingVoltage = climb.getDoubleTopic("spooling voltage (V)").publish();
 
     /*
     private NetworkTable persistent = table.getSubTable("[persistent variables]");
@@ -249,11 +243,9 @@ public class Telemetry
         
         Command climbCommand = Climb.getInstance().getCurrentCommand();
         this.climbCommand.set(climbCommand == null ? "" : climbCommand.getName());
-        climbElevatorVelocity.set(Climb.getInstance().getElevatorVelocity().in(RotationsPerSecond));
-        climbElevatorVoltage.set(Climb.getInstance().getElevatorVoltage().in(Volts));
-        climbElevatorPosition.set(Climb.getInstance().getElevatorPosition().in(Rotations));
-        climbElevatorTarget.set(Climb.getInstance().getElevatorTargetPosition().in(Rotations));
-        climbClimbVoltage.set(Climb.getInstance().getClimbVoltage().in(Volts));
+        climbClimbWheelsVelocity.set(Climb.getInstance().getClimbWheelsVelocity().in(RotationsPerSecond));
+        climbClimbWheelsVoltage.set(Climb.getInstance().getClimbWheelsVoltage().in(Volts));
+        climbSpoolingVoltage.set(Climb.getInstance().getSpoolingVoltage().in(Volts));
 
 
         //turretYawRawPublisher.set(Turret.getInstance().getPosition().in(Rotations));

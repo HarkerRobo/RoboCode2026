@@ -2,16 +2,13 @@ package frc.robot.commands.climb;
 
 import static edu.wpi.first.units.Units.Volts;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.Climb;
 
-public class RunClimb extends Command
+public class Unspool extends Command
 {
-    Timer timer = new Timer();
-
-    public RunClimb()
+    public Unspool()
     {
         addRequirements(Climb.getInstance());
     }
@@ -19,8 +16,7 @@ public class RunClimb extends Command
     @Override
     public void initialize()
     {
-        timer.reset();
-        Climb.getInstance().setClimbVoltage(Constants.Climb.CLIMB_DEPLOY_VOLTAGE);
+        Climb.getInstance().setSpoolingVoltage(Constants.Climb.UNSPOOL_VOLTAGE);
     }
 
     @Override
@@ -31,12 +27,12 @@ public class RunClimb extends Command
     @Override
     public boolean isFinished()
     {
-        return timer.hasElapsed(5.0);
+        return false;
     }
 
     @Override
     public void end(boolean interrupted)
     {
-        Climb.getInstance().setClimbVoltage(Volts.of(0.0));
+        Climb.getInstance().setSpoolingVoltage((Volts.of(0.0)));
     }
 }

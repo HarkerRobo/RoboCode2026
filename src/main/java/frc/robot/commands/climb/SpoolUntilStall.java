@@ -7,10 +7,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.Climb;
 
-public class UndeployClimb extends Command
+public class SpoolUntilStall extends Command
 {
     Timer timer = new Timer();
-    public UndeployClimb()
+    public SpoolUntilStall()
     {
         addRequirements(Climb.getInstance());
     }
@@ -19,7 +19,7 @@ public class UndeployClimb extends Command
     public void initialize()
     {
         timer.reset();
-        Climb.getInstance().setClimbVoltage(Constants.Climb.CLIMB_UNDEPLOY_VOLTAGE);
+        Climb.getInstance().setSpoolingVoltage(Constants.Climb.SPOOL_VOLTAGE);
     }
 
     @Override
@@ -30,12 +30,12 @@ public class UndeployClimb extends Command
     @Override
     public boolean isFinished()
     {
-        return timer.hasElapsed(5.0);
+        return Climb.getInstance().isSpoolingStalling();
     }
 
     @Override
     public void end(boolean interrupted)
     {
-        Climb.getInstance().setClimbVoltage(Volts.of(0.0));
+        Climb.getInstance().setSpoolingVoltage((Volts.of(0.0)));
     }
 }
