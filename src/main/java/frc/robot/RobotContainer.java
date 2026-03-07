@@ -141,8 +141,8 @@ public class RobotContainer
 
     private boolean isSlow = false;
     public boolean mostRecentAim = false; // false = shoot; true = pass
-    private boolean intakeTriggered = false; // true if intake has been enabled
-    private boolean intakeExtended = true; //true if intake and hopper have been extended // TODO reverse
+    public boolean intakeTriggered = false; // true if intake has been enabled
+    public boolean intakeExtended = true; //true if intake and hopper have been extended // TODO reverse
     public double pitchOffset = 0.0;
     public double leftFlywheelOffset = 0.0;
     public double rightFlywheelOffset = 0.0;
@@ -229,7 +229,7 @@ public class RobotContainer
         shoot = new RotateToAngle(drivetrain, ()->AlignConstants.HUB)
             //Commands.none()
             .alongWith(new AimToAngle(()->Util.calculateShootPitch(drivetrain).in(Degrees)))
-            .alongWith(new IndependentCommand(new ShooterTargetSpeed(Util.calculateShootVelocity(drivetrain))))
+            .alongWith(new IndependentCommand(track(new ShooterTargetSpeed(Util.calculateShootVelocity(drivetrain)))))
             // .alongWith(new AimToAngle(75.0))
             // .alongWith(new IndependentCommand(new ShooterTargetSpeed(()->8.0 + leftFlywheelOffset, ()->8.0 + rightFlywheelOffset)))
             .andThen(new WaitUntilCommand(
@@ -252,9 +252,9 @@ public class RobotContainer
                                : Constants.PASS_RIGHT_TARGET_POSITION.toTranslation2d())
             //Commands.none()
             .alongWith(new AimToAngle(() -> Util.calculatePassPitch(drivetrain).in(Degrees) + pitchOffset))
-            .andThen(new IndependentCommand(new ShooterTargetSpeed(
+            .andThen(new IndependentCommand(track(new ShooterTargetSpeed(
                 ()->Util.calculatePassVelocity(drivetrain) + leftFlywheelOffset,
-                ()->Util.calculatePassVelocity(drivetrain) + rightFlywheelOffset)))
+                ()->Util.calculatePassVelocity(drivetrain) + rightFlywheelOffset))))
             .andThen(new WaitUntilCommand(
                     () -> Shooter.getInstance().readyToShoot(Util.calculatePassVelocity(drivetrain))
                             && Hood.getInstance().readyToShoot()))
@@ -267,8 +267,11 @@ public class RobotContainer
         
 
         // tested in sim
-        hardShoot = new AimToAngle(Constants.HARDCODE_HOOD_PITCH.in(Degrees))
-            .alongWith(new IndependentCommand(new ShooterTargetSpeed(()->Constants.HARDCODE_VELOCITY)))
+        hardShoot = //new AimToAngle(Constants.HARDCODE_HOOD_PITCH.in(Degrees))
+            Commands.none()
+            .alongWith(new IndependentCommand(track(new ShooterTargetSpeed(()->Constants.HARDCODE_VELOCITY))))
+            .andThen(new IndependentCommand(track(new RunIntake())))
+            .andThen(new IndependentCommand(track(new IndexerFullSpeed())))
             .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot()))
             .andThen(new ShooterIndexerFullSpeed())
             .finallyDo(()->CommandScheduler.getInstance().schedule(new ShooterDefaultSpeed()))
@@ -277,9 +280,9 @@ public class RobotContainer
 
         revShoot = 
                 Commands.runOnce(()->mostRecentAim = false)
-            .andThen(new IndependentCommand(new ShooterIndexerDefaultSpeed()))
+            .andThen(new IndependentCommand(track(new ShooterIndexerDefaultSpeed())))
             .andThen(
-                new IndependentCommand(new ShooterTargetSpeed(()->Util.calculateShootVelocity(drivetrain))))
+                new IndependentCommand(track(new ShooterTargetSpeed(()->Util.calculateShootVelocity(drivetrain)))))
                 // new IndependentCommand(new ShooterTargetSpeed(()->8.0 + leftFlywheelOffset, ()->8.0 + rightFlywheelOffset)))
             .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot()))
             //.andThen(
@@ -289,11 +292,11 @@ public class RobotContainer
 
         revPass = 
                 Commands.runOnce(()->mostRecentAim = true)
-            .andThen(new IndependentCommand(new ShooterIndexerDefaultSpeed()))
+            .andThen(new IndependentCommand(track(new ShooterIndexerDefaultSpeed())))
             .andThen(
-                new IndependentCommand(new ShooterTargetSpeed(
+                new IndependentCommand(track(new ShooterTargetSpeed(
                     ()->Util.calculatePassVelocity(drivetrain) + leftFlywheelOffset,
-                    ()->Util.calculatePassVelocity(drivetrain) + rightFlywheelOffset)))
+                    ()->Util.calculatePassVelocity(drivetrain) + rightFlywheelOffset))))
             .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot()))
             //.andThen(
             //     Commands.runOnce(()->driver.setRumble(RumbleType.kBothRumble, 1.0)))
@@ -591,7 +594,16 @@ public class RobotContainer
     public void configureOperatorBindings()
     {
         operator.start().onTrue(track(
-                drivetrain.runOnce(() -> drivetrain.seedFieldCentric())
+                drivetrain.runOnce(() -> {
+                if (DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Red)
+                {
+                    drivetrain.seedFieldCentric();
+                }
+                else
+                {
+                    drivetrain.seedFieldCentric(Rotation2d.k180deg);
+                }
+            })
                 .andThen(drivetrain.runOnce(() -> drivetrain.resetPose(
                             (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) ? 
                             FlippingUtil.flipFieldPose(Constants.ZEROING_POSE) : Constants.ZEROING_POSE)))
@@ -601,9 +613,8 @@ public class RobotContainer
             //.alongWith(new ShooterDefaultSpeed())
             .withName("ZeroHood+Shooter")));
 
-        operator.leftTrigger().onTrue(track(new EjectIntake().andThen(Commands.runOnce(()->{
-            if (intakeTriggered) CommandScheduler.getInstance().schedule(new RunIntake());   
-        })).withName("EjectIntake")));
+        operator.leftTrigger().onTrue(track(new EjectIntake().andThen(new IndependentCommand(track(new RunIntake())))
+            .withName("EjectIntake")));
 
         operator.rightTrigger().whileTrue(track(new IndependentCommand(new ShooterTargetSpeed(Constants.Shooter.SOFT_PASS_VELOCITY))
             .andThen(new IndependentCommand(new IndexerFullSpeed()))

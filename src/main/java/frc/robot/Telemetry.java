@@ -54,6 +54,8 @@ public class Telemetry
     private DoublePublisher hoodOffset = table.getDoubleTopic("hood offset").publish();
     private DoublePublisher leftFlywheelOffset = table.getDoubleTopic("left flywheel offset").publish();
     private DoublePublisher rightFlywheelOffset = table.getDoubleTopic("right flywheel offset").publish();
+    private BooleanPublisher intakeTriggered = table.getBooleanTopic("intake triggered").publish();
+    private BooleanPublisher intakeExtended = table.getBooleanTopic("intake extended").publish();
 
     private NetworkTable intake = table.getSubTable("Intake");
     private StringPublisher intakeCommand = intake.getStringTopic("main command").publish();
@@ -196,6 +198,8 @@ public class Telemetry
         hoodOffset.set(Robot.instance.robotContainer.pitchOffset);
         leftFlywheelOffset.set(Robot.instance.robotContainer.leftFlywheelOffset);
         rightFlywheelOffset.set(Robot.instance.robotContainer.rightFlywheelOffset);
+        intakeTriggered.set(Robot.instance.robotContainer.intakeTriggered);
+        intakeExtended.set(Robot.instance.robotContainer.intakeExtended);
 
         Command intakeCommand = Intake.getInstance().getCurrentCommand();
         this.intakeCommand.set(intakeCommand == null ? "" : intakeCommand.getName());
