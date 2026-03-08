@@ -97,7 +97,7 @@ public class Constants
         public static final int RIGHT_ID = 19;
         
         public static final double STATOR_CURRENT_LIMIT = 60.0;
-        public static final double SUPPLY_CURRENT_LIMIT = 60.0;
+        public static final double SUPPLY_CURRENT_LIMIT = 40.0;
 
         public static final double MM_CRUISE_VELOCITY = 60.0;
 		public static final double MM_ACCELERATION = 60.0;
@@ -139,7 +139,7 @@ public class Constants
         public static int ID = 23;
 
         public static final double STATOR_CURRENT_LIMIT = 60.0;
-        public static final double SUPPLY_CURRENT_LIMIT = 60.0;
+        public static final double SUPPLY_CURRENT_LIMIT = 40.0;
 
         public static final double INTAKE_VELOCITY = 20.0; // rot/s
         public static final double DEFAULT_INTAKE_VELOCITY = 0.0;
@@ -165,7 +165,7 @@ public class Constants
         public static int ID = 24;
 
         public static final double STATOR_CURRENT_LIMIT = 60.0;
-        public static final double SUPPLY_CURRENT_LIMIT = 60.0;
+        public static final double SUPPLY_CURRENT_LIMIT = 40.0;
 
         public static final double EXTENDING_VOLTAGE = 2.5;
         public static final double RETRACTING_VOLTAGE = -2.5;
@@ -195,7 +195,7 @@ public class Constants
         public static final int ID = 26;
         
         public static final double STATOR_CURRENT_LIMIT = 60.0;
-        public static final double SUPPLY_CURRENT_LIMIT = 60.0;
+        public static final double SUPPLY_CURRENT_LIMIT = 40.0;
 
         public static final double MM_CRUISE_VELOCITY = 2.0; // TODO
 		public static final double MM_ACCELERATION = 8.0;  // TODO
@@ -291,9 +291,11 @@ public class Constants
         public static final double KD_CLIMBWHEELS = 0.0; //TODO
         public static final double KD_SPOOLING = 0.037935; // TODO
 
-        public static final Current STATOR_CURRENT_LIMIT = Amps.of(60); // TODO
-        public static final Current SPOOLING_STALLING_CURRENT = Amps.of(30); // TODO
-        public static final Current SUPPLY_CURRENT_LIMIT = Amps.of(60); // TODO
+        public static final double CLIMBWHEELS_STATOR_CURRENT_LIMIT = 60.0;
+        public static final double CLIMBWHEELS_SUPPLY_CURRENT_LIMIT = 40.0;
+        public static final double SPOOLING_STATOR_CURRENT_LIMIT = 90.0;
+        public static final double SPOOLING_SUPPLY_CURRENT_LIMIT = 40.0;
+        public static final double SPOOLING_STALLING_CURRENT = 20;
 		
         public static final double KS = 0.0025457; // TODO
         public static final double KV = 0.018935; // TODO
