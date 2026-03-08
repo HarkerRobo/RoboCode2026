@@ -302,12 +302,9 @@ public class RobotContainer
         testCommandChooser.addOption("Climb/ClimbDown", new ClimbDown());
         testCommandChooser.addOption("Climb/SpoolUntilStall", new SpoolUntilStall());
         testCommandChooser.addOption("Climb/Unspool", new Unspool());
-        testCommandChooser.addOption("Hood/AimToAngle[" + Hood.mechanismToEffective(Constants.Hood.MIN_ANGLE) + "°]", 
-            new AimToAngle(Hood.mechanismToEffective(Constants.Hood.MIN_ANGLE)));
-        testCommandChooser.addOption("Hood/AimToAngle[65°]", new AimToAngle(65.0));
+        testCommandChooser.addOption("Hood/AimToAngle[75°]", new AimToAngle(75.0));
+        testCommandChooser.addOption("Hood/AimToAngle[60°]", new AimToAngle(60.0));
         testCommandChooser.addOption("Hood/AimToAngle[70°]", new AimToAngle(70.0));
-        testCommandChooser.addOption("Hood/AimToAngle[" + Hood.mechanismToEffective(Constants.Hood.MAX_ANGLE) + "°]", 
-            new AimToAngle(Hood.mechanismToEffective(Constants.Hood.MAX_ANGLE)));
         testCommandChooser.addOption("Hood/ZeroHood", new ZeroHood());
         testCommandChooser.addOption("Hood/HoodManualUp", new HoodManualUp());
         testCommandChooser.addOption("Hood/HoodManualDown", new HoodManualDown());

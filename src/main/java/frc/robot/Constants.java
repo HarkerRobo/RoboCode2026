@@ -197,10 +197,7 @@ public class Constants
         public static final double STATOR_CURRENT_LIMIT = 60.0;
         public static final double SUPPLY_CURRENT_LIMIT = 40.0;
 
-        public static final double MM_CRUISE_VELOCITY = 2.0; // TODO
-		public static final double MM_ACCELERATION = 8.0;  // TODO
-		public static final double MM_JERK = 16.0; // TODO
-		public static final InvertedValue INVERTED = InvertedValue.CounterClockwise_Positive;
+		public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive;
         
         public static final double GEAR_RATIO = 137.67; // sensor to hood angle
 
@@ -215,19 +212,17 @@ public class Constants
 
         public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
 
-        public static final double MOMENT_OF_INERTIA = 20.0; // TODO (kg m^2)
-
-        public static final double LENGTH = 0.5; // TODO meters
-
-        public static final double MIN_ANGLE = 0.0; // in motor direction - equivalent to 75 degree pitch for fuel trajectory
-        public static final double MAX_ANGLE = 15.0; // equivalent to 60 degree pitch
         public static final double MAX_ERROR = 0.25;
     
         public static final double STALLING_CURRENT = 30.0; // TODO
 
-        public static final double MANUAL_UP_VOLTAGE = 0.5; // TODO
-        public static final double MANUAL_DOWN_VOLTAGE = -0.5; // TODO
+        public static final double MANUAL_UP_VOLTAGE = -0.5; // TODO
+        public static final double MANUAL_DOWN_VOLTAGE = 0.5; // TODO
+        
         public static final double ZEROING_VOLTAGE = -1.0; // TODO
+        public static final double ZEROING_POSITION = 75.5; 
+        // because the hood current zeroes too high up for some reason and we don't
+        // want the hood to stall when it goes to 75 degrees (its max angle)
     }
 
     public class Simulation

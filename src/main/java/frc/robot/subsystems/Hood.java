@@ -91,11 +91,6 @@ public class Hood extends SubsystemBase
         this.desiredPosition = desiredPosition.in(Rotations);
         motor.setControl(new PositionVoltage(desiredPosition));
     }
-
-    public void moveToEffectivePosition(Angle desiredPosition)
-    {
-        moveToPosition(effectiveToMechanism(desiredPosition));
-    }
     
     public Angle getPosition()
     {
@@ -206,25 +201,5 @@ public class Hood extends SubsystemBase
     {
         if (instance == null) instance = new Hood();
         return instance;
-    }
-
-    public static Angle effectiveToMechanism(Angle effectivePitch)
-    {
-        return Degrees.of(75.0).minus(effectivePitch);
-    }
-
-    public static Angle mechanismToEffective(Angle mechanismPitch)
-    {
-        return Degrees.of(75.0).minus(mechanismPitch);
-    }
-
-    public static double effectiveToMechanism(double effectivePitchDegrees)
-    {
-        return 75.0 - effectivePitchDegrees;
-    }
-
-    public static double mechanismToEffective(double mechanismPitchDegrees)
-    {
-        return 75.0 - mechanismPitchDegrees;
     }
 }

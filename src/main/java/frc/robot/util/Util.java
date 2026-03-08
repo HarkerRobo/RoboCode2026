@@ -59,9 +59,9 @@ public class Util
 
     public static void init ()
     {
-        addData(1.86, 8.0, Hood.mechanismToEffective(0.5));
-        addData(2.484, 8.0, Hood.mechanismToEffective(1.51));
-        addData(2.946, 8.0, Hood.mechanismToEffective(4.94));
+        // dummy data for testing interpolation
+        addData(1.5, 0.0, 75.0);
+        addData(4.5, 10.0, 60.0);
     }
 
     public static double bottomLeftX (Rectangle2d r)

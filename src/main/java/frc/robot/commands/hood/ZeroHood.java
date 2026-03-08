@@ -32,9 +32,7 @@ public class ZeroHood extends Command
         if (!interrupted)
         {
             System.out.println("Soft zero done");
-            Hood.getInstance().setPosition(Degrees.of(-0.5)); 
-            // this is because the hood pops a bit after the current zero, so don't
-            // want the hood to stall when it goes to 75.0 (or 0.0) degrees.
+            Hood.getInstance().setPosition(Degrees.of(Constants.Hood.ZEROING_POSITION));
         }
         Hood.getInstance().setVoltage(Volts.of(0.0));
     }

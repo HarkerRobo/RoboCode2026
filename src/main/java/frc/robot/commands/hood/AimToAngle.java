@@ -32,7 +32,7 @@ public class AimToAngle extends Command
     {
         pitch = pitcher.getAsDouble();
         
-        Hood.getInstance().moveToEffectivePosition(Degrees.of(pitch));
+        Hood.getInstance().moveToPosition(Degrees.of(pitch));
         System.out.println("Aiming: " + pitch + "°");
     }
 
