@@ -165,8 +165,8 @@ public class RobotContainer
 
     public boolean onLeftSide()
     {
-      if (direction == PassDirection.Left) return false; // not a bug
-      if (direction == PassDirection.Right) return true;
+      if (direction == PassDirection.Left) return true;
+      if (direction == PassDirection.Right) return false;
       return (Util.onLeftSide(drivetrain));
     }
 

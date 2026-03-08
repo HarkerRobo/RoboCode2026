@@ -90,7 +90,9 @@ public class Telemetry
     private StringPublisher climbCommand = climb.getStringTopic("command").publish();
     private DoublePublisher climbClimbWheelsVelocity = climb.getDoubleTopic("climb wheels velocity (rot per s)").publish();
     private DoublePublisher climbClimbWheelsVoltage = climb.getDoubleTopic("climb wheels voltage (V)").publish();
+    private DoublePublisher climbClimbWheelsPosition = climb.getDoubleTopic("climb wheels position (rot)").publish();
     private DoublePublisher climbSpoolingVoltage = climb.getDoubleTopic("spooling voltage (V)").publish();
+    private DoublePublisher climbSpoolingPosition = climb.getDoubleTopic("spooling position (rot)").publish();
 
     /*
     private NetworkTable persistent = table.getSubTable("[persistent variables]");
@@ -221,7 +223,9 @@ public class Telemetry
         this.climbCommand.set(climbCommand == null ? "" : climbCommand.getName());
         climbClimbWheelsVelocity.set(Climb.getInstance().getClimbWheelsVelocity().in(RotationsPerSecond));
         climbClimbWheelsVoltage.set(Climb.getInstance().getClimbWheelsVoltage().in(Volts));
+        climbClimbWheelsPosition.set(Climb.getInstance().getClimbWheelsPosition().in(Rotations));
         climbSpoolingVoltage.set(Climb.getInstance().getSpoolingVoltage().in(Volts));
+        climbSpoolingPosition.set(Climb.getInstance().getSpoolingPosition().in(Rotations));
 
 
         //turretYawRawPublisher.set(Turret.getInstance().getPosition().in(Rotations));
