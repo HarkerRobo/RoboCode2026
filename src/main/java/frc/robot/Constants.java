@@ -219,7 +219,7 @@ public class Constants
         public static final double MANUAL_UP_VOLTAGE = -0.5; // TODO
         public static final double MANUAL_DOWN_VOLTAGE = 0.5; // TODO
         
-        public static final double ZEROING_VOLTAGE = -1.0; // TODO
+        public static final double ZEROING_VOLTAGE = 1.0; // TODO
         public static final double ZEROING_POSITION = 75.5; 
         // because the hood current zeroes too high up for some reason and we don't
         // want the hood to stall when it goes to 75 degrees (its max angle)
