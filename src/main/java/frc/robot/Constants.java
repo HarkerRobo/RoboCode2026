@@ -183,6 +183,10 @@ public class Constants
         public static final double MAX_HEIGHT = 1.0; // TODO
         
         public static final double STALLING_DEBOUNCE_TIME = 0.1;
+
+        public static final double AGITATE_MIN_VOLTAGE = -1.0; // TODO
+        public static final double AGITATE_MAX_VOLTAGE = 1.0; // TODO
+        public static final double AGITATE_PERIOD_SECONDS = 1.0; // TODO
     }
 
     public class Hood
