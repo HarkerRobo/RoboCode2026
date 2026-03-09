@@ -56,6 +56,7 @@ public class Telemetry
     private NetworkTable intake = table.getSubTable("Intake");
     private StringPublisher intakeCommand = intake.getStringTopic("main command").publish();
     private DoublePublisher intakeMainVelocity = intake.getDoubleTopic("main velocity (rot per s)").publish();
+    private DoublePublisher intakeMainTargetVelocity = intake.getDoubleTopic("main target velocity (rot per s)").publish();
     private DoublePublisher intakeMainVoltage = intake.getDoubleTopic("main voltage (V)").publish();
     private DoublePublisher intakeMainCurrent = intake.getDoubleTopic("main current (A) ").publish();
 
@@ -188,6 +189,7 @@ public class Telemetry
         Command intakeCommand = Intake.getInstance().getCurrentCommand();
         this.intakeCommand.set(intakeCommand == null ? "" : intakeCommand.getName());
         intakeMainVelocity.set(Intake.getInstance().getVelocity().in(RotationsPerSecond));
+        intakeMainTargetVelocity.set(Intake.getInstance().getTargetVelocity().in(RotationsPerSecond));
         intakeMainVoltage.set(Intake.getInstance().getVoltage().in(Volts));
         intakeMainCurrent.set(Intake.getInstance().getStatorCurrent().in(Amps));
         

@@ -25,6 +25,7 @@ public class Intake extends SubsystemBase
 {
     private static Intake instance;
     private TalonFX motor;
+    private double targetVelocity;
 
     private DCMotorSim motorSim = new DCMotorSim(
         LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 0.001, Constants.Intake.GEAR_RATIO),
@@ -80,6 +81,11 @@ public class Intake extends SubsystemBase
         return motor.getVelocity().getValue();
     }
 
+    public AngularVelocity getTargetVelocity()
+    {
+        return RotationsPerSecond.of(targetVelocity);
+    }
+
     public Current getStatorCurrent()
     {
         return motor.getStatorCurrent().getValue();
@@ -97,6 +103,7 @@ public class Intake extends SubsystemBase
 
     public void setVelocity (AngularVelocity velocity)
     {
+        targetVelocity = velocity.in(RotationsPerSecond);
         if (isDisabled())
         {
             System.out.println("Quashing input to Intake");
