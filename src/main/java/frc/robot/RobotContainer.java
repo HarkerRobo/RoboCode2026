@@ -335,7 +335,8 @@ public class RobotContainer
             .andThen(Commands.runOnce(()->CommandScheduler.getInstance().schedule(new ShooterTargetSpeed(
                 ()->Util.calculateShootVelocity(drivetrain) + leftFlywheelOffset,
                 ()->Util.calculateShootVelocity(drivetrain) + rightFlywheelOffset)))));
-        NamedCommands.registerCommand("Shoot", new AimToAngle(()->Util.calculateShootPitch(drivetrain).in(Degrees) + pitchOffset)
+        NamedCommands.registerCommand("Shoot", new AimToAngle(()->Util.calculateShootPitch(drivetrain).in(Degrees))
+        .alongWith(new ShooterTargetSpeed(()->Util.calculateShootVelocity(drivetrain)))
         .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot() && Hood.getInstance().readyToShoot()))
         .andThen(new ShooterIndexerFullSpeed().withTimeout(5.0)) // load to shoot
         .finallyDo(()->{
