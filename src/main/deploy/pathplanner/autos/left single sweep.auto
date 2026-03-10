@@ -43,12 +43,6 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "StartDefaultIntake"
-          }
-        },
-        {
           "type": "deadline",
           "data": {
             "commands": [
@@ -71,6 +65,18 @@
           "type": "path",
           "data": {
             "pathName": "shoot to center line "
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "StartDefaultIntake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "RetractIntake"
           }
         }
       ]
