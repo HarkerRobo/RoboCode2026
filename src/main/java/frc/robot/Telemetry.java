@@ -23,6 +23,8 @@ import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
 import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.networktables.DoubleTopic;
 import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.networktables.IntegerPublisher;
 import edu.wpi.first.networktables.NetworkTable;
@@ -111,6 +113,8 @@ public class Telemetry
     private IntegerPublisher fuelsInBlueOutpost = simulation.getIntegerTopic("Fuels in BlueOutpost").publish();
     private IntegerPublisher fuelsInRedOutpost = simulation.getIntegerTopic("Fuels in RedOutpost").publish();
     private StructArrayPublisher<Translation3d> test = simulation.getStructArrayTopic("TEST", Translation3d.struct).publish();
+    public DoublePublisher test1 = simulation.getDoubleTopic("Current heading").publish();
+    public DoublePublisher test2 = simulation.getDoubleTopic("Desired heading").publish();
 
     private NetworkTable indexer = table.getSubTable("Indexer");
     private StringPublisher indexerCommand = indexer.getStringTopic("command").publish();
@@ -172,8 +176,15 @@ public class Telemetry
 
     private static final double[] m_poseArray = new double[3];
 
+
+    private final NetworkTable inputs = tableInstance.getTable("Control Inputs");
+    private final DoubleSubscriber hoodAngle = inputs.getDoubleTopic("Hood Angle (degrees)").subscribe(75.0);
+    private final DoubleSubscriber shooterSpeed = inputs.getDoubleTopic("Shooter Speed (degrees)").subscribe(10.0);
+
     private Telemetry ()
     {
+        hoodAngle.getTopic().publish().set(75.0);
+        shooterSpeed.getTopic().publish().set(10.0);
         //turretYawRaw.setPersistent(true);
     }
 
@@ -291,7 +302,9 @@ public class Telemetry
         test.set(new Translation3d[]
         {
             //Util.Robot.instance.robotContainer.drivetrain.getState().Pose.getTranslation()
-        });
+        }
+     
+        );
     }
     /** Accept the swerve drive state and telemeterize it to SmartDashboard and SignalLogger. */
     public void telemeterize(SwerveDriveState state) 
@@ -334,6 +347,15 @@ public class Telemetry
         }
     }
 
+    public double getHoodAngle()
+    {
+        return hoodAngle.get();
+    }
+    
+    public double getShooterSpeed()
+    {
+        return shooterSpeed.get();
+    }
 
     public static Telemetry getInstance ()
     {

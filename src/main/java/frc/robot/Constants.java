@@ -102,11 +102,11 @@ public class Constants
         
         public static final double GEAR_RATIO = 20.0/12.0; // TODO
 
-		public static final double LEFT_KP = 0.07; // TODO
+		public static final double LEFT_KP = 0.05; // TODO
 		public static final double LEFT_KI = 0.0; // TODO
         public static final double LEFT_KD = 0.0; // TODO 
         public static final double LEFT_KS = 0.13518;
-        public static final double LEFT_KV = 0.11737;
+        public static final double LEFT_KV = 0.11737 + 0.005;
         public static final double LEFT_KA = 0.0055121;
 		
         public static final double RIGHT_KP = 0.07; // TODO
@@ -141,10 +141,9 @@ public class Constants
         public static final double DEFAULT_INTAKE_VELOCITY = 0.0;
         public static final double EJECT_VELOCITY = -25.0; // rot/s
 
-        public static final double KP = 7.0;
+        public static final double KP = 0.75;
 		public static final double KI = 0.0;
 		public static final double KD = 0.0;
-        public static final double KF = 1.0;
 		
         public static final double KS = 0.0;
         public static final double KV = 12.0/90.0; // max voltage/max speed = 12/(120/1.33)
@@ -395,7 +394,7 @@ public class Constants
         // the
         // output type specified by SwerveModuleConstants.SteerMotorClosedLoopOutput
         public static final Slot0Configs steerGains = new Slot0Configs()
-                .withKP(20.823).withKI(0).withKD(0.49617)
+                .withKP(20.823 - 5.0).withKI(0).withKD(0.49617)
                 .withKS(0.0/*0.27579*/).withKV(2.4256).withKA(0.055487)
                 .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
         // When using closed-loop control, the drive motor uses the control

@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.TunerConstants;
 import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
 import frc.robot.Robot;
+import frc.robot.Telemetry;
 import edu.wpi.first.wpilibj.DriverStation;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
@@ -70,7 +71,9 @@ public class RotateToAngle extends Command{
         
         System.out.println("Rotating to target...");
         System.out.println("Current angle: " + dt.getState().Pose.getRotation());
+        Telemetry.getInstance().test1.accept(dt.getState().Pose.getRotation().getDegrees());
         System.out.println("Target rotation: " + calcAngle());
+        Telemetry.getInstance().test2.accept(calcAngle().getDegrees());
         System.out.println("ERROR: " + (calcAngle().getDegrees() - dt.getState().Pose.getRotation().getDegrees()));
         System.out.println("X- and Y- Speeds: " + (xSpeed * MaxSpeed) + ", " + (ySpeed * MaxSpeed));
     }

@@ -47,9 +47,9 @@ public class ShooterTargetSpeed extends Command
     @Override
     public void execute()
     {
-        leftTargetSpeed = Util.bound(leftTargetSpeedSupplier.getAsDouble(), 0.0, Constants.Shooter.MAX_VELOCITY);
+        leftTargetSpeed = leftTargetSpeedSupplier.getAsDouble();
         Shooter.getInstance().setLeftEffectiveVelocity(MetersPerSecond.of(leftTargetSpeed));
-        rightTargetSpeed = Util.bound(rightTargetSpeedSupplier.getAsDouble(), 0.0, Constants.Shooter.MAX_VELOCITY);
+        rightTargetSpeed = rightTargetSpeedSupplier.getAsDouble();
         Shooter.getInstance().setRightEffectiveVelocity(MetersPerSecond.of(rightTargetSpeed));
     }
 

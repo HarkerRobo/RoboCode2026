@@ -515,7 +515,18 @@ public class RobotContainer
         // tested
         driver.leftTrigger().whileTrue(new StartEndCommand(()->isSlow = true, ()->isSlow = false).withName("ToggleSlow"));
 
-        driver.rightTrigger().and(()->!mostRecentAim).whileTrue(track(shoot));
+        driver.rightTrigger().and(()->!mostRecentAim).whileTrue(track(
+            shoot
+            /*new RotateToAngle(drivetrain, ()->AlignConstants.HUB)
+            .andThen(
+
+            new AimToAngle(()->Telemetry.getInstance().getHoodAngle())
+            .alongWith(new ShooterTargetSpeed(()->Telemetry.getInstance().getShooterSpeed()))
+            .alongWith(new WaitCommand(2.0).andThen(new ShooterIndexerFullSpeed()
+                .alongWith(new IndexerFullSpeed()))))
+            .finallyDo(()->CommandScheduler.getInstance().schedule(stow.get()))*/
+            ));
+
         driver.rightTrigger().and(()->mostRecentAim).whileTrue(track(pass));
 
         // tested in sim

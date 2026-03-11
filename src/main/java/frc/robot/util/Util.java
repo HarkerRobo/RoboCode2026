@@ -59,9 +59,14 @@ public class Util
 
     public static void init ()
     {
-        // dummy data for testing interpolation
-        addData(1.5, 0.0, 75.0);
-        addData(4.5, 10.0, 60.0);
+        addData(1.121, 12.5, 75.0);
+        addData(1.709, 18.5, 75.0);
+        addData(1.891, 20.0, 75.0);
+        addData(2.483, 21.0, 73.0);
+        addData(2.856, 22.0, 71.0);
+        addData(3.373, 19.0, 68.0);
+
+        // 2.722, 70, 19.5
     }
 
     public static double bottomLeftX (Rectangle2d r)
