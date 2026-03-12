@@ -132,7 +132,8 @@ public class Constants
 
     public class Intake
     {
-        public static int ID = 23;
+        public static int LEFT_ID = 33;
+        public static int RIGHT_ID = 23;
 
         public static final double STATOR_CURRENT_LIMIT = 60.0;
         public static final double SUPPLY_CURRENT_LIMIT = 40.0;
@@ -148,10 +149,12 @@ public class Constants
         public static final double KS = 0.0;
         public static final double KV = 12.0/90.0; // max voltage/max speed = 12/(120/1.33)
         public static final double KA = 0.0;
-        public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive;
+        public static final InvertedValue LEFT_INVERTED = InvertedValue.Clockwise_Positive;
+        public static final InvertedValue RIGHT_INVERTED = InvertedValue.CounterClockwise_Positive;
 
         
-        public static final double GEAR_RATIO = 16.0/12.0;
+        public static final double LEFT_GEAR_RATIO = 16.0/12.0;
+        public static final double RIGHT_GEAR_RATIO = 16.0/12.0;
         
         public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
 
