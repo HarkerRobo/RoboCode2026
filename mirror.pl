@@ -43,11 +43,11 @@ print "\n";
 
 my $newname = translatename $autoname;
 
-$text =~ s/
+$text =~ s/"pathName": "(.*)"/"\"pathName\": \"" . translatename $1 . "\""/ge;
 
 print $newname;
 open (my $newauto, ">", "$dirname/autos/$newname.auto") or die $!;
-
+print $newauto $text;
 
 
 foreach my $path (@relevantpaths)
@@ -61,8 +61,8 @@ foreach my $path (@relevantpaths)
 
 	close $in;
 
-	$contents =~ s/"y": (.*)/"\"y\": " . (8.069326 - int($1))/ge;
-	$contents =~ s/"rotation": (.*)/"\"rotation\": " . (-int($1))/ge;
+	$contents =~ s/"y": (.*)/"\"y\": " . (8.069326 - $1)/ge;
+	$contents =~ s/"rotation": (.*)/"\"rotation\": " . (-$1)/ge;
 
 	$contents =~ s/"folder": "(.*)"/"\"folder\": \"" . translatename $1 . "\""/ge;
 	print $out $contents;
