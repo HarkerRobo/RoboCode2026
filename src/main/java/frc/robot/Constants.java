@@ -45,7 +45,7 @@ public class Constants
     public static final double ROBOT_HEIGHT = 0.89535; // y direction when bot is faced in the positive x direction; that is, parallel to the intake face
     public static final double ROBOT_WIDTH = 0.84455;
 
-    public static final Pose2d ZEROING_POSE = new Pose2d(3.581, 4.20288, new Rotation2d(0.0));
+    public static final Pose2d ZEROING_POSE = new Pose2d(3.581, 4.20288, new Rotation2d(Degrees.of(180)));
 
     public static final double TRANSLATION_SLOW_MULTIPLIER = 0.2;
     public static final double ROTATION_SLOW_MULTIPLIER = 0.4;
@@ -117,7 +117,7 @@ public class Constants
         public static final double RIGHT_KA = 0.0078621;
 
         public static final double DEFAULT_VELOCITY = 0.0; // TODO meters per second (nonzero to decrease startup time)
-        public static final double SOFT_PASS_VELOCITY = 5.0; // TODO meters per second
+        public static final double SOFT_PASS_VELOCITY = 15.0; // TODO meters per second
 
         public static final double INCREASE_VELOCITY = 0.5; // TODO
         public static final double MAX_VELOCITY = 14.0; // TODO
@@ -167,7 +167,7 @@ public class Constants
         public static final double STATOR_CURRENT_LIMIT = 60.0;
         public static final double SUPPLY_CURRENT_LIMIT = 40.0;
 
-        public static final double EXTENDING_VOLTAGE = 2.5;
+        public static final double EXTENDING_VOLTAGE = 3.5;
         public static final double RETRACTING_VOLTAGE = -2.5;
         public static final double HOLDING_EXTEND_VOLTAGE = 0.25;
         public static final double HOLDING_RETRACT_VOLTAGE = -0.25;
@@ -178,7 +178,7 @@ public class Constants
         
         public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
 
-        public static final double STALLING_CURRENT_EXTEND = 16;
+        public static final double STALLING_CURRENT_EXTEND = 20;
         public static final double STALLING_CURRENT_RETRACT = 25;
 
         public static final double MIN_HEIGHT = 0.0; // TODO
@@ -391,7 +391,7 @@ public class Constants
     public class Drive
     {
         public static final double autoalignSteerKP = 15.0;
-        public static final double autoalignSteerKI = 0.0;
+        public static final double autoalignSteerKI = 0.5;
         public static final double autoalignSteerKD = 0.0;
         
         public static final double autoalignDriveKP = 6.0;

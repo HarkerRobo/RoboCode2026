@@ -302,13 +302,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             SmartDashboard.putNumber("Drive/bestEstimateY", bestEstimate.pose.getY());
             SmartDashboard.putNumber("Drive/bestEstimateYaw", bestEstimate.pose.getRotation().getDegrees());
             if (bestEstimate != null && bestEstimate.tagCount > 0) {
-                double stdDevFactor = Math.pow(bestEstimate.avgTagDist, 2.0) / bestEstimate.tagCount;
+                double stdDevFactor = 1; // Math.pow(bestEstimate.avgTagDist, 2.0) / bestEstimate.tagCount;
                 double linearStdDev = Constants.Vision.linTagStdDevs * stdDevFactor;
                 
-                if (bestEstimate.avgTagDist < 3.0 && bestEstimate.rawFiducials[0].ambiguity < 0.7)
-                {
-                    addVisionMeasurement(bestEstimate.pose, bestEstimate.timestampSeconds, VecBuilder.fill(linearStdDev, linearStdDev, Constants.Vision.angTagStdDevs));
-                }
+                addVisionMeasurement(bestEstimate.pose, bestEstimate.timestampSeconds, VecBuilder.fill(linearStdDev, linearStdDev, Constants.Vision.angTagStdDevs));
                 
                 // if (bestEstimate.tagCount >= 2 || (bestEstimate.avgTagDist < 3.0 && bestEstimate.rawFiducials[0].ambiguity < 0.7)) {
                 //     addVisionMeasurement(bestEstimate.pose, bestEstimate.timestampSeconds, Constants.Vision.kTagStdDevs);

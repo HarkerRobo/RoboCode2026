@@ -36,7 +36,7 @@ public class Indexer extends SubsystemBase
         DCMotor.getKrakenX60Foc(1));
 
     private Indexer() { 
-        main = new TalonFX(Constants.Indexer.MAIN_ID, Constants.CAN_CHAIN);
+        main = new TalonFX(Constants.Indexer.MAIN_ID, Constants.CAN_SUPERSTRUCTURE);
         side = new TalonFX(Constants.Indexer.SIDE_ID, Constants.CAN_SUPERSTRUCTURE);
         config();
         

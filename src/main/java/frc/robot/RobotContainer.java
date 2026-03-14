@@ -225,7 +225,7 @@ public class RobotContainer
         // tested in sim
         shoot = new RotateToAngle(drivetrain, ()->AlignConstants.HUB)
             //Commands.none()
-            .alongWith(new AimToAngle(()->Util.calculateShootPitch(drivetrain).in(Degrees)))
+            .alongWith(new IndependentCommand(track(new AimToAngle(()->Util.calculateShootPitch(drivetrain).in(Degrees)))))
             .alongWith(new IndependentCommand(track(new ShooterTargetSpeed(()->Util.calculateShootVelocity(drivetrain)))))
             // .alongWith(new AimToAngle(75.0))
             // .alongWith(new IndependentCommand(new ShooterTargetSpeed(()->8.0 + leftFlywheelOffset, ()->8.0 + rightFlywheelOffset)))
@@ -478,6 +478,7 @@ public class RobotContainer
                     CommandScheduler.getInstance().schedule(
                         track(new RunIntake()
                         .withName("ActivateIntake")));
+                    driver.setRumble(RumbleType.kBothRumble, 0.5);
                 }
         })));
         
@@ -632,8 +633,8 @@ public class RobotContainer
         operator.leftTrigger().onTrue(track(new EjectIntake().andThen(new IndependentCommand(track(new RunIntake())))
             .withName("EjectIntake")));
 
-        operator.rightTrigger().whileTrue(track(new IndependentCommand(new ShooterTargetSpeed(Constants.Shooter.SOFT_PASS_VELOCITY))
-            .andThen(new IndependentCommand(new IndexerFullSpeed()))
+        operator.rightTrigger().whileTrue(track(new IndependentCommand(track(new ShooterTargetSpeed(Constants.Shooter.SOFT_PASS_VELOCITY)))
+            .andThen(new IndependentCommand(track(new IndexerFullSpeed())))
             .andThen(new ShooterIndexerFullSpeed())
             .andThen(stow.get())
             .withName("SoftPass")));
@@ -659,11 +660,14 @@ public class RobotContainer
             }
             ))));
         operator.a().whileTrue(track(new HoodManualDown()));
-        operator.b().onTrue(track(new ExtendIntake()
+        operator.b().onTrue(track(new IndependentCommand(track(new RunIntake()))
+            .andThen(Commands.runOnce(()->intakeTriggered = true))
+            .andThen(new ExtendIntake())
             .andThen(Commands.runOnce(()->
             {
                 intakeExtended = true;
-            }))));
+            }
+            ))));
 
         operator.povUp().onTrue(Commands.runOnce(()->rightFlywheelOffset += Constants.FLYWHEEL_OFFSET_UNIT));
         operator.povDown().onTrue(Commands.runOnce(()->leftFlywheelOffset -= Constants.FLYWHEEL_OFFSET_UNIT));

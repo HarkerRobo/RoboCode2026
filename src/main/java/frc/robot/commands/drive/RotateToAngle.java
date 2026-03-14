@@ -80,7 +80,13 @@ public class RotateToAngle extends Command{
 
     @Override
     public boolean isFinished() {
-        return (dt.getState().Pose.getRotation().getDegrees() + 180 - calcAngle().getDegrees()) % 360 <= 0.2;
+        if ((dt.getState().Pose.getRotation().getDegrees() + 180 - calcAngle().getDegrees()) % 360 <= 1.0)
+        {
+            Telemetry.getInstance().aligned.set(true);
+            return true;
+        }
+        Telemetry.getInstance().aligned.set(false);
+        return false;
     }
 
     @Override

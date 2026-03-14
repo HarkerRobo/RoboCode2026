@@ -54,6 +54,7 @@ public class Telemetry
     private DoublePublisher rightFlywheelOffset = table.getDoubleTopic("right flywheel offset").publish();
     private BooleanPublisher intakeTriggered = table.getBooleanTopic("intake triggered").publish();
     private BooleanPublisher intakeExtended = table.getBooleanTopic("intake extended").publish();
+    public BooleanPublisher aligned = table.getBooleanTopic("aligned").publish();
 
     private NetworkTable intake = table.getSubTable("Intake");
     private StringPublisher intakeCommand = intake.getStringTopic("main command").publish();

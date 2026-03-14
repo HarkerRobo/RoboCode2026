@@ -281,7 +281,7 @@ public class Shooter extends SubsystemBase
     
     public boolean readyToShoot()
     {
-        return Math.abs(left.getVelocity().getValue().in(Rotations.per(Second)) - leftTargetVelocity) < 0.5 &&
+        return Math.abs(left.getVelocity().getValue().in(Rotations.per(Second)) - leftTargetVelocity) < 0.5 ||
                Math.abs(right.getVelocity().getValue().in(Rotations.per(Second)) - rightTargetVelocity) < 0.5;
     }
     
