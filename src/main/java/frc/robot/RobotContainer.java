@@ -39,7 +39,7 @@ import frc.robot.RobotContainer.PassDirection;
 import frc.robot.commands.climb.ClimbDown;
 import frc.robot.commands.climb.ClimbUp;
 import frc.robot.commands.climb.Unspool;
-import frc.robot.commands.climb.SpoolUntilStall;
+import frc.robot.commands.climb.Spool;
 import frc.robot.commands.drive.DriveToPose;
 import frc.robot.commands.drive.RotateToAngle;
 import frc.robot.commands.hood.AimToAngle;
@@ -62,6 +62,7 @@ import frc.robot.subsystems.*;
 import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
 import frc.robot.subsystems.drivetrain.Modules;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeExtension;
 import frc.robot.util.IndependentCommand;
 import frc.robot.util.Util;
 
@@ -303,7 +304,7 @@ public class RobotContainer
         testCommandChooser.setDefaultOption("None", Commands.none());
         testCommandChooser.addOption("Climb/ClimbUp", new ClimbUp());
         testCommandChooser.addOption("Climb/ClimbDown", new ClimbDown());
-        testCommandChooser.addOption("Climb/SpoolUntilStall", new SpoolUntilStall());
+        testCommandChooser.addOption("Climb/SpoolUntilStall", new Spool());
         testCommandChooser.addOption("Climb/Unspool", new Unspool());
         testCommandChooser.addOption("Hood/AimToAngle[75°]", new AimToAngle(75.0));
         testCommandChooser.addOption("Hood/AimToAngle[60°]", new AimToAngle(60.0));
@@ -328,7 +329,9 @@ public class RobotContainer
         SmartDashboard.putData("Test a Command", testCommandChooser);
         SmartDashboard.putData(CommandScheduler.getInstance());
 
-        NamedCommands.registerCommand("ExtendIntake", new ExtendIntake());
+        NamedCommands.registerCommand("ExtendIntake", Commands.runEnd(
+            ()->IntakeExtension.getInstance().setVoltage(Volts.of(Constants.IntakeExtension.EXTENDING_VOLTAGE)),
+            ()->IntakeExtension.getInstance().setVoltage(Volts.of(Constants.IntakeExtension.HOLDING_EXTEND_VOLTAGE))));
         NamedCommands.registerCommand("RetractIntake", new RetractIntake());
         NamedCommands.registerCommand("StartRunIntake", new IndependentCommand(new RunIntake()));
         NamedCommands.registerCommand("StartDefaultIntake", new IndependentCommand(new DefaultIntake()));
@@ -373,13 +376,8 @@ public class RobotContainer
         // -------------------- CHANGE BINDING SETTINGS HERE ---------------------
         
         boolean useDebuggingBindings = false; // mainly for sysid or debugging
-        boolean useDefaultBindings = false; // in case ever the official controls don't work, use these as a backup to be able to drive around
         
         if (useDebuggingBindings) configureDebugBindings();
-        else if (useDefaultBindings)
-        {
-            configureDefaultBindings();
-        }
         else
         {
             configureDriverBindings();
@@ -392,38 +390,11 @@ public class RobotContainer
     private void configureDebugBindings()
     {
 
-        driver.x().whileTrue(Commands.runOnce(()->drivetrain.setControl(drive
-            .withRotationalRate(0.5))));
+        driver.x().whileTrue(new Spool());
         driver.y().whileTrue(new ClimbUp());
-        driver.a().whileTrue(new ClimbDown());
+        // driver.a().whileTrue(new ClimbDown());
         driver.b().whileTrue(new Unspool());
 
-        // driver.button(1).onTrue(Hood.getInstance().sysIdQuasistatic(Direction.kForward));
-        // driver.button(2).onTrue(Hood.getInstance().sysIdQuasistatic(Direction.kReverse));
-        // driver.button(3).onTrue(Hood.getInstance().sysIdDynamic(Direction.kForward));
-        // driver.button(4).onTrue(Hood.getInstance().sysIdDynamic(Direction.kReverse));
-
-        /*
-        driver.povUp().onTrue(Commands.print("POV UP"));
-        driver.povDown().onTrue(Commands.print("POV DOWN"));
-        driver.povLeft().onTrue(Commands.print("POV LEFT"));
-        driver.povRight().onTrue(Commands.print("POV RIGHT"));
-        */
-        // driver.a().whileTrue(Hood.getInstance().sysIdQuasistatic(Direction.kForward));
-        // driver.b().whileTrue(Hood.getInstance().sysIdQuasistatic(Direction.kReverse));
-        // driver.x().whileTrue(Hood.getInstance().sysIdDynamic(Direction.kForward));
-        // driver.y().whileTrue(Hood.getInstance().sysIdDynamic(Direction.kReverse));
-        /*driver.a().whileTrue(Shooter.getInstance().rightSysIdQuasistatic(Direction.kForward));
-        driver.b().whileTrue(Shooter.getInstance().rightSysIdQuasistatic(Direction.kReverse));
-        driver.x().whileTrue(Shooter.getInstance().rightSysIdDynamic(Direction.kForward));
-        driver.y().whileTrue(Shooter.getInstance().rightSysIdDynamic(Direction.kReverse));*/
-
-        /*
-        driver.button(1).onTrue(new DriveToPose(drivetrain));
-        driver.button(2).onTrue(alignLeft);
-        driver.button(3).onTrue(alignRight);
-        */
-
         drivetrain.setDefaultCommand(
                 // Drivetrain will execute this command periodically
                 drivetrain.applyRequest(() -> 
@@ -432,76 +403,6 @@ public class RobotContainer
                         .withRotationalRate(-driver.getRightX() * MaxAngularRate * (isSlow ? Constants.ROTATION_SLOW_MULTIPLIER : 1.0)) // Drive counterclockwise with negative X (left)
                     ).withName("SwerveManual"));
     }
-
-    private void configureDefaultBindings()
-    {
-        // Note that X is defined as forward according to WPILib convention,
-        // and Y is defined as to the left according to WPILib convention.
-        drivetrain.setDefaultCommand(
-                // Drivetrain will execute this command periodically
-                drivetrain.applyRequest(() -> 
-                        drive.withVelocityX(-driver.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-                        .withVelocityY(-driver.getLeftX() * MaxSpeed * (isSlow ? Constants.TRANSLATION_SLOW_MULTIPLIER : 1.0)) // Drive left with negative X (left)
-                        .withRotationalRate(-driver.getRightX() * MaxAngularRate * (isSlow ? Constants.ROTATION_SLOW_MULTIPLIER : 1.0)) // Drive counterclockwise with negative X (left)
-                    ).withName("SwerveManual"));
-
-        driver.x().onTrue(Indexer.getInstance().run(()->Indexer.getInstance().setSideVoltage(Volts.of(3.0))));
-        driver.b().toggleOnTrue(new IndexerFullSpeed());
-        driver.a().toggleOnTrue(new ShooterIndexerFullSpeed());
-        driver.y().toggleOnTrue(new ShooterTargetSpeed(()->Constants.HARDCODE_VELOCITY + leftFlywheelOffset, ()->Constants.HARDCODE_VELOCITY + rightFlywheelOffset));
-
-        driver.povUp().whileTrue(new HoodManualUp());
-        driver.povDown().whileTrue(new HoodManualDown());
-
-        //driver.povLeft().whileTrue(new ExtendHopper());
-        //driver.povRight().whileTrue(new RetractHopper());
-
-        driver.start().onTrue(
-                drivetrain.runOnce(() -> drivetrain.seedFieldCentric())
-                .andThen(drivetrain.runOnce(() -> drivetrain.resetPose(
-                            (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) ? 
-                            FlippingUtil.flipFieldPose(Constants.ZEROING_POSE) : Constants.ZEROING_POSE)))
-                .withName("ZeroDrivetrain"));
-        
-        driver.rightBumper().onTrue(track(
-            Commands.runOnce(()->{
-                if (intakeTriggered)
-                {
-                    intakeTriggered = false;
-                    CommandScheduler.getInstance().schedule(
-                        track(new DefaultIntake()
-                        .withName("DeactivateIntake")));
-                }
-                else if (intakeExtended)
-                {
-                    intakeTriggered = true;
-                    CommandScheduler.getInstance().schedule(
-                        track(new RunIntake()
-                        .withName("ActivateIntake")));
-                }
-        })));
-        
-        driver.povLeft().onTrue(Commands.runOnce(()->{
-            leftFlywheelOffset += Constants.FLYWHEEL_OFFSET_UNIT;
-            rightFlywheelOffset += Constants.FLYWHEEL_OFFSET_UNIT;}));
-        driver.povRight().onTrue(Commands.runOnce(()->{
-            leftFlywheelOffset -= Constants.FLYWHEEL_OFFSET_UNIT;
-            rightFlywheelOffset -= Constants.FLYWHEEL_OFFSET_UNIT;}));
-        
-        operator.x().onTrue(new RetractIntake()
-            .andThen(Commands.runOnce(()->
-            {
-                intakeExtended = false;
-            }
-            )));
-        operator.b().onTrue(new ExtendIntake()
-            .andThen(Commands.runOnce(()->
-            {
-                intakeExtended = true;
-            })));
-        
-    }
-   
 
     private void configureDriverBindings() 
     {
@@ -552,7 +453,6 @@ public class RobotContainer
                     CommandScheduler.getInstance().schedule(
                         track(new RunIntake()
                         .withName("ActivateIntake")));
-                    driver.setRumble(RumbleType.kBothRumble, 0.5);
                 }
         })));
         
@@ -596,16 +496,6 @@ public class RobotContainer
         final var idle = new SwerveRequest.Idle();
         RobotModeTriggers.disabled().whileTrue(
                 drivetrain.applyRequest(() -> idle).ignoringDisable(true).withName("Drivetrain Set Idle"));
-
-                /*
-        // Zero DT
-        operator.x().onTrue(
-        drivetrain.runOnce(() -> drivetrain.seedFieldCentric())
-                andThen(drivetrain.runOnce(() -> drivetrain.resetPose(
-                            (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) ? 
-                            FlippingUtil.flipFieldPose(Constants.ZEROING_POSE) : Constants.ZEROING_POSE)))
-                .withName("ZeroDrivetrain"));
-                */
     }
 
     public void configureOperatorBindings()
@@ -614,11 +504,11 @@ public class RobotContainer
                 drivetrain.runOnce(() -> {
                 if (DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Red)
                 {
-                    drivetrain.seedFieldCentric();
+                    drivetrain.seedFieldCentric(Rotation2d.k180deg);
                 }
                 else
                 {
-                    drivetrain.seedFieldCentric(Rotation2d.k180deg);
+                    drivetrain.seedFieldCentric();
                 }
             })
                 .andThen(drivetrain.runOnce(() -> drivetrain.resetPose(

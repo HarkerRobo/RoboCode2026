@@ -47,7 +47,7 @@ public class Constants
 
     public static final Pose2d ZEROING_POSE = new Pose2d(3.581, 4.20288, new Rotation2d(Degrees.of(180)));
 
-    public static final double TRANSLATION_SLOW_MULTIPLIER = 0.2;
+    public static final double TRANSLATION_SLOW_MULTIPLIER = 0.1;
     public static final double ROTATION_SLOW_MULTIPLIER = 0.4;
 
     public static final CANBus CAN_CHAIN = new CANBus("rio");
@@ -62,12 +62,11 @@ public class Constants
                 new Translation3d(Units.inchesToMeters(-10.5238), Units.inchesToMeters(-9.5396), Units.inchesToMeters(9.2734)),
                 new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(112.7732 - 90.0), Units.degreesToRadians(90.0 + 31.0351)));
 
-        /*
-        public static final String kCamera2Name = "limelight";
+        
+        public static final String kCamera2Name = "limelight-right";
         public static final Transform3d kRobotToCam2 = new Transform3d(
-                new Translation3d(Units.inchesToMeters(5.472), Units.inchesToMeters(-10.5), Units.inchesToMeters(7.482)),
-                new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(26.1), 0)); // TODO bc this is copied from 2025 code
-                */
+                new Translation3d(Units.inchesToMeters(-11.743), Units.inchesToMeters(10.009), Units.inchesToMeters(9.0552)),
+                new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(12.567), Units.degreesToRadians(180.0 + 7.566))); // TODO bc this is copied from 2025 code
 
         public static final double linTagStdDevs = 0.1;
         public static final double angTagStdDevs = 999999;
@@ -271,8 +270,8 @@ public class Constants
 
     public static final class Climb 
     {
-        public static final int CLIMBWHEELS_ID = 29;
-        public static final int SPOOLING_ID = 30;
+        public static final int CLIMBWHEELS_ID = 61;
+        public static final int SPOOLING_ID = 62;
 
         public static final InvertedValue CLIMBWHEELS_INVERTED = InvertedValue.CounterClockwise_Positive; // TODO
         public static final InvertedValue SPOOLING_INVERTED = InvertedValue.CounterClockwise_Positive; // TODO
@@ -300,12 +299,12 @@ public class Constants
         public static final Angle MAX_ERROR = Rotations.of(0.1);
 
         // positive voltage on CLIMBWHEELS = driving CLIMBWHEELS up
-        public static final Voltage CLIMB_DOWN_VOLTAGE = Volts.of(-2.0); //TODO
-        public static final Voltage CLIMB_UP_VOLTAGE =  Volts.of(2.0); // TODO
+        public static final Voltage CLIMB_DOWN_VOLTAGE = Volts.of(3.0); //TODO
+        public static final Voltage CLIMB_UP_VOLTAGE =  Volts.of(-3.0); // TODO
 
         // positive voltage on climb = deploying climb
-        public static final Voltage SPOOL_VOLTAGE = Volts.of(1.0); // TODO
-        public static final Voltage UNSPOOL_VOLTAGE = Volts.of(-1.0); // TODO
+        public static final Voltage SPOOL_VOLTAGE = Volts.of(2.4); // TODO
+        public static final Voltage UNSPOOL_VOLTAGE = Volts.of(-2.4); // TODO
 
         public static final double UNSPOOL_TIME = 2.0; // seconds
     }

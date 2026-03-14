@@ -63,6 +63,7 @@ foreach my $path (@relevantpaths)
 
 	$contents =~ s/"y": (.*)/"\"y\": " . (8.069326 - $1)/ge;
 	$contents =~ s/"rotation": (.*)/"\"rotation\": " . (-$1)/ge;
+	$contents =~ s/"rotationDegrees": (.*)/"\"rotationDegrees\": " . (-$1)/ge;
 
 	$contents =~ s/"folder": "(.*)"/"\"folder\": \"" . translatename $1 . "\""/ge;
 	print $out $contents;

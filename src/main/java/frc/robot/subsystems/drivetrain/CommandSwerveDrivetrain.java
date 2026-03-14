@@ -287,9 +287,15 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             redAllianceYaw,
             0, 0, 0, 0, 0
         );
+        LimelightHelpers.SetRobotOrientation(
+            Constants.Vision.kCamera2Name,
+            redAllianceYaw,
+            0, 0, 0, 0, 0
+        );
         LimelightHelpers.SetIMUMode(Constants.Vision.kCamera1Name, 4);
+        // LimelightHelpers.SetIMUMode(Constants.Vision.kCamera2Name, 4);
         LimelightHelpers.PoseEstimate limelight1Estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.Vision.kCamera1Name);
-        LimelightHelpers.PoseEstimate limelight2Estimate = null; //LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.Vision.kCamera2Name);
+        LimelightHelpers.PoseEstimate limelight2Estimate = null;//LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.Vision.kCamera2Name);
 
 
        // Only run vision updates if we see a tag
