@@ -181,10 +181,10 @@ public class Constants
         public static final double STALLING_CURRENT_EXTEND = 20;
         public static final double STALLING_CURRENT_RETRACT = 25;
 
-        public static final double MIN_HEIGHT = 0.0; // TODO
-        public static final double MAX_HEIGHT = 1.0; // TODO
+        public static final double MIN_HEIGHT = 0.0;
+        public static final double MAX_HEIGHT = 1.0;
         
-        public static final double STALLING_DEBOUNCE_TIME = 0.1;
+        public static final double STALLING_DEBOUNCE_TIME = 0.2; // 0.1
 
         public static final double AGITATE_MIN_VOLTAGE = -1.0; // TODO
         public static final double AGITATE_MAX_VOLTAGE = 1.0; // TODO

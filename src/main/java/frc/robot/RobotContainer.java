@@ -276,7 +276,7 @@ public class RobotContainer
 
         revShoot = 
                 Commands.runOnce(()->mostRecentAim = false)
-            .andThen(new IndependentCommand(track(new ShooterIndexerDefaultSpeed())))
+            //.andThen(new IndependentCommand(track(new ShooterIndexerDefaultSpeed())))
             .andThen(
                 new IndependentCommand(track(new ShooterTargetSpeed(()->Util.calculateShootVelocity(drivetrain)))))
                 // new IndependentCommand(new ShooterTargetSpeed(()->8.0 + leftFlywheelOffset, ()->8.0 + rightFlywheelOffset)))
@@ -288,7 +288,7 @@ public class RobotContainer
 
         revPass = 
                 Commands.runOnce(()->mostRecentAim = true)
-            .andThen(new IndependentCommand(track(new ShooterIndexerDefaultSpeed())))
+            //.andThen(new IndependentCommand(track(new ShooterIndexerDefaultSpeed())))
             .andThen(
                 new IndependentCommand(track(new ShooterTargetSpeed(
                     ()->Util.calculatePassVelocity(drivetrain) + leftFlywheelOffset,
@@ -478,7 +478,6 @@ public class RobotContainer
                     CommandScheduler.getInstance().schedule(
                         track(new RunIntake()
                         .withName("ActivateIntake")));
-                    driver.setRumble(RumbleType.kBothRumble, 0.5);
                 }
         })));
         
@@ -553,6 +552,7 @@ public class RobotContainer
                     CommandScheduler.getInstance().schedule(
                         track(new RunIntake()
                         .withName("ActivateIntake")));
+                    driver.setRumble(RumbleType.kBothRumble, 0.5);
                 }
         })));
         
@@ -630,10 +630,11 @@ public class RobotContainer
             //.alongWith(new ShooterDefaultSpeed())
             .withName("ZeroHood+Shooter")));
 
-        operator.leftTrigger().onTrue(track(new EjectIntake().andThen(new IndependentCommand(track(new RunIntake())))
+        operator.leftTrigger().whileTrue(track(new EjectIntake().finallyDo(()->CommandScheduler.getInstance().schedule(track(new RunIntake())))
             .withName("EjectIntake")));
 
         operator.rightTrigger().whileTrue(track(new IndependentCommand(track(new ShooterTargetSpeed(Constants.Shooter.SOFT_PASS_VELOCITY)))
+            .andThen(new IndependentCommand(new AimToAngle(60.0)))
             .andThen(new IndependentCommand(track(new IndexerFullSpeed())))
             .andThen(new ShooterIndexerFullSpeed())
             .andThen(stow.get())
