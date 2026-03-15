@@ -9,7 +9,7 @@
       "prevControl": null,
       "nextControl": {
         "x": 3.62953488372093,
-        "y": 0.553977162790698
+        "y": 0.5539771627906978
       },
       "isLocked": false,
       "linkedName": null
@@ -48,7 +48,7 @@
   "folder": "RightFirstFarDoubleSweep",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0
+    "rotation": 0.0
   },
   "useDefaultConstraints": true
 }

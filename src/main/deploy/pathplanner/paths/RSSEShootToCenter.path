@@ -9,7 +9,7 @@
       "prevControl": null,
       "nextControl": {
         "x": 1.3579785330948118,
-        "y": 0.197018307692307
+        "y": 0.1970183076923071
       },
       "isLocked": false,
       "linkedName": null
@@ -21,7 +21,7 @@
       },
       "prevControl": {
         "x": 5.965992844364937,
-        "y": 0.408055874776388
+        "y": 0.4080558747763884
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0
+    "rotation": 0.0
   },
   "reversed": false,
   "folder": "RightSingleSweepExit",

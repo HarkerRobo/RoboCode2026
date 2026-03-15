@@ -70,8 +70,6 @@ public class Constants
 
         public static final double linTagStdDevs = 0.1;
         public static final double angTagStdDevs = 999999;
-        public static final Matrix<N3, N1> kTagStdDevs = VecBuilder.fill(0.1, 0.1, 99999);
-        public static final Matrix<N3, N1> stateStdDevs = VecBuilder.fill(0.05, 0.05, 0.1);
 
         // The layout of the AprilTags on the field
         public static final AprilTagFieldLayout kTagLayout = AprilTagFieldLayout
