@@ -47,8 +47,8 @@ public class Constants
 
     public static final Pose2d ZEROING_POSE = new Pose2d(3.581, 4.20288, new Rotation2d(Degrees.of(180)));
 
-    public static final double TRANSLATION_SLOW_MULTIPLIER = 0.1;
-    public static final double ROTATION_SLOW_MULTIPLIER = 0.4;
+    public static final double TRANSLATION_SLOW_MULTIPLIER = 0.35;
+    public static final double ROTATION_SLOW_MULTIPLIER = 0.5;
 
     public static final CANBus CAN_CHAIN = new CANBus("rio");
 

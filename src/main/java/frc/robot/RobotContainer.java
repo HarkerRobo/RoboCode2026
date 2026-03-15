@@ -551,8 +551,8 @@ public class RobotContainer
             }
             ))));
         operator.a().whileTrue(track(new HoodManualDown()));
-        operator.b().onTrue(track(new IndependentCommand(track(new RunIntake()))
-            .andThen(Commands.runOnce(()->intakeTriggered = true))
+        operator.b().onTrue(track(new IndependentCommand(track(new DefaultIntake()))
+            .andThen(Commands.runOnce(()->intakeTriggered = false))
             .andThen(new ExtendIntake())
             .andThen(Commands.runOnce(()->
             {
