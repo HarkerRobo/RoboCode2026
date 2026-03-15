@@ -193,8 +193,8 @@
   "reversed": false,
   "folder": "RightSingleSweepExit",
   "idealStartingState": {
-    "velocity": 0,
-    "rotation": 0
+    "velocity": 0.0,
+    "rotation": 90
   },
   "useDefaultConstraints": true
 }
