@@ -37,11 +37,11 @@ public class Shooter extends SubsystemBase
     private TalonFX right;
     
     private DCMotorSim leftSim = new DCMotorSim(
-        LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60(2), 0.001, Constants.Shooter.GEAR_RATIO),
+        LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60(1), 0.001, Constants.Shooter.GEAR_RATIO),
         DCMotor.getKrakenX60(2));
     
     private DCMotorSim rightSim = new DCMotorSim(
-        LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60(2), 0.001, Constants.Shooter.GEAR_RATIO),
+        LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60(1), 0.001, Constants.Shooter.GEAR_RATIO),
         DCMotor.getKrakenX60(2));
 
     private double leftTargetVelocity = 0.0;
@@ -282,7 +282,7 @@ public class Shooter extends SubsystemBase
     
     public boolean readyToShoot()
     {
-        return Math.abs(left.getVelocity().getValue().in(Rotations.per(Second)) - leftTargetVelocity) < 0.5 &&
+        return Math.abs(left.getVelocity().getValue().in(Rotations.per(Second)) - leftTargetVelocity) < 0.5 ||
                Math.abs(right.getVelocity().getValue().in(Rotations.per(Second)) - rightTargetVelocity) < 0.5;
     }
     

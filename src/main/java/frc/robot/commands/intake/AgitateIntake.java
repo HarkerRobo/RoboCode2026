@@ -25,8 +25,8 @@ public class AgitateIntake extends Command
     public void execute()
     {
         Intake.getInstance().setVoltage(Volts.of(
-            Math.sin(2 * Math.PI / Constants.IntakeExtension.AGITATE_PERIOD_SECONDS * timer.get())
-            * (Constants.IntakeExtension.AGITATE_MAX_VOLTAGE - Constants.IntakeExtension.AGITATE_MIN_VOLTAGE) + 
+            (Math.sin(2 * Math.PI / Constants.IntakeExtension.AGITATE_PERIOD_SECONDS * timer.get()) + 1.0)
+            * (Constants.IntakeExtension.AGITATE_MAX_VOLTAGE - Constants.IntakeExtension.AGITATE_MIN_VOLTAGE) / 2.0 + 
             Constants.IntakeExtension.AGITATE_MIN_VOLTAGE));
     }
 

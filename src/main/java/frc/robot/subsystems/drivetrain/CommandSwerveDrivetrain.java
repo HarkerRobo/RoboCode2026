@@ -287,9 +287,15 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             redAllianceYaw,
             0, 0, 0, 0, 0
         );
+        LimelightHelpers.SetRobotOrientation(
+            Constants.Vision.kCamera2Name,
+            redAllianceYaw,
+            0, 0, 0, 0, 0
+        );
         LimelightHelpers.SetIMUMode(Constants.Vision.kCamera1Name, 4);
+        // LimelightHelpers.SetIMUMode(Constants.Vision.kCamera2Name, 4);
         LimelightHelpers.PoseEstimate limelight1Estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.Vision.kCamera1Name);
-        LimelightHelpers.PoseEstimate limelight2Estimate = null; //LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.Vision.kCamera2Name);
+        LimelightHelpers.PoseEstimate limelight2Estimate = null;//LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.Vision.kCamera2Name);
 
 
        // Only run vision updates if we see a tag
@@ -302,13 +308,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             SmartDashboard.putNumber("Drive/bestEstimateY", bestEstimate.pose.getY());
             SmartDashboard.putNumber("Drive/bestEstimateYaw", bestEstimate.pose.getRotation().getDegrees());
             if (bestEstimate != null && bestEstimate.tagCount > 0) {
-                double stdDevFactor = Math.pow(bestEstimate.avgTagDist, 2.0) / bestEstimate.tagCount;
+                double stdDevFactor = 1; // Math.pow(bestEstimate.avgTagDist, 2.0) / bestEstimate.tagCount;
                 double linearStdDev = Constants.Vision.linTagStdDevs * stdDevFactor;
                 
-                if (bestEstimate.avgTagDist < 3.0 && bestEstimate.rawFiducials[0].ambiguity < 0.7)
-                {
-                    addVisionMeasurement(bestEstimate.pose, bestEstimate.timestampSeconds, VecBuilder.fill(linearStdDev, linearStdDev, Constants.Vision.angTagStdDevs));
-                }
+                addVisionMeasurement(bestEstimate.pose, bestEstimate.timestampSeconds, VecBuilder.fill(linearStdDev, linearStdDev, Constants.Vision.angTagStdDevs));
                 
                 // if (bestEstimate.tagCount >= 2 || (bestEstimate.avgTagDist < 3.0 && bestEstimate.rawFiducials[0].ambiguity < 0.7)) {
                 //     addVisionMeasurement(bestEstimate.pose, bestEstimate.timestampSeconds, Constants.Vision.kTagStdDevs);
@@ -429,9 +432,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                                     .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesYNewtons())),
                     new PPHolonomicDriveController(
                             // PID constants for translation
-                            new PIDConstants(Constants.TunerConstants.driveGains.kP, Constants.TunerConstants.driveGains.kI, Constants.TunerConstants.driveGains.kD),
+                            new PIDConstants(Constants.Drive.autoalignDriveKP, Constants.Drive.autoalignDriveKI, Constants.Drive.autoalignDriveKD),
                             // PID constants for rotation
-                            new PIDConstants(Constants.TunerConstants.steerGains.kP, Constants.TunerConstants.steerGains.kI, Constants.TunerConstants.steerGains.kD)),
+                            new PIDConstants(Constants.Drive.autoalignSteerKP, Constants.Drive.autoalignSteerKI, Constants.Drive.autoalignSteerKD)),
                     config,
                     // Assume the path needs to be flipped for Red vs Blue, this is normally the
                     // case

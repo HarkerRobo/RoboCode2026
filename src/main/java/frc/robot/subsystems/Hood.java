@@ -7,6 +7,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 
@@ -38,6 +39,7 @@ public class Hood extends SubsystemBase
         LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX44(1), 0.001, Constants.Hood.GEAR_RATIO),
         DCMotor.getKrakenX44(1));
 
+    private Debouncer debouncer = new Debouncer(Constants.Hood.DEBOUNCE_TIME);
 
     /**
      * Initializes the master/follower TalonFX motors and applies configuration.
@@ -56,10 +58,7 @@ public class Hood extends SubsystemBase
             simState.setMotorType(TalonFXSimState.MotorType.KrakenX44);
         }
     }
-    /**
-     * Clears sticky faults on master and follower. 
-     * Makes both motors start in a fully‑configured state I guess.
-     */
+
     private void config()
     {
         motor.clearStickyFaults();
@@ -146,7 +145,6 @@ public class Hood extends SubsystemBase
         motor.setVoltage(voltage.in(Volts));
     }
 
-    
     /**
     * Checks if the hood is at the angle it was told to reach.
     * Returns true when it’s there.
@@ -171,7 +169,8 @@ public class Hood extends SubsystemBase
     */
     public boolean isStalling()
     {
-        return Math.abs(motor.getStatorCurrent().getValueAsDouble()) >= Constants.Hood.STALLING_CURRENT;
+
+        return debouncer.calculate(Math.abs(motor.getStatorCurrent().getValueAsDouble()) >= Constants.Hood.STALLING_CURRENT);
     }
 
     public double getStatorCurrent()

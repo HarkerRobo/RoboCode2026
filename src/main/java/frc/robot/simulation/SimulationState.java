@@ -232,12 +232,12 @@ public class SimulationState
         double posX = Robot.instance.robotContainer.drivetrain.getState().Pose.getX();
         double posY = Robot.instance.robotContainer.drivetrain.getState().Pose.getY();
         double rot = Robot.instance.robotContainer.drivetrain.getState().Pose.getRotation().getRadians();
-        double endX = posX + Constants.ROBOT_HEIGHT*Math.sqrt(2)/2*Math.cos(rot+Math.PI/4); // doesn't work perfectly since bot is not a square
+        double endX = posX + Constants.ROBOT_WIDTH*Math.sqrt(2)/2*Math.cos(rot+Math.PI/4); // doesn't work perfectly since bot is not a square
         double endY = posY + Constants.ROBOT_HEIGHT*Math.sqrt(2)/2*Math.sin(rot+Math.PI/4);
-        double startX = posX + Constants.ROBOT_HEIGHT*Math.sqrt(2)/2*Math.cos(rot-Math.PI/4);
+        double startX = posX + Constants.ROBOT_WIDTH*Math.sqrt(2)/2*Math.cos(rot-Math.PI/4);
         double startY = posY + Constants.ROBOT_HEIGHT*Math.sqrt(2)/2*Math.sin(rot-Math.PI/4);
 
-        double midPointX = posX + Constants.ROBOT_HEIGHT/2*Math.cos(rot);
+        double midPointX = posX + Constants.ROBOT_WIDTH/2*Math.cos(rot);
         double midPointY = posY + Constants.ROBOT_HEIGHT/2*Math.sin(rot);
 
         double vx = startX - endX;
@@ -256,8 +256,8 @@ public class SimulationState
             switch (fuelPositions[i].location)
             {
             case Robot:
+                fuelPositions[i].state.pose = new Pose3d(Util.packElWithRot(posX - Math.cos(rot)*Constants.ROBOT_WIDTH/2, posY - Math.sin(rot)*Constants.ROBOT_HEIGHT/2, 0.0, Robot.instance.robotContainer.drivetrain.getState().Pose.getRotation().getRadians(), Constants.ROBOT_WIDTH, Constants.ROBOT_HEIGHT, FUEL_DIAMETER, fuelsInRobot), new Rotation3d(Robot.instance.robotContainer.drivetrain.getState().Pose.getRotation()));
                 fuelsInRobot++;
-                fuelPositions[i].state.pose = new Pose3d(posX, posY, 0, new Rotation3d(Robot.instance.robotContainer.drivetrain.getState().Pose.getRotation()));
                 break;
             case BlueHub:
                 fuelPositions[i].state.pose = new Pose3d(Util.packEl(HUB_CONTENTS, 0.0762, FUEL_DIAMETER, fuelsInBlueHub), new Rotation3d());

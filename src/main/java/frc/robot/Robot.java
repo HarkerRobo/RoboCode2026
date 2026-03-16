@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.commands.hood.ZeroHood;
 import frc.robot.simulation.SimulationState;
 import frc.robot.util.Util;
 
@@ -52,14 +53,15 @@ public class Robot extends TimedRobot
       robotContainer.init();
       Util.init();
 
+
       LimelightHelpers.setCameraPose_RobotSpace(Constants.Vision.kCamera1Name, 
       Constants.Vision.kRobotToCam1.getX(), Constants.Vision.kRobotToCam1.getY(), Constants.Vision.kRobotToCam1.getZ(),
       Units.radiansToDegrees(Constants.Vision.kRobotToCam1.getRotation().getX()), Units.radiansToDegrees(Constants.Vision.kRobotToCam1.getRotation().getY()), Units.radiansToDegrees(Constants.Vision.kRobotToCam1.getRotation().getZ()));
    
 
-      /*LimelightHelpers.setCameraPose_RobotSpace(Constants.Vision.kCamera2Name, 
+      LimelightHelpers.setCameraPose_RobotSpace(Constants.Vision.kCamera2Name, 
       Constants.Vision.kRobotToCam2.getX(), Constants.Vision.kRobotToCam2.getY(), Constants.Vision.kRobotToCam2.getZ(),
-      Units.radiansToDegrees(Constants.Vision.kRobotToCam2.getRotation().getX()), Units.radiansToDegrees(Constants.Vision.kRobotToCam2.getRotation().getY()), Units.radiansToDegrees(Constants.Vision.kRobotToCam2.getRotation().getZ()));*/
+      Units.radiansToDegrees(Constants.Vision.kRobotToCam2.getRotation().getX()), Units.radiansToDegrees(Constants.Vision.kRobotToCam2.getRotation().getY()), Units.radiansToDegrees(Constants.Vision.kRobotToCam2.getRotation().getZ()));
    }
       
 
@@ -137,6 +139,7 @@ public class Robot extends TimedRobot
    @Override
    public void teleopInit() 
    {
+      CommandScheduler.getInstance().schedule(new ZeroHood());
       if (autonomousCommand != null) 
       {
          autonomousCommand.cancel();

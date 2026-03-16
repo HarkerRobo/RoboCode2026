@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.TunerConstants;
 import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
 import frc.robot.Robot;
+import frc.robot.Telemetry;
 import edu.wpi.first.wpilibj.DriverStation;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
@@ -60,7 +61,7 @@ public class RotateToAngle extends Command{
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
         dt.setControl(drive
-            .withHeadingPID(Constants.TunerConstants.steerGains.kP, Constants.TunerConstants.steerGains.kI, Constants.TunerConstants.steerGains.kD)
+            .withHeadingPID(Constants.Drive.autoalignSteerKP, Constants.Drive.autoalignSteerKI, Constants.Drive.autoalignSteerKD)
             .withTargetDirection(calcAngle())
             .withMaxAbsRotationalRate(MaxAngularRate)
             .withVelocityX(0.0)
@@ -70,14 +71,22 @@ public class RotateToAngle extends Command{
         
         System.out.println("Rotating to target...");
         System.out.println("Current angle: " + dt.getState().Pose.getRotation());
-        System.out.println("Target rotation: " + calcAngle());
+        Telemetry.getInstance().test1.accept(dt.getState().Pose.getRotation().getDegrees());
+        System.out.println("Target rotation: " + (calcAngle().getDegrees()));
+        Telemetry.getInstance().test2.accept(calcAngle().getDegrees());
         System.out.println("ERROR: " + (calcAngle().getDegrees() - dt.getState().Pose.getRotation().getDegrees()));
         System.out.println("X- and Y- Speeds: " + (xSpeed * MaxSpeed) + ", " + (ySpeed * MaxSpeed));
     }
 
     @Override
     public boolean isFinished() {
-        return (dt.getState().Pose.getRotation().getRotations() + 0.5 - calcAngle().getRotations()) % 1 <= 0.01;
+        if ((dt.getState().Pose.getRotation().getDegrees() + 180 - calcAngle().getDegrees()) % 360 <= 1.0)
+        {
+            Telemetry.getInstance().aligned.set(true);
+            return true;
+        }
+        Telemetry.getInstance().aligned.set(false);
+        return false;
     }
 
     @Override

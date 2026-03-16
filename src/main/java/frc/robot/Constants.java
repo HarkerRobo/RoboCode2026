@@ -46,10 +46,10 @@ public class Constants
     public static final double ROBOT_HEIGHT = 0.89535; // y direction when bot is faced in the positive x direction; that is, parallel to the intake face
     public static final double ROBOT_WIDTH = 0.84455;
 
-    public static final Pose2d ZEROING_POSE = new Pose2d(3.581, 4.20288, new Rotation2d(0.0));
+    public static final Pose2d ZEROING_POSE = new Pose2d(3.581, 4.20288, new Rotation2d(Degrees.of(180)));
 
-    public static final double TRANSLATION_SLOW_MULTIPLIER = 0.2;
-    public static final double ROTATION_SLOW_MULTIPLIER = 0.4;
+    public static final double TRANSLATION_SLOW_MULTIPLIER = 0.35;
+    public static final double ROTATION_SLOW_MULTIPLIER = 0.5;
 
     public static final CANBus CAN_CHAIN = new CANBus("rio");
 
@@ -63,17 +63,14 @@ public class Constants
                 new Translation3d(Units.inchesToMeters(-10.5238), Units.inchesToMeters(-9.5396), Units.inchesToMeters(9.2734)),
                 new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(112.7732 - 90.0), Units.degreesToRadians(90.0 + 31.0351)));
 
-        /*
-        public static final String kCamera2Name = "limelight";
+        
+        public static final String kCamera2Name = "limelight-right";
         public static final Transform3d kRobotToCam2 = new Transform3d(
-                new Translation3d(Units.inchesToMeters(5.472), Units.inchesToMeters(-10.5), Units.inchesToMeters(7.482)),
-                new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(26.1), 0)); // TODO bc this is copied from 2025 code
-                */
+                new Translation3d(Units.inchesToMeters(-11.743), Units.inchesToMeters(10.009), Units.inchesToMeters(9.0552)),
+                new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(12.567), Units.degreesToRadians(180.0 + 7.566))); // TODO bc this is copied from 2025 code
 
         public static final double linTagStdDevs = 0.1;
         public static final double angTagStdDevs = 999999;
-        public static final Matrix<N3, N1> kTagStdDevs = VecBuilder.fill(0.1, 0.1, 99999);
-        public static final Matrix<N3, N1> stateStdDevs = VecBuilder.fill(0.05, 0.05, 0.1);
 
         // The layout of the AprilTags on the field
         public static final AprilTagFieldLayout kTagLayout = AprilTagFieldLayout
@@ -101,24 +98,24 @@ public class Constants
 		public static final InvertedValue LEFT_INVERTED = InvertedValue.Clockwise_Positive;
 		public static final InvertedValue RIGHT_INVERTED = InvertedValue.CounterClockwise_Positive;
         
-        public static final double GEAR_RATIO = 20.0/12.0; // TODO
+        public static final double GEAR_RATIO = 20.0/12.0;
 
-		public static final double LEFT_KP = 1.0; // TODO
+		public static final double LEFT_KP = 0.21;
 		public static final double LEFT_KI = 0.0;
-		public static final double LEFT_KD = 0.0054;
-        public static final double LEFT_KS = 0.21795;
-        public static final double LEFT_KV = 0.11737;
-        public static final double LEFT_KA = 0.0055121;
+        public static final double LEFT_KD = 0.0;
+        public static final double LEFT_KS = 0.27795;
+        public static final double LEFT_KV = 0.11653;
+        public static final double LEFT_KA = 0.003365;
 		
-        public static final double RIGHT_KP = 1.0; // TODO
+        public static final double RIGHT_KP = 0.11;
 		public static final double RIGHT_KI = 0.0;
-		public static final double RIGHT_KD = 0.0054;
-        public static final double RIGHT_KS = 0.13518;
-        public static final double RIGHT_KV = 0.1154;
-        public static final double RIGHT_KA = 0.0057192;
+		public static final double RIGHT_KD = 0.0009;
+        public static final double RIGHT_KS = 0.093651;
+        public static final double RIGHT_KV = 0.11827;
+        public static final double RIGHT_KA = 0.0078621;
 
         public static final double DEFAULT_VELOCITY = 0.0; // TODO meters per second (nonzero to decrease startup time)
-        public static final double SOFT_PASS_VELOCITY = 5.0; // TODO meters per second
+        public static final double SOFT_PASS_VELOCITY = 15.0; // TODO meters per second
 
         public static final double INCREASE_VELOCITY = 0.5; // TODO
         public static final double MAX_VELOCITY = 14.0; // TODO
@@ -133,27 +130,30 @@ public class Constants
 
     public class Intake
     {
-        public static int ID = 23;
+        public static int LEFT_ID = 23;
+        public static int RIGHT_ID = 33;
 
         public static final double STATOR_CURRENT_LIMIT = 60.0;
         public static final double SUPPLY_CURRENT_LIMIT = 40.0;
 
-        public static final double INTAKE_VELOCITY = 30.0; // rot/s
+        public static final double INTAKE_VELOCITY = -30.0; // rot/s // not a bug
+        public static final double REDUCED_INTAKE_VELOCITY = -20.0;
         public static final double DEFAULT_INTAKE_VELOCITY = 0.0;
-        public static final double EJECT_VELOCITY = -25.0; // rot/s
+        public static final double EJECT_VELOCITY = 25.0; // rot/s
 
-        public static final double KP = 7.0;
+        public static final double KP = 5.0;
 		public static final double KI = 0.0;
 		public static final double KD = 0.0;
-        public static final double KF = 1.0;
 		
         public static final double KS = 0.0;
         public static final double KV = 12.0/90.0; // max voltage/max speed = 12/(120/1.33)
         public static final double KA = 0.0;
-        public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive;
+        public static final InvertedValue LEFT_INVERTED = InvertedValue.CounterClockwise_Positive;
+        public static final InvertedValue RIGHT_INVERTED = InvertedValue.CounterClockwise_Positive;
 
         
-        public static final double GEAR_RATIO = 16.0/12.0;
+        public static final double LEFT_GEAR_RATIO = 16.0/12.0;
+        public static final double RIGHT_GEAR_RATIO = 16.0/12.0;
         
         public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
 
@@ -166,7 +166,7 @@ public class Constants
         public static final double STATOR_CURRENT_LIMIT = 60.0;
         public static final double SUPPLY_CURRENT_LIMIT = 40.0;
 
-        public static final double EXTENDING_VOLTAGE = 2.5;
+        public static final double EXTENDING_VOLTAGE = 3.5;
         public static final double RETRACTING_VOLTAGE = -2.5;
         public static final double HOLDING_EXTEND_VOLTAGE = 0.25;
         public static final double HOLDING_RETRACT_VOLTAGE = -0.25;
@@ -177,13 +177,13 @@ public class Constants
         
         public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
 
-        public static final double STALLING_CURRENT_EXTEND = 16;
+        public static final double STALLING_CURRENT_EXTEND = 20;
         public static final double STALLING_CURRENT_RETRACT = 25;
 
-        public static final double MIN_HEIGHT = 0.0; // TODO
-        public static final double MAX_HEIGHT = 1.0; // TODO
+        public static final double MIN_HEIGHT = 0.0;
+        public static final double MAX_HEIGHT = 1.0;
         
-        public static final double STALLING_DEBOUNCE_TIME = 0.1;
+        public static final double STALLING_DEBOUNCE_TIME = 0.2; // 0.1
 
         public static final double AGITATE_MIN_VOLTAGE = -1.0; // TODO
         public static final double AGITATE_MAX_VOLTAGE = 1.0; // TODO
@@ -223,6 +223,8 @@ public class Constants
         public static final double ZEROING_POSITION = 75.5; 
         // because the hood current zeroes too high up for some reason and we don't
         // want the hood to stall when it goes to 75 degrees (its max angle)
+
+        public static final double DEBOUNCE_TIME = 0.1;
     }
 
     public class Simulation
@@ -268,8 +270,8 @@ public class Constants
 
     public static final class Climb 
     {
-        public static final int CLIMBWHEELS_ID = 29;
-        public static final int SPOOLING_ID = 30;
+        public static final int CLIMBWHEELS_ID = 61;
+        public static final int SPOOLING_ID = 62;
 
         public static final InvertedValue CLIMBWHEELS_INVERTED = InvertedValue.CounterClockwise_Positive; // TODO
         public static final InvertedValue SPOOLING_INVERTED = InvertedValue.CounterClockwise_Positive; // TODO
@@ -297,12 +299,12 @@ public class Constants
         public static final Angle MAX_ERROR = Rotations.of(0.1);
 
         // positive voltage on CLIMBWHEELS = driving CLIMBWHEELS up
-        public static final Voltage CLIMB_DOWN_VOLTAGE = Volts.of(-2.0); //TODO
-        public static final Voltage CLIMB_UP_VOLTAGE =  Volts.of(2.0); // TODO
+        public static final Voltage CLIMB_DOWN_VOLTAGE = Volts.of(3.0); //TODO
+        public static final Voltage CLIMB_UP_VOLTAGE =  Volts.of(-3.0); // TODO
 
         // positive voltage on climb = deploying climb
-        public static final Voltage SPOOL_VOLTAGE = Volts.of(1.0); // TODO
-        public static final Voltage UNSPOOL_VOLTAGE = Volts.of(-1.0); // TODO
+        public static final Voltage SPOOL_VOLTAGE = Volts.of(2.4); // TODO
+        public static final Voltage UNSPOOL_VOLTAGE = Volts.of(-2.4); // TODO
 
         public static final double UNSPOOL_TIME = 2.0; // seconds
     }
@@ -365,24 +367,35 @@ public class Constants
 
         public static final InvertedValue INVERTED = InvertedValue.CounterClockwise_Positive;
         public static final double STATOR_CURRENT_LIMIT = 60.0;
-        public static final double SUPPLY_CURRENT_LIMIT = 60.0;
+        public static final double SUPPLY_CURRENT_LIMIT = 40.0;
 
         public static final double DEFAULT_VOLTAGE = 0.0;
         public static final double INTAKE_VOLTAGE = 6.0;
 
-        public static final double INTAKE_VELOCITY = 30.0; // rot/s
+        public static final double INTAKE_VELOCITY = 25.0; // rot/s
         
         public static final double KS = 0;
-        public static final double KV = 0.36;
+        public static final double KV = 0;
         public static final double KA = 0;
         
-        public static final double KP = 3.0;
+        public static final double KP = 1.0;
         public static final double KI = 0.0;
         public static final double KD = 0.0;
 
         public static final double GEAR_RATIO = 3.0;
 
         public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
+    }
+
+    public class Drive
+    {
+        public static final double autoalignSteerKP = 15.0;
+        public static final double autoalignSteerKI = 0.5;
+        public static final double autoalignSteerKD = 0.0;
+        
+        public static final double autoalignDriveKP = 6.0;
+        public static final double autoalignDriveKI = 0.0;
+        public static final double autoalignDriveKD = 0.0;
     }
 
     // Generated by the 2026 Tuner X Swerve Project Generator
@@ -402,7 +415,7 @@ public class Constants
         public static final Slot0Configs driveGains = new Slot0Configs()
                 .withKP(0.1).withKI(0).withKD(0)
                 .withKS(0.11411/*0*/).withKV(0.1150/*0.124*/);
-
+ 
         // The closed-loop output type to use for the steer motors;
         // This affects the PID/FF gains for the steer motors
         public static final ClosedLoopOutputType kSteerClosedLoopOutput = ClosedLoopOutputType.Voltage;
@@ -510,7 +523,7 @@ public class Constants
         public static final int kFrontRightDriveMotorId = 10;
         public static final int kFrontRightSteerMotorId = 9;
         public static final int kFrontRightEncoderId = 18;
-        public static final Angle kFrontRightEncoderOffset = Rotations.of(0.25927734375);
+        public static final Angle kFrontRightEncoderOffset = Rotations.of(0.260010);
         public static final boolean kFrontRightSteerMotorInverted = false;
         public static final boolean kFrontRightEncoderInverted = false;
 

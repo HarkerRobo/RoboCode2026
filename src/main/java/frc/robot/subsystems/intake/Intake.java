@@ -1,8 +1,10 @@
 package frc.robot.subsystems.intake;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 
@@ -24,10 +26,12 @@ import frc.robot.RobotContainer.SubsystemStatus;
 public class Intake extends SubsystemBase 
 {
     private static Intake instance;
-    private TalonFX motor;
+    private TalonFX left;
+    private TalonFX right;
+    private double targetVelocity;
 
     private DCMotorSim motorSim = new DCMotorSim(
-        LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 0.001, Constants.Intake.GEAR_RATIO),
+        LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 0.001, Constants.Intake.LEFT_GEAR_RATIO),
         DCMotor.getKrakenX60Foc(1));
 
    
@@ -37,13 +41,14 @@ public class Intake extends SubsystemBase
      */
     private Intake()
     {
-        motor = new TalonFX(Constants.Intake.ID, Constants.CAN_CHAIN);
+        left = new TalonFX(Constants.Intake.LEFT_ID, Constants.CAN_SUPERSTRUCTURE);
+        right = new TalonFX(Constants.Intake.RIGHT_ID, Constants.CAN_SUPERSTRUCTURE);
         config();
         
         if (isSimulated())
         {
-            motor.getSimState().Orientation = Constants.Intake.MECHANICAL_ORIENTATION;
-            motor.getSimState().setMotorType(TalonFXSimState.MotorType.KrakenX60);
+            left.getSimState().Orientation = Constants.Intake.MECHANICAL_ORIENTATION;
+            left.getSimState().setMotorType(TalonFXSimState.MotorType.KrakenX60);
         }
     }
 
@@ -53,12 +58,19 @@ public class Intake extends SubsystemBase
      */
     private void config()
     {
-        motor.clearStickyFaults();
+        left.clearStickyFaults();
+        right.clearStickyFaults();
+        TalonFXConfiguration leftConfig = new TalonFXConfiguration();
+        leftConfig.Feedback.SensorToMechanismRatio = Constants.Intake.LEFT_GEAR_RATIO;
+        leftConfig.MotorOutput.Inverted = Constants.Intake.LEFT_INVERTED;
+        leftConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+        left.getConfigurator().apply(leftConfig);
+        TalonFXConfiguration rightConfig = new TalonFXConfiguration();
+        rightConfig.Feedback.SensorToMechanismRatio = Constants.Intake.RIGHT_GEAR_RATIO;
+        rightConfig.MotorOutput.Inverted = Constants.Intake.RIGHT_INVERTED;
+        right.getConfigurator().apply(rightConfig);
+
         TalonFXConfiguration motorConfig = new TalonFXConfiguration();
-
-        motorConfig.Feedback.SensorToMechanismRatio = Constants.Intake.GEAR_RATIO;
-
-        motorConfig.MotorOutput.Inverted = Constants.Intake.INVERTED;
         motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
         motorConfig.Slot0.kP = Constants.Intake.KP;
@@ -75,30 +87,48 @@ public class Intake extends SubsystemBase
         motorConfig.CurrentLimits.SupplyCurrentLimit = Constants.Intake.SUPPLY_CURRENT_LIMIT;
         motorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
-        motor.getConfigurator().apply(motorConfig);
+        //left.getConfigurator().apply(motorConfig);
+        right.getConfigurator().apply(motorConfig);
+
+        left.setControl(new Follower(Constants.Intake.RIGHT_ID, MotorAlignmentValue.Opposed));
     }
-   
     /**
-    * Returns the voltage currently applied to the motor.
-    * Useful for getting the voltage.
-    */
-    public Voltage getVoltage()
-    {
-        return motor.getMotorVoltage().getValue();
-    }
-    
-    /**
-    * Returns the current angular velocity.
+    * Returns the target angular velocity.
     * Used if you need the velocity.
     */
-    public AngularVelocity getVelocity()
+    public AngularVelocity getTargetVelocity()
     {
-        return motor.getVelocity().getValue();
+        return RotationsPerSecond.of(targetVelocity);
+    }
+   
+    public Voltage getRightVoltage()
+    {
+        return right.getMotorVoltage().getValue();
+    }
+    
+    public AngularVelocity getRightVelocity()
+    {
+        return right.getVelocity().getValue();
     }
 
-    public Current getStatorCurrent()
+    public Current getRightStatorCurrent()
     {
-        return motor.getStatorCurrent().getValue();
+        return right.getStatorCurrent().getValue();
+    }
+    
+    public Voltage getLeftVoltage()
+    {
+        return left.getMotorVoltage().getValue();
+    }
+    
+    public AngularVelocity getLeftVelocity()
+    {
+        return left.getVelocity().getValue();
+    }
+
+    public Current getLeftStatorCurrent()
+    {
+        return left.getStatorCurrent().getValue();
     }
    
     /**
@@ -112,7 +142,7 @@ public class Intake extends SubsystemBase
             System.out.println("Quashing input to Intake");
             return;
         }
-        motor.setControl(new VoltageOut(voltage));
+        right.setControl(new VoltageOut(voltage));
     }
 
     /**
@@ -121,13 +151,15 @@ public class Intake extends SubsystemBase
     */
     public void setVelocity (AngularVelocity velocity)
     {
+        targetVelocity = velocity.in(RotationsPerSecond);
         if (isDisabled())
         {
             System.out.println("Quashing input to Intake");
             return;
         }
-        motor.setControl(new VelocityVoltage(velocity));
+        right.setControl(new VelocityVoltage(velocity));
     }
+    
     /**
      * When running in simulation, updates the DCMotorSim.
      * Pushes the new rotor position and velocity into the TalonFX sim state.
@@ -137,7 +169,7 @@ public class Intake extends SubsystemBase
     {
         if (isSimulated())
         {
-            TalonFXSimState simState = motor.getSimState();
+            TalonFXSimState simState = right.getSimState();
 
             // set the supply voltage of the TalonFX
             simState.setSupplyVoltage(RobotController.getBatteryVoltage());
@@ -150,8 +182,8 @@ public class Intake extends SubsystemBase
             // apply the new rotor position and velocity to the TalonFX;
             // note that this is rotor position/velocity (before gear ratio), but
             // DCMotorSim returns mechanism position/velocity (after gear ratio)
-            simState.setRawRotorPosition(motorSim.getAngularPosition().times(Constants.Intake.GEAR_RATIO));
-            simState.setRotorVelocity(motorSim.getAngularVelocity().times(Constants.Intake.GEAR_RATIO));
+            simState.setRawRotorPosition(motorSim.getAngularPosition().times(Constants.Intake.RIGHT_GEAR_RATIO));
+            simState.setRotorVelocity(motorSim.getAngularVelocity().times(Constants.Intake.RIGHT_GEAR_RATIO));
         }
     }
    
