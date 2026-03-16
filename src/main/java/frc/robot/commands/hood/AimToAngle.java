@@ -5,9 +5,7 @@ import static edu.wpi.first.units.Units.*;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants;
 import frc.robot.subsystems.Hood;
-import frc.robot.util.Util;
 
 public class AimToAngle extends Command
 {
@@ -41,11 +39,7 @@ public class AimToAngle extends Command
     public void initialize()
     {
         pitch = pitcher.getAsDouble();
-        double boundedPitch = Util.bound(pitch, Constants.Hood.MIN_ANGLE, Constants.Hood.MAX_ANGLE);
-        if (boundedPitch != pitch)
-            System.out.println("Bounding out-of-bounds pitch " + pitch + " to " + boundedPitch);
-        this.pitch = boundedPitch;
-
+        
         Hood.getInstance().moveToPosition(Degrees.of(pitch));
         System.out.println("Aiming: " + pitch + "°");
     }

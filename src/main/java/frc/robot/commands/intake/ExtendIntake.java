@@ -48,6 +48,6 @@ public class ExtendIntake extends Command
     @Override
     public void end(boolean interrupted)
     {
-        IntakeExtension.getInstance().setVoltage(Volts.of(0.0));
+        IntakeExtension.getInstance().setVoltage(Volts.of(Constants.IntakeExtension.HOLDING_EXTEND_VOLTAGE));
     }
 }

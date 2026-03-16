@@ -1,8 +1,6 @@
 package frc.robot.subsystems.intake;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -10,10 +8,11 @@ import com.ctre.phoenix6.sim.TalonFXSimState;
 
 import static edu.wpi.first.units.Units.*;
 
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
@@ -29,16 +28,14 @@ public class IntakeExtension extends SubsystemBase
     private TalonFX motor;
 
     private ElevatorSim sim = new ElevatorSim(
-        LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60(1), 0.001, Constants.Climb.ELEVATOR_GEAR_RATIO),
+        LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60(1), 0.001, Constants.IntakeExtension.GEAR_RATIO),
             DCMotor.getKrakenX60(1), Constants.IntakeExtension.MIN_HEIGHT, Constants.IntakeExtension.MAX_HEIGHT, false, Constants.IntakeExtension.MIN_HEIGHT);
 
-    /**
-     * Creates the extension motor and applies all configuration settings.
-     * If running in simulation, sets up the TalonFX sim state so the virtual mechanism behaves correctly.
-     */
+    private Debouncer stallingDebouncer;
+    
     private IntakeExtension()
     {
-        motor = new TalonFX(Constants.IntakeExtension.ID);
+        motor = new TalonFX(Constants.IntakeExtension.ID, Constants.CAN_CHAIN);
         config();
         
         if (isSimulated())
@@ -46,6 +43,8 @@ public class IntakeExtension extends SubsystemBase
             motor.getSimState().Orientation = Constants.IntakeExtension.MECHANICAL_ORIENTATION;
             motor.getSimState().setMotorType(TalonFXSimState.MotorType.KrakenX60);
         }
+
+        stallingDebouncer = new Debouncer(Constants.IntakeExtension.STALLING_DEBOUNCE_TIME);
     }
 
     /**
@@ -61,13 +60,6 @@ public class IntakeExtension extends SubsystemBase
 
         extensionConfig.MotorOutput.Inverted = Constants.IntakeExtension.INVERTED;
         extensionConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-
-        extensionConfig.Slot0.kP = Constants.IntakeExtension.KP;
-        extensionConfig.Slot0.kI = Constants.IntakeExtension.KI;
-        extensionConfig.Slot0.kD = Constants.IntakeExtension.KD;
-        extensionConfig.Slot0.kS = Constants.IntakeExtension.KS;
-        extensionConfig.Slot0.kV = Constants.IntakeExtension.KV;
-        extensionConfig.Slot0.kA = Constants.IntakeExtension.KA;
 
         extensionConfig.Voltage.PeakForwardVoltage = Constants.MAX_VOLTAGE;
         extensionConfig.Voltage.PeakReverseVoltage = -Constants.MAX_VOLTAGE;
@@ -96,13 +88,9 @@ public class IntakeExtension extends SubsystemBase
         return motor.getVelocity().getValue();
     }
 
-    /**
-     * Returns the motor’s current position reading.
-     * Gives you the extension height.
-     */
-    public Angle getPosition()
+    public Current getStatorCurrent()
     {
-        return motor.getPosition().getValue();
+        return motor.getStatorCurrent().getValue();
     }
 
     /**
@@ -119,42 +107,16 @@ public class IntakeExtension extends SubsystemBase
         motor.setControl(new VoltageOut(voltage));
     }
 
-    /**
-     * Commands the motor to hold a specific speed.
-     * Blocked when the subsystem is disabled.
-     */
-    public void setVelocity (AngularVelocity velocity)
-    {
-        if (isDisabled())
-        {
-            System.out.println("Quashing input to IntakeExtension");
-            return;
-        }
-        motor.setControl(new VelocityVoltage(velocity));
-    }
-
-    /**
-     * Drives the motor with a raw percent output.
-     * If the subsystem is disabled, the command is ignored.
-     */
-    public void setDutyCycle(double velocity) 
-    {
-        if (isDisabled())
-        {
-            System.out.println("Quashing input to IntakeExtension");
-            return;
-        }
-        motor.setControl(new DutyCycleOut(velocity));
-    }
-
-    /**
-     * Checks the stator current.
-     * Returns true when the current crosses the configured threshold.
-     */
     public boolean isStalling()
     {
-        System.out.println("Stator Current: " + motor.getStatorCurrent().getValueAsDouble());
-        return Math.abs(motor.getStatorCurrent().getValueAsDouble()) >= Constants.IntakeExtension.STALLING_CURRENT;
+        if (getVoltage().in(Volts) > 0)
+        {
+            return stallingDebouncer.calculate(motor.getStatorCurrent().getValueAsDouble() >= Constants.IntakeExtension.STALLING_CURRENT_EXTEND);
+        }
+        else
+        {
+            return stallingDebouncer.calculate(motor.getStatorCurrent().getValueAsDouble() >= Constants.IntakeExtension.STALLING_CURRENT_RETRACT);
+        }
     }
 
     /**
@@ -168,16 +130,11 @@ public class IntakeExtension extends SubsystemBase
         {
             TalonFXSimState simState = motor.getSimState();
 
-            // set the supply voltage of the TalonFX
             simState.setSupplyVoltage(RobotController.getBatteryVoltage());
-
-            // get the motor voltage of the TalonFX
             Voltage elevatorMotorVoltage = simState.getMotorVoltageMeasure();
 
-            // use the motor voltage to calculate new position and velocity
-            // using WPILib's DCMotorSim class for physics simulation
             sim.setInputVoltage(elevatorMotorVoltage.in(Volts));
-            sim.update(0.020); // assume 20 ms loop time
+            sim.update(0.020);
 
             // apply the new rotor position and velocity to the TalonFX;
             // note that this is rotor position/velocity (before gear ratio), but
@@ -204,29 +161,6 @@ public class IntakeExtension extends SubsystemBase
     {
         return Robot.instance.robotContainer.getStatus(RobotContainer.INTAKE_EXTENSION_INDEX) == SubsystemStatus.Disabled;
     }
-
-    /*
-    private SysIdRoutine sysId = new SysIdRoutine(
-        new SysIdRoutine.Config(), 
-        new SysIdRoutine.Mechanism((Voltage v)->motor.setControl(new VoltageOut(v)),
-            (SysIdRoutineLog l)->l
-                .motor("IntakeExtension")
-                .voltage(getVoltage())
-                .angularPosition(motor.getPosition().getValue())
-                .angularVelocity(getVelocity()),
-        this)
-    );
-
-    public Command sysIdQuasistatic (SysIdRoutine.Direction direction)
-    {
-        return sysId.quasistatic(direction).withName("SysId Q" + (direction == SysIdRoutine.Direction.kForward ? "F" : "R"));
-    }
-    
-    public Command sysIdDynamic (SysIdRoutine.Direction direction)
-    {
-        return sysId.dynamic(direction).withName("SysId Q" + (direction == SysIdRoutine.Direction.kForward ? "F" : "R"));
-    }
-        */
 
     public static IntakeExtension getInstance()
     {

@@ -1,12 +1,6 @@
 package frc.robot.util;
 
-import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.*;
-import edu.wpi.first.units.measure.*;
 import edu.wpi.first.util.struct.Struct;
-
-import static edu.wpi.first.units.Units.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,24 +10,13 @@ import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 
 import edu.wpi.first.networktables.BooleanPublisher;
-import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.networktables.DoublePublisher;
-import edu.wpi.first.networktables.DoubleTopic;
 import edu.wpi.first.networktables.IntegerPublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StringPublisher;
 import edu.wpi.first.networktables.StructArrayPublisher;
-import edu.wpi.first.networktables.StructArrayTopic;
 import edu.wpi.first.networktables.StructPublisher;
-import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.Simulation;
-import frc.robot.simulation.SimulationState;
-import frc.robot.subsystems.Hood;
-import frc.robot.subsystems.Indexer;
-import frc.robot.subsystems.Hopper;
-import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.Turret;
 
 public class TelemetryUtil {
 

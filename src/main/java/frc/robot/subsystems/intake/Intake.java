@@ -1,6 +1,5 @@
 package frc.robot.subsystems.intake;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -12,6 +11,7 @@ import static edu.wpi.first.units.Units.*;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
@@ -37,7 +37,7 @@ public class Intake extends SubsystemBase
      */
     private Intake()
     {
-        motor = new TalonFX(Constants.Intake.ID);
+        motor = new TalonFX(Constants.Intake.ID, Constants.CAN_CHAIN);
         config();
         
         if (isSimulated())
@@ -64,9 +64,8 @@ public class Intake extends SubsystemBase
         motorConfig.Slot0.kP = Constants.Intake.KP;
         motorConfig.Slot0.kI = Constants.Intake.KI;
         motorConfig.Slot0.kD = Constants.Intake.KD;
-        motorConfig.Slot0.kS = Constants.Intake.KS;
+
         motorConfig.Slot0.kV = Constants.Intake.KV;
-        motorConfig.Slot0.kA = Constants.Intake.KA;
 
         motorConfig.Voltage.PeakForwardVoltage = Constants.MAX_VOLTAGE;
         motorConfig.Voltage.PeakReverseVoltage = -Constants.MAX_VOLTAGE;
@@ -95,6 +94,11 @@ public class Intake extends SubsystemBase
     public AngularVelocity getVelocity()
     {
         return motor.getVelocity().getValue();
+    }
+
+    public Current getStatorCurrent()
+    {
+        return motor.getStatorCurrent().getValue();
     }
    
     /**
@@ -125,20 +129,6 @@ public class Intake extends SubsystemBase
         motor.setControl(new VelocityVoltage(velocity));
     }
     /**
-     * Drives the intake motor with a raw percent output.
-     * If the subsystem is disabled, the command is ignored.
-     */
-    public void setDutyCycle(double velocity) 
-    {
-        if (isDisabled())
-        {
-            System.out.println("Quashing input to Intake");
-            return;
-        }
-        motor.setControl(new DutyCycleOut(velocity));
-    }
-    
-    /**
      * When running in simulation, updates the DCMotorSim.
      * Pushes the new rotor position and velocity into the TalonFX sim state.
      */
@@ -165,50 +155,16 @@ public class Intake extends SubsystemBase
         }
     }
    
-    /**
-     * Returns true if the subsystem is marked as simulated in RobotContainer.
-     * Used to decide whether to run physics simulation.
-     */
     private boolean isSimulated ()
     {
         return Robot.instance.robotContainer.getStatus(RobotContainer.INTAKE_INDEX) == SubsystemStatus.Simulated;
     }
     
-    /**
-     * Returns true if the subsystem is disabled in RobotContainer.
-     * Prevents motors from moving
-     */
     private boolean isDisabled ()
     {
         return Robot.instance.robotContainer.getStatus(RobotContainer.INTAKE_INDEX) == SubsystemStatus.Disabled;
     }
-     
-    /*
-    private SysIdRoutine sysId = new SysIdRoutine(
-        new SysIdRoutine.Config(), 
-        new SysIdRoutine.Mechanism((Voltage v)->motor.setControl(new VoltageOut(v)),
-            (SysIdRoutineLog l)->l
-                .motor("Intake")
-                .voltage(getVoltage())
-                .angularPosition(motor.getPosition().getValue())
-                .angularVelocity(getVelocity()),
-        this)
-    );
 
-    public Command sysIdQuasistatic (SysIdRoutine.Direction direction)
-    {
-        return sysId.quasistatic(direction).withName("SysId Q" + (direction == SysIdRoutine.Direction.kForward ? "F" : "R"));
-    }
-    
-    public Command sysIdDynamic (SysIdRoutine.Direction direction)
-    {
-        return sysId.dynamic(direction).withName("SysId Q" + (direction == SysIdRoutine.Direction.kForward ? "F" : "R"));
-    }
-        */
-
-    /**
-     * singleton code
-     */
     public static Intake getInstance()
     {
         if(instance == null) instance = new Intake();

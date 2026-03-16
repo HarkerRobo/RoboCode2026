@@ -1,17 +1,17 @@
 package frc.robot.commands.hood;
 
-import static edu.wpi.first.units.Units.*;
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Volts;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-
-import frc.robot.subsystems.Hood;
 import frc.robot.Constants;
+import frc.robot.subsystems.Hood;
 
 public class ZeroHood extends Command
 {
-    /**
-     * Claims the Hood subsystem.
-     */
+    Timer timer = new Timer();
+
     public ZeroHood()
     {
         addRequirements(Hood.getInstance());
@@ -24,15 +24,8 @@ public class ZeroHood extends Command
     @Override
     public void initialize()
     {
-        Hood.getInstance().moveToPosition(Degrees.of(Constants.Hood.MIN_ANGLE));
-    }
-
-    /**
-     * No repeated action required during execution.
-     */
-    @Override
-    public void execute()
-    {
+        timer.reset();
+        Hood.getInstance().setVoltage(Volts.of(Constants.Hood.ZEROING_VOLTAGE));
     }
 
     /**
@@ -42,7 +35,7 @@ public class ZeroHood extends Command
     @Override
     public boolean isFinished()
     {
-        return Hood.getInstance().isStalling() || Hood.getInstance().readyToShoot();
+        return timer.hasElapsed(0.2) && Hood.getInstance().isStalling();
     }
 
     /**
@@ -54,8 +47,9 @@ public class ZeroHood extends Command
     {
         if (!interrupted)
         {
-            System.out.println("Zeroing Hood");
-            Hood.getInstance().setPosition(Degrees.of(Constants.Hood.MIN_ANGLE));
+            System.out.println("Soft zero done");
+            Hood.getInstance().setPosition(Degrees.of(Constants.Hood.ZEROING_POSITION));
         }
+        Hood.getInstance().setVoltage(Volts.of(0.0));
     }
 }

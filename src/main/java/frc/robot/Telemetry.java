@@ -11,6 +11,11 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 
 import static edu.wpi.first.units.Units.*;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.math.geometry.Translation2d;
+
+import com.pathplanner.lib.util.FlippingUtil;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
@@ -28,7 +33,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.simulation.SimulationState;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Indexer;
-import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.ShooterIndexer;
 import frc.robot.subsystems.intake.Intake;
@@ -45,51 +49,53 @@ public class Telemetry
     private NetworkTableInstance tableInstance = NetworkTableInstance.getDefault();
     private NetworkTable table = tableInstance.getTable("1072");
 
-    private StringPublisher mostRecentAim = table.getStringTopic("Most Recent Aim").publish();
-    private DoublePublisher hoodOffset = table.getDoubleTopic("Hood Offset").publish();
+    private StringPublisher mostRecentAim = table.getStringTopic("most recent aim").publish();
+    private DoublePublisher hoodOffset = table.getDoubleTopic("hood offset").publish();
+    private DoublePublisher leftFlywheelOffset = table.getDoubleTopic("left flywheel offset").publish();
+    private DoublePublisher rightFlywheelOffset = table.getDoubleTopic("right flywheel offset").publish();
+    private BooleanPublisher intakeTriggered = table.getBooleanTopic("intake triggered").publish();
+    private BooleanPublisher intakeExtended = table.getBooleanTopic("intake extended").publish();
 
     private NetworkTable intake = table.getSubTable("Intake");
     private StringPublisher intakeCommand = intake.getStringTopic("main command").publish();
     private DoublePublisher intakeMainVelocity = intake.getDoubleTopic("main velocity (rot per s)").publish();
     private DoublePublisher intakeMainVoltage = intake.getDoubleTopic("main voltage (V)").publish();
+    private DoublePublisher intakeMainCurrent = intake.getDoubleTopic("main current (A) ").publish();
 
     private StringPublisher intakeExtensionCommand = intake.getStringTopic("extension command").publish();
-    private DoublePublisher intakeExtensionPosition = intake.getDoubleTopic("extension position (rot)").publish();
     private DoublePublisher intakeExtensionVelocity = intake.getDoubleTopic("extension velocity (rot per s)").publish();
     private DoublePublisher intakeExtensionVoltage = intake.getDoubleTopic("extension voltage (V)").publish();
-
-    /*
-    private NetworkTable turret = table.getSubTable("Turret");
-    private StringPublisher turretCommand = turret.getStringTopic("command").publish();
-    private DoublePublisher turretPosition = turret.getDoubleTopic("position (°)").publish();
-    private DoublePublisher turretTargetPosition = turret.getDoubleTopic("target position (°)").publish();
-    private DoublePublisher turretVelocity = turret.getDoubleTopic("velocity (° per s)").publish();
-    private DoublePublisher turretVoltage = turret.getDoubleTopic("voltage (V)").publish();
-    private BooleanPublisher turretReadyToShoot = turret.getBooleanTopic("ready to shoot?").publish();
-    */
+    private DoublePublisher intakeExtensionCurrent = intake.getDoubleTopic("current (A)").publish();
 
     private NetworkTable hood = table.getSubTable("Hood");
     private StringPublisher hoodCommand = hood.getStringTopic("command").publish();
     private DoublePublisher hoodPosition = hood.getDoubleTopic("position (°)").publish();
     private DoublePublisher hoodTargetPosition = hood.getDoubleTopic("target position (°)").publish();
-    private DoublePublisher hoodVelocity = hood.getDoubleTopic("velocity (° per s)").publish();
     private DoublePublisher hoodVoltage = hood.getDoubleTopic("voltage (V)").publish();
     private BooleanPublisher hoodReadyToShoot = hood.getBooleanTopic("ready to shoot?").publish();
+    private DoublePublisher hoodStatorCurrent = hood.getDoubleTopic("stator current (A)").publish();
     
     private NetworkTable shooter = table.getSubTable("Shooter");
     private StringPublisher shooterCommand = shooter.getStringTopic("command").publish();
     private DoublePublisher shooterLeftVelocity = shooter.getDoubleTopic("left velocity (rot per s)").publish();
+    private DoublePublisher shooterEffectiveLeftVelocity = shooter.getDoubleTopic("left effective velocity (m per s)").publish();
+    private DoublePublisher shooterLeftTargetVelocity = shooter.getDoubleTopic("left target velocity (rot per s)").publish();
+    private DoublePublisher shooterLeftEffectiveTargetVelocity = shooter.getDoubleTopic("left effective target velocity (m per s)").publish();
     private DoublePublisher shooterLeftVoltage = shooter.getDoubleTopic("left voltage (V)").publish();
     private DoublePublisher shooterRightVelocity = shooter.getDoubleTopic("right velocity (rot per s)").publish();
+    private DoublePublisher shooterEffectiveRightVelocity = shooter.getDoubleTopic("right effective velocity (m per s)").publish();
     private DoublePublisher shooterRightVoltage = shooter.getDoubleTopic("right voltage (V)").publish();
+    private DoublePublisher shooterRightTargetVelocity = shooter.getDoubleTopic("right target velocity (rot per s)").publish();
+    private DoublePublisher shooterRightEffectiveTargetVelocity = shooter.getDoubleTopic("right effective target velocity (m per s)").publish();
+    private BooleanPublisher shooterReadyToShoot = shooter.getBooleanTopic("ready to shoot?").publish();
 
     private NetworkTable climb = table.getSubTable("Climb");
     private StringPublisher climbCommand = climb.getStringTopic("command").publish();
-    private DoublePublisher climbElevatorVelocity = climb.getDoubleTopic("elevator velocity (rot per s)").publish();
-    private DoublePublisher climbElevatorVoltage = climb.getDoubleTopic("elevator voltage (V)").publish();
-    private DoublePublisher climbElevatorPosition = climb.getDoubleTopic("elevator position (rot)").publish();
-    private DoublePublisher climbElevatorTarget = climb.getDoubleTopic("elevator target (rot)").publish();
-    private DoublePublisher climbClimbVoltage = climb.getDoubleTopic("climb voltage (V)").publish();
+    private DoublePublisher climbClimbWheelsVelocity = climb.getDoubleTopic("climb wheels velocity (rot per s)").publish();
+    private DoublePublisher climbClimbWheelsVoltage = climb.getDoubleTopic("climb wheels voltage (V)").publish();
+    private DoublePublisher climbClimbWheelsPosition = climb.getDoubleTopic("climb wheels position (rot)").publish();
+    private DoublePublisher climbSpoolingVoltage = climb.getDoubleTopic("spooling voltage (V)").publish();
+    private DoublePublisher climbSpoolingPosition = climb.getDoubleTopic("spooling position (rot)").publish();
 
     /*
     private NetworkTable persistent = table.getSubTable("[persistent variables]");
@@ -110,16 +116,11 @@ public class Telemetry
 
     private NetworkTable indexer = table.getSubTable("Indexer");
     private StringPublisher indexerCommand = indexer.getStringTopic("command").publish();
-    private DoublePublisher indexerVelocity = indexer.getDoubleTopic("velocity (rps)").publish();
-    private DoublePublisher indexerVoltage = indexer.getDoubleTopic("voltage (V)").publish();
+    private DoublePublisher indexerMainVelocity = indexer.getDoubleTopic("main velocity (rps)").publish();
+    private DoublePublisher indexerMainVoltage = indexer.getDoubleTopic("main voltage (V)").publish();
+    private DoublePublisher indexerSideVelocity = indexer.getDoubleTopic("side velocity (rps)").publish();
+    private DoublePublisher indexerSideVoltage = indexer.getDoubleTopic("side voltage (V)").publish();
     
-    private NetworkTable hopper = table.getSubTable("Hopper");
-    private StringPublisher hopperCommand = hopper.getStringTopic("command").publish();
-    private DoublePublisher hopperVelocity = hopper.getDoubleTopic("velocity (rot per s)").publish();
-    private DoublePublisher hopperVoltage = hopper.getDoubleTopic("voltage (V)").publish();
-    private DoublePublisher hopperPosition = hopper.getDoubleTopic("current position (rotations)").publish();
-    // private DoublePublisher hopperTarget = hopper.getDoubleTopic("target position (rotations)").publish();
-
     private NetworkTable shooterIndexer = table.getSubTable("ShooterIndexer");
     private StringPublisher shooterIndexerCommand = shooterIndexer.getStringTopic("command").publish();
     private DoublePublisher shooterIndexerVelocity = shooterIndexer.getDoubleTopic("velocity (rps)").publish();
@@ -135,6 +136,7 @@ public class Telemetry
     private final StructArrayPublisher<SwerveModulePosition> driveModulePositions = driveStateTable.getStructArrayTopic("ModulePositions", SwerveModulePosition.struct).publish();
     private final DoublePublisher driveTimestamp = driveStateTable.getDoubleTopic("Timestamp").publish();
     private final DoublePublisher driveOdometryFrequency = driveStateTable.getDoubleTopic("OdometryFrequency").publish();
+    private final DoublePublisher distanceToShoot = driveStateTable.getDoubleTopic("DistanceToShoot").publish();
 
     /* Robot pose for field positioning */
     private final NetworkTable poses = tableInstance.getTable("Pose");
@@ -187,57 +189,52 @@ public class Telemetry
     {
         mostRecentAim.set(Robot.instance.robotContainer.mostRecentAim ? "Pass" : "Shoot");
         hoodOffset.set(Robot.instance.robotContainer.pitchOffset);
+        leftFlywheelOffset.set(Robot.instance.robotContainer.leftFlywheelOffset);
+        rightFlywheelOffset.set(Robot.instance.robotContainer.rightFlywheelOffset);
+        intakeTriggered.set(Robot.instance.robotContainer.intakeTriggered);
+        intakeExtended.set(Robot.instance.robotContainer.intakeExtended);
 
         Command intakeCommand = Intake.getInstance().getCurrentCommand();
         this.intakeCommand.set(intakeCommand == null ? "" : intakeCommand.getName());
         intakeMainVelocity.set(Intake.getInstance().getVelocity().in(RotationsPerSecond));
         intakeMainVoltage.set(Intake.getInstance().getVoltage().in(Volts));
+        intakeMainCurrent.set(Intake.getInstance().getStatorCurrent().in(Amps));
         
         Command intakeExtensionCommand = IntakeExtension.getInstance().getCurrentCommand();
         this.intakeExtensionCommand.set(intakeExtensionCommand == null ? "" : intakeExtensionCommand.getName());
-        intakeExtensionPosition.set(IntakeExtension.getInstance().getPosition().in(Rotations));
         intakeExtensionVelocity.set(IntakeExtension.getInstance().getVelocity().in(RotationsPerSecond));
         intakeExtensionVoltage.set(IntakeExtension.getInstance().getVoltage().in(Volts));
+        intakeExtensionCurrent.set(IntakeExtension.getInstance().getStatorCurrent().in(Amps));
 
-        /*
-        Command turretCommand = Turret.getInstance().getCurrentCommand();
-        this.turretCommand.set(turretCommand == null ? "" : turretCommand.getName());
-        turretPosition.set(Turret.getInstance().getPosition().in(Degrees));
-        turretTargetPosition.set(Turret.getInstance().getDesiredPosition().in(Degrees));
-        turretVelocity.set(Turret.getInstance().getVelocity().in(DegreesPerSecond));
-        turretVoltage.set(Turret.getInstance().getVoltage().in(Volts));
-        turretReadyToShoot.set(Turret.getInstance().readyToShoot());
-        */
-        
         Command hoodCommand = Hood.getInstance().getCurrentCommand();
         this.hoodCommand.set(hoodCommand == null ? "" : hoodCommand.getName());
         hoodPosition.set(Hood.getInstance().getPosition().in(Degrees));
         hoodTargetPosition.set(Hood.getInstance().getDesiredPosition().in(Degrees));
-        hoodVelocity.set(Hood.getInstance().getVelocity().in(DegreesPerSecond));
         hoodVoltage.set(Hood.getInstance().getVoltage().in(Volts));
         hoodReadyToShoot.set(Hood.getInstance().readyToShoot());
+        hoodStatorCurrent.set(Hood.getInstance().getStatorCurrent());
 
         Command shooterCommand = Shooter.getInstance().getCurrentCommand();
         this.shooterCommand.set(shooterCommand == null ? "" : shooterCommand.getName());
         shooterLeftVelocity.set(Shooter.getInstance().getLeftVelocity().in(RotationsPerSecond));
+        shooterEffectiveLeftVelocity.set(Shooter.getInstance().getLeftEffectiveVelocity().in(MetersPerSecond));
+        shooterLeftTargetVelocity.set(Shooter.getInstance().getLeftTargetVelocity().in(RotationsPerSecond));
+        shooterLeftEffectiveTargetVelocity.set(Shooter.getInstance().getLeftEffectiveTargetVelocity().in(MetersPerSecond));
         shooterLeftVoltage.set(Shooter.getInstance().getLeftVoltage().in(Volts));
         shooterRightVelocity.set(Shooter.getInstance().getRightVelocity().in(RotationsPerSecond));
+        shooterEffectiveRightVelocity.set(Shooter.getInstance().getRightEffectiveVelocity().in(MetersPerSecond));
+        shooterRightTargetVelocity.set(Shooter.getInstance().getRightTargetVelocity().in(RotationsPerSecond));
+        shooterRightEffectiveTargetVelocity.set(Shooter.getInstance().getRightEffectiveTargetVelocity().in(MetersPerSecond));
         shooterRightVoltage.set(Shooter.getInstance().getRightVoltage().in(Volts));
+        shooterReadyToShoot.set(Shooter.getInstance().readyToShoot());
         
-        Command hopperCommand = Hopper.getInstance().getCurrentCommand();
-        this.hopperCommand.set(hopperCommand == null ? "" : hopperCommand.getName());
-        hopperPosition.set(Hopper.getInstance().getPosition().in(Rotations));
-        hopperVelocity.set(Hopper.getInstance().getVelocity().in(RotationsPerSecond));
-        hopperVoltage.set(Hopper.getInstance().getVoltage().in(Volts));
-        // hopperTarget.set(Hopper.getInstance().getDesiredPosition().in(Rotations));
-
         Command climbCommand = Climb.getInstance().getCurrentCommand();
         this.climbCommand.set(climbCommand == null ? "" : climbCommand.getName());
-        climbElevatorVelocity.set(Climb.getInstance().getElevatorVelocity().in(RotationsPerSecond));
-        climbElevatorVoltage.set(Climb.getInstance().getElevatorVoltage().in(Volts));
-        climbElevatorPosition.set(Climb.getInstance().getElevatorPosition().in(Rotations));
-        climbElevatorTarget.set(Climb.getInstance().getElevatorTargetPosition().in(Rotations));
-        climbClimbVoltage.set(Climb.getInstance().getClimbVoltage().in(Volts));
+        climbClimbWheelsVelocity.set(Climb.getInstance().getClimbWheelsVelocity().in(RotationsPerSecond));
+        climbClimbWheelsVoltage.set(Climb.getInstance().getClimbWheelsVoltage().in(Volts));
+        climbClimbWheelsPosition.set(Climb.getInstance().getClimbWheelsPosition().in(Rotations));
+        climbSpoolingVoltage.set(Climb.getInstance().getSpoolingVoltage().in(Volts));
+        climbSpoolingPosition.set(Climb.getInstance().getSpoolingPosition().in(Rotations));
 
 
         //turretYawRawPublisher.set(Turret.getInstance().getPosition().in(Rotations));
@@ -252,8 +249,10 @@ public class Telemetry
 
         Command indexerCommand = Indexer.getInstance().getCurrentCommand();
         this.indexerCommand.set(indexerCommand == null ? "" : indexerCommand.getName());
-        indexerVelocity.set(Indexer.getInstance().getVelocity().in(RotationsPerSecond));
-        indexerVoltage.set(Indexer.getInstance().getVoltage().in(Volts));
+        indexerMainVelocity.set(Indexer.getInstance().getMainVelocity().in(RotationsPerSecond));
+        indexerMainVoltage.set(Indexer.getInstance().getMainVoltage().in(Volts));
+        indexerSideVelocity.set(Indexer.getInstance().getSideVelocity().in(RotationsPerSecond));
+        indexerSideVoltage.set(Indexer.getInstance().getSideVoltage().in(Volts));
 
         Command shooterIndexerCommand = ShooterIndexer.getInstance().getCurrentCommand();
         this.shooterIndexerCommand.set(shooterIndexerCommand == null ? "" : shooterIndexerCommand.getName());
@@ -274,6 +273,7 @@ public class Telemetry
                               Constants.Simulation.HUB_CONTENTS.getCenter().getY() - 0.5 * Constants.Simulation.HUB_CONTENTS.getYWidth(), 0.0)
         }
                               */
+        /*
         double posX = Robot.instance.robotContainer.drivetrain.getState().Pose.getX();
         double posY = Robot.instance.robotContainer.drivetrain.getState().Pose.getY();
         double rot = Robot.instance.robotContainer.drivetrain.getState().Pose.getRotation().getRadians();
@@ -294,7 +294,11 @@ public class Telemetry
             new Translation3d(startX, startY, 0),
             new Translation3d(midPointX, midPointY, 0)
         }
-            );
+            */;
+        test.set(new Translation3d[]
+        {
+            //Util.Robot.instance.robotContainer.drivetrain.getState().Pose.getTranslation()
+        });
     }
     /** 
      * Accept the swerve drive state and telemeterize it to SmartDashboard and SignalLogger. 
@@ -310,6 +314,10 @@ public class Telemetry
         driveModulePositions.set(state.ModulePositions);
         driveTimestamp.set(state.Timestamp);
         driveOdometryFrequency.set(1.0 / state.OdometryPeriod);
+        Translation2d targetPose = (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue) ? 
+                    Constants.HUB_TARGET_POSITION.toTranslation2d() : 
+                    FlippingUtil.flipFieldPosition(Constants.HUB_TARGET_POSITION.toTranslation2d());
+        distanceToShoot.set(state.Pose.getTranslation().getDistance(targetPose));
 
         /* Also write to log file */
         SignalLogger.writeStruct("DriveState/Pose", Pose2d.struct, state.Pose);

@@ -48,6 +48,6 @@ public class RetractIntake extends Command
     @Override
     public void end(boolean interrupted)
     {
-        IntakeExtension.getInstance().setVoltage(Volts.of(0.0));
+        IntakeExtension.getInstance().setVoltage(Volts.of(Constants.IntakeExtension.HOLDING_RETRACT_VOLTAGE));
     }
 }

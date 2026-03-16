@@ -1,0 +1,143 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "LFFDS1"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ExtendIntake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "StartRunIntake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "LFFDS2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "LFFDS3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "StartDefaultIntake"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "LFFDS4"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "RetractIntake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 5.0
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shoot"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "LFFDS5"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ExtendIntake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "StartRunIntake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "LFFDS6"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "LFFDS7"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "StartDefaultIntake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "RetractIntake"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

@@ -1,38 +1,31 @@
 package frc.robot.commands.drive;
 
-import static edu.wpi.first.units.Units.*;
+import java.util.List;
 
-import java.util.function.Supplier;
-
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.TunerConstants;
-import frc.robot.Robot;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
-import edu.wpi.first.wpilibj.DriverStation;
-
-import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.Waypoint;
 import com.pathplanner.lib.util.FlippingUtil;
-import com.ctre.phoenix6.swerve.SwerveRequest;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.AlignConstants;
 import frc.robot.Constants;
+import frc.robot.Robot;
+import frc.robot.RobotContainer.AlignDirection;
+import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
 
-public class DriveToPose extends Command {
-    CommandSwerveDrivetrain dt;
+public class DriveToPose extends Command{
+    private final CommandSwerveDrivetrain drivetrain;
+    private Pose2d targetPose;
+    private Command pathCommand;
 
-    private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
-    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
-    private Supplier<Translation2d> targetSupplier;
-    private Translation2d target;
-
-    /**
-     * Claims the drivetrain and stores the target supplier.
-     */
-    public DriveToPose(CommandSwerveDrivetrain drivetrain, Supplier<Translation2d> targetSupplier) {
-        dt = drivetrain;
-        addRequirements(dt);
-        this.targetSupplier = targetSupplier;
+    public DriveToPose(CommandSwerveDrivetrain drivetrain) {
+        this.drivetrain = drivetrain;
+        addRequirements(drivetrain);
     }
 
     /**
@@ -41,22 +34,9 @@ public class DriveToPose extends Command {
      */
     @Override
     public void initialize() {
-        Translation2d rawTarget = targetSupplier.get();
-        boolean red = DriverStation.getAlliance().get() == DriverStation.Alliance.Red;
-        if (red) target = FlippingUtil.flipFieldPosition(rawTarget);
-        else target = rawTarget;
-    }
-
-    /**
-     * Computes the angle from the robot to the target position.
-     * Returns a Rotation2d pointing directly at the target.
-     */
-    private Rotation2d calcAngle() {
-        double xdiff = target.getX() - dt.getState().Pose.getX();
-        double ydiff = target.getY() - dt.getState().Pose.getY();
-        double angle = Math.atan(ydiff / xdiff) + Math.PI;
-        if (xdiff < 0) angle = Math.PI + angle;
-        return new Rotation2d(angle);
+        System.out.println("Starting DriveToPoseCommand...");
+        updateTargetPose();
+        startPath();
     }
 
     /**
@@ -65,28 +45,11 @@ public class DriveToPose extends Command {
      */
     @Override
     public void execute() {
+        if (pathCommand != null) {
+            pathCommand.execute(); 
+        }
 
-        double xSpeed = -Robot.instance.robotContainer.driver.getLeftY();
-        double ySpeed = -Robot.instance.robotContainer.driver.getLeftX();
-
-        SwerveRequest.FieldCentricFacingAngle drive = new SwerveRequest.FieldCentricFacingAngle()
-            .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1)
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
-
-        dt.setControl(drive
-            .withHeadingPID(Constants.TunerConstants.steerGains.kP,
-                            Constants.TunerConstants.steerGains.kI,
-                            Constants.TunerConstants.steerGains.kD)
-            .withTargetDirection(calcAngle())
-            .withMaxAbsRotationalRate(MaxAngularRate)
-            .withVelocityX(0.0)
-            .withVelocityY(0.0));
-
-        System.out.println("Rotating to target...");
-        System.out.println("Current angle: " + dt.getState().Pose.getRotation());
-        System.out.println("Target rotation: " + calcAngle());
-        System.out.println("ERROR: " + (calcAngle().getDegrees() - dt.getState().Pose.getRotation().getDegrees()));
-        System.out.println("X- and Y- Speeds: " + (xSpeed * MaxSpeed) + ", " + (ySpeed * MaxSpeed));
+        SmartDashboard.putString("Drive/direction", Robot.instance.robotContainer.getAlignDirection().toString());
     }
 
     /**
@@ -95,16 +58,72 @@ public class DriveToPose extends Command {
      */
     @Override
     public boolean isFinished() {
-        return (dt.getState().Pose.getRotation().getRotations() + 0.5 - calcAngle().getRotations()) % 1 <= 0.01;
+        return pathCommand == null || pathCommand.isFinished();
     }
 
-    /**
-     * Applies a braking request when the command ends.
-     * Stops rotation whether interrupted or completed.
-     */
-    @Override
-    public void end(boolean interrupted) {
-        SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-        dt.applyRequest(() -> brake);
+    /** Updates the target pose dynamically based on AprilTag ID */
+    private void updateTargetPose() {
+
+        if (targetPose != null && drivetrain.getState().Pose.equals(targetPose)) {
+            System.out.println("Already at target pose. No path needed.");
+            pathCommand = null; 
+            return;
+        }
+
+        targetPose = getTargetPose();
+        
+        // Flip pose if we're on the red alliance
+        if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) targetPose = FlippingUtil.flipFieldPose(targetPose);
+        
+    }
+
+    private void startPath() {
+        if (targetPose != null) {
+            Pose2d currentPose = drivetrain.getState().Pose;
+            
+            // Check if the robot is already at the target position within a small tolerance
+            double distance = currentPose.getTranslation().getDistance(targetPose.getTranslation());
+            double angleDifference = Math.abs(currentPose.getRotation().getDegrees() - targetPose.getRotation().getDegrees());
+    
+            if (distance < 0.01 && angleDifference < 2) { // 1 cm and 2 degrees tolerance
+                System.out.println("Already at target pose. No path needed.");
+                pathCommand = null;
+                return;
+            }
+            
+            List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(currentPose, targetPose);
+    
+            if (waypoints.isEmpty()) {
+                System.out.println("No waypoints generated. Skipping path.");
+                pathCommand = null;
+                return;
+            }
+
+            PathPlannerPath generatedPath = new PathPlannerPath(waypoints, Constants.Vision.constraints, null, new GoalEndState(0, targetPose.getRotation()));
+            generatedPath.preventFlipping = true;
+            pathCommand = AutoBuilder.followPath(generatedPath);
+
+            if (pathCommand == null) {
+                System.out.println("PathPlanner failed to generate a command. Skipping execution.");
+                return;
+            }
+    
+            try {
+                pathCommand.initialize();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return;
+            }
+        }
+    }
+
+    private Pose2d getTargetPose() {
+
+        return switch (Robot.instance.robotContainer.getAlignDirection()) {
+            case Center -> AlignConstants.CLIMB_CENTER;
+            case Right -> AlignConstants.CLIMB_CENTER.plus(AlignConstants.LEFT_OFFSET);
+            case Left -> AlignConstants.CLIMB_CENTER.plus(AlignConstants.RIGHT_OFFSET);
+            default -> drivetrain.getState().Pose;
+        };
     }
 }

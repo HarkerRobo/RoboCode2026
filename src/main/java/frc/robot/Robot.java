@@ -5,15 +5,15 @@
 package frc.robot;
 
 import com.ctre.phoenix6.SignalLogger;
-import com.ctre.phoenix6.Utils;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.simulation.LimelightSimulation;
 import frc.robot.simulation.SimulationState;
+import frc.robot.util.Util;
 
 /**
  * Main robot entry point that manages the robot mode lifecycle and scheduling
@@ -23,10 +23,9 @@ public class Robot extends TimedRobot
    private Command autonomousCommand;
    public RobotContainer robotContainer;
    public static Robot instance;
-   /**
-    * Constructs the robot
-    * and initializes logging configuration
-    */
+
+
+
    public Robot() 
    {
       instance = this;
@@ -51,17 +50,19 @@ public class Robot extends TimedRobot
    public void robotInit() 
    {
       robotContainer.init();
-      if (Utils.isSimulation()) 
-      {
-         LimelightSimulation limelightSim = new LimelightSimulation(
-         Constants.Vision.kCamera1Name, Constants.Vision.kRobotToCam1);
-      }
+      Util.init();
+
+      LimelightHelpers.setCameraPose_RobotSpace(Constants.Vision.kCamera1Name, 
+      Constants.Vision.kRobotToCam1.getX(), Constants.Vision.kRobotToCam1.getY(), Constants.Vision.kRobotToCam1.getZ(),
+      Units.radiansToDegrees(Constants.Vision.kRobotToCam1.getRotation().getX()), Units.radiansToDegrees(Constants.Vision.kRobotToCam1.getRotation().getY()), Units.radiansToDegrees(Constants.Vision.kRobotToCam1.getRotation().getZ()));
+   
+
+      /*LimelightHelpers.setCameraPose_RobotSpace(Constants.Vision.kCamera2Name, 
+      Constants.Vision.kRobotToCam2.getX(), Constants.Vision.kRobotToCam2.getY(), Constants.Vision.kRobotToCam2.getZ(),
+      Units.radiansToDegrees(Constants.Vision.kRobotToCam2.getRotation().getX()), Units.radiansToDegrees(Constants.Vision.kRobotToCam2.getRotation().getY()), Units.radiansToDegrees(Constants.Vision.kRobotToCam2.getRotation().getZ()));*/
    }
       
-   /**
-    * Called periodically in all robot modes
-    * Runs the command scheduler, schedules selected test commands, and updates telemetry
-    */
+
    @Override
    public void robotPeriodic() 
    {

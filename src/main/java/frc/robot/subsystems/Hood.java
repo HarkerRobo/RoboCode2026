@@ -1,25 +1,20 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
-import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.*;
 import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
-import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 
 
@@ -30,35 +25,18 @@ import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
 import frc.robot.RobotContainer.SubsystemStatus;
-import frc.robot.simulation.StallSimulator;
-
 
 public class Hood extends SubsystemBase
 {
     private static Hood instance;
 
-    private static TalonFX master;
-    private static TalonFX follower;
+    private static TalonFX motor;
 
-    private double desiredPosition; // rotations
+    private double desiredPosition; // degrees
     
-    private final SingleJointedArmSim motorSimModel = new SingleJointedArmSim(
-        new DCMotorSim(
-            LinearSystemId.createDCMotorSystem(
-                    DCMotor.getKrakenX60Foc(2), 0.001, Constants.Hood.GEAR_RATIO),
-            DCMotor.getKrakenX60Foc(2)).getGearbox(),
-        Constants.Hood.GEAR_RATIO,
-        Constants.Hood.MOMENT_OF_INERTIA,
-        Constants.Hood.LENGTH,
-        Units.degreesToRadians(Constants.Hood.MIN_ANGLE),
-        Units.degreesToRadians(Constants.Hood.MAX_ANGLE),
-        true,
-        Units.degreesToRadians(10.0)
-        // no std devs -> no noise simulated
-        );
-
-
-    StallSimulator stallSimulator;
+    private final DCMotorSim sim = new DCMotorSim(
+        LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX44(1), 0.001, Constants.Hood.GEAR_RATIO),
+        DCMotor.getKrakenX44(1));
 
 
     /**
@@ -67,28 +45,24 @@ public class Hood extends SubsystemBase
     */
     private Hood()
     {
-        master = new TalonFX(Constants.Hood.MASTER_ID);
-        follower = new TalonFX(Constants.Hood.FOLLOWER_ID);
+        motor = new TalonFX(Constants.Hood.ID, Constants.CAN_SUPERSTRUCTURE);
 
         config();
 
         if (isSimulated())
         {
-            TalonFXSimState simState = master.getSimState();
+            TalonFXSimState simState = motor.getSimState();
             simState.Orientation = Constants.Hood.MECHANICAL_ORIENTATION;
-            simState.setMotorType(TalonFXSimState.MotorType.KrakenX60);
-            stallSimulator = new StallSimulator(()->master.getPosition().getValueAsDouble());
+            simState.setMotorType(TalonFXSimState.MotorType.KrakenX44);
         }
     }
-
     /**
      * Clears sticky faults on master and follower. 
      * Makes both motors start in a fully‑configured state I guess.
      */
     private void config()
     {
-        master.clearStickyFaults();
-        follower.clearStickyFaults();
+        motor.clearStickyFaults();
         TalonFXConfiguration config = new TalonFXConfiguration();
 
         if (!isSimulated())
@@ -102,26 +76,22 @@ public class Hood extends SubsystemBase
 
         config.Feedback.SensorToMechanismRatio = Constants.Hood.GEAR_RATIO;
 
-        config.MotionMagic.MotionMagicCruiseVelocity = Constants.Hood.MM_CRUISE_VELOCITY;
-        config.MotionMagic.MotionMagicAcceleration = Constants.Hood.MM_ACCELERATION;
-        config.MotionMagic.MotionMagicJerk = Constants.Hood.MM_JERK;
-
         config.MotorOutput.Inverted = Constants.Hood.INVERTED;
-        config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+        config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
         config.Slot0.kP = Constants.Hood.KP;
         config.Slot0.kI = Constants.Hood.KI;
         config.Slot0.kD = Constants.Hood.KD;
-        config.Slot0.kG = Constants.Hood.KG;
+        
+        config.Slot0.kS = Constants.Hood.KS;
         config.Slot0.kV = Constants.Hood.KV;
-        config.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
+        config.Slot0.kA = Constants.Hood.KA;
+        config.Slot0.kG = Constants.Hood.KG;
 
         config.Voltage.PeakForwardVoltage = Constants.MAX_VOLTAGE;
         config.Voltage.PeakReverseVoltage = -Constants.MAX_VOLTAGE;
 
-        master.getConfigurator().apply(config);
-        follower.getConfigurator().apply(config);
-
+        motor.getConfigurator().apply(config);
     }
 
     /**
@@ -130,9 +100,8 @@ public class Hood extends SubsystemBase
     */
     public void moveToPosition(Angle desiredPosition)
     {
-        //System.out.println("Moving to position: " + desiredPosition.in(Degrees) + "°");
         this.desiredPosition = desiredPosition.in(Rotations);
-        master.setControl(new MotionMagicVoltage(desiredPosition));
+        motor.setControl(new PositionVoltage(desiredPosition));
     }
     
     /**
@@ -141,7 +110,7 @@ public class Hood extends SubsystemBase
     */
     public Angle getPosition()
     {
-        return master.getPosition().getValue();
+        return motor.getPosition().getValue();
     }
     
     /**
@@ -150,16 +119,7 @@ public class Hood extends SubsystemBase
     */
     public Voltage getVoltage()
     {
-        return master.getMotorVoltage().getValue();
-    }
-    
-    /**
-    * Returns the hood’s current angular velocity.
-    * Used if you need the velocity.
-    */
-    public AngularVelocity getVelocity()
-    {
-        return master.getVelocity().getValue();
+        return motor.getMotorVoltage().getValue();
     }
 
     /**
@@ -173,41 +133,9 @@ public class Hood extends SubsystemBase
             System.out.println("Quashing input to Hood");
             return;
         }
-        master.setPosition(position);
+        motor.setPosition(position, 0.5);
     }
 
-    /**
-    * Commands the hood to hold a target velocity.
-    * Automatically does feedforward and PID.
-    */
-    public void setVelocity(AngularVelocity velocity)
-    {
-        if (isDisabled())
-        {
-            System.out.println("Quashing input to Hood");
-            return;
-        }
-        master.setControl(new VelocityVoltage(velocity));
-    }
-
-    /**
-    * Drives the motor with a raw percent output.
-    * Blocked when disabled.
-    */
-    public void setDutyCycle(double dutyCycle)
-    {
-        if (isDisabled())
-        {
-            System.out.println("Quashing input to Hood");
-            return;
-        }
-        master.setControl(new DutyCycleOut(dutyCycle));
-    }
-
-    /**
-    * Pushes a specific voltage into the motor.
-    * Blocked if disabled
-    */
     public void setVoltage(Voltage voltage)
     {
         if (isDisabled())
@@ -215,7 +143,7 @@ public class Hood extends SubsystemBase
             System.out.println("Quashing input to Hood");
             return;
         }
-        master.setVoltage(voltage.in(Volts));
+        motor.setVoltage(voltage.in(Volts));
     }
 
     
@@ -225,7 +153,7 @@ public class Hood extends SubsystemBase
     */
     public boolean readyToShoot ()
     {
-        return Math.abs(master.getPosition().getValue().in(Rotations) - desiredPosition) < Constants.EPSILON;
+        return Math.abs(motor.getPosition().getValue().in(Rotations) - desiredPosition) < Degrees.of(Constants.Hood.MAX_ERROR).in(Rotations);
     }
     
     /**
@@ -243,10 +171,13 @@ public class Hood extends SubsystemBase
     */
     public boolean isStalling()
     {
-        if (isSimulated() && stallSimulator.get()) return true;
-        return Math.abs(master.getStatorCurrent().getValueAsDouble()) >= Constants.Hood.STALLING_CURRENT;
+        return Math.abs(motor.getStatorCurrent().getValueAsDouble()) >= Constants.Hood.STALLING_CURRENT;
     }
 
+    public double getStatorCurrent()
+    {
+        return motor.getStatorCurrent().getValueAsDouble();
+    }
 
     /**
     * Updates the simulated hood physics when running in simulation mode.
@@ -257,26 +188,21 @@ public class Hood extends SubsystemBase
     {
         if (isSimulated())
         {
-            TalonFXSimState simState = master.getSimState();
+            TalonFXSimState simState = motor.getSimState();
 
             // set the supply voltage of the TalonFX
             simState.setSupplyVoltage(RobotController.getBatteryVoltage());
 
-            // get the motor voltage of the TalonFX
-            Voltage motorVoltage = simState.getMotorVoltageMeasure();
-
             // use the motor voltage to calculate new position and velocity
             // using WPILib's DCMotorSim class for physics simulation
-            motorSimModel.setInputVoltage(motorVoltage.in(Volts));
-            motorSimModel.update(0.020); // assume 20 ms loop time
+            sim.setInputVoltage(simState.getMotorVoltageMeasure().in(Volts));
+            sim.update(0.020); // assume 20 ms loop time
 
             // apply the new rotor position and velocity to the TalonFX;
             // note that this is rotor position/velocity (before gear ratio), but
             // DCMotorSim returns mechanism position/velocity (after gear ratio)
-            simState.setRawRotorPosition(
-                    Units.radiansToRotations(motorSimModel.getAngleRads()) * Constants.Hood.GEAR_RATIO);
-            simState.setRotorVelocity(
-                    Units.radiansToRotations(motorSimModel.getVelocityRadPerSec()) * Constants.Hood.GEAR_RATIO);
+            simState.setRawRotorPosition(sim.getAngularPosition().times(Constants.Hood.GEAR_RATIO));
+            simState.setRotorVelocity(sim.getAngularVelocity().times(Constants.Hood.GEAR_RATIO));
         }
     }
 
@@ -289,23 +215,19 @@ public class Hood extends SubsystemBase
         return Robot.instance.robotContainer.getStatus(RobotContainer.HOOD_INDEX) == SubsystemStatus.Simulated;
     }
     
-    /**
-    * Checks if the subsystem is
-    * marked as disabled. 
-    */
     private boolean isDisabled ()
     {
         return Robot.instance.robotContainer.getStatus(RobotContainer.HOOD_INDEX) == SubsystemStatus.Disabled;
     }
     
     private SysIdRoutine sysId = new SysIdRoutine(
-        new SysIdRoutine.Config(Volts.of(0.05).div(Seconds.of(1.)),Volts.of(0.1),Seconds.of(10.0)), 
-        new SysIdRoutine.Mechanism((Voltage v)->master.setControl(new VoltageOut(v)),
+        new SysIdRoutine.Config(Volts.of(0.1).div(Seconds.of(1.)),Volts.of(0.7),Seconds.of(5.0)), 
+        new SysIdRoutine.Mechanism((Voltage v)->motor.setControl(new VoltageOut(v)),
             (SysIdRoutineLog l)->l
                 .motor("Hood")
                 .voltage(getVoltage())
                 .angularPosition(getPosition())
-                .angularVelocity(getVelocity()),
+                .angularVelocity(motor.getVelocity().getValue()),
         this)
     );
 
@@ -324,10 +246,9 @@ public class Hood extends SubsystemBase
     */
     public Command sysIdDynamic (SysIdRoutine.Direction direction)
     {
-        return sysId.dynamic(direction).withName("SysId Q" + (direction == SysIdRoutine.Direction.kForward ? "F" : "R"));
+        return sysId.dynamic(direction).withName("SysId D" + (direction == SysIdRoutine.Direction.kForward ? "F" : "R"));
     }
     
-
     /**
     * Returns the Hood subsystem instance.
     * Makes sure there isnt a second created

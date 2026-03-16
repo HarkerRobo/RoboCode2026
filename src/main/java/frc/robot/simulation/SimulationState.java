@@ -232,13 +232,13 @@ public class SimulationState
         double posX = Robot.instance.robotContainer.drivetrain.getState().Pose.getX();
         double posY = Robot.instance.robotContainer.drivetrain.getState().Pose.getY();
         double rot = Robot.instance.robotContainer.drivetrain.getState().Pose.getRotation().getRadians();
-        double endX = posX + Constants.ROBOT_DIAMETER*Math.sqrt(2)/2*Math.cos(rot+Math.PI/4);
-        double endY = posY + Constants.ROBOT_DIAMETER*Math.sqrt(2)/2*Math.sin(rot+Math.PI/4);
-        double startX = posX + Constants.ROBOT_DIAMETER*Math.sqrt(2)/2*Math.cos(rot-Math.PI/4);
-        double startY = posY + Constants.ROBOT_DIAMETER*Math.sqrt(2)/2*Math.sin(rot-Math.PI/4);
+        double endX = posX + Constants.ROBOT_HEIGHT*Math.sqrt(2)/2*Math.cos(rot+Math.PI/4); // doesn't work perfectly since bot is not a square
+        double endY = posY + Constants.ROBOT_HEIGHT*Math.sqrt(2)/2*Math.sin(rot+Math.PI/4);
+        double startX = posX + Constants.ROBOT_HEIGHT*Math.sqrt(2)/2*Math.cos(rot-Math.PI/4);
+        double startY = posY + Constants.ROBOT_HEIGHT*Math.sqrt(2)/2*Math.sin(rot-Math.PI/4);
 
-        double midPointX = posX + Constants.ROBOT_DIAMETER/2*Math.cos(rot);
-        double midPointY = posY + Constants.ROBOT_DIAMETER/2*Math.sin(rot);
+        double midPointX = posX + Constants.ROBOT_HEIGHT/2*Math.cos(rot);
+        double midPointY = posY + Constants.ROBOT_HEIGHT/2*Math.sin(rot);
 
         double vx = startX - endX;
         double vy = startY - endY;
@@ -291,7 +291,7 @@ public class SimulationState
                 {
                     fuelPositions[i].location = FieldLocation.BlueHub;
                 }
-                else if(crossProduct < 0.05 && magnitude <= Constants.ROBOT_DIAMETER/3)
+                else if(crossProduct < 0.05 && magnitude <= Constants.ROBOT_HEIGHT/3)
                 {
                     fuelPositions[i].location = FieldLocation.Robot;
                 }

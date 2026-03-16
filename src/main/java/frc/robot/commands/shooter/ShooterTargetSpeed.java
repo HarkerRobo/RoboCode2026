@@ -1,6 +1,6 @@
 package frc.robot.commands.shooter;
 
-import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.MetersPerSecond;
 
 import java.util.function.DoubleSupplier;
 
@@ -11,25 +11,36 @@ import frc.robot.util.Util;
 
 public class ShooterTargetSpeed extends Command
 {
-    DoubleSupplier targetSpeedSupplier;
-    double targetSpeed;
-
+    DoubleSupplier leftTargetSpeedSupplier;
+    double leftTargetSpeed;
+    
+    DoubleSupplier rightTargetSpeedSupplier;
+    double rightTargetSpeed;
+    
     /**
      * Claims the Shooter subsystem
      * Stores the supplied target speed source.
      */
-    public ShooterTargetSpeed(DoubleSupplier targetSpeedSupplier)
+    public ShooterTargetSpeed(DoubleSupplier leftTargetSpeedSupplier, DoubleSupplier rightTargetSpeedSupplier)
     {
-        this.targetSpeedSupplier = targetSpeedSupplier;
+        this.leftTargetSpeedSupplier = leftTargetSpeedSupplier;
+        this.rightTargetSpeedSupplier = rightTargetSpeedSupplier;
         addRequirements(Shooter.getInstance());
     }
 
-    /**
-     * Wraps target speed.
-     */
+    public ShooterTargetSpeed(double leftTargetSpeed, double rightTargetSpeed)
+    {
+        this(()->leftTargetSpeed, ()->rightTargetSpeed);
+    }
+    
+    public ShooterTargetSpeed(DoubleSupplier targetSpeedSupplier)
+    {
+        this(targetSpeedSupplier, targetSpeedSupplier);
+    }
+
     public ShooterTargetSpeed(double targetSpeed)
     {
-        this(() -> targetSpeed);
+        this(()->targetSpeed);
     }
 
     /**
@@ -46,8 +57,10 @@ public class ShooterTargetSpeed extends Command
     @Override
     public void execute()
     {
-        targetSpeed = Util.bound(targetSpeedSupplier.getAsDouble(), 0.0, Constants.Shooter.MAX_VELOCITY);
-        Shooter.getInstance().setVelocity(RotationsPerSecond.of(targetSpeed));
+        leftTargetSpeed = Util.bound(leftTargetSpeedSupplier.getAsDouble(), 0.0, Constants.Shooter.MAX_VELOCITY);
+        Shooter.getInstance().setLeftEffectiveVelocity(MetersPerSecond.of(leftTargetSpeed));
+        rightTargetSpeed = Util.bound(rightTargetSpeedSupplier.getAsDouble(), 0.0, Constants.Shooter.MAX_VELOCITY);
+        Shooter.getInstance().setRightEffectiveVelocity(MetersPerSecond.of(rightTargetSpeed));
     }
 
     /**

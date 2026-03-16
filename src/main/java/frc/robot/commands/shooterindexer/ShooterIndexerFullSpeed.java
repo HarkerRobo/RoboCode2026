@@ -1,5 +1,6 @@
 package frc.robot.commands.shooterindexer;
 
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -22,7 +23,7 @@ public class ShooterIndexerFullSpeed extends Command
     @Override
     public void initialize()
     {
-        ShooterIndexer.getInstance().setVoltage(Volts.of(Constants.ShooterIndexer.INTAKE_VOLTAGE));
+        ShooterIndexer.getInstance().setVelocity(RotationsPerSecond.of(Constants.ShooterIndexer.INTAKE_VELOCITY));
     }
 
     /**
