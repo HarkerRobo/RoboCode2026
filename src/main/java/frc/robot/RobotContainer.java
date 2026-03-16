@@ -542,14 +542,15 @@ public class RobotContainer
         }));
 
         operator.y().whileTrue(track(new HoodManualUp()));
-        operator.x().onTrue(track(new IndependentCommand(track(new RunIntake()))
+        operator.x().onTrue(track(new IndependentCommand(track(Intake.getInstance().run(()->Intake.getInstance().setVelocity(
+                RotationsPerSecond.of(Constants.Intake.REDUCED_INTAKE_VELOCITY)))))
             .andThen(Commands.runOnce(()->intakeTriggered = true))
             .andThen(new RetractIntake())
             .andThen(Commands.runOnce(()->
             {
                 intakeExtended = false;
             }
-            ))));
+            )).withName("RetractIntake")));
         operator.a().whileTrue(track(new HoodManualDown()));
         operator.b().onTrue(track(new IndependentCommand(track(new DefaultIntake()))
             .andThen(Commands.runOnce(()->intakeTriggered = false))
@@ -558,7 +559,7 @@ public class RobotContainer
             {
                 intakeExtended = true;
             }
-            ))));
+            )).withName("ExtendIntake")));
 
         operator.povUp().onTrue(Commands.runOnce(()->rightFlywheelOffset += Constants.FLYWHEEL_OFFSET_UNIT));
         operator.povDown().onTrue(Commands.runOnce(()->leftFlywheelOffset -= Constants.FLYWHEEL_OFFSET_UNIT));

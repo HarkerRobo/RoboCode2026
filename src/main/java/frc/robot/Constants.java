@@ -136,6 +136,7 @@ public class Constants
         public static final double SUPPLY_CURRENT_LIMIT = 40.0;
 
         public static final double INTAKE_VELOCITY = -30.0; // rot/s // not a bug
+        public static final double REDUCED_INTAKE_VELOCITY = -20.0;
         public static final double DEFAULT_INTAKE_VELOCITY = 0.0;
         public static final double EJECT_VELOCITY = 25.0; // rot/s
 
