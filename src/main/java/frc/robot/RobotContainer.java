@@ -242,7 +242,7 @@ public class RobotContainer
                  Hood.getInstance().readyToShoot()
                  ))
             .andThen(new IndependentCommand(track(new IndexerFullSpeed())))
-            .andThen(track(new ShooterIndexerFullSpeed())) // load to shoot
+            .andThen(new IndepententCommand(track(new ShooterIndexerFullSpeed()))) // load to shoot
             .finallyDo(()->{
                 CommandScheduler.getInstance().schedule(stow.get());
             })
@@ -369,11 +369,12 @@ public class RobotContainer
             track(new IndependentCommand(track(new AimToAngle(()->Util.calculateShootPitch(drivetrain).in(Degrees))))
             .alongWith(new IndependentCommand(track(new ShooterTargetSpeed(()->Util.calculateShootVelocity(drivetrain)))))
             .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot() && Hood.getInstance().readyToShoot()))
-            .andThen(new ShooterIndexerFullSpeed().alongWith(new IndexerFullSpeed())) // load to shoot
+            .andThen(new IndependentCommand(track(new ShooterIndexerFullSpeed())
+            .andThen(new IndependentCommand(track(new IndexerFullSpeed())))) // load to shoot
             .finallyDo(()->{
                 CommandScheduler.getInstance().schedule(stow.get());
             }))
-        .withName("Shoot"));
+        .withName("Shoot")));
         
         autonChooser = AutoBuilder.buildAutoChooser();
         /*
