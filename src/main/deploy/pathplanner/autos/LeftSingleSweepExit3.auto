@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "RSSEBeforeShoot2"
+            "pathName": "LSSEBeforeShoot3"
           }
         },
         {
@@ -38,7 +38,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "RSSEShootToCenter"
+            "pathName": "LSSEShootToCenter"
           }
         }
       ]
