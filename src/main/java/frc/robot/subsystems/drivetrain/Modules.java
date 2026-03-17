@@ -11,6 +11,7 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import frc.robot.Constants;
 
 import static frc.robot.Constants.TunerConstants.*;
 
@@ -55,7 +56,11 @@ public class Modules
      */
     public static CommandSwerveDrivetrain createDrivetrain() {
         return new CommandSwerveDrivetrain(
-                DrivetrainConstants, FrontLeft, FrontRight, BackLeft, BackRight);
+                DrivetrainConstants,
+                Constants.Vision.odometryUpdateFrequency, 
+                Constants.Vision.stateStdDevs, 
+                Constants.Vision.kTagStdDevs, 
+                FrontLeft, FrontRight, BackLeft, BackRight);
     }
 
     /**

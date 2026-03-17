@@ -68,10 +68,10 @@ public class Constants
                 new Translation3d(Units.inchesToMeters(-11.743), Units.inchesToMeters(10.009), Units.inchesToMeters(9.0552)),
                 new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(12.567), Units.degreesToRadians(180.0 + 7.566))); // TODO bc this is copied from 2025 code
 
-        public static final double linTagStdDevs = 0.1;
-        public static final double angTagStdDevs = 999999;
-
-        public static final double linTagStdDevsAutonomous = 999999;
+        public static final double odometryUpdateFrequency = 100.0; // 100.0 Hz for CAN 2.0, which the Roborio runs on
+        public static final Matrix<N3, N1> kTagStdDevs = VecBuilder.fill(0.1, 0.1, 99999);
+        public static final Matrix<N3, N1> stateStdDevs = VecBuilder.fill(0.05, 0.05, 0.1);
+        public static final double maxAmbiguity = 0.5;
 
         // The layout of the AprilTags on the field
         public static final AprilTagFieldLayout kTagLayout = AprilTagFieldLayout
