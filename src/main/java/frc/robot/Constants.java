@@ -71,6 +71,8 @@ public class Constants
         public static final double linTagStdDevs = 0.1;
         public static final double angTagStdDevs = 999999;
 
+        public static final double linTagStdDevsAutonomous = 999999;
+
         // The layout of the AprilTags on the field
         public static final AprilTagFieldLayout kTagLayout = AprilTagFieldLayout
                 .loadField(AprilTagFields.kDefaultField);
@@ -140,7 +142,7 @@ public class Constants
         public static final double DEFAULT_INTAKE_VELOCITY = 0.0;
         public static final double EJECT_VELOCITY = 25.0; // rot/s
 
-        public static final double KP = 5.0;
+        public static final double KP = 0.3;
 		public static final double KI = 0.0;
 		public static final double KD = 0.0;
 		
@@ -166,7 +168,7 @@ public class Constants
         public static final double SUPPLY_CURRENT_LIMIT = 40.0;
 
         public static final double EXTENDING_VOLTAGE = 3.5;
-        public static final double RETRACTING_VOLTAGE = -2.5;
+        public static final double RETRACTING_VOLTAGE = -3.5;
         public static final double HOLDING_EXTEND_VOLTAGE = 0.25;
         public static final double HOLDING_RETRACT_VOLTAGE = -0.25;
 
@@ -572,4 +574,6 @@ public class Constants
     public static final LinearVelocity SPEED_OFFSET = MetersPerSecond.of(0.275);
 
     public static final boolean INTERPOLATE_VALUES = true;
+
+    public static final double ACCELERATION_LIMIT = 3.0;
 }

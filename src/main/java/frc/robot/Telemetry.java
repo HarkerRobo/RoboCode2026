@@ -55,6 +55,7 @@ public class Telemetry
     private BooleanPublisher intakeTriggered = table.getBooleanTopic("intake triggered").publish();
     private BooleanPublisher intakeExtended = table.getBooleanTopic("intake extended").publish();
     public BooleanPublisher aligned = table.getBooleanTopic("aligned").publish();
+    public DoubleArrayPublisher currents = table.getDoubleArrayTopic("currents").publish();
 
     private NetworkTable intake = table.getSubTable("Intake");
     private StringPublisher intakeCommand = intake.getStringTopic("main command").publish();
@@ -202,6 +203,7 @@ public class Telemetry
         rightFlywheelOffset.set(Robot.instance.robotContainer.rightFlywheelOffset);
         intakeTriggered.set(Robot.instance.robotContainer.intakeTriggered);
         intakeExtended.set(Robot.instance.robotContainer.intakeExtended);
+        currents.set(Robot.instance.robotContainer.powerDistributionTracker.getAllCurrents());
 
         Command intakeCommand = Intake.getInstance().getCurrentCommand();
         this.intakeCommand.set(intakeCommand == null ? "" : intakeCommand.getName());

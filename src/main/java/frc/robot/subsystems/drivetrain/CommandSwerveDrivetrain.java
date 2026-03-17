@@ -295,8 +295,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         LimelightHelpers.SetIMUMode(Constants.Vision.kCamera1Name, 4);
         // LimelightHelpers.SetIMUMode(Constants.Vision.kCamera2Name, 4);
         LimelightHelpers.PoseEstimate limelight1Estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.Vision.kCamera1Name);
-        LimelightHelpers.PoseEstimate limelight2Estimate = null;//LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.Vision.kCamera2Name);
-
+        LimelightHelpers.PoseEstimate limelight2Estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.Vision.kCamera2Name);
 
        // Only run vision updates if we see a tag
         if ((limelight1Estimate != null && limelight1Estimate.tagCount > 0) ||
@@ -309,9 +308,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             SmartDashboard.putNumber("Drive/bestEstimateYaw", bestEstimate.pose.getRotation().getDegrees());
             if (bestEstimate != null && bestEstimate.tagCount > 0) {
                 double stdDevFactor = 1; // Math.pow(bestEstimate.avgTagDist, 2.0) / bestEstimate.tagCount;
-                double linearStdDev = Constants.Vision.linTagStdDevs * stdDevFactor;
+                double linearStdDev = (DriverStation.isAutonomous() ? 
+                    Constants.Vision.linTagStdDevsAutonomous : Constants.Vision.linTagStdDevs) * stdDevFactor;
                 
                 addVisionMeasurement(bestEstimate.pose, bestEstimate.timestampSeconds, VecBuilder.fill(linearStdDev, linearStdDev, Constants.Vision.angTagStdDevs));
+
+                
                 
                 // if (bestEstimate.tagCount >= 2 || (bestEstimate.avgTagDist < 3.0 && bestEstimate.rawFiducials[0].ambiguity < 0.7)) {
                 //     addVisionMeasurement(bestEstimate.pose, bestEstimate.timestampSeconds, Constants.Vision.kTagStdDevs);

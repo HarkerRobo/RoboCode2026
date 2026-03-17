@@ -17,9 +17,11 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.util.FlippingUtil;
 
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -64,6 +66,7 @@ import frc.robot.subsystems.drivetrain.Modules;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeExtension;
 import frc.robot.util.IndependentCommand;
+import frc.robot.util.PerpetuallyIndependentCommand;
 import frc.robot.util.Util;
 
 
@@ -156,6 +159,9 @@ public class RobotContainer
     private Command hardShoot;
     private Command revShoot;
     private Command revPass;
+
+    private SlewRateLimiter accelerationLimiter = new SlewRateLimiter(Constants.ACCELERATION_LIMIT);
+    public PowerDistribution powerDistributionTracker = new PowerDistribution();
 
     public void setPassDirection(PassDirection newDirection) {
         direction = newDirection;
@@ -329,26 +335,44 @@ public class RobotContainer
         SmartDashboard.putData("Test a Command", testCommandChooser);
         SmartDashboard.putData(CommandScheduler.getInstance());
 
-        NamedCommands.registerCommand("ExtendIntake", Commands.runEnd(
+        NamedCommands.registerCommand("ExtendIntake", track(Commands.runEnd(
             ()->IntakeExtension.getInstance().setVoltage(Volts.of(Constants.IntakeExtension.EXTENDING_VOLTAGE)),
-            ()->IntakeExtension.getInstance().setVoltage(Volts.of(Constants.IntakeExtension.HOLDING_EXTEND_VOLTAGE))));
-        NamedCommands.registerCommand("RetractIntake", new RetractIntake());
-        NamedCommands.registerCommand("StartRunIntake", new IndependentCommand(new RunIntake()));
-        NamedCommands.registerCommand("StartDefaultIntake", new IndependentCommand(new DefaultIntake()));
-        NamedCommands.registerCommand("EjectIntake (with timeout)", new EjectIntake().withTimeout(1.0));
-        NamedCommands.registerCommand("HardShoot", hardShoot);
-        NamedCommands.registerCommand("RevShoot", Commands.runOnce(()->{System.out.println(Util.calculateShootVelocity(drivetrain));})
+            ()->IntakeExtension.getInstance().setVoltage(Volts.of(Constants.IntakeExtension.HOLDING_EXTEND_VOLTAGE)))));
+        NamedCommands.registerCommand("RetractIntake", track(new RetractIntake().alongWith(new IndependentCommand(new RunIntake()))));
+        NamedCommands.registerCommand("StartRunIntake", new IndependentCommand(track(new RunIntake())));
+        NamedCommands.registerCommand("StartDefaultIntake", new IndependentCommand(track(new DefaultIntake())));
+        NamedCommands.registerCommand("EjectIntake (with timeout)", track(new EjectIntake().withTimeout(1.0)));
+        NamedCommands.registerCommand("HardShoot", track(hardShoot));
+        NamedCommands.registerCommand("RevShoot", track(Commands.runOnce(()->{System.out.println(Util.calculateShootVelocity(drivetrain));})
             .andThen(Commands.runOnce(()->CommandScheduler.getInstance().schedule(new ShooterTargetSpeed(
                 ()->Util.calculateShootVelocity(drivetrain) + leftFlywheelOffset,
-                ()->Util.calculateShootVelocity(drivetrain) + rightFlywheelOffset)))));
+                ()->Util.calculateShootVelocity(drivetrain) + rightFlywheelOffset))))));
+        NamedCommands.registerCommand("InOutIntake", track(
+            new IndependentCommand(track(new RunIntake()))
+                        .alongWith(
+                                IntakeExtension.getInstance()
+                                        .runOnce(() -> IntakeExtension.getInstance()
+                                                .setVoltage(Volts.of(Constants.IntakeExtension.RETRACTING_VOLTAGE)))
+                                        .withTimeout(2.0)
+                                        .andThen(new ExtendIntake().withTimeout(1.0))
+                                        .andThen(IntakeExtension.getInstance()
+                                                .runOnce(() -> IntakeExtension.getInstance().setVoltage(
+                                                        Volts.of(Constants.IntakeExtension.RETRACTING_VOLTAGE)))
+                                                .withTimeout(2.0))
+                                        .andThen(new ExtendIntake().withTimeout(1.0))
+                                        .andThen(IntakeExtension.getInstance()
+                                                .runOnce(() -> IntakeExtension.getInstance().setVoltage(
+                                                        Volts.of(Constants.IntakeExtension.RETRACTING_VOLTAGE)))
+                                                .withTimeout(2.0)))));
+
         NamedCommands.registerCommand("Shoot", 
-            new IndependentCommand(new AimToAngle(()->Util.calculateShootPitch(drivetrain).in(Degrees)))
-            .alongWith(new IndependentCommand(new ShooterTargetSpeed(()->Util.calculateShootVelocity(drivetrain))))
+            track(new IndependentCommand(track(new AimToAngle(()->Util.calculateShootPitch(drivetrain).in(Degrees))))
+            .alongWith(new IndependentCommand(track(new ShooterTargetSpeed(()->Util.calculateShootVelocity(drivetrain)))))
             .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot() && Hood.getInstance().readyToShoot()))
-            .andThen(new ShooterIndexerFullSpeed().alongWith(new IndexerFullSpeed()).withTimeout(5.0)) // load to shoot
+            .andThen(new ShooterIndexerFullSpeed().alongWith(new IndexerFullSpeed())) // load to shoot
             .finallyDo(()->{
                 CommandScheduler.getInstance().schedule(stow.get());
-            })
+            }))
         .withName("Shoot"));
         
         autonChooser = AutoBuilder.buildAutoChooser();
@@ -411,8 +435,8 @@ public class RobotContainer
         drivetrain.setDefaultCommand(
                 // Drivetrain will execute this command periodically
                 drivetrain.applyRequest(() -> 
-                        drive.withVelocityX(-driver.getLeftY() * MaxSpeed * (isSlow ? Constants.TRANSLATION_SLOW_MULTIPLIER : 1.0)) // Drive forward with negative Y (forward)
-                        .withVelocityY(-driver.getLeftX() * MaxSpeed * (isSlow ? Constants.TRANSLATION_SLOW_MULTIPLIER : 1.0)) // Drive left with negative X (left)
+                        drive.withVelocityX(/*accelerationLimiter.calculate(*/-driver.getLeftY() * MaxSpeed * (isSlow ? Constants.TRANSLATION_SLOW_MULTIPLIER : 1.0)/*)*/) // Drive forward with negative Y (forward)
+                        .withVelocityY(/*accelerationLimiter.calculate(*/-driver.getLeftX() * MaxSpeed * (isSlow ? Constants.TRANSLATION_SLOW_MULTIPLIER : 1.0)/*)*/) // Drive left with negative X (left)
                         .withRotationalRate(-driver.getRightX() * MaxAngularRate * (isSlow ? Constants.ROTATION_SLOW_MULTIPLIER : 1.0)) // Drive counterclockwise with negative X (left)
                     ).withName("SwerveManual"));
 
