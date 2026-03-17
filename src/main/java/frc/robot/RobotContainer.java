@@ -242,7 +242,7 @@ public class RobotContainer
                  Hood.getInstance().readyToShoot()
                  ))
             .andThen(new IndependentCommand(track(new IndexerFullSpeed())))
-            .andThen(new IndepententCommand(track(new ShooterIndexerFullSpeed()))) // load to shoot
+            .andThen(new IndependentCommand(track(new ShooterIndexerFullSpeed()))) // load to shoot
             .finallyDo(()->{
                 CommandScheduler.getInstance().schedule(stow.get());
             })

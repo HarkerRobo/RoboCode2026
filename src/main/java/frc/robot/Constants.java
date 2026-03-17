@@ -561,8 +561,8 @@ public class Constants
 
     public static final Transform3d ROBOT_TO_HOOD = new Transform3d(0.3, 0.0, 0.34, Rotation3d.kZero); // TODO
 
-    public static final Translation3d PASS_LEFT_TARGET_POSITION = new Translation3d(2.010664, Simulation.FIELD_HEIGHT - 2.010664, 0.0);
-    public static final Translation3d PASS_RIGHT_TARGET_POSITION = new Translation3d(2.010664, 2.010664, 0.0);
+    public static final Translation3d PASS_LEFT_TARGET_POSITION = new Translation3d(2.010664, 2.010664, 0.0);
+    public static final Translation3d PASS_RIGHT_TARGET_POSITION = new Translation3d(2.010664, Simulation.FIELD_HEIGHT - 2.010664, 0.0);
 
     public static final Angle HARDCODE_HOOD_PITCH = Degrees.of(74.5);
     public static final double HARDCODE_VELOCITY = 8.0;
