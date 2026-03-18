@@ -390,8 +390,8 @@ public class Constants
 
     public class Drive
     {
-        public static final double autoalignSteerKP = 15.0;
-        public static final double autoalignSteerKI = 0.5;
+        public static final double autoalignSteerKP = 12.0;
+        public static final double autoalignSteerKI = 0.0;
         public static final double autoalignSteerKD = 0.0;
         
         public static final double autoalignDriveKP = 6.0;

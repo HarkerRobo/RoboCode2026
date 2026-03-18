@@ -155,7 +155,7 @@ public class ShooterIndexer extends SubsystemBase
     
     public Command sysIdDynamic (SysIdRoutine.Direction direction)
     {
-        return sysId.dynamic(direction).withName("SysId Q" + (direction == SysIdRoutine.Direction.kForward ? "F" : "R"));
+        return sysId.dynamic(direction).withName("SysId D" + (direction == SysIdRoutine.Direction.kForward ? "F" : "R"));
     }
 
     /**

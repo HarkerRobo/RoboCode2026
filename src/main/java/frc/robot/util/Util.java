@@ -6,6 +6,8 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Rotations;
 
+import java.nio.file.WatchEvent;
+
 import com.pathplanner.lib.util.FlippingUtil;
 
 import edu.wpi.first.math.Pair;
@@ -59,13 +61,24 @@ public class Util
 
     public static void init ()
     {
-        addData(1.121, 12.5, 75.0);
-        addData(1.709, 18.5, 75.0);
+        /*
         addData(1.891, 20.0, 75.0);
-        addData(2.483, 21.0, 73.0);
-        addData(2.856, 21.0, 71.0);
         addData(3.373, 19.0, 68.0);
         addData(3.703,19.0,66.0);
+        */
+        addData(1.121, 12.5, 75.0); // old
+        addData(1.709, 18.5, 75.0); // old
+        addData(1.902, 19.0, 74.0);
+        //addData(2.483, 21.0, 73.0); // old
+        addData(2.678, 20.0, 72.0);
+        //addData(2.856, 21.0, 71.0); // old
+        addData(3.081, 20.0, 71.0);
+        addData(3.662, 19.0, 68.0);
+        addData(4.038, 19.0, 67.0);
+        addData(4.45, 19.0, 66.5);
+        addData(5.386, 21.0, 66.0);
+
+        
 
         // 2.722, 70, 19.5
     }
@@ -266,12 +279,14 @@ public class Util
     
     public static Angle calculatePassPitch(CommandSwerveDrivetrain drivetrain)
     {
-        return Util.calculatePitch(getShootStartingPoint(drivetrain), getPassEndingPoint(drivetrain), calculatePassVelocity(drivetrain));
+        return Degrees.of(68.0);
+        //return Util.calculatePitch(getShootStartingPoint(drivetrain), getPassEndingPoint(drivetrain), calculatePassVelocity(drivetrain));
     }
     
     public static double calculatePassVelocity(CommandSwerveDrivetrain drivetrain)
     {
-        return Util.calculateVelocity(getShootStartingPoint(drivetrain), getPassEndingPoint(drivetrain));
+        return 30.0;
+        //return Util.calculateVelocity(getShootStartingPoint(drivetrain), getPassEndingPoint(drivetrain));
     }
 
     public static double bound(double value, double min, double max)
