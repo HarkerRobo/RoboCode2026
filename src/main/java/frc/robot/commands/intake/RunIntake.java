@@ -3,6 +3,7 @@ package frc.robot.commands.intake;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
@@ -21,7 +22,14 @@ public class RunIntake extends Command
     {
         Robot.instance.robotContainer.driver.setRumble(RumbleType.kBothRumble, 0.5);
         // Intake.getInstance().setVoltage(Volts.of(5.5));
-        Intake.getInstance().setVelocity(RotationsPerSecond.of(Constants.Intake.INTAKE_VELOCITY));
+        if (DriverStation.isAutonomous())
+        {
+            Intake.getInstance().setVelocity(RotationsPerSecond.of(Constants.Intake.INTAKE_VELOCITY_AUTON));
+        }
+        else
+        {
+            Intake.getInstance().setVelocity(RotationsPerSecond.of(Constants.Intake.INTAKE_VELOCITY));
+        }
     }
 
     @Override
