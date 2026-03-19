@@ -138,6 +138,7 @@ public class Constants
         public static final double SUPPLY_CURRENT_LIMIT = 40.0;
 
         public static final double INTAKE_VELOCITY = -30.0; // rot/s // not a bug
+        public static final double INTAKE_VELOCITY_AUTON = -50.0; // rot/s
         public static final double REDUCED_INTAKE_VELOCITY = -20.0;
         public static final double DEFAULT_INTAKE_VELOCITY = 0.0;
         public static final double EJECT_VELOCITY = 25.0; // rot/s
@@ -390,8 +391,8 @@ public class Constants
 
     public class Drive
     {
-        public static final double autoalignSteerKP = 15.0;
-        public static final double autoalignSteerKI = 0.5;
+        public static final double autoalignSteerKP = 12.0;
+        public static final double autoalignSteerKI = 0.0;
         public static final double autoalignSteerKD = 0.0;
         
         public static final double autoalignDriveKP = 6.0;

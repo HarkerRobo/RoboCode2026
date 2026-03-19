@@ -248,7 +248,7 @@ public class RobotContainer
                                                 &&
                                                 Hood.getInstance().readyToShoot())
                                         .andThen(new IndependentCommand(track(new IndexerFullSpeed())))
-                                        .andThen(new IndependentCommand(track(new ShooterIndexerFullSpeed()))))) // load
+                                        .andThen(new ShooterIndexerFullSpeed()))) // load
                                                                                                                  // to
                                                                                                                  // shoot
                 .finallyDo(() -> {
@@ -270,6 +270,7 @@ public class RobotContainer
             .andThen(new WaitUntilCommand(
                     () -> Shooter.getInstance().readyToShoot()
                             && Hood.getInstance().readyToShoot()))
+            .andThen(new IndependentCommand(track(new IndexerFullSpeed())))
             .andThen(new ShooterIndexerFullSpeed()) // load to pass
             .andThen(shooterCommandFakeSubsystem.runOnce(()->{})))
             .finallyDo(() -> {
@@ -378,8 +379,8 @@ public class RobotContainer
             track(new IndependentCommand(track(new AimToAngle(()->Util.calculateShootPitch(drivetrain).in(Degrees))))
             .alongWith(new IndependentCommand(track(new ShooterTargetSpeed(()->Util.calculateShootVelocity(drivetrain)))))
             .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot() && Hood.getInstance().readyToShoot()))
-            .andThen(new IndependentCommand(track(new ShooterIndexerFullSpeed())
-            .andThen(new IndependentCommand(track(new IndexerFullSpeed())))) // load to shoot
+            .andThen(new IndependentCommand(track(new ShooterIndexerFullSpeed()))
+            .andThen(new IndexerFullSpeed()) // load to shoot
             .finallyDo(()->{
                 CommandScheduler.getInstance().schedule(stow.get());
             }))
@@ -566,13 +567,13 @@ public class RobotContainer
 
         operator.leftBumper().onTrue(Commands.runOnce(()->
         {
-            if (direction == PassDirection.Left) direction = PassDirection.Automatic;
-            else direction = PassDirection.Left;
+            if (direction == PassDirection.Right) direction = PassDirection.Automatic;
+            else direction = PassDirection.Right;
         }));
         operator.rightBumper().onTrue(Commands.runOnce(()->
         {
-            if (direction == PassDirection.Right) direction = PassDirection.Automatic;
-            else direction = PassDirection.Right;
+            if (direction == PassDirection.Left) direction = PassDirection.Automatic;
+            else direction = PassDirection.Left;
         }));
 
         operator.y().whileTrue(track(new HoodManualUp()));

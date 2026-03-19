@@ -292,7 +292,7 @@ public class Shooter extends SubsystemBase
     
     public Command leftSysIdDynamic (SysIdRoutine.Direction direction)
     {
-        return leftSysId.dynamic(direction).withName("SysId Q" + (direction == SysIdRoutine.Direction.kForward ? "F" : "R"));
+        return leftSysId.dynamic(direction).withName("SysId D" + (direction == SysIdRoutine.Direction.kForward ? "F" : "R"));
     }
 
     
