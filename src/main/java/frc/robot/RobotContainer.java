@@ -159,6 +159,7 @@ public class RobotContainer
     private Command hardShoot;
     private Command revShoot;
     private Command revPass;
+    private Command brake;
 
     private SlewRateLimiter accelerationLimiter = new SlewRateLimiter(Constants.ACCELERATION_LIMIT);
     public PowerDistribution powerDistributionTracker = new PowerDistribution();
@@ -228,33 +229,41 @@ public class RobotContainer
             .andThen(new AimToAngle(75.0));
         // because a command instance cannot be scheduled to independent triggers
         
+        brake = drivetrain.applyRequest(()->new SwerveRequest.SwerveDriveBrake());
 
         // tested in sim
-        shoot = new RotateToAngle(drivetrain, ()->AlignConstants.HUB)
-            //Commands.none()
-            .alongWith(new IndependentCommand(track(new AimToAngle(()->Util.calculateShootPitch(drivetrain).in(Degrees)))))
-            .alongWith(new IndependentCommand(track(new ShooterTargetSpeed(()->Util.calculateShootVelocity(drivetrain)))))
-            // .alongWith(new AimToAngle(75.0))
-            // .alongWith(new IndependentCommand(new ShooterTargetSpeed(()->8.0 + leftFlywheelOffset, ()->8.0 + rightFlywheelOffset)))
-            .andThen(new WaitUntilCommand(
-                ()->Shooter.getInstance().readyToShoot() // we will see if this works lol
-                 && 
-                 Hood.getInstance().readyToShoot()
-                 ))
-            .andThen(new IndependentCommand(track(new IndexerFullSpeed())))
-            .andThen(new IndependentCommand(track(new ShooterIndexerFullSpeed()))) // load to shoot
-            .finallyDo(()->{
-                CommandScheduler.getInstance().schedule(stow.get());
-            })
-            .andThen(shooterCommandFakeSubsystem.runOnce(()->{}))
-            .withName("Shoot");
+        shoot = new RotateToAngle(drivetrain, () -> AlignConstants.HUB, false)
+                // Commands.none()
+                .alongWith(new IndependentCommand(
+                        track(new AimToAngle(() -> Util.calculateShootPitch(drivetrain).in(Degrees)))))
+                .alongWith(new IndependentCommand(
+                        track(new ShooterTargetSpeed(() -> Util.calculateShootVelocity(drivetrain)))))
+                // .alongWith(new AimToAngle(75.0))
+                // .alongWith(new IndependentCommand(new ShooterTargetSpeed(()->8.0 +
+                // leftFlywheelOffset, ()->8.0 + rightFlywheelOffset)))
+                .andThen(drivetrain.applyRequest(() -> new SwerveRequest.SwerveDriveBrake())
+                        .alongWith(
+                                new WaitUntilCommand(
+                                        () -> Shooter.getInstance().readyToShoot()
+                                                &&
+                                                Hood.getInstance().readyToShoot())
+                                        .andThen(new IndependentCommand(track(new IndexerFullSpeed())))
+                                        .andThen(new IndependentCommand(track(new ShooterIndexerFullSpeed()))))) // load
+                                                                                                                 // to
+                                                                                                                 // shoot
+                .finallyDo(() -> {
+                    CommandScheduler.getInstance().schedule(stow.get());
+                })
+                .andThen(shooterCommandFakeSubsystem.runOnce(() -> {
+                }))
+                .withName("Shoot");
         
         // tested in sim
         pass = new RotateToAngle(drivetrain,
             () -> onLeftSide() ? Constants.PASS_LEFT_TARGET_POSITION.toTranslation2d()
-                               : Constants.PASS_RIGHT_TARGET_POSITION.toTranslation2d())
+                               : Constants.PASS_RIGHT_TARGET_POSITION.toTranslation2d(), true)
             //Commands.none()
-            .alongWith(new AimToAngle(() -> Util.calculatePassPitch(drivetrain).in(Degrees) + pitchOffset))
+            .alongWith(new AimToAngle(() -> Util.calculatePassPitch(drivetrain).in(Degrees) + pitchOffset)
             .andThen(new IndependentCommand(track(new ShooterTargetSpeed(
                 ()->Util.calculatePassVelocity(drivetrain) + leftFlywheelOffset,
                 ()->Util.calculatePassVelocity(drivetrain) + rightFlywheelOffset))))
@@ -262,7 +271,7 @@ public class RobotContainer
                     () -> Shooter.getInstance().readyToShoot()
                             && Hood.getInstance().readyToShoot()))
             .andThen(new ShooterIndexerFullSpeed()) // load to pass
-            .andThen(shooterCommandFakeSubsystem.runOnce(()->{}))
+            .andThen(shooterCommandFakeSubsystem.runOnce(()->{})))
             .finallyDo(() -> {
                 CommandScheduler.getInstance().schedule(stow.get());
             })

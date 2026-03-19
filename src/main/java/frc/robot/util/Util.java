@@ -212,7 +212,7 @@ public class Util
         double dz = target.getZ() - position.getZ();
         double s = shootVelocity;
         double g = Constants.G;
-        System.out.println("\n\tdb: " + db + "\tdz: " + dz + "\ts: " + s);
+        //System.out.println("\n\tdb: " + db + "\tdz: " + dz + "\ts: " + s);
         double idealAngle = Math.atan((Math.pow(s,2.0) + 
             Math.sqrt(Math.pow(s,4.0)
                 - g * (g * Math.pow(db,2.0) + 2.0 * dz * Math.pow(s,2.0))))
@@ -236,13 +236,13 @@ public class Util
             if (value != null)
             {
                 Angle output = value.getSecond();
-                System.out.printf("Calculated angle with interpolation: %f degrees\n", output.in(Degrees));
+                // System.out.printf("Calculated angle with interpolation: %f degrees\n", output.in(Degrees));
                 return output;
             }
-            System.out.println("Interpolation failed - no value found. Reverting to math");
+            // System.out.println("Interpolation failed - no value found. Reverting to math");
         }
         Angle output = Util.calculatePitch(getShootStartingPoint(drivetrain), getShootEndingPoint(), calculateShootVelocity(drivetrain));
-        System.out.printf("Calculated angle: %f degrees\n", output.in(Degrees));
+        // System.out.printf("Calculated angle: %f degrees\n", output.in(Degrees));
         return output;
     }
 
@@ -254,13 +254,13 @@ public class Util
             if (value != null)
             {
                 double output = value.getFirst().in(MetersPerSecond);
-                System.out.printf("Calculated velocity with interpolation: %f\n", output);
+                // System.out.printf("Calculated velocity with interpolation: %f\n", output);
                 return output;
             }
-            System.out.println("Interpolation failed - no value found. Reverting to math");
+            // System.out.println("Interpolation failed - no value found. Reverting to math");
         }
         double output = Util.calculateVelocity(getShootStartingPoint(drivetrain), getShootEndingPoint());
-        System.out.printf("Calculated velocity: %f\n", output);
+        // System.out.printf("Calculated velocity: %f\n", output);
         return output;
     }
     
