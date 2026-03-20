@@ -7,7 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "LSSEBeforeShoot4"
+            "pathName": "LSSETrenchToCenter4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "LSSECenterSweepToTrench4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "LSSETrenchToShoot234"
           }
         },
         {

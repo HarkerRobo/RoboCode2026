@@ -7,7 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "RSSEBeforeShoot3"
+            "pathName": "RSSETrenchToCenter3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RSSECenterSweepToTrench3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RSSETrenchToShoot234"
           }
         },
         {
