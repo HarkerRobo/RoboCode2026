@@ -214,7 +214,7 @@ public class Constants
 
         public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
 
-        public static final double MAX_ERROR = 0.25;
+        public static final double MAX_ERROR = 1.0;//0.25;
     
         public static final double STALLING_CURRENT = 10.0; // TODO
 
@@ -391,7 +391,7 @@ public class Constants
 
     public class Drive
     {
-        public static final double autoalignSteerKP = 12.0;
+        public static final double autoalignSteerKP = 13.0;// 12.0;
         public static final double autoalignSteerKI = 0.0;
         public static final double autoalignSteerKD = 0.0;
         
@@ -565,8 +565,8 @@ public class Constants
     public static final Translation3d PASS_LEFT_TARGET_POSITION = new Translation3d(2.010664, 2.010664, 0.0);
     public static final Translation3d PASS_RIGHT_TARGET_POSITION = new Translation3d(2.010664, Simulation.FIELD_HEIGHT - 2.010664, 0.0);
 
-    public static final Angle HARDCODE_HOOD_PITCH = Degrees.of(74.5);
-    public static final double HARDCODE_VELOCITY = 8.0;
+    public static final Angle HARDCODE_HOOD_PITCH = Degrees.of(72.25);
+    public static final double HARDCODE_VELOCITY = 19.75;
 
     public static final double PITCH_OFFSET_UNIT = 5.0; // TODO
     public static final double FLYWHEEL_OFFSET_UNIT = 0.5; // TODO

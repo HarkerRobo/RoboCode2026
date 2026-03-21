@@ -203,7 +203,7 @@ public class Telemetry
         rightFlywheelOffset.set(Robot.instance.robotContainer.rightFlywheelOffset);
         intakeTriggered.set(Robot.instance.robotContainer.intakeTriggered);
         intakeExtended.set(Robot.instance.robotContainer.intakeExtended);
-        currents.set(Robot.instance.robotContainer.powerDistributionTracker.getAllCurrents());
+        // currents.set(Robot.instance.robotContainer.powerDistributionTracker.getAllCurrents());
 
         Command intakeCommand = Intake.getInstance().getCurrentCommand();
         this.intakeCommand.set(intakeCommand == null ? "" : intakeCommand.getName());

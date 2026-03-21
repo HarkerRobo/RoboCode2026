@@ -243,10 +243,11 @@ public class RobotContainer
                 // leftFlywheelOffset, ()->8.0 + rightFlywheelOffset)))
                 .andThen(drivetrain.applyRequest(() -> new SwerveRequest.SwerveDriveBrake())
                         .alongWith(
-                                new WaitUntilCommand(
+                                /*new WaitUntilCommand(
                                         () -> Shooter.getInstance().readyToShoot()
                                                 &&
-                                                Hood.getInstance().readyToShoot())
+                                                Hood.getInstance().readyToShoot())*/
+                                new WaitCommand(1.0)
                                         .andThen(new IndependentCommand(track(new IndexerFullSpeed())))
                                         .andThen(new ShooterIndexerFullSpeed()))) // load
                                                                                                                  // to
@@ -267,9 +268,10 @@ public class RobotContainer
             .andThen(new IndependentCommand(track(new ShooterTargetSpeed(
                 ()->Util.calculatePassVelocity(drivetrain) + leftFlywheelOffset,
                 ()->Util.calculatePassVelocity(drivetrain) + rightFlywheelOffset))))
-            .andThen(new WaitUntilCommand(
+            /*.andThen(new WaitUntilCommand(
                     () -> Shooter.getInstance().readyToShoot()
-                            && Hood.getInstance().readyToShoot()))
+                            && Hood.getInstance().readyToShoot()))*/
+            .andThen(new WaitCommand(1.0))
             .andThen(new IndependentCommand(track(new IndexerFullSpeed())))
             .andThen(new ShooterIndexerFullSpeed()) // load to pass
             .andThen(shooterCommandFakeSubsystem.runOnce(()->{})))
@@ -363,7 +365,7 @@ public class RobotContainer
                                 IntakeExtension.getInstance()
                                         .runOnce(() -> IntakeExtension.getInstance()
                                                 .setVoltage(Volts.of(Constants.IntakeExtension.RETRACTING_VOLTAGE)))
-                                        .withTimeout(2.0)
+                                       .withTimeout(2.0)
                                         .andThen(new ExtendIntake().withTimeout(1.0))
                                         .andThen(IntakeExtension.getInstance()
                                                 .runOnce(() -> IntakeExtension.getInstance().setVoltage(
@@ -378,7 +380,8 @@ public class RobotContainer
         NamedCommands.registerCommand("Shoot", 
             track(new IndependentCommand(track(new AimToAngle(()->Util.calculateShootPitch(drivetrain).in(Degrees))))
             .alongWith(new IndependentCommand(track(new ShooterTargetSpeed(()->Util.calculateShootVelocity(drivetrain)))))
-            .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot() && Hood.getInstance().readyToShoot()))
+            //.andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot() && Hood.getInstance().readyToShoot()))
+            .andThen(new WaitCommand(0.0))
             .andThen(new IndependentCommand(track(new ShooterIndexerFullSpeed()))
             .andThen(new IndexerFullSpeed()) // load to shoot
             .finallyDo(()->{
@@ -500,6 +503,15 @@ public class RobotContainer
         driver.button(8) // menu button/right paddle
             .onTrue(track(revShoot));
 
+        driver.y().whileTrue(track(
+            new IndependentCommand(track(new ShooterTargetSpeed(Constants.HARDCODE_VELOCITY)))
+            .andThen(new IndependentCommand(track(new AimToAngle(Constants.HARDCODE_HOOD_PITCH.in(Degrees)))))
+            .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot() && Hood.getInstance().readyToShoot()))
+            .andThen(new IndependentCommand(track(new ShooterIndexerFullSpeed())))
+            .andThen(new IndexerFullSpeed())
+            .finallyDo(()->CommandScheduler.getInstance().schedule(stow.get()))
+            .withName("HardShoot")));
+
         // tested in sim
         // THIS ALL NEEDS TO BE CHANGED BASED ON WHAT DRIVE TEAM WANTS
         // driver.y().onTrue(track(new ClimbToLevel(3).andThen(new RunClimb())
@@ -559,11 +571,11 @@ public class RobotContainer
             .withName("EjectIntake")));
 
         operator.rightTrigger().whileTrue(track(new IndependentCommand(track(new ShooterTargetSpeed(Constants.Shooter.SOFT_PASS_VELOCITY)))
-            .andThen(new IndependentCommand(new AimToAngle(60.0)))
+            .andThen(new IndependentCommand(track(new AimToAngle(60.0))))
             .andThen(new IndependentCommand(track(new IndexerFullSpeed())))
-            .andThen(new ShooterIndexerFullSpeed())
-            .andThen(stow.get())
-            .withName("SoftPass")));
+            .andThen(new ShooterIndexerFullSpeed()))
+            .finallyDo(()->CommandScheduler.getInstance().schedule(stow.get()))
+            .withName("SoftPass"));
 
         operator.leftBumper().onTrue(Commands.runOnce(()->
         {

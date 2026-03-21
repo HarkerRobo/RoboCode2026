@@ -48,7 +48,15 @@ public class RotateToAngle extends Command
         double xdiff = target.getX() - dt.getState().Pose.getX();
         double ydiff = target.getY() - dt.getState().Pose.getY();
         double angle = Math.atan(ydiff/xdiff) + Math.PI;
+
         if (xdiff < 0) angle = Math.PI + angle;
+        
+        if (DriverStation.getAlliance().orElse(DriverStation.Alliance.Red) == DriverStation.Alliance.Blue)
+        {
+            angle = angle + Math.PI;
+        }
+
+
         return new Rotation2d(angle);
     }
 
@@ -105,7 +113,7 @@ public class RotateToAngle extends Command
     {
         if (continueDrive) return false;
 
-        if (Math.abs((dt.getState().Pose.getRotation().getDegrees() + 180 - calcAngle().getDegrees()) % 360) <= 1.0)
+        if (Math.abs((dt.getState().Pose.getRotation().getDegrees() + 180 - calcAngle().getDegrees()) % 360) <= 3.0)
         {
             Telemetry.getInstance().aligned.set(true);
             return true;
