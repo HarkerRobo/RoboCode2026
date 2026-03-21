@@ -4,13 +4,12 @@
   "holonomicMode": true,
   "pathFolders": [
     "DepotClimbLeft",
-    "LeftFirstFarDoubleSweep",
     "LeftSingleSweepExit",
     "LeftTrenchNeutralClimbLeft",
-    "MiddleShoot",
+    "LeftFirstFarDoubleSweep",
+    "RightFirstFarDoubleSweep",
     "OutpostClimbRight",
     "RightFerry",
-    "RightFirstFarDoubleSweep",
     "RightSingleSweepExit",
     "RightTrenchNeutralClimbRight"
   ],
