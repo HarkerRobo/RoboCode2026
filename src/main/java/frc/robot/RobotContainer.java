@@ -392,8 +392,10 @@ public class RobotContainer
                                                 .withTimeout(2.0)))));
 
         NamedCommands.registerCommand("Shoot", 
-            track(new IndependentCommand(track(new AimToAngle(()->Util.calculateShootPitch(drivetrain).in(Degrees))))
-            .alongWith(new IndependentCommand(track(new ShooterTargetSpeed(()->Util.calculateShootVelocity(drivetrain)))))
+            // track(new IndependentCommand(track(new AimToAngle(()->Util.calculateShootPitch(drivetrain).in(Degrees))))
+            // .alongWith(new IndependentCommand(track(new ShooterTargetSpeed(()->Util.calculateShootVelocity(drivetrain)))))
+            track(new IndependentCommand(track(new AimToAngle(70.9/*71.5*/)))
+            .alongWith(new IndependentCommand(track(new ShooterTargetSpeed(/*20.0*/21.0))))
             //.andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot() && Hood.getInstance().readyToShoot()))
             .andThen(new IndependentCommand(track(new ShooterIndexerFullSpeed())))
             .andThen(new IndexerFullSpeed()) // load to shoot

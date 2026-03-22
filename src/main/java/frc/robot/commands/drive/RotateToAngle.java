@@ -50,10 +50,10 @@ public class RotateToAngle extends Command
         double angle = Math.atan2(ydiff, xdiff);// + Math.PI;
         // if (xdiff < 0) angle = Math.PI + angle;
 
-        // if (DriverStation.getAlliance().orElse(DriverStation.Alliance.Red) == DriverStation.Alliance.Blue)
-        // {
-        //     angle = Math.PI + angle;
-        // }
+        if (DriverStation.getAlliance().orElse(DriverStation.Alliance.Red) == DriverStation.Alliance.Red)
+        {
+            angle = Math.PI + angle;
+        }
         return new Rotation2d(angle);
     }
 
