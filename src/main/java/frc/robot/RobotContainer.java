@@ -243,7 +243,7 @@ public class RobotContainer
                 // leftFlywheelOffset, ()->8.0 + rightFlywheelOffset)))
                 .andThen(drivetrain.applyRequest(() -> new SwerveRequest.SwerveDriveBrake())
                         .alongWith(
-                                new WaitUntilCommand( () -> Shooter.getInstance().readyToShoot()
+                                new WaitUntilCommand(() -> Shooter.getInstance().readyToShoot()
                                                 &&
                                                 Hood.getInstance().readyToShoot())
                                 /*new WaitCommand(1.0)*/
@@ -281,9 +281,9 @@ public class RobotContainer
         
 
         // tested in sim
-        hardShoot = //new AimToAngle(Constants.HARDCODE_HOOD_PITCH.in(Degrees))
-            Commands.none()
-            .alongWith(new IndependentCommand(track(new ShooterTargetSpeed(()->Constants.HARDCODE_VELOCITY))))
+        hardShoot = 
+            new IndependentCommand(track(new AimToAngle(Constants.HARDCODE_HOOD_PITCH.in(Degrees))))
+            .andThen(new IndependentCommand(track(new ShooterTargetSpeed(()->Constants.HARDCODE_VELOCITY))))
             .andThen(new IndependentCommand(track(new RunIntake())))
             .andThen(new IndependentCommand(track(new IndexerFullSpeed())))
             .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot()))
@@ -342,6 +342,21 @@ public class RobotContainer
         testCommandChooser.addOption("Shooter/ShooterDefaultSpeed", new ShooterDefaultSpeed());
         testCommandChooser.addOption("ShooterIndexer/ShooterIndexerDefaultSpeed", new ShooterIndexerDefaultSpeed());
         testCommandChooser.addOption("ShooterIndexer/ShooterIndexerFullSpeed", new ShooterIndexerFullSpeed());
+        testCommandChooser.addOption("ZeroDT", 
+                drivetrain.runOnce(() -> {
+                if (DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Red)
+                {
+                    drivetrain.seedFieldCentric(Rotation2d.k180deg);
+                }
+                else
+                {
+                    drivetrain.seedFieldCentric();
+                }
+            })
+                .andThen(drivetrain.runOnce(() -> drivetrain.resetPose(
+                            (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) ? 
+                            FlippingUtil.flipFieldPose(Constants.ZEROING_POSE) : Constants.ZEROING_POSE)))
+                .withName("ZeroDrivetrain"));
 
         SmartDashboard.putData("Test a Command", testCommandChooser);
         SmartDashboard.putData(CommandScheduler.getInstance());
@@ -380,11 +395,11 @@ public class RobotContainer
             track(new IndependentCommand(track(new AimToAngle(()->Util.calculateShootPitch(drivetrain).in(Degrees))))
             .alongWith(new IndependentCommand(track(new ShooterTargetSpeed(()->Util.calculateShootVelocity(drivetrain)))))
             //.andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot() && Hood.getInstance().readyToShoot()))
-            .andThen(new IndependentCommand(track(new ShooterIndexerFullSpeed()))
+            .andThen(new IndependentCommand(track(new ShooterIndexerFullSpeed())))
             .andThen(new IndexerFullSpeed()) // load to shoot
             .finallyDo(()->{
                 CommandScheduler.getInstance().schedule(stow.get());
-            }))
+            })
         .withName("Shoot")));
         
         autonChooser = AutoBuilder.buildAutoChooser();
@@ -443,7 +458,7 @@ public class RobotContainer
     private void configureDriverBindings() 
     {
         driver.a().whileTrue(track(new RotateToAngle(drivetrain, () -> AlignConstants.HUB, false)));
-
+        
         driver.y().whileTrue(track(
             new IndependentCommand(track(new ShooterTargetSpeed(Constants.HARDCODE_VELOCITY)))
             .andThen(new IndependentCommand(track(new AimToAngle(Constants.HARDCODE_HOOD_PITCH.in(Degrees)))))
@@ -532,7 +547,7 @@ public class RobotContainer
         driver.x().whileTrue(track(hardShoot));
         
         // tested (?) in sim
-        driver.a().onTrue(track(new Unspool().andThen(stow.get()).withName("Drop")));
+        // driver.a().onTrue(track(new Unspool().andThen(stow.get()).withName("Drop")));
         
         // tested in sim
         driver.povUp().onTrue(Commands.runOnce(()->pitchOffset += Constants.PITCH_OFFSET_UNIT));
