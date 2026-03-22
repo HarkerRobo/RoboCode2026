@@ -47,16 +47,13 @@ public class RotateToAngle extends Command
     {
         double xdiff = target.getX() - dt.getState().Pose.getX();
         double ydiff = target.getY() - dt.getState().Pose.getY();
-        double angle = Math.atan(ydiff/xdiff) + Math.PI;
+        double angle = Math.atan2(ydiff, xdiff);// + Math.PI;
+        // if (xdiff < 0) angle = Math.PI + angle;
 
-        if (xdiff < 0) angle = Math.PI + angle;
-        
         if (DriverStation.getAlliance().orElse(DriverStation.Alliance.Red) == DriverStation.Alliance.Blue)
         {
-            angle = angle + Math.PI;
+            angle = Math.PI + angle;
         }
-
-
         return new Rotation2d(angle);
     }
 
@@ -104,7 +101,7 @@ public class RotateToAngle extends Command
         Telemetry.getInstance().test1.accept(dt.getState().Pose.getRotation().getDegrees());
         System.out.println("Target rotation: " + (calcAngle().getDegrees()));
         Telemetry.getInstance().test2.accept(calcAngle().getDegrees());
-        System.out.println("ERROR: " + (-calcAngle().getDegrees() + 180 + dt.getState().Pose.getRotation().getDegrees()) % 360);
+        System.out.println("ERROR: " + (dt.getState().Pose.getRotation().getDegrees() + 180.0 - calcAngle().getDegrees()));
         System.out.println("X- and Y- Speeds: " + (xSpeed * MaxSpeed) + ", " + (ySpeed * MaxSpeed));
     }
 
@@ -113,7 +110,10 @@ public class RotateToAngle extends Command
     {
         if (continueDrive) return false;
 
-        if (Math.abs((dt.getState().Pose.getRotation().getDegrees() + 180 - calcAngle().getDegrees()) % 360) <= 3.0)
+        double angle = dt.getState().Pose.getRotation().getDegrees() /*+ 180.0*/ - calcAngle().getDegrees();
+        angle = (angle + 360.0) % 360.0;
+
+        if (Math.min(Math.abs(angle), Math.abs(angle - 360.0)) < 1.0)
         {
             Telemetry.getInstance().aligned.set(true);
             return true;

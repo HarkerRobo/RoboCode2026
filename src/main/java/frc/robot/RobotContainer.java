@@ -232,8 +232,8 @@ public class RobotContainer
         brake = drivetrain.applyRequest(()->new SwerveRequest.SwerveDriveBrake());
 
         // tested in sim
-        shoot = new RotateToAngle(drivetrain, () -> AlignConstants.HUB, false)
-                // Commands.none()
+        shoot = //new RotateToAngle(drivetrain, () -> AlignConstants.HUB, false)
+                Commands.none()
                 .alongWith(new IndependentCommand(
                         track(new AimToAngle(() -> Util.calculateShootPitch(drivetrain).in(Degrees)))))
                 .alongWith(new IndependentCommand(
@@ -243,11 +243,10 @@ public class RobotContainer
                 // leftFlywheelOffset, ()->8.0 + rightFlywheelOffset)))
                 .andThen(drivetrain.applyRequest(() -> new SwerveRequest.SwerveDriveBrake())
                         .alongWith(
-                                /*new WaitUntilCommand(
-                                        () -> Shooter.getInstance().readyToShoot()
+                                new WaitUntilCommand( () -> Shooter.getInstance().readyToShoot()
                                                 &&
-                                                Hood.getInstance().readyToShoot())*/
-                                new WaitCommand(1.0)
+                                                Hood.getInstance().readyToShoot())
+                                /*new WaitCommand(1.0)*/
                                         .andThen(new IndependentCommand(track(new IndexerFullSpeed())))
                                         .andThen(new ShooterIndexerFullSpeed()))) // load
                                                                                                                  // to
@@ -381,7 +380,6 @@ public class RobotContainer
             track(new IndependentCommand(track(new AimToAngle(()->Util.calculateShootPitch(drivetrain).in(Degrees))))
             .alongWith(new IndependentCommand(track(new ShooterTargetSpeed(()->Util.calculateShootVelocity(drivetrain)))))
             //.andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot() && Hood.getInstance().readyToShoot()))
-            .andThen(new WaitCommand(0.0))
             .andThen(new IndependentCommand(track(new ShooterIndexerFullSpeed()))
             .andThen(new IndexerFullSpeed()) // load to shoot
             .finallyDo(()->{
@@ -444,6 +442,16 @@ public class RobotContainer
 
     private void configureDriverBindings() 
     {
+        driver.a().whileTrue(track(new RotateToAngle(drivetrain, () -> AlignConstants.HUB, false)));
+
+        driver.y().whileTrue(track(
+            new IndependentCommand(track(new ShooterTargetSpeed(Constants.HARDCODE_VELOCITY)))
+            .andThen(new IndependentCommand(track(new AimToAngle(Constants.HARDCODE_HOOD_PITCH.in(Degrees)))))
+            .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot() && Hood.getInstance().readyToShoot()))
+            .andThen(new IndependentCommand(track(new ShooterIndexerFullSpeed())))
+            .andThen(new IndexerFullSpeed())
+            .finallyDo(()->CommandScheduler.getInstance().schedule(stow.get()))));
+
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
