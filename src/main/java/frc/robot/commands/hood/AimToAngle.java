@@ -44,7 +44,7 @@ public class AimToAngle extends Command
     @Override
     public boolean isFinished ()
     {
-        return Hood.getInstance().readyToShoot();
+        return true;
     }
 
     @Override

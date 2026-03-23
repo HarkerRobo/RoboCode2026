@@ -10,9 +10,9 @@ import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.subsystems.intake.Intake;
 
-public class RunIntake extends Command 
+public class StartRunIntake extends Command 
 {
-    public RunIntake () 
+    public StartRunIntake () 
     {
         addRequirements(Intake.getInstance());
     }
@@ -32,22 +32,15 @@ public class RunIntake extends Command
         }
     }
 
-    @Override
-    public void execute () 
-    {
-    }
 
     @Override
     public boolean isFinished () 
     {
-        return false;
+        return true;
     }
 
     @Override
     public void end (boolean interrupted) 
     {
-        Robot.instance.robotContainer.driver.setRumble(RumbleType.kBothRumble, 0.0);
-        Intake.getInstance().setVoltage(Volts.zero());
-        // Intake.getInstance().setVelocity(RotationsPerSecond.zero());
     }
 }

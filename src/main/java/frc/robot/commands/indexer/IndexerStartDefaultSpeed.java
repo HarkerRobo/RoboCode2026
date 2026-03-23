@@ -6,10 +6,9 @@ import frc.robot.subsystems.Indexer;
 
 import static edu.wpi.first.units.Units.*;
 
-public class IndexerFullSpeed extends Command
+public class IndexerStartDefaultSpeed extends Command
 {
-    
-    public IndexerFullSpeed()
+    public IndexerStartDefaultSpeed() 
     {
         addRequirements(Indexer.getInstance());
     }
@@ -17,13 +16,13 @@ public class IndexerFullSpeed extends Command
     @Override
     public void initialize() 
     {
-        Indexer.getInstance().setMainVoltage(Volts.of(Constants.Indexer.MAIN_MAX_VOLTAGE));
-        Indexer.getInstance().setSideVoltage(Volts.of(Constants.Indexer.SIDE_MAX_VOLTAGE));
+        Indexer.getInstance().setMainVoltage(Volts.of(Constants.Indexer.MAIN_DEFAULT_VOLTAGE));
+        Indexer.getInstance().setSideVoltage(Volts.of(Constants.Indexer.SIDE_DEFAULT_VOLTAGE));
     }
 
     @Override
     public boolean isFinished() 
     {
-        return false;
+        return true;
     }
 }

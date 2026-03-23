@@ -42,11 +42,6 @@ public class ShooterTargetSpeed extends Command
     @Override
     public void initialize()
     {
-    }
-
-    @Override
-    public void execute()
-    {
         leftTargetSpeed = leftTargetSpeedSupplier.getAsDouble();
         Shooter.getInstance().setLeftEffectiveVelocity(MetersPerSecond.of(leftTargetSpeed));
         rightTargetSpeed = rightTargetSpeedSupplier.getAsDouble();
@@ -56,7 +51,7 @@ public class ShooterTargetSpeed extends Command
     @Override
     public boolean isFinished()
     {
-        return false;
+        return true;
     }
 
     @Override

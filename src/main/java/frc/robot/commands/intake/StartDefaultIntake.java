@@ -2,15 +2,17 @@ package frc.robot.commands.intake;
 
 import static edu.wpi.first.units.Units.*;
 
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Robot;
 import frc.robot.subsystems.intake.Intake;
 
 /**
  * is still used but applies a zero voltage
  */
-public class DefaultIntake extends Command 
+public class StartDefaultIntake extends Command 
 {
-    public DefaultIntake () 
+    public StartDefaultIntake () 
     {
         addRequirements(Intake.getInstance());
     }
@@ -18,25 +20,14 @@ public class DefaultIntake extends Command
     @Override
     public void initialize()
     {
+        Robot.instance.robotContainer.driver.setRumble(RumbleType.kBothRumble, 0.0);
         Intake.getInstance().setVoltage(Volts.zero());
         // Intake.getInstance().setVelocity(RotationsPerSecond.zero());
-    }
-
-    @Override
-    public void execute () 
-    {
     }
 
     @Override
     public boolean isFinished () 
     {
-        return false;
-    }
-
-    @Override
-    public void end (boolean interrupted) 
-    {
-        Intake.getInstance().setVoltage(Volts.zero());
-        // Intake.getInstance().setVelocity(RotationsPerSecond.zero());
+        return true;
     }
 }
