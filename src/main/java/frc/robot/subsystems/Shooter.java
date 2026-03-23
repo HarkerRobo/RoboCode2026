@@ -113,62 +113,105 @@ public class Shooter extends SubsystemBase
         right.getConfigurator().apply(rightConfig);
     }
     
+    /**
+     * Returns the voltage applied to the left flywheel motor.
+     */
     public Voltage getLeftVoltage()
     {
         return left.getMotorVoltage().getValue();
     }
     
+    /**
+     * Returns the voltage applied to the right flywheel motor.
+     */
     public Voltage getRightVoltage()
     {
         return right.getMotorVoltage().getValue();
     }
     
+    /**
+     * Returns the angular velocity of the left flywheel.
+     */
     public AngularVelocity getLeftVelocity()
     {
         return left.getVelocity().getValue();
     }
     
+    /**
+     * Returns the angular velocity of the right flywheel.
+     */
     public AngularVelocity getRightVelocity()
     {
         return right.getVelocity().getValue();
     }
 
+    /**
+     * Returns the linear surface speed of the left flywheel.
+     * Converts angular ro meters per second
+     */
     public LinearVelocity getLeftEffectiveVelocity()
     {
         return MetersPerSecond.of(getLeftVelocity().in(RotationsPerSecond) * Constants.Shooter.FLYWHEEL_CIRCUMFERANCE);
     }
     
+    /**
+     * Returns the linear surface speed of the right flywheel.
+     * Converts angular velocity into meters per second.
+     */
     public LinearVelocity getRightEffectiveVelocity()
     {
         return MetersPerSecond.of(getRightVelocity().in(RotationsPerSecond) * Constants.Shooter.FLYWHEEL_CIRCUMFERANCE);
     }
 
+    /**
+     * Returns the last commanded angular velocity for the left flywheel.
+     */
     public AngularVelocity getLeftTargetVelocity()
     {
         return RotationsPerSecond.of(leftTargetVelocity);
     }
 
+    /**
+     * Returns the target linear surface speed of the left flywheel.
+     * Converts the stored angular target into meters per second.
+     */
     public LinearVelocity getLeftEffectiveTargetVelocity()
     {
         return MetersPerSecond.of(leftTargetVelocity * Constants.Shooter.FLYWHEEL_CIRCUMFERANCE);
     }
-
+    
+    /**
+     * Returns the last commanded angular velocity for the right flywheel.
+     * Useful for comparing target and measured speeds.
+     */
     public AngularVelocity getRightTargetVelocity()
     {
         return RotationsPerSecond.of(rightTargetVelocity);
     }
 
+    /**
+     * Returns the target linear surface speed of the right flywheel.
+     * Converts the stored angular target into meters per second.
+     */
     public LinearVelocity getRightEffectiveTargetVelocity()
     {
         return MetersPerSecond.of(rightTargetVelocity * Constants.Shooter.FLYWHEEL_CIRCUMFERANCE);
     }
 
+    /**
+     * Sets both flywheels to the same angular velocity.
+     * Calls the individual left and right setters internally.
+     */
     public void setVelocity (AngularVelocity velocity)
     {
         setLeftVelocity(velocity);
         setRightVelocity(velocity);
     }
 
+    /**
+     * Commands the left flywheel to a target angular velocity.
+     * Blocks the command when the subsystem is disabled.
+     */
     public void setLeftVelocity(AngularVelocity velocity)
     {
         if (isDisabled())
@@ -180,11 +223,19 @@ public class Shooter extends SubsystemBase
         leftTargetVelocity = velocity.in(RotationsPerSecond);
     }
 
+    /**
+     * Sets the left flywheel using a linear surface speed.
+     * Converts meters per second into angular velocity.
+     */
     public void setLeftEffectiveVelocity(LinearVelocity velocity)
     {
         setLeftVelocity(RotationsPerSecond.of(velocity.in(MetersPerSecond) / Constants.Shooter.FLYWHEEL_CIRCUMFERANCE));
     }
 
+    /**
+     * Commands the right flywheel to a target angular velocity.
+     * Blocks the command when the subsystem is disabled.
+     */
     public void setRightVelocity(AngularVelocity velocity)
     {
         if (isDisabled())
@@ -196,17 +247,29 @@ public class Shooter extends SubsystemBase
         rightTargetVelocity = velocity.in(RotationsPerSecond);
     }
 
+    /**
+     * Sets the right flywheel using a linear surface speed.
+     * Converts meters per second into angular velocity.
+     */
     public void setRightEffectiveVelocity(LinearVelocity velocity)
     {
         setRightVelocity(RotationsPerSecond.of(velocity.in(MetersPerSecond) / Constants.Shooter.FLYWHEEL_CIRCUMFERANCE));
     }
     
+    /**
+     * Sets both flywheels using a linear surface speed.
+     * Converts meters per second into angular velocity for each side.
+     */
     public void setEffectiveVelocity (LinearVelocity velocity)
     {
         setLeftEffectiveVelocity(velocity);
         setRightEffectiveVelocity(velocity);
     }
 
+    /**
+     * Applies a direct voltage to both flywheel motors.
+     * Blocks the command when the subsystem is disabled.
+     */
     public void setVoltage (Voltage voltage)
     {
         if (isDisabled())
@@ -218,6 +281,10 @@ public class Shooter extends SubsystemBase
         right.setControl(new VoltageOut(voltage));
     }
 
+    /**
+     * Drives both flywheels using a raw duty cycle percentage.
+     * Blocks the command when the subsystem is disabled.
+     */
     public void setDutyCycle (double dutyCycle)
     {
         if (isDisabled())
@@ -230,6 +297,10 @@ public class Shooter extends SubsystemBase
     }
     
     
+    /**
+     * Returns true when both flywheels are within tolerance of their targets.
+     * Used to determine when the shooter is stable enough to fire.
+     */
     @Override
     public void periodic ()
     {
@@ -280,17 +351,31 @@ public class Shooter extends SubsystemBase
         this)
     );
     
+
+    /**
+     * Creates a quasistatic SysId test for the left flywheel.
+     * Used to characterize feedforward constants.
+     */
     public boolean readyToShoot()
     {
         return Math.abs(left.getVelocity().getValue().in(Rotations.per(Second)) - leftTargetVelocity) < 0.5 ||
                Math.abs(right.getVelocity().getValue().in(Rotations.per(Second)) - rightTargetVelocity) < 0.5;
     }
     
+    /**
+     * Creates a quasistatic SysId test for the left flywheel.
+     * Used to characterize feedforward constants.
+     */
     public Command leftSysIdQuasistatic (SysIdRoutine.Direction direction)
     {
         return leftSysId.quasistatic(direction).withName("SysId Q" + (direction == SysIdRoutine.Direction.kForward ? "F" : "R"));
     }
     
+    /**
+     * Creates a dynamic SysId test for the left flywheel.
+     * Measures acceleration response for tuning.
+     */
+
     public Command leftSysIdDynamic (SysIdRoutine.Direction direction)
     {
         return leftSysId.dynamic(direction).withName("SysId Q" + (direction == SysIdRoutine.Direction.kForward ? "F" : "R"));
@@ -308,26 +393,48 @@ public class Shooter extends SubsystemBase
         this)
     );
 
+    
+    /**
+     * Creates a quasistatic SysId test for the right flywheel.
+     * Used to characterize feedforward constants.
+     */
     public Command rightSysIdQuasistatic (SysIdRoutine.Direction direction)
     {
         return rightSysId.quasistatic(direction).withName("SysId Q" + (direction == SysIdRoutine.Direction.kForward ? "F" : "R"));
     }
     
+
+    /**
+     * Creates a dynamic SysId test for the right flywheel.
+     * Measures acceleration response for tuning.
+     */
     public Command rightSysIdDynamic (SysIdRoutine.Direction direction)
     {
         return rightSysId.dynamic(direction).withName("SysId Q" + (direction == SysIdRoutine.Direction.kForward ? "F" : "R"));
     }
     
+    /**
+     * Returns true if the subsystem is running in simulation mode.
+     * Controls whether the DCMotorSim models are updated.
+     */
     private boolean isSimulated ()
     {
         return Robot.instance.robotContainer.getStatus(RobotContainer.SHOOTER_INDEX) == SubsystemStatus.Simulated;
     }
     
+    /**
+     * Returns true if the subsystem is disabled.
+     * Prevents all motor commands from being applied.
+     */
     private boolean isDisabled ()
     {
         return Robot.instance.robotContainer.getStatus(RobotContainer.SHOOTER_INDEX) == SubsystemStatus.Disabled;
     }
     
+    /**
+     * Returns the Shooter subsystem instance.
+     * Ensures only one instance is ever created.
+     */
     public static Shooter getInstance()
     {
         if (instance == null) instance = new Shooter();

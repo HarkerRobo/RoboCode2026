@@ -33,6 +33,10 @@ public class RotateToAngle extends Command{
         this.targetSupplier = targetSupplier;
     }
 
+    /**
+     * Reads and flips the target position based on alliance color. 
+     * Stores the final field‑relative target for angle calculation.
+     */
     @Override
     public void initialize() 
     {
@@ -42,6 +46,10 @@ public class RotateToAngle extends Command{
         else target = rawTarget;
     }
 
+    /**
+     * Computes the field‑relative angle from the robot to the target. 
+     * Returns a Rotation2d representing the desired facing direction.
+     */
     private Rotation2d calcAngle() {
         double xdiff = target.getX() - dt.getState().Pose.getX();
         double ydiff = target.getY() - dt.getState().Pose.getY();
@@ -50,6 +58,10 @@ public class RotateToAngle extends Command{
         return new Rotation2d(angle);
     }
 
+    /**
+     * Commands the drivetrain to rotate toward the computed target angle. 
+     * Publishes telemetry and prints diagnostic information during alignment.
+     */
     @Override
     public void execute() {
         
@@ -78,6 +90,10 @@ public class RotateToAngle extends Command{
         System.out.println("X- and Y- Speeds: " + (xSpeed * MaxSpeed) + ", " + (ySpeed * MaxSpeed));
     }
 
+    /**
+     * Finishes when the robot’s heading is within tolerance of the target angle. 
+     * Updates alignment telemetry to reflect whether the robot is facing correctly.
+     */
     @Override
     public boolean isFinished() {
         if ((dt.getState().Pose.getRotation().getDegrees() + 180 - calcAngle().getDegrees()) % 360 <= 1.0)
@@ -89,6 +105,10 @@ public class RotateToAngle extends Command{
         return false;
     }
 
+    /**
+     * Applies a braking request when the command ends. 
+     * Ensures the drivetrain stops rotating after alignment completes.
+     */
     @Override
     public void end (boolean interrupted)
     {

@@ -88,6 +88,10 @@ public class IntakeExtension extends SubsystemBase
         return motor.getVelocity().getValue();
     }
 
+    /**
+     * Returns the stator current of the motor.
+     * Indicates the electrical load applied to the extension mechanism.
+     */
     public Current getStatorCurrent()
     {
         return motor.getStatorCurrent().getValue();
@@ -107,6 +111,10 @@ public class IntakeExtension extends SubsystemBase
         motor.setControl(new VoltageOut(voltage));
     }
 
+    /**
+     * Returns true if the extension motor is stalling.
+     * Uses a debouncer to filter noise and detect sustained overload.
+     */
     public boolean isStalling()
     {
         if (getVoltage().in(Volts) > 0)
@@ -162,6 +170,10 @@ public class IntakeExtension extends SubsystemBase
         return Robot.instance.robotContainer.getStatus(RobotContainer.INTAKE_EXTENSION_INDEX) == SubsystemStatus.Disabled;
     }
 
+    /**
+     * Returns the singleton IntakeExtension instance.
+     * Creates the subsystem on first access.
+     */
     public static IntakeExtension getInstance()
     {
         if(instance == null) instance = new IntakeExtension();

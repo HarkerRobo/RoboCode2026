@@ -14,7 +14,6 @@ import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
 import frc.robot.RobotContainer.SubsystemStatus;
-import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -117,6 +116,10 @@ public class Indexer extends SubsystemBase
         main.setControl(new VelocityVoltage(velocity));
     }
 
+    /**
+     * Applies a direct voltage to the main indexer motor.
+     * Blocks the command when the subsystem is disabled.
+     */
     public void setMainVoltage(Voltage voltage) 
     {
         if (isDisabled())
@@ -138,6 +141,10 @@ public class Indexer extends SubsystemBase
         side.setControl(new VelocityVoltage(velocity));
     }
 
+    /**
+     * Applies a direct voltage to the side indexer motor.
+     * Blocks the command when the subsystem is disabled.
+     */
     public void setSideVoltage(Voltage voltage) 
     {
         if (isDisabled())
@@ -148,21 +155,37 @@ public class Indexer extends SubsystemBase
         side.setVoltage(voltage.in(Volts));
     }
     
+    /**
+     * Returns the current velocity of the main indexer motor.
+     * Useful for telemetry and closed‑loop monitoring.
+     */
     public AngularVelocity getMainVelocity() 
     {
         return main.getVelocity().getValue();
     }
 
+    /**
+     * Returns the voltage applied to the main indexer motor.
+     * Helps diagnose power delivery and subsystem behavior.
+     */
     public Voltage getMainVoltage() 
     {
         return main.getMotorVoltage().getValue();
     }
     
+    /**
+     * Returns the current velocity of the side indexer motor.
+     * Useful for telemetry and closed‑loop monitoring.
+     */
     public AngularVelocity getSideVelocity() 
     {
         return side.getVelocity().getValue();
     }
     
+    /**
+     * Returns the voltage applied to the side indexer motor.
+     * Helps diagnose power delivery and subsystem behavior.
+     */
     public Voltage getSideVoltage() 
     {
         return side.getMotorVoltage().getValue();
@@ -225,6 +248,9 @@ public class Indexer extends SubsystemBase
         return Robot.instance.robotContainer.getStatus(RobotContainer.INDEXER_INDEX) == SubsystemStatus.Disabled;
     }
     
+    /**
+     * Returns the Indexer subsystem instance.
+     */
     public static Indexer getInstance() {
         if (instance == null) instance = new Indexer();
         return instance;

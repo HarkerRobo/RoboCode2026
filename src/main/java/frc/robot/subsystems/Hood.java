@@ -135,6 +135,10 @@ public class Hood extends SubsystemBase
         motor.setPosition(position, 0.5);
     }
 
+    /**
+     * Applies a direct voltage to the hood motor.
+     * Blocks the command when the subsystem is disabled.
+     */
     public void setVoltage(Voltage voltage)
     {
         if (isDisabled())
@@ -173,6 +177,9 @@ public class Hood extends SubsystemBase
         return debouncer.calculate(Math.abs(motor.getStatorCurrent().getValueAsDouble()) >= Constants.Hood.STALLING_CURRENT);
     }
 
+    /**
+     * Returns the stator current drawn by the hood motor.
+     */
     public double getStatorCurrent()
     {
         return motor.getStatorCurrent().getValueAsDouble();
@@ -214,6 +221,10 @@ public class Hood extends SubsystemBase
         return Robot.instance.robotContainer.getStatus(RobotContainer.HOOD_INDEX) == SubsystemStatus.Simulated;
     }
     
+    /**
+     * Returns true if the subsystem is disabled.
+     * Prevents all motor commands from being applied.
+     */
     private boolean isDisabled ()
     {
         return Robot.instance.robotContainer.getStatus(RobotContainer.HOOD_INDEX) == SubsystemStatus.Disabled;

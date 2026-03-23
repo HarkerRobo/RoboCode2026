@@ -8,28 +8,43 @@ import frc.robot.subsystems.Hood;
 
 public class HoodManualDown extends Command
 {
+    /**
+     * Claims the Hood subsystem.
+     */
     public HoodManualDown()
     {
         addRequirements(Hood.getInstance());
     }
     
+    /**
+     * Drives the hood downward at the configured manual voltage.
+     */
     @Override
     public void initialize()
     {
         Hood.getInstance().setVoltage(Volts.of(Constants.Hood.MANUAL_DOWN_VOLTAGE));
     }
 
+    /**
+     * No repeated action is required.
+     */
     @Override
     public void execute()
     {
     }
 
+    /**
+     * Finishes when the hood stalls against its mechanical stop.
+     */
     @Override
     public boolean isFinished()
     {
         return Hood.getInstance().isStalling();
     }
 
+    /**
+     * Holds the hood at its current position when the command ends.
+     */
     @Override
     public void end(boolean interrupted)
     {

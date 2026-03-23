@@ -126,21 +126,34 @@ public class Climb extends SubsystemBase
         climbWheels.setControl(new VelocityVoltage(velocity));
     }
 
+    /**
+     * Returns the current climb wheels velocity.
+     */
     public AngularVelocity getClimbWheelsVelocity() 
     {
         return climbWheels.getVelocity().getValue();
     }
 
+    /**
+     * Returns the voltage applied to the climb wheels motor.
+     */
     public Voltage getClimbWheelsVoltage()
     {
         return climbWheels.getMotorVoltage().getValue();
     }
 
+    /**
+     * Returns the climb wheels position in rotations.
+     */
     public Angle getClimbWheelsPosition()
     {
         return climbWheels.getPosition().getValue();
     }
 
+    /**
+     * Applies a direct voltage to the climb wheels motor.
+     * Blocks the command if the subsystem is disabled.
+     */
     public void setClimbWheelsVoltage(Voltage v)
     {
         if (isDisabled())
@@ -151,21 +164,36 @@ public class Climb extends SubsystemBase
         climbWheels.setControl(new VoltageOut(v));
     }
 
+    /**
+     * Returns true if the spooling motor is stalling.
+     * Uses stator current to detect mechanical resistance.
+     */
     public boolean isSpoolingStalling()
     {
         return Math.abs(spooling.getStatorCurrent().getValueAsDouble()) >= Constants.Climb.SPOOLING_STALLING_CURRENT;
     }
 
+    /**
+     * Returns the voltage applied to the spooling motor.
+     */
     public Voltage getSpoolingVoltage()
     {
         return spooling.getMotorVoltage().getValue();
     }
     
+    /**
+     * Returns the spooling motor position in rotations.
+     * Used for tracking rope payout or encoder diagnostics.
+     */
     public Angle getSpoolingPosition()
     {
         return spooling.getPosition().getValue();
     }
 
+    /**
+     * Applies a direct voltage to the spooling motor.
+     * Blocks the command if the subsystem is disabled.
+     */
     public void setSpoolingVoltage(Voltage v)
     {
         if (isDisabled())
@@ -228,11 +256,19 @@ public class Climb extends SubsystemBase
         }
     }
 
+    /**
+     * Checks RobotContainer to see if
+     * this subsystem is running in simulation mode.
+     */
     private boolean isSimulated ()
     {
         return Robot.instance.robotContainer.getStatus(RobotContainer.CLIMB_INDEX) == SubsystemStatus.Simulated;
     }
     
+    /**
+     * Checks if the subsystem is marked disabled.
+     * Blocks all motor commands when it is.
+     */
     private boolean isDisabled ()
     {
         return Robot.instance.robotContainer.getStatus(RobotContainer.CLIMB_INDEX) == SubsystemStatus.Disabled;

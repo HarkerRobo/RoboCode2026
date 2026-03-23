@@ -12,6 +12,9 @@ public class ZeroHood extends Command
 {
     Timer timer = new Timer();
 
+    /**
+     * Claims the Hood subsystem.
+     */
     public ZeroHood()
     {
         addRequirements(Hood.getInstance());

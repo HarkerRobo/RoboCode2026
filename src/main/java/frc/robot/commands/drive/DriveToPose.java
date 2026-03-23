@@ -77,6 +77,10 @@ public class DriveToPose extends Command{
         
     }
 
+    /**
+     * Generates a path toward the target pose if movement is required. 
+     * Initializes the path command unless the robot is already within tolerance.
+     */
     private void startPath() {
         if (targetPose != null) {
             Pose2d currentPose = drivetrain.getState().Pose;
@@ -117,6 +121,10 @@ public class DriveToPose extends Command{
         }
     }
 
+    /**
+     * Returns the target pose based on the selected alignment direction. 
+     * Falls back to the current pose if no valid direction is provided.
+     */
     private Pose2d getTargetPose() {
 
         return switch (Robot.instance.robotContainer.getAlignDirection()) {

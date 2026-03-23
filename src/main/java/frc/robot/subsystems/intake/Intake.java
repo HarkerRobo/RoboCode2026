@@ -101,31 +101,54 @@ public class Intake extends SubsystemBase
         return RotationsPerSecond.of(targetVelocity);
     }
    
+    /**
+     * Returns the right motor voltage.
+     */
     public Voltage getRightVoltage()
     {
         return right.getMotorVoltage().getValue();
     }
     
+    /**
+     * Returns the right motor velocity.
+     * Represents the measured angular speed of the intake.
+     */
     public AngularVelocity getRightVelocity()
     {
         return right.getVelocity().getValue();
     }
 
+    /**
+     * Returns the right stator current.
+     * Indicates the electrical load on the motor.
+     */
     public Current getRightStatorCurrent()
     {
         return right.getStatorCurrent().getValue();
     }
     
+    /**
+     * Returns the left motor voltage.
+     * Useful for telemetry and debugging.
+     */
     public Voltage getLeftVoltage()
     {
         return left.getMotorVoltage().getValue();
     }
     
+    /**
+     * Returns the left motor velocity.
+     * Represents the measured angular speed of the intake.
+     */
     public AngularVelocity getLeftVelocity()
     {
         return left.getVelocity().getValue();
     }
 
+    /**
+     * Returns the left stator current.
+     * Indicates the electrical load on the motor.
+     */
     public Current getLeftStatorCurrent()
     {
         return left.getStatorCurrent().getValue();
@@ -187,16 +210,30 @@ public class Intake extends SubsystemBase
         }
     }
    
+    /**
+     * Returns true if the subsystem is running in simulation.
+     * Uses RobotContainer status to determine the mode.
+     */
     private boolean isSimulated ()
     {
         return Robot.instance.robotContainer.getStatus(RobotContainer.INTAKE_INDEX) == SubsystemStatus.Simulated;
     }
     
+
+    /**
+     * Returns true if the subsystem is disabled.
+     * Prevents motor commands from being applied.
+     */
     private boolean isDisabled ()
     {
         return Robot.instance.robotContainer.getStatus(RobotContainer.INTAKE_INDEX) == SubsystemStatus.Disabled;
     }
 
+
+    /**
+     * Returns the singleton Intake instance.
+     * Creates the subsystem on first access.
+     */
     public static Intake getInstance()
     {
         if(instance == null) instance = new Intake();
