@@ -11,6 +11,7 @@ import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 import com.ctre.phoenix6.sim.ChassisReference;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
@@ -90,39 +91,32 @@ public class Constants
 
     public class Shooter
     {
-        public static final int LEFT_ID = 21;
-        public static final int RIGHT_ID = 19;
+        public static final int MASTER_ID = 21;
+        public static final int FOLLOWER_ID = 19;
         
         public static final double STATOR_CURRENT_LIMIT = 60.0;
         public static final double SUPPLY_CURRENT_LIMIT = 40.0;
 
-		public static final InvertedValue LEFT_INVERTED = InvertedValue.Clockwise_Positive;
-		public static final InvertedValue RIGHT_INVERTED = InvertedValue.CounterClockwise_Positive;
+		public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive;
+        public static final MotorAlignmentValue MOTOR_ALIGNMENT = MotorAlignmentValue.Opposed;
         
         public static final double GEAR_RATIO = 20.0/12.0;
 
-		public static final double LEFT_KP = 0.21;
-		public static final double LEFT_KI = 0.0;
-        public static final double LEFT_KD = 0.0;
-        public static final double LEFT_KS = 0.27795;
-        public static final double LEFT_KV = 0.11653;
-        public static final double LEFT_KA = 0.003365;
+		public static final double KP = 0.21;
+		public static final double KI = 0.0;
+        public static final double KD = 0.0;
+        public static final double KS = 0.27795;
+        public static final double KV = 0.11653;
+        public static final double KA = 0.003365;
 		
-        public static final double RIGHT_KP = 0.11;
-		public static final double RIGHT_KI = 0.0;
-		public static final double RIGHT_KD = 0.0009;
-        public static final double RIGHT_KS = 0.093651;
-        public static final double RIGHT_KV = 0.11827;
-        public static final double RIGHT_KA = 0.0078621;
-
         public static final double DEFAULT_VELOCITY = 0.0; // TODO meters per second (nonzero to decrease startup time)
         public static final double SOFT_PASS_VELOCITY = 15.0; // TODO meters per second
 
         public static final double INCREASE_VELOCITY = 0.5; // TODO
         public static final double MAX_VELOCITY = 14.0; // TODO
 
-        public static final ChassisReference LEFT_MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
-        public static final ChassisReference RIGHT_MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
+        public static final ChassisReference MASTER_MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
+        public static final ChassisReference FOLLOWER_MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
 
         public static final double FLYWHEEL_CIRCUMFERANCE = Inches.of(4.0).times(Math.PI).in(Meters); // radius of 2 inches
         

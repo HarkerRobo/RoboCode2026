@@ -121,8 +121,7 @@ public class RobotContainer
     public boolean intakeTriggered = false; // true if intake has been enabled
     public boolean intakeExtended = true; //true if intake and hopper have been extended // TODO reverse
     public double pitchOffset = 0.0;
-    public double leftFlywheelOffset = 0.0;
-    public double rightFlywheelOffset = 0.0;
+    public double flywheelOffset = 0.0;
   
     private List<Command> commands = new ArrayList<>(40);
   
@@ -223,9 +222,7 @@ public class RobotContainer
                                : Constants.PASS_RIGHT_TARGET_POSITION.toTranslation2d(), true)
             .alongWith(
                 new AimToAngle(() -> Util.calculatePassPitch(drivetrain).in(Degrees) + pitchOffset)
-                .andThen(new ShooterTargetSpeed(
-                    ()->Util.calculatePassVelocity(drivetrain) + leftFlywheelOffset,
-                    ()->Util.calculatePassVelocity(drivetrain) + rightFlywheelOffset))
+                .andThen(new ShooterTargetSpeed(()->Util.calculatePassVelocity(drivetrain) + flywheelOffset))
                 .andThen(new WaitUntilCommand(() -> Shooter.getInstance().readyToShoot() && Hood.getInstance().readyToShoot()))
                 .andThen(new IndexerStartFullSpeed())
                 .andThen(new ShooterIndexerStartFullSpeed()))
@@ -244,9 +241,7 @@ public class RobotContainer
         revPass = 
             Commands.runOnce(()->mostRecentAim = true)
             .andThen(new ShooterIndexerStartDefaultSpeed())
-            .andThen(new ShooterTargetSpeed(
-                    ()->Util.calculatePassVelocity(drivetrain) + leftFlywheelOffset,
-                    ()->Util.calculatePassVelocity(drivetrain) + rightFlywheelOffset))
+            .andThen(new ShooterTargetSpeed(()->Util.calculatePassVelocity(drivetrain) + flywheelOffset))
             .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot()))
             //.andThen(
             //     Commands.runOnce(()->driver.setRumble(RumbleType.kBothRumble, 1.0)))
@@ -306,9 +301,7 @@ public class RobotContainer
             .andThen(new StartDefaultIntake()));
         NamedCommands.registerCommand("HardShoot", hardShoot);
         NamedCommands.registerCommand("RevShoot",
-            new ShooterTargetSpeed(
-                ()->Util.calculateShootVelocity(drivetrain) + leftFlywheelOffset,
-                ()->Util.calculateShootVelocity(drivetrain) + rightFlywheelOffset));
+            new ShooterTargetSpeed(()->Util.calculateShootVelocity(drivetrain) + flywheelOffset));
         NamedCommands.registerCommand("InOutIntake",
             new StartRunIntake()
             .andThen(new RetractIntake().withTimeout(2.0))
@@ -461,11 +454,9 @@ public class RobotContainer
 
         // tested in sim
         driver.povLeft().onTrue(Commands.runOnce(()->{
-            leftFlywheelOffset -= Constants.FLYWHEEL_OFFSET_UNIT;
-            rightFlywheelOffset -= Constants.FLYWHEEL_OFFSET_UNIT;}));
+            flywheelOffset -= Constants.FLYWHEEL_OFFSET_UNIT;}));
         driver.povRight().onTrue(Commands.runOnce(()->{
-            leftFlywheelOffset += Constants.FLYWHEEL_OFFSET_UNIT;
-            rightFlywheelOffset += Constants.FLYWHEEL_OFFSET_UNIT;}));
+            flywheelOffset += Constants.FLYWHEEL_OFFSET_UNIT;}));
 
         // Idle while the robot is disabled. This ensures the configured
         // neutral mode is applied to the drive motors while disabled.
@@ -535,11 +526,6 @@ public class RobotContainer
                 intakeExtended = true;
             }
             )).withName("ExtendIntake"));
-
-        operator.povUp().onTrue(Commands.runOnce(()->rightFlywheelOffset += Constants.FLYWHEEL_OFFSET_UNIT));
-        operator.povDown().onTrue(Commands.runOnce(()->leftFlywheelOffset -= Constants.FLYWHEEL_OFFSET_UNIT));
-        operator.povLeft().onTrue(Commands.runOnce(()->leftFlywheelOffset += Constants.FLYWHEEL_OFFSET_UNIT));
-        operator.povRight().onTrue(Commands.runOnce(()->rightFlywheelOffset -= Constants.FLYWHEEL_OFFSET_UNIT));
     }
 
     public AlignDirection getAlignDirection ()

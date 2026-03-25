@@ -11,41 +11,25 @@ import frc.robot.util.Util;
 
 public class ShooterTargetSpeed extends Command
 {
-    DoubleSupplier leftTargetSpeedSupplier;
-    double leftTargetSpeed;
-    
-    DoubleSupplier rightTargetSpeedSupplier;
-    double rightTargetSpeed;
-    
-    public ShooterTargetSpeed(DoubleSupplier leftTargetSpeedSupplier, DoubleSupplier rightTargetSpeedSupplier)
-    {
-        this.leftTargetSpeedSupplier = leftTargetSpeedSupplier;
-        this.rightTargetSpeedSupplier = rightTargetSpeedSupplier;
-        addRequirements(Shooter.getInstance());
-    }
-
-    public ShooterTargetSpeed(double leftTargetSpeed, double rightTargetSpeed)
-    {
-        this(()->leftTargetSpeed, ()->rightTargetSpeed);
-    }
+    DoubleSupplier targetSpeedSupplier;
+    double targetSpeed;
     
     public ShooterTargetSpeed(DoubleSupplier targetSpeedSupplier)
     {
-        this(targetSpeedSupplier, targetSpeedSupplier);
+        this.targetSpeedSupplier = targetSpeedSupplier;
+        addRequirements(Shooter.getInstance());
     }
 
-    public ShooterTargetSpeed(double targetSpeed)
+    public ShooterTargetSpeed(double leftTargetSpeed)
     {
-        this(()->targetSpeed);
+        this(()->leftTargetSpeed);
     }
-
+    
     @Override
     public void initialize()
     {
-        leftTargetSpeed = leftTargetSpeedSupplier.getAsDouble();
-        Shooter.getInstance().setLeftEffectiveVelocity(MetersPerSecond.of(leftTargetSpeed));
-        rightTargetSpeed = rightTargetSpeedSupplier.getAsDouble();
-        Shooter.getInstance().setRightEffectiveVelocity(MetersPerSecond.of(rightTargetSpeed));
+        targetSpeed = targetSpeedSupplier.getAsDouble();
+        Shooter.getInstance().setEffectiveVelocity(MetersPerSecond.of(targetSpeed));
     }
 
     @Override
