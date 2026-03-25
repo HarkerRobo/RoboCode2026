@@ -49,10 +49,10 @@ import frc.robot.commands.hood.HoodManual;
 import frc.robot.commands.hood.ZeroHood;
 import frc.robot.commands.indexer.IndexerStartDefaultSpeed;
 import frc.robot.commands.indexer.IndexerStartFullSpeed;
+import frc.robot.commands.intake.AgitateIntake;
 import frc.robot.commands.intake.StartDefaultIntake;
 import frc.robot.commands.intake.StartEjectIntake;
 import frc.robot.commands.intake.StartRunIntake;
-import frc.robot.commands.intakeextension.AgitateIntake;
 import frc.robot.commands.intakeextension.ExtendIntake;
 import frc.robot.commands.intakeextension.IntakeExtensionManual;
 import frc.robot.commands.intakeextension.RetractIntake;
@@ -206,7 +206,8 @@ public class RobotContainer
             .andThen(new StartDefaultIntake())
             .andThen(new ShooterTargetSpeed(Constants.Shooter.DEFAULT_VELOCITY))
             .andThen(new ShooterIndexerStartDefaultSpeed())
-            .andThen(new AimToAngle(75.0)); // must stay a supplier
+            .andThen(new AimToAngle(75.0))
+            .withName("Stow"); // must stay a supplier
         
         brake = drivetrain.applyRequest(()->new SwerveRequest.SwerveDriveBrake());
 
@@ -266,7 +267,7 @@ public class RobotContainer
         testCommandChooser.addOption("Intake/StartDefaultIntake", new StartDefaultIntake());
         testCommandChooser.addOption("Intake/StartRunIntake", new StartRunIntake());
         testCommandChooser.addOption("Intake/StartEjectIntake", new StartEjectIntake());
-        testCommandChooser.addOption("IntakeExtension/AgitateIntake", new AgitateIntake());
+        testCommandChooser.addOption("Intake/AgitateIntake", new AgitateIntake());
         testCommandChooser.addOption("IntakeExtension/ExtendIntake", new ExtendIntake());
         testCommandChooser.addOption("IntakeExtension/RetractIntake", new RetractIntake());
         testCommandChooser.addOption("Shooter/ShooterTargetSpeed[10]", new ShooterTargetSpeed(10.0));
@@ -372,14 +373,16 @@ public class RobotContainer
     private void configureDriverBindings() 
     {
         driver.a().whileTrue(new RotateToAngle(drivetrain, () -> AlignConstants.HUB, false)
-            .andThen(new RetractIntake().withTimeout(2.0)));
+            .andThen(new RetractIntake().withTimeout(2.0))
+            .withName("ShootAlign"));
         
         driver.y().onTrue(
             new ShooterTargetSpeed(Constants.HARDCODE_VELOCITY)
             .andThen(new AimToAngle(Constants.HARDCODE_HOOD_PITCH.in(Degrees)))
             .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot() && Hood.getInstance().readyToShoot()))
             .andThen(new ShooterIndexerStartFullSpeed())
-            .andThen(new IndexerStartFullSpeed()));
+            .andThen(new IndexerStartFullSpeed())
+            .withName("HardShoot"));
 
         driver.y().onFalse(stow.get());
 
@@ -494,7 +497,7 @@ public class RobotContainer
             .withName("ZeroHood+Shooter"));
 
         operator.leftTrigger().onTrue(new StartEjectIntake());
-        operator.leftTrigger().onFalse(new StartDefaultIntake().andThen(new StartRunIntake()));
+        operator.leftTrigger().onFalse(new StartRunIntake());
 
         operator.rightTrigger().onTrue(
             new ShooterTargetSpeed(Constants.Shooter.SOFT_PASS_VELOCITY)
