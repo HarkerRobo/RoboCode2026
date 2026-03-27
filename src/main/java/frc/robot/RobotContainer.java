@@ -135,7 +135,6 @@ public class RobotContainer
     private Command hardShoot;
     private Command revShoot;
     private Command revPass;
-    private Command brake;
 
     private SlewRateLimiter accelerationLimiter = new SlewRateLimiter(Constants.ACCELERATION_LIMIT);
     public PowerDistribution powerDistributionTracker = new PowerDistribution();
@@ -208,8 +207,6 @@ public class RobotContainer
             .andThen(new AimToAngle(75.0))
             .withName("Stow"); // must stay a supplier
         
-        brake = drivetrain.applyRequest(()->new SwerveRequest.SwerveDriveBrake());
-
         shoot = new AimToAngle(()->Util.calculateShootPitch(drivetrain).in(Degrees))
             .andThen(new ShooterTargetSpeed(()->Util.calculateShootVelocity(drivetrain)))
             .andThen(new WaitUntilCommand(() -> Shooter.getInstance().readyToShoot() && Hood.getInstance().readyToShoot()))
