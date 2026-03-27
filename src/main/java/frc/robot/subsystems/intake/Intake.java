@@ -17,11 +17,13 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
 import frc.robot.RobotContainer.SubsystemStatus;
+import frc.robot.commands.intake.StartDefaultIntake;
 
 public class Intake extends SubsystemBase 
 {
@@ -119,7 +121,13 @@ public class Intake extends SubsystemBase
     {
         return left.getStatorCurrent().getValue();
     }
-   
+    
+    public boolean isStalling()
+    {
+        return Math.abs(left.getStatorCurrent().getValueAsDouble()) >= Constants.Intake.STALLING_CURRENT ||
+            Math.abs(right.getStatorCurrent().getValueAsDouble()) >= Constants.Intake.STALLING_CURRENT;
+    }
+    
     public void setVoltage (Voltage voltage)
     {
         if (isDisabled())
@@ -144,6 +152,11 @@ public class Intake extends SubsystemBase
     @Override
     public void periodic ()
     {
+        if (isStalling())
+        {
+            CommandScheduler.getInstance().schedule(new StartDefaultIntake());
+        }
+
         if (isSimulated())
         {
             TalonFXSimState simState = right.getSimState();

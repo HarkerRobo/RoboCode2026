@@ -150,6 +150,8 @@ public class Constants
         
         public static final double LEFT_GEAR_RATIO = 16.0/12.0;
         public static final double RIGHT_GEAR_RATIO = 16.0/12.0;
+
+        public static final double STALLING_CURRENT = 30.0;
         
         public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
 
