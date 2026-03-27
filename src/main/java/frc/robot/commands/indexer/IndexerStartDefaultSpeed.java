@@ -17,7 +17,6 @@ public class IndexerStartDefaultSpeed extends Command
     public void initialize() 
     {
         Indexer.getInstance().setMainVoltage(Volts.of(Constants.Indexer.MAIN_DEFAULT_VOLTAGE));
-        Indexer.getInstance().setSideVoltage(Volts.of(Constants.Indexer.SIDE_DEFAULT_VOLTAGE));
     }
 
     @Override

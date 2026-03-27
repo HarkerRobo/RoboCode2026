@@ -334,27 +334,6 @@ public class Constants
         public static final double MAIN_GEAR_RATIO = 16.0/12.0; // TODO
 
         public static final ChassisReference MAIN_MECHANICAL_ORIENTATION = ChassisReference.Clockwise_Positive;
-        
-        public static final int SIDE_ID = 25; // TODO
-
-        public static final InvertedValue SIDE_INVERTED = InvertedValue.Clockwise_Positive;
-        public static final double SIDE_STATOR_CURRENT_LIMIT = 60.0;
-        public static final double SIDE_SUPPLY_CURRENT_LIMIT = 60.0;
-
-        public static final double SIDE_KS = 0.0048438; //TODO
-        public static final double SIDE_KV = 0.12361; //TODO
-        public static final double SIDE_KA = 0.0089587; //TODO
-        
-        public static final double SIDE_KP = 0.093687; //TODO
-        public static final double SIDE_KI = 0.0; //TODO
-        public static final double SIDE_KD = 0.0; //TODO
-
-        public static final double SIDE_MAX_VOLTAGE = 3.5 * 0.75; // TODO volts
-        public static final double SIDE_DEFAULT_VOLTAGE = 0.0; // TODO volts
-
-        public static final double SIDE_GEAR_RATIO = 20.0/12.0; // TODO
-
-        public static final ChassisReference SIDE_MECHANICAL_ORIENTATION = ChassisReference.Clockwise_Positive;
     }
 
     public class ShooterIndexer

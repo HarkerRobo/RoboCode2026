@@ -120,8 +120,6 @@ public class Telemetry
     private StringPublisher indexerCommand = indexer.getStringTopic("command").publish();
     private DoublePublisher indexerMainVelocity = indexer.getDoubleTopic("main velocity (rps)").publish();
     private DoublePublisher indexerMainVoltage = indexer.getDoubleTopic("main voltage (V)").publish();
-    private DoublePublisher indexerSideVelocity = indexer.getDoubleTopic("side velocity (rps)").publish();
-    private DoublePublisher indexerSideVoltage = indexer.getDoubleTopic("side voltage (V)").publish();
     
     private NetworkTable shooterIndexer = table.getSubTable("ShooterIndexer");
     private StringPublisher shooterIndexerCommand = shooterIndexer.getStringTopic("command").publish();
@@ -254,8 +252,6 @@ public class Telemetry
         this.indexerCommand.set(indexerCommand == null ? "" : indexerCommand.getName());
         indexerMainVelocity.set(Indexer.getInstance().getMainVelocity().in(RotationsPerSecond));
         indexerMainVoltage.set(Indexer.getInstance().getMainVoltage().in(Volts));
-        indexerSideVelocity.set(Indexer.getInstance().getSideVelocity().in(RotationsPerSecond));
-        indexerSideVoltage.set(Indexer.getInstance().getSideVoltage().in(Volts));
 
         Command shooterIndexerCommand = ShooterIndexer.getInstance().getCurrentCommand();
         this.shooterIndexerCommand.set(shooterIndexerCommand == null ? "" : shooterIndexerCommand.getName());
