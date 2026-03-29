@@ -74,14 +74,13 @@ public class RobotContainer
 {
     public enum AlignDirection
     {
-        Center,
         Right,
         Left
     }
     
     public double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
-    private AlignDirection alignDirection = AlignDirection.Center;
+    private AlignDirection alignDirection = AlignDirection.Left;
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
         .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
@@ -102,7 +101,6 @@ public class RobotContainer
             public boolean isFinished () {return true;}});
 
     Command alignLeft = setDirectionFactory.apply(AlignDirection.Left);
-    Command alignCenter = setDirectionFactory.apply(AlignDirection.Center);
     Command alignRight = setDirectionFactory.apply(AlignDirection.Right);
 
     private SendableChooser<Command> autonChooser;
@@ -357,6 +355,9 @@ public class RobotContainer
         // driver.y().whileTrue(new ClimbUp());
         // driver.a().whileTrue(new ClimbDown());
         // driver.b().whileTrue(new Unspool());
+
+        //driver.button(1).onTrue(alignLeft.andThen(new DriveToPose(drivetrain)));
+        //driver.button(2).onTrue(alignRight.andThen(new DriveToPose(drivetrain)));
 
         drivetrain.setDefaultCommand(
                 // Drivetrain will execute this command periodically
