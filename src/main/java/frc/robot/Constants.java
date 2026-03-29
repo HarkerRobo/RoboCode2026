@@ -102,12 +102,12 @@ public class Constants
         
         public static final double GEAR_RATIO = 20.0/12.0;
 
-		public static final double KP = 0.21;
+		public static final double KP = 0.1;
 		public static final double KI = 0.0;
         public static final double KD = 0.0;
-        public static final double KS = 0.27795;
-        public static final double KV = 0.11653;
-        public static final double KA = 0.003365;
+        public static final double KS = 0.1382;
+        public static final double KV = 0.19241;
+        public static final double KA = 0.013044;
 		
         public static final double DEFAULT_VELOCITY = 0.0; // TODO meters per second (nonzero to decrease startup time)
         public static final double SOFT_PASS_VELOCITY = 15.0; // TODO meters per second
@@ -120,7 +120,7 @@ public class Constants
 
         public static final double FLYWHEEL_CIRCUMFERANCE = Inches.of(4.0).times(Math.PI).in(Meters); // radius of 2 inches
         
-        public static final double MAX_ERROR = 0.3;
+        public static final double MAX_ERROR = 0.2;
     }
 
     public class Intake
@@ -176,12 +176,12 @@ public class Constants
         public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
 
         public static final double STALLING_CURRENT_EXTEND = 20;
-        public static final double STALLING_CURRENT_RETRACT = 25;
+        public static final double STALLING_CURRENT_RETRACT = 20; // might need to be lower
 
         public static final double MIN_HEIGHT = 0.0;
         public static final double MAX_HEIGHT = 1.0;
         
-        public static final double STALLING_DEBOUNCE_TIME = 0.2; // 0.1
+        public static final double STALLING_DEBOUNCE_TIME = 0.4; // 0.1
 
         public static final double AGITATE_MIN_VOLTAGE = -1.0; // TODO
         public static final double AGITATE_MAX_VOLTAGE = 1.0; // TODO
@@ -332,6 +332,7 @@ public class Constants
 
         public static final double MAIN_MAX_VOLTAGE = 3.5; // TODO volts
         public static final double MAIN_DEFAULT_VOLTAGE = 0.0; // TODO volts
+        public static final double MAIN_EJECT_VOLTAGE = -3.5; // TODO volts
 
         public static final double MAIN_GEAR_RATIO = 16.0/12.0; // TODO
 
@@ -350,6 +351,7 @@ public class Constants
         public static final double INTAKE_VOLTAGE = 6.0;
 
         public static final double INTAKE_VELOCITY = 25.0; // rot/s
+        public static final double EJECT_VELOCITY = -25.0; // rot/s
         
         public static final double KS = 0;
         public static final double KV = 0;

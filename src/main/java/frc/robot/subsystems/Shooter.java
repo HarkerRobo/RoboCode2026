@@ -196,7 +196,7 @@ public class Shooter extends SubsystemBase
     
     public boolean readyToShoot()
     {
-        return Math.abs(master.getVelocity().getValue().in(Rotations.per(Second)) - targetVelocity) < 0.5;
+        return Math.abs(master.getVelocity().getValue().in(Rotations.per(Second)) - targetVelocity) < Constants.Shooter.MAX_ERROR;
     }
     
     public Command sysIdQuasistatic (SysIdRoutine.Direction direction)

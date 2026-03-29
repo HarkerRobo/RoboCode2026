@@ -61,26 +61,38 @@ public class Util
 
     public static void init ()
     {
+        // OLD DATA POINTS
         /*
         addData(1.891, 20.0, 75.0);
         addData(3.373, 19.0, 68.0);
         addData(3.703,19.0,66.0);
         */
-        addData(1.121, 12.5, 75.0); // old
-        addData(1.709, 18.5, 75.0); // old
-        addData(1.902, 19.0, 74.0);
-        //addData(2.483, 21.0, 73.0); // old
-        addData(2.678, 20.0, 72.0);
-        //addData(2.856, 21.0, 71.0); // old
-        addData(3.081, 20.0, 71.0);
-        addData(3.662, 19.0, 68.0);
-        addData(4.038, 19.0, 67.0);
-        addData(4.45, 19.0, 66.5);
-        addData(5.386, 21.0, 66.0);
-
-        
-
+        // addData(1.121, 12.5, 75.0); // old
+        // addData(1.709, 18.5, 75.0); // old
+        // addData(1.902, 19.0, 74.0);
+        // //addData(2.483, 21.0, 73.0); // old
+        // addData(2.678, 20.0, 72.0);
+        // //addData(2.856, 21.0, 71.0); // old
+        // addData(3.081, 20.0, 71.0);
+        // addData(3.662, 19.0, 68.0);
+        // addData(4.038, 19.0, 67.0);
+        // addData(4.45, 19.0, 66.5);
+        // addData(5.386, 21.0, 66.0);
         // 2.722, 70, 19.5
+
+        // 2026-03-28 DATA POINTS
+        addData(1.425, 7.4, 75.0);
+        addData(1.864, 7.7, 71.5);
+        addData(2.062, 8.0, 71.5);
+        addData(2.320, 8.3, 71.5);
+        addData(2.614, 8.4, 71.0);
+        addData(2.919, 8.5, 70.8);
+        addData(3.207, 8.8, 70.6);
+        addData(3.574, 8.8, 70.3);
+        addData(3.952, 9.26, 70.1);
+        addData(4.312, 9.35, 69.9); // should be tested with both motors running
+        addData(4.646, 9.7, 69.7); // "
+        addData(5.697, 10.2, 64.9); // "; farthest point
     }
 
     public static double bottomLeftX (Rectangle2d r)

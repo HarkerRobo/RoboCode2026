@@ -28,7 +28,7 @@ public class IntakeExtensionManual extends Command
             IntakeExtension.getInstance().setVoltage(Volts.of(Constants.IntakeExtension.RETRACTING_VOLTAGE));
         }
 
-        if (IntakeExtension.getInstance().getVoltage().in(Volts) < 0.0)
+        if (IntakeExtension.getInstance().getVoltage().in(Volts) > 0.0)
         {
             if (IntakeExtension.getInstance().isStalling())
             {
@@ -37,7 +37,7 @@ public class IntakeExtensionManual extends Command
             }
             stallingBack = false;
         }
-        else if (IntakeExtension.getInstance().getVoltage().in(Volts) > 0.0)
+        else if (IntakeExtension.getInstance().getVoltage().in(Volts) < 0.0)
         {
             if (IntakeExtension.getInstance().isStalling())
             {

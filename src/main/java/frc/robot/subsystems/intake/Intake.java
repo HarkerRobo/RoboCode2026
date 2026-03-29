@@ -152,10 +152,10 @@ public class Intake extends SubsystemBase
     @Override
     public void periodic ()
     {
-        if (isStalling())
-        {
-            CommandScheduler.getInstance().schedule(new StartDefaultIntake());
-        }
+        // if (isStalling())
+        // {
+        //     CommandScheduler.getInstance().schedule(new StartDefaultIntake());
+        // }
 
         if (isSimulated())
         {
