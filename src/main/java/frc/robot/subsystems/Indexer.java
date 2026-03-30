@@ -1,5 +1,4 @@
 package frc.robot.subsystems;
-
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -25,28 +24,19 @@ public class Indexer extends SubsystemBase
     private static Indexer instance;
 
     private static TalonFX main;
-    private static TalonFX side;
     
     private DCMotorSim mainSim = new DCMotorSim(
         LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 0.001, Constants.Indexer.MAIN_GEAR_RATIO),
         DCMotor.getKrakenX60Foc(1));
     
-    private DCMotorSim sideSim = new DCMotorSim(
-        LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 0.001, Constants.Indexer.SIDE_GEAR_RATIO),
-        DCMotor.getKrakenX60Foc(1));
-
     private Indexer() { 
         main = new TalonFX(Constants.Indexer.MAIN_ID, Constants.CAN_SUPERSTRUCTURE);
-        side = new TalonFX(Constants.Indexer.SIDE_ID, Constants.CAN_SUPERSTRUCTURE);
         config();
         
         if (isSimulated())
         {
             main.getSimState().Orientation = Constants.Indexer.MAIN_MECHANICAL_ORIENTATION;
             main.getSimState().setMotorType(TalonFXSimState.MotorType.KrakenX60);
-            
-            side.getSimState().Orientation = Constants.Indexer.SIDE_MECHANICAL_ORIENTATION;
-            side.getSimState().setMotorType(TalonFXSimState.MotorType.KrakenX60);
         }
     }
 
@@ -78,31 +68,6 @@ public class Indexer extends SubsystemBase
         mainConfigs.Feedback.SensorToMechanismRatio = Constants.Indexer.MAIN_GEAR_RATIO;
 
         main.getConfigurator().apply(mainConfigs);
-        
-        side.clearStickyFaults();
-
-        TalonFXConfiguration sideConfigs = new TalonFXConfiguration();
-
-        // currently not in use
-        sideConfigs.Slot0.kP = Constants.Indexer.SIDE_KP;
-        sideConfigs.Slot0.kI = Constants.Indexer.SIDE_KI;
-        sideConfigs.Slot0.kD = Constants.Indexer.SIDE_KD;
-
-        sideConfigs.CurrentLimits.StatorCurrentLimit = Constants.Indexer.SIDE_STATOR_CURRENT_LIMIT;
-        sideConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
-        
-        sideConfigs.CurrentLimits.SupplyCurrentLimit = Constants.Indexer.SIDE_SUPPLY_CURRENT_LIMIT;
-        sideConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
-
-        sideConfigs.MotorOutput.Inverted = Constants.Indexer.SIDE_INVERTED;
-        sideConfigs.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-
-        sideConfigs.Voltage.PeakForwardVoltage = Constants.MAX_VOLTAGE;
-        sideConfigs.Voltage.PeakReverseVoltage = -Constants.MAX_VOLTAGE;
-
-        sideConfigs.Feedback.SensorToMechanismRatio = Constants.Indexer.SIDE_GEAR_RATIO;
-
-        side.getConfigurator().apply(sideConfigs);
     }
 
     // currently not in use
@@ -116,10 +81,6 @@ public class Indexer extends SubsystemBase
         main.setControl(new VelocityVoltage(velocity));
     }
 
-    /**
-     * Applies a direct voltage to the main indexer motor.
-     * Blocks the command when the subsystem is disabled.
-     */
     public void setMainVoltage(Voltage voltage) 
     {
         if (isDisabled())
@@ -130,35 +91,6 @@ public class Indexer extends SubsystemBase
         main.setVoltage(voltage.in(Volts));
     }
     
-    // currently not in use
-    public void setSideVelocity(AngularVelocity velocity) 
-    {
-        if (isDisabled())
-        {
-            System.out.println("Quashing input to Indexer");
-            return;
-        }
-        side.setControl(new VelocityVoltage(velocity));
-    }
-
-    /**
-     * Applies a direct voltage to the side indexer motor.
-     * Blocks the command when the subsystem is disabled.
-     */
-    public void setSideVoltage(Voltage voltage) 
-    {
-        if (isDisabled())
-        {
-            System.out.println("Quashing input to Indexer");
-            return;
-        }
-        side.setVoltage(voltage.in(Volts));
-    }
-    
-    /**
-     * Returns the current velocity of the main indexer motor.
-     * Useful for telemetry and closed‑loop monitoring.
-     */
     public AngularVelocity getMainVelocity() 
     {
         return main.getVelocity().getValue();
@@ -173,24 +105,6 @@ public class Indexer extends SubsystemBase
         return main.getMotorVoltage().getValue();
     }
     
-    /**
-     * Returns the current velocity of the side indexer motor.
-     * Useful for telemetry and closed‑loop monitoring.
-     */
-    public AngularVelocity getSideVelocity() 
-    {
-        return side.getVelocity().getValue();
-    }
-    
-    /**
-     * Returns the voltage applied to the side indexer motor.
-     * Helps diagnose power delivery and subsystem behavior.
-     */
-    public Voltage getSideVoltage() 
-    {
-        return side.getMotorVoltage().getValue();
-    }
-
     @Override
     public void periodic ()
     {
@@ -211,22 +125,6 @@ public class Indexer extends SubsystemBase
             // DCMotorSim returns mechanism position/velocity (after gear ratio)
             mainSimState.setRawRotorPosition(mainSim.getAngularPosition().times(Constants.Indexer.MAIN_GEAR_RATIO));
             mainSimState.setRotorVelocity(mainSim.getAngularVelocity().times(Constants.Indexer.MAIN_GEAR_RATIO));
-            
-            TalonFXSimState sideSimState = main.getSimState();
-
-            // set the supply voltage of the TalonFX
-            sideSimState.setSupplyVoltage(RobotController.getBatteryVoltage());
-
-            // use the motor voltage to calculate new position and velocity
-            // using WPILib's DCMotorSim class for physics simulation
-            sideSim.setInputVoltage(sideSimState.getMotorVoltageMeasure().in(Volts));
-            sideSim.update(0.020); // assume 20 ms loop time
-
-            // apply the new rotor position and velocity to the TalonFX;
-            // note that this is rotor position/velocity (before gear ratio), but
-            // DCMotorSim returns mechanism position/velocity (after gear ratio)
-            sideSimState.setRawRotorPosition(mainSim.getAngularPosition().times(Constants.Indexer.SIDE_GEAR_RATIO));
-            sideSimState.setRotorVelocity(mainSim.getAngularVelocity().times(Constants.Indexer.SIDE_GEAR_RATIO));
         }
     }
 

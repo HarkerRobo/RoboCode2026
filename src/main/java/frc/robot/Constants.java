@@ -11,6 +11,7 @@ import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 import com.ctre.phoenix6.sim.ChassisReference;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
@@ -69,8 +70,10 @@ public class Constants
                 new Translation3d(Units.inchesToMeters(-11.743), Units.inchesToMeters(10.009), Units.inchesToMeters(9.0552)),
                 new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(12.567), Units.degreesToRadians(180.0 + 7.566))); // TODO bc this is copied from 2025 code
 
-        public static final double linTagStdDevs = 0.1;
-        public static final double angTagStdDevs = 999999;
+        public static final double odometryUpdateFrequency = 100.0; // 100.0 Hz for CAN 2.0, which the Roborio runs on
+        public static final Matrix<N3, N1> kTagStdDevs = VecBuilder.fill(0.5, 0.5, 99999);
+        public static final Matrix<N3, N1> stateStdDevs = VecBuilder.fill(0.05, 0.05, 0.1);
+        public static final double maxAmbiguity = 0.5;
 
         // The layout of the AprilTags on the field
         public static final AprilTagFieldLayout kTagLayout = AprilTagFieldLayout
@@ -89,43 +92,36 @@ public class Constants
 
     public class Shooter
     {
-        public static final int LEFT_ID = 21;
-        public static final int RIGHT_ID = 19;
+        public static final int MASTER_ID = 21;
+        public static final int FOLLOWER_ID = 19;
         
         public static final double STATOR_CURRENT_LIMIT = 60.0;
         public static final double SUPPLY_CURRENT_LIMIT = 40.0;
 
-		public static final InvertedValue LEFT_INVERTED = InvertedValue.Clockwise_Positive;
-		public static final InvertedValue RIGHT_INVERTED = InvertedValue.CounterClockwise_Positive;
+		public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive;
+        public static final MotorAlignmentValue MOTOR_ALIGNMENT = MotorAlignmentValue.Opposed;
         
         public static final double GEAR_RATIO = 20.0/12.0;
 
-		public static final double LEFT_KP = 0.21;
-		public static final double LEFT_KI = 0.0;
-        public static final double LEFT_KD = 0.0;
-        public static final double LEFT_KS = 0.27795;
-        public static final double LEFT_KV = 0.11653;
-        public static final double LEFT_KA = 0.003365;
+		public static final double KP = 0.1;
+		public static final double KI = 0.0;
+        public static final double KD = 0.0;
+        public static final double KS = 0.1382;
+        public static final double KV = 0.19241;
+        public static final double KA = 0.013044;
 		
-        public static final double RIGHT_KP = 0.11;
-		public static final double RIGHT_KI = 0.0;
-		public static final double RIGHT_KD = 0.0009;
-        public static final double RIGHT_KS = 0.093651;
-        public static final double RIGHT_KV = 0.11827;
-        public static final double RIGHT_KA = 0.0078621;
-
         public static final double DEFAULT_VELOCITY = 0.0; // TODO meters per second (nonzero to decrease startup time)
         public static final double SOFT_PASS_VELOCITY = 15.0; // TODO meters per second
 
         public static final double INCREASE_VELOCITY = 0.5; // TODO
         public static final double MAX_VELOCITY = 14.0; // TODO
 
-        public static final ChassisReference LEFT_MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
-        public static final ChassisReference RIGHT_MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
+        public static final ChassisReference MASTER_MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
+        public static final ChassisReference FOLLOWER_MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
 
         public static final double FLYWHEEL_CIRCUMFERANCE = Inches.of(4.0).times(Math.PI).in(Meters); // radius of 2 inches
         
-        public static final double MAX_ERROR = 0.3;
+        public static final double MAX_ERROR = 0.2;
     }
 
     public class Intake
@@ -137,11 +133,12 @@ public class Constants
         public static final double SUPPLY_CURRENT_LIMIT = 40.0;
 
         public static final double INTAKE_VELOCITY = -30.0; // rot/s // not a bug
+        public static final double INTAKE_VELOCITY_AUTON = -50.0; // rot/s
         public static final double REDUCED_INTAKE_VELOCITY = -20.0;
         public static final double DEFAULT_INTAKE_VELOCITY = 0.0;
         public static final double EJECT_VELOCITY = 25.0; // rot/s
 
-        public static final double KP = 5.0;
+        public static final double KP = 0.3;
 		public static final double KI = 0.0;
 		public static final double KD = 0.0;
 		
@@ -154,6 +151,8 @@ public class Constants
         
         public static final double LEFT_GEAR_RATIO = 16.0/12.0;
         public static final double RIGHT_GEAR_RATIO = 16.0/12.0;
+
+        public static final double STALLING_CURRENT = 30.0;
         
         public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
 
@@ -167,7 +166,7 @@ public class Constants
         public static final double SUPPLY_CURRENT_LIMIT = 40.0;
 
         public static final double EXTENDING_VOLTAGE = 3.5;
-        public static final double RETRACTING_VOLTAGE = -2.5;
+        public static final double RETRACTING_VOLTAGE = -3.5;
         public static final double HOLDING_EXTEND_VOLTAGE = 0.25;
         public static final double HOLDING_RETRACT_VOLTAGE = -0.25;
 
@@ -178,12 +177,12 @@ public class Constants
         public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
 
         public static final double STALLING_CURRENT_EXTEND = 20;
-        public static final double STALLING_CURRENT_RETRACT = 25;
+        public static final double STALLING_CURRENT_RETRACT = 20; // might need to be lower
 
         public static final double MIN_HEIGHT = 0.0;
         public static final double MAX_HEIGHT = 1.0;
         
-        public static final double STALLING_DEBOUNCE_TIME = 0.2; // 0.1
+        public static final double STALLING_DEBOUNCE_TIME = 0.4; // 0.1
 
         public static final double AGITATE_MIN_VOLTAGE = -1.0; // TODO
         public static final double AGITATE_MAX_VOLTAGE = 1.0; // TODO
@@ -212,7 +211,7 @@ public class Constants
 
         public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
 
-        public static final double MAX_ERROR = 0.25;
+        public static final double MAX_ERROR = 1.0;//0.25;
     
         public static final double STALLING_CURRENT = 10.0; // TODO
 
@@ -334,31 +333,11 @@ public class Constants
 
         public static final double MAIN_MAX_VOLTAGE = 3.5; // TODO volts
         public static final double MAIN_DEFAULT_VOLTAGE = 0.0; // TODO volts
+        public static final double MAIN_EJECT_VOLTAGE = -3.5; // TODO volts
 
         public static final double MAIN_GEAR_RATIO = 16.0/12.0; // TODO
 
         public static final ChassisReference MAIN_MECHANICAL_ORIENTATION = ChassisReference.Clockwise_Positive;
-        
-        public static final int SIDE_ID = 25; // TODO
-
-        public static final InvertedValue SIDE_INVERTED = InvertedValue.Clockwise_Positive;
-        public static final double SIDE_STATOR_CURRENT_LIMIT = 60.0;
-        public static final double SIDE_SUPPLY_CURRENT_LIMIT = 60.0;
-
-        public static final double SIDE_KS = 0.0048438; //TODO
-        public static final double SIDE_KV = 0.12361; //TODO
-        public static final double SIDE_KA = 0.0089587; //TODO
-        
-        public static final double SIDE_KP = 0.093687; //TODO
-        public static final double SIDE_KI = 0.0; //TODO
-        public static final double SIDE_KD = 0.0; //TODO
-
-        public static final double SIDE_MAX_VOLTAGE = 3.5 * 0.75; // TODO volts
-        public static final double SIDE_DEFAULT_VOLTAGE = 0.0; // TODO volts
-
-        public static final double SIDE_GEAR_RATIO = 20.0/12.0; // TODO
-
-        public static final ChassisReference SIDE_MECHANICAL_ORIENTATION = ChassisReference.Clockwise_Positive;
     }
 
     public class ShooterIndexer
@@ -373,6 +352,7 @@ public class Constants
         public static final double INTAKE_VOLTAGE = 6.0;
 
         public static final double INTAKE_VELOCITY = 25.0; // rot/s
+        public static final double EJECT_VELOCITY = -25.0; // rot/s
         
         public static final double KS = 0;
         public static final double KV = 0;
@@ -389,8 +369,8 @@ public class Constants
 
     public class Drive
     {
-        public static final double autoalignSteerKP = 15.0;
-        public static final double autoalignSteerKI = 0.5;
+        public static final double autoalignSteerKP = 13.0;// 12.0;
+        public static final double autoalignSteerKI = 0.0;
         public static final double autoalignSteerKD = 0.0;
         
         public static final double autoalignDriveKP = 6.0;
@@ -512,7 +492,7 @@ public class Constants
         public static final int kFrontLeftDriveMotorId = 12;
         public static final int kFrontLeftSteerMotorId = 11;
         public static final int kFrontLeftEncoderId = 17;
-        public static final Angle kFrontLeftEncoderOffset = Rotations.of(-0.4521484375);
+        public static final Angle kFrontLeftEncoderOffset = Rotations.of(-0.451416);
         public static final boolean kFrontLeftSteerMotorInverted = false;
         public static final boolean kFrontLeftEncoderInverted = false;
 
@@ -523,7 +503,7 @@ public class Constants
         public static final int kFrontRightDriveMotorId = 10;
         public static final int kFrontRightSteerMotorId = 9;
         public static final int kFrontRightEncoderId = 18;
-        public static final Angle kFrontRightEncoderOffset = Rotations.of(0.260010);
+        public static final Angle kFrontRightEncoderOffset = Rotations.of(0.258789);
         public static final boolean kFrontRightSteerMotorInverted = false;
         public static final boolean kFrontRightEncoderInverted = false;
 
@@ -534,7 +514,7 @@ public class Constants
         public static final int kBackLeftDriveMotorId = 4;
         public static final int kBackLeftSteerMotorId = 3;
         public static final int kBackLeftEncoderId = 14;
-        public static final Angle kBackLeftEncoderOffset = Rotations.of(0.184326171875);
+        public static final Angle kBackLeftEncoderOffset = Rotations.of(0.186279);
         public static final boolean kBackLeftSteerMotorInverted = false;
         public static final boolean kBackLeftEncoderInverted = false;
 
@@ -545,7 +525,7 @@ public class Constants
         public static final int kBackRightDriveMotorId = 8;
         public static final int kBackRightSteerMotorId = 7;
         public static final int kBackRightEncoderId = 16;
-        public static final Angle kBackRightEncoderOffset = Rotations.of(-0.014404296875);
+        public static final Angle kBackRightEncoderOffset = Rotations.of(-0.011963);
         public static final boolean kBackRightSteerMotorInverted = false;
         public static final boolean kBackRightEncoderInverted = false;
 
@@ -560,11 +540,11 @@ public class Constants
 
     public static final Transform3d ROBOT_TO_HOOD = new Transform3d(0.3, 0.0, 0.34, Rotation3d.kZero); // TODO
 
-    public static final Translation3d PASS_LEFT_TARGET_POSITION = new Translation3d(2.010664, Simulation.FIELD_HEIGHT - 2.010664, 0.0);
-    public static final Translation3d PASS_RIGHT_TARGET_POSITION = new Translation3d(2.010664, 2.010664, 0.0);
+    public static final Translation3d PASS_LEFT_TARGET_POSITION = new Translation3d(2.010664, 2.010664, 0.0);
+    public static final Translation3d PASS_RIGHT_TARGET_POSITION = new Translation3d(2.010664, Simulation.FIELD_HEIGHT - 2.010664, 0.0);
 
-    public static final Angle HARDCODE_HOOD_PITCH = Degrees.of(74.5);
-    public static final double HARDCODE_VELOCITY = 8.0;
+    public static final Angle HARDCODE_HOOD_PITCH = Degrees.of(72.25);
+    public static final double HARDCODE_VELOCITY = 19.75;
 
     public static final double PITCH_OFFSET_UNIT = 5.0; // TODO
     public static final double FLYWHEEL_OFFSET_UNIT = 0.5; // TODO
@@ -573,4 +553,6 @@ public class Constants
     public static final LinearVelocity SPEED_OFFSET = MetersPerSecond.of(0.275);
 
     public static final boolean INTERPOLATE_VALUES = true;
+
+    public static final double ACCELERATION_LIMIT = 3.0;
 }

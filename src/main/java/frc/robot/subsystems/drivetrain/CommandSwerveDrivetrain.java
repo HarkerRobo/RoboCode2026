@@ -16,7 +16,6 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.numbers.N1;
@@ -278,44 +277,46 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             });
         }
 
-        //Pose Estimation using AprilTags
-        double redAllianceYaw = this.getPigeon2().getRotation2d().getDegrees();
+        // UNUSED: for MT2
+        // double redAllianceYaw = this.getPigeon2().getRotation2d().getDegrees();
         
-        // DEBUG THIS!! shows as reflection on the other side of the april tag
-        LimelightHelpers.SetRobotOrientation(
-            Constants.Vision.kCamera1Name,
-            redAllianceYaw,
-            0, 0, 0, 0, 0
-        );
-        LimelightHelpers.SetRobotOrientation(
-            Constants.Vision.kCamera2Name,
-            redAllianceYaw,
-            0, 0, 0, 0, 0
-        );
-        LimelightHelpers.SetIMUMode(Constants.Vision.kCamera1Name, 4);
-        // LimelightHelpers.SetIMUMode(Constants.Vision.kCamera2Name, 4);
+        // LimelightHelpers.SetRobotOrientation(
+        //     Constants.Vision.kCamera1Name,
+        //     redAllianceYaw,
+        //     0, 0, 0, 0, 0
+        // );
+        // LimelightHelpers.SetRobotOrientation(
+        //     Constants.Vision.kCamera2Name,
+        //     redAllianceYaw,
+        //     0, 0, 0, 0, 0
+        // );
+       
+        // MegaTag 1
         LimelightHelpers.PoseEstimate limelight1Estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.Vision.kCamera1Name);
-        LimelightHelpers.PoseEstimate limelight2Estimate = null;//LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.Vision.kCamera2Name);
-
+        LimelightHelpers.PoseEstimate limelight2Estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.Vision.kCamera2Name);
 
        // Only run vision updates if we see a tag
         if ((limelight1Estimate != null && limelight1Estimate.tagCount > 0) ||
-            (limelight2Estimate != null && limelight2Estimate.tagCount > 0)) {
+            (limelight2Estimate != null && limelight2Estimate.tagCount > 0))
+            {
 
             LimelightHelpers.PoseEstimate bestEstimate = selectBestEstimate(limelight1Estimate, limelight2Estimate);
 
             SmartDashboard.putNumber("Drive/bestEstimateX", bestEstimate.pose.getX());
             SmartDashboard.putNumber("Drive/bestEstimateY", bestEstimate.pose.getY());
             SmartDashboard.putNumber("Drive/bestEstimateYaw", bestEstimate.pose.getRotation().getDegrees());
-            if (bestEstimate != null && bestEstimate.tagCount > 0) {
-                double stdDevFactor = 1; // Math.pow(bestEstimate.avgTagDist, 2.0) / bestEstimate.tagCount;
-                double linearStdDev = Constants.Vision.linTagStdDevs * stdDevFactor;
-                
-                addVisionMeasurement(bestEstimate.pose, bestEstimate.timestampSeconds, VecBuilder.fill(linearStdDev, linearStdDev, Constants.Vision.angTagStdDevs));
-                
-                // if (bestEstimate.tagCount >= 2 || (bestEstimate.avgTagDist < 3.0 && bestEstimate.rawFiducials[0].ambiguity < 0.7)) {
-                //     addVisionMeasurement(bestEstimate.pose, bestEstimate.timestampSeconds, Constants.Vision.kTagStdDevs);
-                // }
+            if (bestEstimate != null && bestEstimate.tagCount > 0)
+            {
+                boolean rejectPose = (bestEstimate.tagCount == 1 && bestEstimate.rawFiducials[0].ambiguity > Constants.Vision.maxAmbiguity) // Cannot be high ambiguity 
+                                // Must be within the field boundaries
+                                || bestEstimate.pose.getX() < 0.0
+                                || bestEstimate.pose.getX() > Constants.Vision.kTagLayout.getFieldLength()
+                                || bestEstimate.pose.getY() < 0.0
+                                || bestEstimate.pose.getY() > Constants.Vision.kTagLayout.getFieldWidth();
+                if (!rejectPose)
+                {
+                    addVisionMeasurement(bestEstimate.pose, bestEstimate.timestampSeconds);
+                }
             }
         } 
     }

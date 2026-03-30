@@ -6,32 +6,23 @@ import frc.robot.subsystems.Indexer;
 
 import static edu.wpi.first.units.Units.*;
 
-public class IndexerFullSpeed extends Command
+public class IndexerStartFullSpeed extends Command
 {
-    /**
-     * Claims the Indexer subsystem.
-     */
-    public IndexerFullSpeed()
+    
+    public IndexerStartFullSpeed()
     {
         addRequirements(Indexer.getInstance());
     }
 
-    /**
-     * Sets the indexer to its maximum rotational speed.
-     */
     @Override
     public void initialize() 
     {
         Indexer.getInstance().setMainVoltage(Volts.of(Constants.Indexer.MAIN_MAX_VOLTAGE));
-        Indexer.getInstance().setSideVoltage(Volts.of(Constants.Indexer.SIDE_MAX_VOLTAGE));
     }
 
-    /**
-     * This command never finishes on its own.
-     */
     @Override
     public boolean isFinished() 
     {
-        return false;
+        return true;
     }
 }

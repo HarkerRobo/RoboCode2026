@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "beforeshoot"
+            "pathName": "LSSEBeforeShoot2"
           }
         },
         {
@@ -17,7 +17,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 10.0
+                  "waitTime": 6.0
                 }
               },
               {
@@ -29,7 +29,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "RetractIntake"
+                  "name": "InOutIntake"
                 }
               }
             ]

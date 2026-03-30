@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "RSSEBeforeShoot2"
+            "pathName": "MSGoBack"
           }
         },
         {
@@ -33,12 +33,6 @@
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "RSSEShootToCenter"
           }
         }
       ]

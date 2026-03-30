@@ -54,11 +54,11 @@ public class Telemetry
 
     private StringPublisher mostRecentAim = table.getStringTopic("most recent aim").publish();
     private DoublePublisher hoodOffset = table.getDoubleTopic("hood offset").publish();
-    private DoublePublisher leftFlywheelOffset = table.getDoubleTopic("left flywheel offset").publish();
-    private DoublePublisher rightFlywheelOffset = table.getDoubleTopic("right flywheel offset").publish();
+    private DoublePublisher flywheelOffset = table.getDoubleTopic("flywheel offset").publish();
     private BooleanPublisher intakeTriggered = table.getBooleanTopic("intake triggered").publish();
     private BooleanPublisher intakeExtended = table.getBooleanTopic("intake extended").publish();
     public BooleanPublisher aligned = table.getBooleanTopic("aligned").publish();
+    public DoubleArrayPublisher currents = table.getDoubleArrayTopic("currents").publish();
 
     private NetworkTable intake = table.getSubTable("Intake");
     private StringPublisher intakeCommand = intake.getStringTopic("main command").publish();
@@ -86,16 +86,11 @@ public class Telemetry
     
     private NetworkTable shooter = table.getSubTable("Shooter");
     private StringPublisher shooterCommand = shooter.getStringTopic("command").publish();
-    private DoublePublisher shooterLeftVelocity = shooter.getDoubleTopic("left velocity (rot per s)").publish();
-    private DoublePublisher shooterEffectiveLeftVelocity = shooter.getDoubleTopic("left effective velocity (m per s)").publish();
-    private DoublePublisher shooterLeftTargetVelocity = shooter.getDoubleTopic("left target velocity (rot per s)").publish();
-    private DoublePublisher shooterLeftEffectiveTargetVelocity = shooter.getDoubleTopic("left effective target velocity (m per s)").publish();
-    private DoublePublisher shooterLeftVoltage = shooter.getDoubleTopic("left voltage (V)").publish();
-    private DoublePublisher shooterRightVelocity = shooter.getDoubleTopic("right velocity (rot per s)").publish();
-    private DoublePublisher shooterEffectiveRightVelocity = shooter.getDoubleTopic("right effective velocity (m per s)").publish();
-    private DoublePublisher shooterRightVoltage = shooter.getDoubleTopic("right voltage (V)").publish();
-    private DoublePublisher shooterRightTargetVelocity = shooter.getDoubleTopic("right target velocity (rot per s)").publish();
-    private DoublePublisher shooterRightEffectiveTargetVelocity = shooter.getDoubleTopic("right effective target velocity (m per s)").publish();
+    private DoublePublisher shooterVelocity = shooter.getDoubleTopic("velocity (rot per s)").publish();
+    private DoublePublisher shooterEffectiveVelocity = shooter.getDoubleTopic("effective velocity (m per s)").publish();
+    private DoublePublisher shooterTargetVelocity = shooter.getDoubleTopic("target velocity (rot per s)").publish();
+    private DoublePublisher shooterTargetEffectiveVelocity = shooter.getDoubleTopic("target effective velocity (m per s)").publish();
+    private DoublePublisher shooterVoltage = shooter.getDoubleTopic("voltage (V)").publish();
     private BooleanPublisher shooterReadyToShoot = shooter.getBooleanTopic("ready to shoot?").publish();
 
     private NetworkTable climb = table.getSubTable("Climb");
@@ -129,8 +124,6 @@ public class Telemetry
     private StringPublisher indexerCommand = indexer.getStringTopic("command").publish();
     private DoublePublisher indexerMainVelocity = indexer.getDoubleTopic("main velocity (rps)").publish();
     private DoublePublisher indexerMainVoltage = indexer.getDoubleTopic("main voltage (V)").publish();
-    private DoublePublisher indexerSideVelocity = indexer.getDoubleTopic("side velocity (rps)").publish();
-    private DoublePublisher indexerSideVoltage = indexer.getDoubleTopic("side voltage (V)").publish();
     
     private NetworkTable shooterIndexer = table.getSubTable("ShooterIndexer");
     private StringPublisher shooterIndexerCommand = shooterIndexer.getStringTopic("command").publish();
@@ -206,10 +199,10 @@ public class Telemetry
     {
         mostRecentAim.set(Robot.instance.robotContainer.mostRecentAim ? "Pass" : "Shoot");
         hoodOffset.set(Robot.instance.robotContainer.pitchOffset);
-        leftFlywheelOffset.set(Robot.instance.robotContainer.leftFlywheelOffset);
-        rightFlywheelOffset.set(Robot.instance.robotContainer.rightFlywheelOffset);
+        flywheelOffset.set(Robot.instance.robotContainer.flywheelOffset);
         intakeTriggered.set(Robot.instance.robotContainer.intakeTriggered);
         intakeExtended.set(Robot.instance.robotContainer.intakeExtended);
+        // currents.set(Robot.instance.robotContainer.powerDistributionTracker.getAllCurrents());
 
         Command intakeCommand = Intake.getInstance().getCurrentCommand();
         this.intakeCommand.set(intakeCommand == null ? "" : intakeCommand.getName());
@@ -237,16 +230,11 @@ public class Telemetry
 
         Command shooterCommand = Shooter.getInstance().getCurrentCommand();
         this.shooterCommand.set(shooterCommand == null ? "" : shooterCommand.getName());
-        shooterLeftVelocity.set(Shooter.getInstance().getLeftVelocity().in(RotationsPerSecond));
-        shooterEffectiveLeftVelocity.set(Shooter.getInstance().getLeftEffectiveVelocity().in(MetersPerSecond));
-        shooterLeftTargetVelocity.set(Shooter.getInstance().getLeftTargetVelocity().in(RotationsPerSecond));
-        shooterLeftEffectiveTargetVelocity.set(Shooter.getInstance().getLeftEffectiveTargetVelocity().in(MetersPerSecond));
-        shooterLeftVoltage.set(Shooter.getInstance().getLeftVoltage().in(Volts));
-        shooterRightVelocity.set(Shooter.getInstance().getRightVelocity().in(RotationsPerSecond));
-        shooterEffectiveRightVelocity.set(Shooter.getInstance().getRightEffectiveVelocity().in(MetersPerSecond));
-        shooterRightTargetVelocity.set(Shooter.getInstance().getRightTargetVelocity().in(RotationsPerSecond));
-        shooterRightEffectiveTargetVelocity.set(Shooter.getInstance().getRightEffectiveTargetVelocity().in(MetersPerSecond));
-        shooterRightVoltage.set(Shooter.getInstance().getRightVoltage().in(Volts));
+        shooterVelocity.set(Shooter.getInstance().getVelocity().in(RotationsPerSecond));
+        shooterEffectiveVelocity.set(Shooter.getInstance().getEffectiveVelocity().in(MetersPerSecond));
+        shooterTargetVelocity.set(Shooter.getInstance().getTargetVelocity().in(RotationsPerSecond));
+        shooterTargetEffectiveVelocity.set(Shooter.getInstance().getTargetEffectiveVelocity().in(MetersPerSecond));
+        shooterVoltage.set(Shooter.getInstance().getVoltage().in(Volts));
         shooterReadyToShoot.set(Shooter.getInstance().readyToShoot());
         
         Command climbCommand = Climb.getInstance().getCurrentCommand();
@@ -272,8 +260,6 @@ public class Telemetry
         this.indexerCommand.set(indexerCommand == null ? "" : indexerCommand.getName());
         indexerMainVelocity.set(Indexer.getInstance().getMainVelocity().in(RotationsPerSecond));
         indexerMainVoltage.set(Indexer.getInstance().getMainVoltage().in(Volts));
-        indexerSideVelocity.set(Indexer.getInstance().getSideVelocity().in(RotationsPerSecond));
-        indexerSideVoltage.set(Indexer.getInstance().getSideVoltage().in(Volts));
 
         Command shooterIndexerCommand = ShooterIndexer.getInstance().getCurrentCommand();
         this.shooterIndexerCommand.set(shooterIndexerCommand == null ? "" : shooterIndexerCommand.getName());

@@ -50,7 +50,6 @@ public class ZeroHood extends Command
     {
         if (!interrupted)
         {
-            System.out.println("Soft zero done");
             Hood.getInstance().setPosition(Degrees.of(Constants.Hood.ZEROING_POSITION));
         }
         Hood.getInstance().setVoltage(Volts.of(0.0));
