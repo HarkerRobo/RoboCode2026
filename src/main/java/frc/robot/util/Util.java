@@ -95,26 +95,54 @@ public class Util
         addData(5.697, 10.2, 64.9); // "; farthest point
     }
 
+    /**
+     * Finds the minimum x-coordinate of the rectangle
+     * @param r the rectangle 
+     * @return  the minimum x-coordinate
+     */
     public static double bottomLeftX (Rectangle2d r)
     {
         return r.getCenter().getX() - 0.5 * r.getXWidth();
     }
     
+    /**
+     * Finds the minimum y-coordinate of the rectangle
+     * @param r the rectangle
+     * @return  the minimum y-coordinate
+     */
     public static double bottomLeftY (Rectangle2d r)
     {
         return r.getCenter().getY() - 0.5 * r.getYWidth();
     }
     
+    /**
+     * Finds the maximum x-coordinate of the rectangle
+     * @param r the rectangle
+     * @return  the maximum x-coordinate
+     */
     public static double topRightX (Rectangle2d r)
     {
         return r.getCenter().getX() + 0.5 * r.getXWidth();
     }
     
+    /**
+     * Find the maximum y-coordinate of the rectangle
+     * @param r the rectangle
+     * @return  the maximum y-coordinate
+     */
     public static double topRightY (Rectangle2d r)
     {
         return r.getCenter().getY() + 0.5 * r.getYWidth();
     }
 
+    /**
+     * Computes the position of the num-th ball packed inside the rectangle footprint
+     * @param r the rectangle footprint
+     * @param bottomZ   the bottom Z coordinate of the first layer
+     * @param sphereDiameter    the diameter of each ball
+     * @param num   the index of the ball
+     * @return  the positition of the num-th ball packed inside the rectangle footprint
+     */
     public static Translation3d packEl (Rectangle2d r, double bottomZ, double sphereDiameter, int num)
     {
         double x0 = bottomLeftX(r);
@@ -177,6 +205,12 @@ public class Util
         return new Translation3d(xc + Math.sin(rad)*Constants.ROBOT_WIDTH/2, yc - Math.cos(rad)*Constants.ROBOT_HEIGHT/2, z0 + zN * sphereDiameter);
     }
 
+    /**
+     * Determines whether a point lies within the x-y bounds of a rectangle
+     * @param r the rectangle
+     * @param t the point
+     * @return  True if the point does lie within the x-y bounds of the rectangle; false otherwise
+     */
     public static boolean within (Rectangle2d r, Translation3d t)
     {
         return 
@@ -184,6 +218,11 @@ public class Util
             t.getY() > r.getCenter().getY() - 0.5 * r.getYWidth() && t.getY() < r.getCenter().getY() + 0.5 * r.getYWidth();
     }
 
+    /**
+     * Rotates a rectangle's center
+     * @param r the rectangle
+     * @return  the new transformed rectangle
+     */
     public static Rectangle2d rotate(Rectangle2d r)
     {
         return new Rectangle2d(new Pose2d(new Translation2d(Constants.Simulation.ROTATE_X.apply(r.getCenter().getX()), Constants.Simulation.ROTATE_Y.apply(r.getCenter().getY())), new Rotation2d()), r.getXWidth(), r.getYWidth());
@@ -245,6 +284,12 @@ public class Util
         return Radians.of(idealAngle);
     }
 
+    /**
+     * Calculates the launch velocity from a position to the target
+     * @param position  the start position
+     * @param target    the target position
+     * @return  the calculated launch velocity
+     */
     public static double calculateVelocity(Translation3d position, Translation3d target)
     {
         double dx = target.getX() - position.getX();
@@ -253,6 +298,11 @@ public class Util
         return Constants.DISTANCE_SHOOTVELO_RATIO * (db - Constants.Simulation.HUB_CONTENTS.getXWidth() / 2.0 - 6.0) + 10.0 - Constants.SPEED_OFFSET.in(MetersPerSecond);
     }
 
+    /**
+     * Calculates the shooting pitch angle based on the drivetrain pose and the hub target position
+     * @param drivetrain    the drivetrain subsystem
+     * @return  the calculated shooting pitch angle
+     */
     public static Angle calculateShootPitch(CommandSwerveDrivetrain drivetrain)
     {
         if (Constants.INTERPOLATE_VALUES)
@@ -271,6 +321,11 @@ public class Util
         return output;
     }
 
+    /**
+     * Calculates the shooting pitch velocity based on the drivetrain pose and the hub target position
+     * @param drivetrain    the drivetrain subsystem
+     * @return  the calculated shooting pitch velocity
+     */
     public static double calculateShootVelocity(CommandSwerveDrivetrain drivetrain)
     {
         if (Constants.INTERPOLATE_VALUES)

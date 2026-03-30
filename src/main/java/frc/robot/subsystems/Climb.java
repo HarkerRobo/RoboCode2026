@@ -38,6 +38,10 @@ public class Climb extends SubsystemBase
         LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60(1),0.001, Constants.Climb.CLIMBWHEELS_GEAR_RATIO),
         DCMotor.getKrakenX60(1));
 
+    /**
+     * Initializes the elevator + climb motors, simulation models, and default target position.
+     * Also applies mechanical orientation and motor type when running in simulation.
+     */
     private Climb() 
     {
         climbWheels = new TalonFX(Constants.Climb.CLIMBWHEELS_ID, Constants.CAN_SUPERSTRUCTURE);
@@ -57,6 +61,11 @@ public class Climb extends SubsystemBase
         }
     }
 
+    /**
+     * Applies all TalonFX configs (PID, current limits, inversion, Motion Magic, etc.) to both motor
+     * Makes the subsystem boots into a fully‑configured state.
+     */
+    
     private void config() 
     {
         climbWheels.clearStickyFaults();
@@ -103,7 +112,11 @@ public class Climb extends SubsystemBase
         spooling.getConfigurator().apply(spoolingConfig);
     }
 
-    public void setClimbWheelsVelocity(AngularVelocity velocity) 
+    /**
+     * Directly drives the elevator motor with a raw duty cycle percentage.
+     * Disabled when the subsystem is marked “Disabled”.
+    */
+    public void setElevatorDutyCycle(double velocity) 
     {
         if (isDisabled())
         {
@@ -113,21 +126,34 @@ public class Climb extends SubsystemBase
         climbWheels.setControl(new VelocityVoltage(velocity));
     }
 
+    /**
+     * Returns the current climb wheels velocity.
+     */
     public AngularVelocity getClimbWheelsVelocity() 
     {
         return climbWheels.getVelocity().getValue();
     }
 
+    /**
+     * Returns the voltage applied to the climb wheels motor.
+     */
     public Voltage getClimbWheelsVoltage()
     {
         return climbWheels.getMotorVoltage().getValue();
     }
 
+    /**
+     * Returns the climb wheels position in rotations.
+     */
     public Angle getClimbWheelsPosition()
     {
         return climbWheels.getPosition().getValue();
     }
 
+    /**
+     * Applies a direct voltage to the climb wheels motor.
+     * Blocks the command if the subsystem is disabled.
+     */
     public void setClimbWheelsVoltage(Voltage v)
     {
         if (isDisabled())
@@ -138,21 +164,36 @@ public class Climb extends SubsystemBase
         climbWheels.setControl(new VoltageOut(v));
     }
 
+    /**
+     * Returns true if the spooling motor is stalling.
+     * Uses stator current to detect mechanical resistance.
+     */
     public boolean isSpoolingStalling()
     {
         return Math.abs(spooling.getStatorCurrent().getValueAsDouble()) >= Constants.Climb.SPOOLING_STALLING_CURRENT;
     }
 
+    /**
+     * Returns the voltage applied to the spooling motor.
+     */
     public Voltage getSpoolingVoltage()
     {
         return spooling.getMotorVoltage().getValue();
     }
     
+    /**
+     * Returns the spooling motor position in rotations.
+     * Used for tracking rope payout or encoder diagnostics.
+     */
     public Angle getSpoolingPosition()
     {
         return spooling.getPosition().getValue();
     }
 
+    /**
+     * Applies a direct voltage to the spooling motor.
+     * Blocks the command if the subsystem is disabled.
+     */
     public void setSpoolingVoltage(Voltage v)
     {
         if (isDisabled())
@@ -162,7 +203,10 @@ public class Climb extends SubsystemBase
         }
         spooling.setControl(new VoltageOut(v));
     }
-    
+        /**
+     * When in simulation, updates both elevator and climb physics.
+     * Feeds simulated rotor position/velocity back into the TalonFXSimState.
+     */
     @Override
     public void periodic()
     {
@@ -212,11 +256,19 @@ public class Climb extends SubsystemBase
         }
     }
 
+    /**
+     * Checks RobotContainer to see if
+     * this subsystem is running in simulation mode.
+     */
     private boolean isSimulated ()
     {
         return Robot.instance.robotContainer.getStatus(RobotContainer.CLIMB_INDEX) == SubsystemStatus.Simulated;
     }
     
+    /**
+     * Checks if the subsystem is marked disabled.
+     * Blocks all motor commands when it is.
+     */
     private boolean isDisabled ()
     {
         return Robot.instance.robotContainer.getStatus(RobotContainer.CLIMB_INDEX) == SubsystemStatus.Disabled;

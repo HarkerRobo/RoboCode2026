@@ -139,6 +139,10 @@ public class RobotContainer
     private SlewRateLimiter accelerationLimiter = new SlewRateLimiter(Constants.ACCELERATION_LIMIT);
     public PowerDistribution powerDistributionTracker = new PowerDistribution();
 
+    /**
+     * Sets the desired pass direction mode
+     * @param newDirection  New pass direction mode
+     */
     public void setPassDirection(PassDirection newDirection) {
         direction = newDirection;
     }
@@ -147,6 +151,10 @@ public class RobotContainer
         return direction;
     }
 
+    /**
+     * Determines if the robot treats itself as on the left side
+     * @return  True if the robot treats itself as on the left side; false otherwise
+     */
     public boolean onLeftSide()
     {
       if (direction == PassDirection.Left) return true;
@@ -175,6 +183,10 @@ public class RobotContainer
     }
   
         
+    /**
+     * Constructs the RobotContainer 
+     * and initializes subsystem mode choosers
+     */    
     public RobotContainer() 
     {
         for (int i = 0; i < INDEXES; i++)
@@ -197,6 +209,11 @@ public class RobotContainer
         }
     }
 
+    /**
+     * Post-construction initialization
+     * Builds commands, registers PathPlanner NamedCommands, configures default subsystem commands, 
+     * selects control binding layout and publishes choosers to SmartDashBoard
+     */
     public void init()
     {
         stow = ()->
@@ -344,6 +361,10 @@ public class RobotContainer
     }
 
 
+    /**
+     * Configures debugging bindings
+     * Used during development, not for match play
+     */
     private void configureDebugBindings()
     {
         // driver.a().whileTrue(Hood.getInstance().sysIdQuasistatic(Direction.kForward));
@@ -368,6 +389,10 @@ public class RobotContainer
                     ).withName("SwerveManual"));}
     
 
+    /**
+     * Configures default driver binding
+     * Allow basic driving even when main bindings are unavailable
+     */
     private void configureDriverBindings() 
     {
         driver.a().whileTrue(new RotateToAngle(drivetrain, () -> AlignConstants.HUB, false)

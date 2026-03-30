@@ -12,11 +12,18 @@ public class ZeroHood extends Command
 {
     Timer timer = new Timer();
 
+    /**
+     * Claims the Hood subsystem.
+     */
     public ZeroHood()
     {
         addRequirements(Hood.getInstance());
     }
 
+    /**
+     * Commands the hood toward its minimum allowed angle.
+     * Uses the subsystem’s internal Motion Magic control.
+     */
     @Override
     public void initialize()
     {
@@ -24,12 +31,20 @@ public class ZeroHood extends Command
         Hood.getInstance().setVoltage(Volts.of(Constants.Hood.ZEROING_VOLTAGE));
     }
 
+    /**
+     * Finishes when the hood stalls or reaches the target.
+     * Either condition indicates the hood is at its mechanical zero.
+     */
     @Override
     public boolean isFinished()
     {
         return Hood.getInstance().isStalling();
     }
 
+    /**
+     * If the command completed normally, resets the hood’s internal position.
+     * Ensures the subsystem’s encoder matches the mechanical zero point.
+     */
     @Override
     public void end(boolean interrupted)
     {

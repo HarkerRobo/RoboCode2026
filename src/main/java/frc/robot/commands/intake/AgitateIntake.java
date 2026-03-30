@@ -10,11 +10,17 @@ import frc.robot.subsystems.intake.Intake;
 public class AgitateIntake extends Command
 {
     Timer timer = new Timer();
+    /**
+     * Claims the Intake subsystem.
+     */
     public  AgitateIntake()
     {
         addRequirements(Intake.getInstance());
     }
 
+    /**
+     * Resets the internal timer.
+     */
     @Override
     public void initialize()
     {
@@ -23,6 +29,10 @@ public class AgitateIntake extends Command
     }
 
     @Override
+    /**
+     * Applies a sinusoidal voltage to oscillate the intake.
+     * Produces continuous agitation during operation.
+     */
     public void execute()
     {
         System.out.printf("Time: %f\n", timer.get());
@@ -32,12 +42,18 @@ public class AgitateIntake extends Command
             Constants.IntakeExtension.AGITATE_MIN_VOLTAGE));
     }
 
+    /**
+     * This command never finishes on its own.
+     */
     @Override
     public boolean isFinished()
     {
         return false;
     }
 
+    /**
+     * Stops the intake by applying zero volts.
+     */
     @Override
     public void end(boolean interrupted)
     {

@@ -44,6 +44,10 @@ public class Shooter extends SubsystemBase
     
     private double targetVelocity = 0.0;
 
+    /**
+     * Creates the Shooter subsystem and configures the master and follower motors.
+     * Initializes simulation settings.
+     */
     private Shooter()
     {
         master = new TalonFX(Constants.Shooter.MASTER_ID, Constants.CAN_SUPERSTRUCTURE);
@@ -62,6 +66,9 @@ public class Shooter extends SubsystemBase
         
     }
 
+    /**
+     * Applies all TalonFX settings: PID, feedforward, inversion, limits, and sensor ratio.
+     */
     private void config()
     {
         master.clearStickyFaults();
@@ -98,31 +105,50 @@ public class Shooter extends SubsystemBase
         follower.setControl(new Follower(Constants.Shooter.MASTER_ID, Constants.Shooter.MOTOR_ALIGNMENT));
     }
     
+    /**
+     * @return motor voltage
+     */
     public Voltage getVoltage()
     {
         return master.getMotorVoltage().getValue();
     }
-    
+    /**
+     * @return velocity of shooter
+     */
     public AngularVelocity getVelocity()
     {
         return master.getVelocity().getValue();
     }
     
+    /**
+     * Returns the linear surface velocity of the flywheel.
+     * Converts angular velocity into tangential speed at the wheel edge.
+     */
     public LinearVelocity getEffectiveVelocity()
     {
         return MetersPerSecond.of(getVelocity().in(RotationsPerSecond) * Constants.Shooter.FLYWHEEL_CIRCUMFERANCE);
     }
 
+    /**
+     * Returns the target linear surface velocity.
+     */
     public LinearVelocity getTargetEffectiveVelocity()
     {
         return MetersPerSecond.of(targetVelocity * Constants.Shooter.FLYWHEEL_CIRCUMFERANCE);
     }
     
+    /**
+     * Returns the target angular velocity of the shooter.
+     */
     public AngularVelocity getTargetVelocity()
     {
         return RotationsPerSecond.of(targetVelocity);
     }
 
+    /**
+     * Sets both flywheels to the same angular velocity.
+     * Calls the individual left and right setters internally.
+     */
     public void setVelocity(AngularVelocity velocity)
     {
         if (isDisabled())
@@ -134,11 +160,19 @@ public class Shooter extends SubsystemBase
         targetVelocity = velocity.in(RotationsPerSecond);
     }
         
+    /**
+     * Sets the flywheel velocity using linear surface speed.
+     * Converts the request into angular velocity internally.
+     */
     public void setEffectiveVelocity(LinearVelocity velocity)
     {
         setVelocity(RotationsPerSecond.of(velocity.in(MetersPerSecond) / Constants.Shooter.FLYWHEEL_CIRCUMFERANCE));
     }
 
+    /**
+     * Applies a direct voltage to both flywheel motors.
+     * Blocks the command when the subsystem is disabled.
+     */
     public void setVoltage (Voltage voltage)
     {
         if (isDisabled())
@@ -149,6 +183,10 @@ public class Shooter extends SubsystemBase
         master.setControl(new VoltageOut(voltage));
     }
 
+    /**
+     * Drives both flywheels using a raw duty cycle percentage.
+     * Blocks the command when the subsystem is disabled.
+     */
     public void setDutyCycle (double dutyCycle)
     {
         if (isDisabled())
@@ -160,6 +198,10 @@ public class Shooter extends SubsystemBase
     }
     
     
+    /**
+     * Returns true when both flywheels are within tolerance of their targets.
+     * Used to determine when the shooter is stable enough to fire.
+     */
     @Override
     public void periodic ()
     {
@@ -194,32 +236,56 @@ public class Shooter extends SubsystemBase
         this)
     );
     
+    /**
+     * Creates a quasistatic SysId test for the left flywheel.
+     * Used to characterize feedforward constants.
+     */
     public boolean readyToShoot()
     {
         return Math.abs(master.getVelocity().getValue().in(Rotations.per(Second)) - targetVelocity) < Constants.Shooter.MAX_ERROR;
     }
     
+    /**
+     * Creates a quasistatic SysId test command for the shooter.
+     * Characterize feedforward constants at low acceleration.
+     */
     public Command sysIdQuasistatic (SysIdRoutine.Direction direction)
     {
         return sysId.quasistatic(direction).withName("SysId Q" + (direction == SysIdRoutine.Direction.kForward ? "F" : "R"));
     }
     
+    /**
+     * Creates a dynamic SysId test command for the shooter.
+     * Measure acceleration response for tuning.
+     */
     public Command sysIdDynamic (SysIdRoutine.Direction direction)
     {
         return sysId.dynamic(direction).withName("SysId D" + (direction == SysIdRoutine.Direction.kForward ? "F" : "R"));
     }
 
-    
+
+    /**
+     * Returns true if the subsystem is running in simulation mode.
+     * Controls whether the DCMotorSim models are updated.
+     */
     private boolean isSimulated ()
     {
         return Robot.instance.robotContainer.getStatus(RobotContainer.SHOOTER_INDEX) == SubsystemStatus.Simulated;
     }
     
+    /**
+     * Returns true if the subsystem is disabled.
+     * Prevents all motor commands from being applied.
+     */
     private boolean isDisabled ()
     {
         return Robot.instance.robotContainer.getStatus(RobotContainer.SHOOTER_INDEX) == SubsystemStatus.Disabled;
     }
     
+    /**
+     * Returns the Shooter subsystem instance.
+     * Ensures only one instance is ever created.
+     */
     public static Shooter getInstance()
     {
         if (instance == null) instance = new Shooter();

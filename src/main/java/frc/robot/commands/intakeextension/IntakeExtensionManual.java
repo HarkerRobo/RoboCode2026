@@ -11,11 +11,18 @@ public class IntakeExtensionManual extends Command
 {
     boolean stallingForward;
     boolean stallingBack;
+    /**
+     * Claims subsystem.
+     */
     public IntakeExtensionManual()
     {
         addRequirements(IntakeExtension.getInstance());
     }
 
+    /**
+     * Applies manual extend or retract voltage based on operator input.
+     * Monitors stall conditions and switches to holding voltages when necessary.
+     */
     @Override
     public void execute()
     {
@@ -53,6 +60,9 @@ public class IntakeExtensionManual extends Command
         }
     }
 
+    /**
+     * Never finishes.
+     */
     @Override
     public boolean isFinished()
     {

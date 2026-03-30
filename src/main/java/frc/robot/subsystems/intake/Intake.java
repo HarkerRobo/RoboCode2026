@@ -37,6 +37,10 @@ public class Intake extends SubsystemBase
         DCMotor.getKrakenX60Foc(1));
 
    
+    /**
+     * Initializes the intake motor and applies all configuration settings.
+     * If running in simulation, sets up the TalonFX sim state so the virtual motor behaves correctly.
+     */
     private Intake()
     {
         left = new TalonFX(Constants.Intake.LEFT_ID, Constants.CAN_SUPERSTRUCTURE);
@@ -50,6 +54,10 @@ public class Intake extends SubsystemBase
         }
     }
 
+    /**
+     * Sets up the TalonFX with all the intake’s settings:
+     * inversion, PID values, current limits, voltage limits, and sensor ratio.
+     */
     private void config()
     {
         left.clearStickyFaults();
@@ -86,37 +94,63 @@ public class Intake extends SubsystemBase
 
         left.setControl(new Follower(Constants.Intake.RIGHT_ID, MotorAlignmentValue.Opposed));
     }
-    
+    /**
+    * Returns the target angular velocity.
+    * Used if you need the velocity.
+    */
     public AngularVelocity getTargetVelocity()
     {
         return RotationsPerSecond.of(targetVelocity);
     }
    
+    /**
+     * Returns the right motor voltage.
+     */
     public Voltage getRightVoltage()
     {
         return right.getMotorVoltage().getValue();
     }
     
+    /**
+     * Returns the right motor velocity.
+     * Represents the measured angular speed of the intake.
+     */
     public AngularVelocity getRightVelocity()
     {
         return right.getVelocity().getValue();
     }
 
+    /**
+     * Returns the right stator current.
+     * Indicates the electrical load on the motor.
+     */
     public Current getRightStatorCurrent()
     {
         return right.getStatorCurrent().getValue();
     }
     
+    /**
+     * Returns the left motor voltage.
+     * Useful for telemetry and debugging.
+     */
     public Voltage getLeftVoltage()
     {
         return left.getMotorVoltage().getValue();
     }
     
+    /**
+     * Returns the left motor velocity.
+     * Represents the measured angular speed of the intake.
+     */
     public AngularVelocity getLeftVelocity()
     {
         return left.getVelocity().getValue();
     }
 
+    /**
+     * Returns the left stator current.
+     * Indicates the electrical load on the motor.
+     */
     public Current getLeftStatorCurrent()
     {
         return left.getStatorCurrent().getValue();
@@ -128,6 +162,10 @@ public class Intake extends SubsystemBase
             Math.abs(right.getStatorCurrent().getValueAsDouble()) >= Constants.Intake.STALLING_CURRENT;
     }
     
+    /**
+    * Pushes a specific voltage into the motor.
+    * Blocked if disabled
+    */
     public void setVoltage (Voltage voltage)
     {
         if (isDisabled())
@@ -138,6 +176,10 @@ public class Intake extends SubsystemBase
         right.setControl(new VoltageOut(voltage));
     }
 
+    /**
+    * Commands to hold a target velocity.
+    * Automatically does feedforward and PID.
+    */
     public void setVelocity (AngularVelocity velocity)
     {
         targetVelocity = velocity.in(RotationsPerSecond);
@@ -149,6 +191,10 @@ public class Intake extends SubsystemBase
         right.setControl(new VelocityVoltage(velocity));
     }
     
+    /**
+     * When running in simulation, updates the DCMotorSim.
+     * Pushes the new rotor position and velocity into the TalonFX sim state.
+     */
     @Override
     public void periodic ()
     {
@@ -177,16 +223,30 @@ public class Intake extends SubsystemBase
         }
     }
    
+    /**
+     * Returns true if the subsystem is running in simulation.
+     * Uses RobotContainer status to determine the mode.
+     */
     private boolean isSimulated ()
     {
         return Robot.instance.robotContainer.getStatus(RobotContainer.INTAKE_INDEX) == SubsystemStatus.Simulated;
     }
     
+
+    /**
+     * Returns true if the subsystem is disabled.
+     * Prevents motor commands from being applied.
+     */
     private boolean isDisabled ()
     {
         return Robot.instance.robotContainer.getStatus(RobotContainer.INTAKE_INDEX) == SubsystemStatus.Disabled;
     }
 
+
+    /**
+     * Returns the singleton Intake instance.
+     * Creates the subsystem on first access.
+     */
     public static Intake getInstance()
     {
         if(instance == null) instance = new Intake();

@@ -9,17 +9,26 @@ import frc.robot.subsystems.ShooterIndexer;
 
 public class ShooterIndexerStartEjectSpeed extends Command
 {
+    /**
+     * Claims Subsys
+     */
     public ShooterIndexerStartEjectSpeed ()
     {
         addRequirements(ShooterIndexer.getInstance());
     }
 
+    /**
+     * Sets the shooter‑indexer motor to its eject operating velocity.
+     */
     @Override
     public void initialize()
     {
         ShooterIndexer.getInstance().setVelocity(RotationsPerSecond.of(Constants.ShooterIndexer.EJECT_VELOCITY));
     }
 
+    /**
+     * Command finsihes immediately.
+     */
     @Override
     public boolean isFinished()
     {

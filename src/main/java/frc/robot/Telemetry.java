@@ -41,6 +41,10 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeExtension;
 import frc.robot.subsystems.Climb;
 
+/**
+ * Central telemtry publisher for subsystems and drivetrain state
+ * Publishes robot data to NetWorkTables
+ */
 public class Telemetry 
 {
     private static Telemetry instance;
@@ -180,6 +184,10 @@ public class Telemetry
     private final DoubleSubscriber hoodAngle = inputs.getDoubleTopic("Hood Angle (degrees)").subscribe(75.0);
     private final DoubleSubscriber shooterSpeed = inputs.getDoubleTopic("Shooter Speed (degrees)").subscribe(10.0);
 
+    /**
+     * Constructs telemetry
+     * Private because this class is a singleton
+     */
     private Telemetry ()
     {
         hoodAngle.getTopic().publish().set(75.0);
@@ -301,7 +309,10 @@ public class Telemetry
      
         );
     }
-    /** Accept the swerve drive state and telemeterize it to SmartDashboard and SignalLogger. */
+    /** 
+     * Accept the swerve drive state and telemeterize it to SmartDashboard and SignalLogger. 
+     * @param state Current drivetrain state
+     */
     public void telemeterize(SwerveDriveState state) 
     {
         /* Telemeterize the swerve drive state */
@@ -353,6 +364,10 @@ public class Telemetry
         return shooterSpeed.get();
     }
 
+    /**
+     * Returns the singleton telemetry instance
+     * @return  Telemetry singleton
+     */
     public static Telemetry getInstance ()
     {
         if (instance == null) instance = new Telemetry();

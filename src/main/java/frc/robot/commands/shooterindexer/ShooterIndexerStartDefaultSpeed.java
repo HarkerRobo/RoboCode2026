@@ -8,17 +8,26 @@ import frc.robot.subsystems.ShooterIndexer;
 
 public class ShooterIndexerStartDefaultSpeed extends Command
 {
+    /**
+     * claims subsys.
+     */
     public ShooterIndexerStartDefaultSpeed ()
     {
         addRequirements(ShooterIndexer.getInstance());
     }
 
+    /**
+     * Sets the shooter‑indexer motor to its default operating voltage.
+     */
     @Override
     public void initialize()
     {
         ShooterIndexer.getInstance().setVoltage(Volts.of(Constants.ShooterIndexer.DEFAULT_VOLTAGE));
     }
 
+    /**
+     * Command finishes immediately
+     */
     @Override
     public boolean isFinished()
     {

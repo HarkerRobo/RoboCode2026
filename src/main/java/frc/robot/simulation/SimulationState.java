@@ -14,7 +14,8 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 /**
- * Stores the position of fuels and models their physics/possession, making sure that their associated poses line up to their position for correct visualization
+ * Stores the position of fuels
+ * Models their physics/possession, making sure that their associated poses line up to their position for correct visualization
  */
 public class SimulationState
 {
@@ -32,18 +33,33 @@ public class SimulationState
         Robot,
         OtherRobot
     }
+    /**
+     * Container for a fuel's location ownership 
+     * and physics state
+     */
     public static class FuelPosition
     {
         public FieldLocation location;
 
         public BallState state; // associated physics values such as position, velocity, spin
-
+        /**
+         * Creates a fuel object at a 2D position
+         * @param location  location of the fuel
+         * @param xPositionMeters   the X position
+         * @param yPositionMeters   the Y position
+         */
         public FuelPosition(FieldLocation location, double xPositionMeters, double yPositionMeters)
         {
             this.location = location;
             state = new BallState(new Pose3d(new Translation3d(xPositionMeters, yPositionMeters, 0.5 * FUEL_DIAMETER), new Rotation3d()), Translation3d.kZero, Translation3d.kZero);
         }
-        
+        /**
+         * Creates a fuel object at a 3D position
+         * @param location  location of the fuel
+         * @param xPositionMeters   X position
+         * @param yPositionMeters   Y position
+         * @param zPositionMeters   Z position
+         */
         public FuelPosition(FieldLocation location, double xPositionMeters, double yPositionMeters, double zPositionMeters)
         {
             this.location = location;
@@ -102,7 +118,7 @@ public class SimulationState
         }
         */
     }
-
+    
     public long lastTime = 0;
 
     public FuelPosition[] fuelPositions = new FuelPosition[TOTAL_FUEL];
@@ -113,14 +129,17 @@ public class SimulationState
     public int fuelsInRedHub = 0;
     public int fuelsInBlueOutpost = 0;
     public int fuelsInRedOutpost = 0;
-
+    /**
+     * Constructs the simulation state and initializes fuel positions
+     */
     private SimulationState ()
     {
         init();
     }
 
     /**
-     * Sets the position of fuels to their position on the field at the start of the match
+     * Sets the position of fuels to their position 
+     * on the field at the start of the match
      */
     public void init ()
     {
@@ -192,7 +211,10 @@ public class SimulationState
 
 
     }
-
+    /**
+     * Updates the simulation state by a tick
+     * Updates all fuel positions
+     */
     public void update ()
     {
         StallSimulator.update();
@@ -289,7 +311,10 @@ public class SimulationState
         lastTime = now;
     }
 
-
+    /**
+     * Returns how may fuels are in the robot
+     * @return  number of fuels in the robot
+     */
     public int fuelsInRobot ()
     {
         int count = 0;
@@ -317,7 +342,8 @@ public class SimulationState
     }
 
     /**
-     * Moves all fuel which are currently on the field to a random spot on the field, elevated by 4 meters
+     * Moves all fuel which are currently on the field to a 
+     * random spot on the field, elevated by 4 meters
      */
     public void testDrop ()
     {
@@ -334,6 +360,7 @@ public class SimulationState
 
     /**
      * Moves a fuel in the specified outpost to the field immediately outside of it
+     * @param alliance  Alliance whose outpost will spawn a fuel
      */
     public void spawnFromOutpost(Alliance alliance)
     {
@@ -359,9 +386,14 @@ public class SimulationState
         }
     }
 
-
+    /**
+     * Singleton instance of the simulation state
+     */
     private static SimulationState instance;
-
+    /**
+     * Returns the singleton instance of the simulation state
+     * @return  the SimmulationState singleton
+     */
     public static SimulationState getInstance()
     {
          if (instance == null) instance = new SimulationState();

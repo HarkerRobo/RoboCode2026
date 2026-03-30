@@ -13,7 +13,6 @@ import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
 import frc.robot.RobotContainer.SubsystemStatus;
-import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
@@ -34,6 +33,10 @@ public class ShooterIndexer extends SubsystemBase
         LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 0.001, Constants.ShooterIndexer.GEAR_RATIO),
         DCMotor.getKrakenX60Foc(1));
 
+    /**
+     * Creates the ShooterIndexer subsystem and configures the TalonFX motor.
+     * Initializes simulation settings.
+     */
     private ShooterIndexer()
     {
         motor = new TalonFX(Constants.ShooterIndexer.ID, Constants.CAN_SUPERSTRUCTURE);
@@ -46,6 +49,10 @@ public class ShooterIndexer extends SubsystemBase
         }
     }
 
+    /**
+     * Applies all TalonFX settings: PID values, current limits, inversion, voltage limits, and sensor ratio.
+     * Ensures the indexer motor starts with the correct behavior before anything commands it.
+     */
     private void config() 
     {
         motor.clearStickyFaults();
@@ -74,16 +81,27 @@ public class ShooterIndexer extends SubsystemBase
         motor.getConfigurator().apply(config);
     }
 
+    /**
+     * Returns the current angular velocity of the shooter indexer motor.
+     */
     public AngularVelocity getVelocity() 
     {
         return motor.getVelocity().getValue();
     }
 
+    /**
+     * Returns the voltage applied to the shooter indexer motor.
+     */
     public Voltage getVoltage() 
     {
         return motor.getMotorVoltage().getValue();
     }
     
+
+    /**
+     * Commands the motor to spin at the given velocity.
+     * If the subsystem is disabled, the command is ignored.
+     */
     public void setVelocity(AngularVelocity velocity) 
     {
         if (isDisabled())
@@ -93,7 +111,11 @@ public class ShooterIndexer extends SubsystemBase
         }
         motor.setControl(new VelocityVoltage(velocity.in(RotationsPerSecond)));
     }
-    
+
+    /**
+     * Sends a specific voltage to the motor.
+     * Direct voltage control for testing or SysId.
+     */
     public void setVoltage(Voltage voltage) 
     {
         if (isDisabled())
@@ -104,6 +126,10 @@ public class ShooterIndexer extends SubsystemBase
         motor.setVoltage(voltage.in(Volts));
     }
     
+    /**
+     * Updates the simulated indexer physics when running in simulation mode.
+     * Feeds simulated rotor position and velocity back into the TalonFXSimState.
+     */
     @Override
     public void periodic ()
     {
@@ -127,11 +153,19 @@ public class ShooterIndexer extends SubsystemBase
         }
     }
 
+    /**
+     * Checks RobotContainer to see if this 
+     * subsystem is running in simulation model
+     */
     private boolean isSimulated ()
     {
         return Robot.instance.robotContainer.getStatus(RobotContainer.SHOOTER_INDEXER_INDEX) == SubsystemStatus.Simulated;
     }
     
+    /**
+     * Returns true if the subsystem is disabled.
+     * Blocks all motor commands when it is.
+     */
     private boolean isDisabled ()
     {
         return Robot.instance.robotContainer.getStatus(RobotContainer.SHOOTER_INDEXER_INDEX) == SubsystemStatus.Disabled;
@@ -148,11 +182,19 @@ public class ShooterIndexer extends SubsystemBase
         this)
     );
 
+    /**
+     * Creates a quasistatic SysId test for the shooter indexer.
+     * Used to characterize feedforward constants.
+     */
     public Command sysIdQuasistatic (SysIdRoutine.Direction direction)
     {
         return sysId.quasistatic(direction).withName("SysId Q" + (direction == SysIdRoutine.Direction.kForward ? "F" : "R"));
     }
     
+    /**
+     * Creates a dynamic SysId test for the shooter indexer.
+     * Used to measure acceleration response for tuning.
+     */
     public Command sysIdDynamic (SysIdRoutine.Direction direction)
     {
         return sysId.dynamic(direction).withName("SysId D" + (direction == SysIdRoutine.Direction.kForward ? "F" : "R"));

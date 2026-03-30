@@ -13,7 +13,6 @@ import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
 import frc.robot.RobotContainer.SubsystemStatus;
-import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -30,6 +29,10 @@ public class Indexer extends SubsystemBase
         LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 0.001, Constants.Indexer.MAIN_GEAR_RATIO),
         DCMotor.getKrakenX60Foc(1));
     
+    /**
+     * Creates the Indexer subsystem and configures the main TalonFX motor.
+     * Initializes simulation settings.
+     */
     private Indexer() { 
         main = new TalonFX(Constants.Indexer.MAIN_ID, Constants.CAN_SUPERSTRUCTURE);
         config();
@@ -41,6 +44,10 @@ public class Indexer extends SubsystemBase
         }
     }
 
+    /**
+     * Applies all TalonFX settings: PID values, current limits, inversion, voltage limits, and sensor ratio.
+     * Ensures the indexer motor starts with the correct behavior before anything commands it.
+     */
     private void config() {
         main.clearStickyFaults();
 
@@ -78,6 +85,10 @@ public class Indexer extends SubsystemBase
         main.setControl(new VelocityVoltage(velocity));
     }
 
+    /**
+     * Applies a direct voltage to the indexer motor.
+     * Blocks the command when the subsystem is disabled.
+     */
     public void setMainVoltage(Voltage voltage) 
     {
         if (isDisabled())
@@ -88,16 +99,27 @@ public class Indexer extends SubsystemBase
         main.setVoltage(voltage.in(Volts));
     }
     
+    /**
+     * Returns the current angular velocity of the indexer motor.
+     */
     public AngularVelocity getMainVelocity() 
     {
         return main.getVelocity().getValue();
     }
 
+    /**
+     * Returns the voltage applied to the main indexer motor.
+     * Helps diagnose power delivery and subsystem behavior.
+     */
     public Voltage getMainVoltage() 
     {
         return main.getMotorVoltage().getValue();
     }
     
+    /**
+     * Updates the simulated indexer physics when running in simulation mode.
+     * Feeds simulated rotor position and velocity back into the TalonFXSimState.
+     */
     @Override
     public void periodic ()
     {
@@ -121,16 +143,27 @@ public class Indexer extends SubsystemBase
         }
     }
 
+    /**
+     * Checks RobotContainer to see if this subsystem is running in simulation mode.
+     * Controls whether the sim model runs.
+     */
     private boolean isSimulated ()
     {
         return Robot.instance.robotContainer.getStatus(RobotContainer.INDEXER_INDEX) == SubsystemStatus.Simulated;
     }
     
+    /**
+     * Checks if the subsystem is marked disabled.
+     * Blocks all motor commands when it is.
+     */
     private boolean isDisabled ()
     {
         return Robot.instance.robotContainer.getStatus(RobotContainer.INDEXER_INDEX) == SubsystemStatus.Disabled;
     }
     
+    /**
+     * Returns the Indexer subsystem instance.
+     */
     public static Indexer getInstance() {
         if (instance == null) instance = new Indexer();
         return instance;

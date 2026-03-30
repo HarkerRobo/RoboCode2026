@@ -41,7 +41,8 @@ import frc.robot.simulation.BallConstants;
 
 public class Constants 
 {
-    public static final double MAX_VOLTAGE = 12.0;
+   
+    public static final double MAX_VOLTAGE = 12.0; //volts
     
     public static final double ROBOT_HEIGHT = 0.89535; // y direction when bot is faced in the positive x direction; that is, parallel to the intake face
     public static final double ROBOT_WIDTH = 0.84455;
@@ -227,8 +228,8 @@ public class Constants
 
     public class Simulation
     {
-        public static final double FIELD_HEIGHT = 8.069326;
-        public static final double FIELD_WIDTH = 16.540988;
+        public static final double FIELD_HEIGHT = 8.069326;//meters
+        public static final double FIELD_WIDTH = 16.540988;//meters
 
         // excluding steel barrier
         public static final Rectangle2d DEPOT = new Rectangle2d(
@@ -243,9 +244,9 @@ public class Constants
         public static final Translation2d CENTER_UPPER_REFERENCE = new Translation2d(FIELD_CENTER.getX(), FIELD_CENTER.getY() + 0.0254);
         public static final Translation2d CENTER_LOWER_REFERENCE = new Translation2d(FIELD_CENTER.getX(), FIELD_CENTER.getY() - 0.0254);
 
-        public static final double FUEL_DIAMETER = 0.15;
-        public static final double MIN_FUEL_MASS = 0.203;
-        public static final double MAX_FUEL_MASS = 0.227;
+        public static final double FUEL_DIAMETER = 0.15;//meters
+        public static final double MIN_FUEL_MASS = 0.203;//meters
+        public static final double MAX_FUEL_MASS = 0.227;//meters
 
         public static final int TOTAL_FUEL = 504;
         public static final int FUELS_TAKEN_BY_OTHER_ROBOTS = 0;
@@ -263,7 +264,7 @@ public class Constants
             (MAX_FUEL_MASS + MIN_FUEL_MASS) / 2.0,
             FUEL_DIAMETER / 2.0, 1.2, 0.30, 1.2, 0.35, 9.81, 20);
 
-        public static final double HUB_INTAKE_HEIGHT = 1.8288;
+        public static final double HUB_INTAKE_HEIGHT = 1.8288;//meters
     }
 
     public static final class Climb 
@@ -312,8 +313,8 @@ public class Constants
         public static final int MAIN_ID = 31;
 
         public static final InvertedValue MAIN_INVERTED = InvertedValue.CounterClockwise_Positive;
-        public static final double MAIN_STATOR_CURRENT_LIMIT = 60.0;
-        public static final double MAIN_SUPPLY_CURRENT_LIMIT = 60.0;
+        public static final double MAIN_STATOR_CURRENT_LIMIT = 60.0;//amps
+        public static final double MAIN_SUPPLY_CURRENT_LIMIT = 60.0;//amps
 
         public static final double MAIN_KS = 0.0048438; //TODO
         public static final double MAIN_KV = 0.12361; //TODO

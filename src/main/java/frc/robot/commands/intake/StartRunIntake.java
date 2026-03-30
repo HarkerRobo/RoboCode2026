@@ -12,11 +12,18 @@ import frc.robot.subsystems.intake.Intake;
 
 public class StartRunIntake extends Command 
 {
+    /**
+     * Claims subsys.
+     */
     public StartRunIntake () 
     {
         addRequirements(Intake.getInstance());
     }
 
+    /**
+    * Activates controller rumble feedback and sets the intake to the correct speed.
+    * Chooses between autonomous and teleop velocities based on robot mode.
+    */
     @Override
     public void initialize()
     {
@@ -33,12 +40,18 @@ public class StartRunIntake extends Command
     }
 
 
+    /**
+     * Command finishes immediately.
+     */
     @Override
     public boolean isFinished () 
     {
         return true;
     }
 
+    /**
+     * Nada.
+     */
     @Override
     public void end (boolean interrupted) 
     {

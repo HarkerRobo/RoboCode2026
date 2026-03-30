@@ -12,20 +12,29 @@ import frc.robot.Constants;
  */
 public final class BallPhysics {
     public static final double GRAVITY = 9.81;
-
+    
     public record ShotSolution(
             double launchPitchRad,
             double launchSpeed,
             double flightTimeSeconds) {
     }
 
+    
     private BallPhysics() {
     }
 
+    /**
+     * Computes the gravitational force acting on the ball.
+     * Returns a downward vector scaled by mass and gravity.
+     */
     private static Translation3d gravityForce(BallConstants c) {
         return new Translation3d(0, 0, -c.mass * c.gravity);
     }
 
+    /**
+     * Computes aerodynamic drag based on velocity.
+     * Returns a force opposite the direction of travel.
+     */
     private static Translation3d dragForce(
             Translation3d v, BallConstants c) {
 
@@ -37,6 +46,10 @@ public final class BallPhysics {
         return v.times(scale);
     }
 
+    /**
+     * Computes the Magnus lift force from ball spin.
+     * Returns a vector perpendicular to both spin and velocity.
+     */
     private static Translation3d magnusForce(
             Translation3d v, Translation3d omega, BallConstants c) {
 
@@ -57,6 +70,10 @@ public final class BallPhysics {
         return direction.times(magnitude);
     }
 
+    /**
+     * Integrates angular velocity into a new rotation.
+     * Applies a small-angle approximation for incremental updates.
+     */
     private static Rotation3d integrateRotation(
             Rotation3d current,
             Translation3d omega,
@@ -70,6 +87,10 @@ public final class BallPhysics {
         return current.plus(delta);
     }
 
+    /**
+     * Advances the ball state by one simulation step.
+     * Updates position, velocity, spin, and rotation using physics forces.
+     */
     public static void step(
             BallState s, BallConstants c, double dt) {
 
@@ -95,6 +116,10 @@ public final class BallPhysics {
         }
     }
 
+    /**
+     * Solves for a ballistic shot given a required incoming angle.
+     * Computes launch pitch, launch speed, and flight time.
+     */
     public static ShotSolution solveBallisticWithIncomingAngle(
             Pose3d shooterPose,
             Pose3d targetPose,
@@ -131,6 +156,10 @@ public final class BallPhysics {
         return new ShotSolution(launchPitch, launchSpeed, T);
     }
 
+    /**
+     * Solves for a ballistic shot given a fixed launch speed.
+     * Computes the required pitch angle and flight time.
+     */
     public static ShotSolution solveBallisticWithSpeed(
             Pose3d shooterPose,
             Pose3d targetPose,
@@ -167,6 +196,10 @@ public final class BallPhysics {
         return new ShotSolution(launchPitch, launchSpeed, time);
     }
 
+    /**
+     * Computes the minimum possible launch speed for any valid arc.
+     * Uses a closed-form solution based on gravity and geometry.
+     */
     public static double minSpeedForAnyArc(
             Pose3d shooterPose,
             Pose3d targetPose) {

@@ -30,6 +30,10 @@ public class DriveToPose extends Command{
         addRequirements(drivetrain);
     }
 
+    /**
+     * Reads the target position and flips it for red alliance.
+     * Stores the final field‑relative target for angle calculation.
+     */
     @Override
     public void initialize() {
         AlignDirection direction = Robot.instance.robotContainer.getAlignDirection();
@@ -38,6 +42,10 @@ public class DriveToPose extends Command{
         startPath();
     }
 
+    /**
+     * Commands the drivetrain to rotate toward the target angle.
+     * Holds zero translational velocity while steering to face the point.
+     */
     @Override
     public void execute() {
         if (pathCommand != null) {
@@ -47,6 +55,10 @@ public class DriveToPose extends Command{
         //SmartDashboard.putString("Drive/direction", Robot.instance.robotContainer.getAlignDirection().toString());
     }
 
+    /**
+     * Finishes when the robot’s heading is within tolerance of the target angle.
+     * Uses modular rotation math to handle wraparound.
+     */
     @Override
     public boolean isFinished() {
         return pathCommand == null || pathCommand.isFinished();
@@ -68,6 +80,10 @@ public class DriveToPose extends Command{
         
     }
 
+    /**
+     * Generates a path toward the target pose if movement is required. 
+     * Initializes the path command unless the robot is already within tolerance.
+     */
     private void startPath() {
         if (targetPose != null) {
             Pose2d currentPose = drivetrain.getState().Pose;
@@ -110,6 +126,10 @@ public class DriveToPose extends Command{
         }
     }
 
+    /**
+     * Returns the target pose based on the selected alignment direction. 
+     * Falls back to the current pose if no valid direction is provided.
+     */
     private Pose2d getTargetPose() {
 
         return switch (Robot.instance.robotContainer.getAlignDirection()) {

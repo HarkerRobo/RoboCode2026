@@ -13,22 +13,30 @@ public class AimToAngle extends Command
     private double pitch = 0.0; // degrees
 
     /**
-     * 
+     * Creates a command that aims the hood to a supplied angle in degrees.
+     * Stores the supplier and claims the Hood subsystem.
      * @param pitch degrees
-    */
-    public AimToAngle (DoubleSupplier pitcher)
+     */
+    public AimToAngle(DoubleSupplier pitcher)
     {
         this.pitcher = pitcher;
         addRequirements(Hood.getInstance());
     }
 
-    public AimToAngle (double pitch)
+    /**
+     * Creates a command that aims the hood to a fixed angle in degrees.
+     */
+    public AimToAngle(double pitch)
     {
-        this(()->pitch);
+        this(() -> pitch);
     }
 
+    /**
+     * Reads the target angle, clamps it to hood limits, and commands the hood.
+     * Prints a warning if the requested angle was out of bounds.
+     */
     @Override
-    public void initialize ()
+    public void initialize()
     {
         pitch = pitcher.getAsDouble();
         
@@ -36,22 +44,38 @@ public class AimToAngle extends Command
         System.out.println("Aiming: " + pitch + "°");
     }
 
+    /**
+     * No repeated action required during execution.
+     * Hood motion is handled internally by the subsystem.
+     */
     @Override
-    public void execute ()
+    public void execute()
     {
     }
 
+    /**
+     * Finishes when the hood reports that it is within tolerance of the target.
+     * Uses the subsystem’s readyToShoot() check.
+     */
     @Override
-    public boolean isFinished ()
+    public boolean isFinished()
     {
         return true;
     }
 
+    /**
+     * No cleanup when the command ends.
+     * Method included for Command API completeness.
+     */
     @Override
-    public void end (boolean interrupted)
+    public void end(boolean interrupted)
     {
     }
 
+    /**
+     * Returns a readable name including the target angle.
+     * Debugging and command tracing.
+     */
     @Override
     public String getName()
     {
