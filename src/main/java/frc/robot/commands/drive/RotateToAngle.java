@@ -29,6 +29,10 @@ public class RotateToAngle extends Command
     private Translation2d target;
     private boolean continueDrive;
 
+    /**
+     * Creates a rotation‑to‑target command for the swerve drivetrain.
+     * Stores the target supplier and whether translational driving continues.
+     */
     public RotateToAngle(CommandSwerveDrivetrain drivetrain, Supplier<Translation2d> targetSupplier,
         boolean continueDrive) 
     {
@@ -37,12 +41,18 @@ public class RotateToAngle extends Command
         this.targetSupplier = targetSupplier;
         this.continueDrive = continueDrive;
     }
-
+    /**
+     * Nothing
+     */
     @Override
     public void initialize() 
     {
     }
 
+    /**
+     * Computes the desired heading angle toward the target point.
+     * Applies alliance‑based flipping to maintain correct field orientation.
+     */
     private Rotation2d calcAngle() 
     {
         double xdiff = target.getX() - dt.getState().Pose.getX();
@@ -57,6 +67,10 @@ public class RotateToAngle extends Command
         return new Rotation2d(angle);
     }
 
+    /**
+     * Updates the target, computes the heading, and applies rotation control.
+     * Optionally preserves driver translational input depending on configuration.
+     */
     @Override
     public void execute() 
     {
@@ -105,6 +119,10 @@ public class RotateToAngle extends Command
         System.out.println("X- and Y- Speeds: " + (xSpeed * MaxSpeed) + ", " + (ySpeed * MaxSpeed));
     }
 
+    /**
+     * Determines whether rotation has reached the target heading.
+     * Always returns false when translational driving is enabled.
+     */
     @Override
     public boolean isFinished() 
     {
@@ -122,6 +140,9 @@ public class RotateToAngle extends Command
         return false;
     }
 
+    /**
+     * Nothing.
+     */
     @Override
     public void end (boolean interrupted)
     {

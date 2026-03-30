@@ -29,6 +29,10 @@ public class Indexer extends SubsystemBase
         LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 0.001, Constants.Indexer.MAIN_GEAR_RATIO),
         DCMotor.getKrakenX60Foc(1));
     
+    /**
+     * Creates the Indexer subsystem and configures the main TalonFX motor.
+     * Initializes simulation settings.
+     */
     private Indexer() { 
         main = new TalonFX(Constants.Indexer.MAIN_ID, Constants.CAN_SUPERSTRUCTURE);
         config();
@@ -81,6 +85,10 @@ public class Indexer extends SubsystemBase
         main.setControl(new VelocityVoltage(velocity));
     }
 
+    /**
+     * Applies a direct voltage to the indexer motor.
+     * Blocks the command when the subsystem is disabled.
+     */
     public void setMainVoltage(Voltage voltage) 
     {
         if (isDisabled())
@@ -91,6 +99,9 @@ public class Indexer extends SubsystemBase
         main.setVoltage(voltage.in(Volts));
     }
     
+    /**
+     * Returns the current angular velocity of the indexer motor.
+     */
     public AngularVelocity getMainVelocity() 
     {
         return main.getVelocity().getValue();
@@ -105,6 +116,10 @@ public class Indexer extends SubsystemBase
         return main.getMotorVoltage().getValue();
     }
     
+    /**
+     * Updates the simulated indexer physics when running in simulation mode.
+     * Feeds simulated rotor position and velocity back into the TalonFXSimState.
+     */
     @Override
     public void periodic ()
     {

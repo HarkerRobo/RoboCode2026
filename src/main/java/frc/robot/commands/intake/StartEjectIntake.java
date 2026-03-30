@@ -11,11 +11,18 @@ import frc.robot.subsystems.intake.Intake;
 
 public class StartEjectIntake extends Command 
 {
+    /**
+     * Claims subsystem.
+     */
     public StartEjectIntake () 
     {
         addRequirements(Intake.getInstance());
     }
 
+    /**
+     * Clears controller rumble feedback and sets the intake to eject speed.
+     * Runs once to begin reversing the intake immediately.
+     */
     @Override
     public void initialize()
     {
@@ -24,6 +31,9 @@ public class StartEjectIntake extends Command
         Intake.getInstance().setVelocity(RotationsPerSecond.of(Constants.Intake.EJECT_VELOCITY));
     }
 
+    /**
+     * Command finishes immediately.
+     */
     @Override
     public boolean isFinished () 
     {

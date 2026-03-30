@@ -33,6 +33,10 @@ public class IntakeExtension extends SubsystemBase
 
     private Debouncer stallingDebouncer;
     
+    /**
+     * Creates the IntakeExtension subsystem and configures the TalonFX hardware.
+     * Initializes simulation settings and the stalling debouncer for overloading.
+     */
     private IntakeExtension()
     {
         motor = new TalonFX(Constants.IntakeExtension.ID, Constants.CAN_CHAIN);

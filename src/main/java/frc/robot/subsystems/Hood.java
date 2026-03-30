@@ -59,6 +59,11 @@ public class Hood extends SubsystemBase
         }
     }
 
+
+    /**
+     * Applies all TalonFX configuration including PID, feedforward, inversion, limits, and sensor ratio.
+     * Ensures the hood motor starts in fully configured state.
+     */
     private void config()
     {
         motor.clearStickyFaults();

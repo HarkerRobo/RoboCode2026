@@ -14,6 +14,10 @@ public class ShooterTargetSpeed extends Command
     DoubleSupplier targetSpeedSupplier;
     double targetSpeed;
     
+    /**
+     * Claims the Shooter subsystem and stores the supplied target speed source.
+     * Allows retrieval of the desired flywheel surface velocity.
+     */
     public ShooterTargetSpeed(DoubleSupplier targetSpeedSupplier)
     {
         this.targetSpeedSupplier = targetSpeedSupplier;
@@ -29,6 +33,9 @@ public class ShooterTargetSpeed extends Command
         this(()->leftTargetSpeed);
     }
     
+    /**
+     * Reads the target speed and applies it as linear velocity.
+     */
     @Override
     public void initialize()
     {

@@ -12,11 +12,18 @@ import frc.robot.subsystems.intake.Intake;
  */
 public class StartDefaultIntake extends Command 
 {
+    /**
+     * Claims subsystem.
+     */
     public StartDefaultIntake () 
     {
         addRequirements(Intake.getInstance());
     }
 
+    /**
+     * Clears controller rumble feedback and sets the intake voltage to zero.
+     * Runs once to place the subsystem into its default inactive state.
+     */
     @Override
     public void initialize()
     {
@@ -25,6 +32,9 @@ public class StartDefaultIntake extends Command
         // Intake.getInstance().setVelocity(RotationsPerSecond.zero());
     }
 
+    /**
+     * Command finishes immediately.
+     */
     @Override
     public boolean isFinished () 
     {

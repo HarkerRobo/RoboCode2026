@@ -44,6 +44,10 @@ public class Shooter extends SubsystemBase
     
     private double targetVelocity = 0.0;
 
+    /**
+     * Creates the Shooter subsystem and configures the master and follower motors.
+     * Initializes simulation settings.
+     */
     private Shooter()
     {
         master = new TalonFX(Constants.Shooter.MASTER_ID, Constants.CAN_SUPERSTRUCTURE);
@@ -62,6 +66,9 @@ public class Shooter extends SubsystemBase
         
     }
 
+    /**
+     * Applies all TalonFX settings: PID, feedforward, inversion, limits, and sensor ratio.
+     */
     private void config()
     {
         master.clearStickyFaults();
@@ -98,26 +105,41 @@ public class Shooter extends SubsystemBase
         follower.setControl(new Follower(Constants.Shooter.MASTER_ID, Constants.Shooter.MOTOR_ALIGNMENT));
     }
     
+    /**
+     * @return motor voltage
+     */
     public Voltage getVoltage()
     {
         return master.getMotorVoltage().getValue();
     }
-    
+    /**
+     * @return velocity of shooter
+     */
     public AngularVelocity getVelocity()
     {
         return master.getVelocity().getValue();
     }
     
+    /**
+     * Returns the linear surface velocity of the flywheel.
+     * Converts angular velocity into tangential speed at the wheel edge.
+     */
     public LinearVelocity getEffectiveVelocity()
     {
         return MetersPerSecond.of(getVelocity().in(RotationsPerSecond) * Constants.Shooter.FLYWHEEL_CIRCUMFERANCE);
     }
 
+    /**
+     * Returns the target linear surface velocity.
+     */
     public LinearVelocity getTargetEffectiveVelocity()
     {
         return MetersPerSecond.of(targetVelocity * Constants.Shooter.FLYWHEEL_CIRCUMFERANCE);
     }
     
+    /**
+     * Returns the target angular velocity of the shooter.
+     */
     public AngularVelocity getTargetVelocity()
     {
         return RotationsPerSecond.of(targetVelocity);
@@ -138,6 +160,10 @@ public class Shooter extends SubsystemBase
         targetVelocity = velocity.in(RotationsPerSecond);
     }
         
+    /**
+     * Sets the flywheel velocity using linear surface speed.
+     * Converts the request into angular velocity internally.
+     */
     public void setEffectiveVelocity(LinearVelocity velocity)
     {
         setVelocity(RotationsPerSecond.of(velocity.in(MetersPerSecond) / Constants.Shooter.FLYWHEEL_CIRCUMFERANCE));
@@ -219,11 +245,19 @@ public class Shooter extends SubsystemBase
         return Math.abs(master.getVelocity().getValue().in(Rotations.per(Second)) - targetVelocity) < Constants.Shooter.MAX_ERROR;
     }
     
+    /**
+     * Creates a quasistatic SysId test command for the shooter.
+     * Characterize feedforward constants at low acceleration.
+     */
     public Command sysIdQuasistatic (SysIdRoutine.Direction direction)
     {
         return sysId.quasistatic(direction).withName("SysId Q" + (direction == SysIdRoutine.Direction.kForward ? "F" : "R"));
     }
     
+    /**
+     * Creates a dynamic SysId test command for the shooter.
+     * Measure acceleration response for tuning.
+     */
     public Command sysIdDynamic (SysIdRoutine.Direction direction)
     {
         return sysId.dynamic(direction).withName("SysId D" + (direction == SysIdRoutine.Direction.kForward ? "F" : "R"));
