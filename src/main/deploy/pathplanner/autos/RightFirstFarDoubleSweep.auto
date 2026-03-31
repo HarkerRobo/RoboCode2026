@@ -5,65 +5,9 @@
     "data": {
       "commands": [
         {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "RFFDS1"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "ExtendIntake"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "StartRunIntake"
-          }
-        },
-        {
           "type": "path",
           "data": {
-            "pathName": "RFFDS2"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "RFFDS3"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "StartDefaultIntake"
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "RFFDS4"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "RetractIntake"
-                }
-              }
-            ]
+            "pathName": "RFFDS1"
           }
         },
         {
@@ -73,7 +17,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 5.0
+                  "waitTime": 3.5
                 }
               },
               {
@@ -81,24 +25,74 @@
                 "data": {
                   "name": "Shoot"
                 }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 1.5
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "RetractIntake"
+                      }
+                    }
+                  ]
+                }
               }
             ]
           }
         },
         {
-          "type": "parallel",
+          "type": "named",
+          "data": {
+            "name": "Stow"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RFFDS2"
+          }
+        },
+        {
+          "type": "deadline",
           "data": {
             "commands": [
               {
-                "type": "path",
+                "type": "wait",
                 "data": {
-                  "pathName": "RFFDS5"
+                  "waitTime": 3.5
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "ExtendIntake"
+                  "name": "Shoot"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 1.5
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "RetractIntake"
+                      }
+                    }
+                  ]
                 }
               }
             ]
@@ -107,31 +101,7 @@
         {
           "type": "named",
           "data": {
-            "name": "StartRunIntake"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "RFFDS6"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "RFFDS7"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "StartDefaultIntake"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "RetractIntake"
+            "name": "Stow"
           }
         }
       ]

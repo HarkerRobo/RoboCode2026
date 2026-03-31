@@ -3,35 +3,165 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.416,
-        "y": 6.964
+        "x": 2.694,
+        "y": 6.251
       },
       "prevControl": null,
       "nextControl": {
-        "x": 8.416,
-        "y": 5.535757239724548
+        "x": 2.570329545454545,
+        "y": 7.127045454545455
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 8.416,
-        "y": 4.595
+        "x": 4.456477272727272,
+        "y": 7.498090909090909
       },
       "prevControl": {
-        "x": 8.416,
-        "y": 5.412090392057021
+        "x": 3.673159090909091,
+        "y": 7.539318181818182
+      },
+      "nextControl": {
+        "x": 5.455095102059776,
+        "y": 7.445532075968145
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 7.55608228980322,
+        "y": 6.801431127012522
+      },
+      "prevControl": {
+        "x": 6.971555193818131,
+        "y": 7.696488242739692
+      },
+      "nextControl": {
+        "x": 7.885900471621401,
+        "y": 6.29639703610343
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 7.393828264758497,
+        "y": 4.64345259391771
+      },
+      "prevControl": {
+        "x": 8.161729959982887,
+        "y": 4.814097415078685
+      },
+      "nextControl": {
+        "x": 6.517656529516995,
+        "y": 4.448747763864043
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 4.456477272727272,
+        "y": 7.498090909090909
+      },
+      "prevControl": {
+        "x": 7.297300084945622,
+        "y": 7.376341359995836
+      },
+      "nextControl": {
+        "x": 3.0135227272727265,
+        "y": 7.559931818181818
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.694,
+        "y": 6.251
+      },
+      "prevControl": {
+        "x": 2.1374318181818177,
+        "y": 6.9879375
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.9669811320754716,
+      "rotationDegrees": 0.0
+    },
+    {
+      "waypointRelativePos": 1.9575471698113205,
+      "rotationDegrees": -56.17841056027074
+    },
+    {
+      "waypointRelativePos": 2.8852201257861676,
+      "rotationDegrees": -128.5908279216377
+    },
+    {
+      "waypointRelativePos": 3.7185534591195046,
+      "rotationDegrees": 136.11589183372166
+    },
+    {
+      "waypointRelativePos": 4.213836477987427,
+      "rotationDegrees": -173.99860115507568
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "ExtendIntake",
+      "waypointRelativePos": 1.3734290843806116,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "ExtendIntake"
+        }
+      }
+    },
+    {
+      "name": "StartRunIntake",
+      "waypointRelativePos": 1.9120287253141834,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "StartRunIntake"
+        }
+      }
+    },
+    {
+      "name": "StartDefaultIntake",
+      "waypointRelativePos": 3.671454219030515,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "StartDefaultIntake"
+        }
+      }
+    },
+    {
+      "name": "RevShoot",
+      "waypointRelativePos": 4.201077199281865,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "RevShoot"
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -42,13 +172,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": -48.576
   },
   "reversed": false,
   "folder": "LeftFirstFarDoubleSweep",
   "idealStartingState": {
-    "velocity": 0,
-    "rotation": -90.0
+    "velocity": 0.0,
+    "rotation": -48.576
   },
   "useDefaultConstraints": true
 }
