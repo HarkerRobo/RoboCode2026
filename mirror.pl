@@ -14,6 +14,14 @@ sub translatename
 	{
 		$newname = "R$1";
 	}
+	elsif ($original =~ m/Right(.*)/)
+	{
+		$newname = "Left$1";
+	}
+	elsif ($original =~ m/R(.*)/)
+	{
+		$newname = "L$1";
+	}
 	else
 	{
 		$newname = "Mirrored$original"

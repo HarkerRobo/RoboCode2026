@@ -319,7 +319,7 @@ public class RobotContainer
         NamedCommands.registerCommand("HardShoot", hardShoot);
         NamedCommands.registerCommand("RevShoot",
             new ShooterTargetSpeed(()->Util.calculateShootVelocity(drivetrain) + flywheelOffset));
-        NamedCommands.registerCommand("InOutIntake",
+        NamedCommands.registerCommand("LinearAgitateIntake",
             new StartRunIntake()
             .andThen(new RetractIntake().withTimeout(2.0))
             .andThen(new ExtendIntake().withTimeout(1.0))
