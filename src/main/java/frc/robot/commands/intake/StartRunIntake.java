@@ -29,14 +29,14 @@ public class StartRunIntake extends Command
     {
         Robot.instance.robotContainer.driver.setRumble(RumbleType.kBothRumble, 0.5);
         // Intake.getInstance().setVoltage(Volts.of(5.5));
-        if (DriverStation.isAutonomous())
-        {
-            Intake.getInstance().setVelocity(RotationsPerSecond.of(Constants.Intake.INTAKE_VELOCITY_AUTON));
-        }
-        else
-        {
+        // if (DriverStation.isAutonomous())
+        // {
+        //     Intake.getInstance().setVelocity(RotationsPerSecond.of(Constants.Intake.INTAKE_VELOCITY_AUTON));
+        // }
+        // else
+        // {
             Intake.getInstance().setVelocity(RotationsPerSecond.of(Constants.Intake.INTAKE_VELOCITY));
-        }
+        // }
     }
 
 

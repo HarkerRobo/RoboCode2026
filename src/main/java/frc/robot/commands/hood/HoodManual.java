@@ -47,6 +47,10 @@ public class HoodManual extends Command
         {
             Hood.getInstance().setVoltage(Volts.of(Constants.Hood.MANUAL_DOWN_VOLTAGE));
         }
+        else
+        {
+            Hood.getInstance().setVoltage(Volts.zero());
+        }
 
         if (Hood.getInstance().getVoltage().in(Volts) < 0.0)
         {

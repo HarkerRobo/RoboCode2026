@@ -45,6 +45,7 @@ import frc.robot.commands.climb.Spool;
 import frc.robot.commands.drive.DriveToPose;
 import frc.robot.commands.drive.RotateToAngle;
 import frc.robot.commands.hood.AimToAngle;
+import frc.robot.commands.hood.AimToAngleInPerpetuity;
 import frc.robot.commands.hood.HoodManual;
 import frc.robot.commands.hood.ZeroHood;
 import frc.robot.commands.indexer.IndexerStartDefaultSpeed;
@@ -55,9 +56,9 @@ import frc.robot.commands.intake.StartDefaultIntake;
 import frc.robot.commands.intake.StartEjectIntake;
 import frc.robot.commands.intake.StartRunIntake;
 import frc.robot.commands.intakeextension.ExtendIntake;
-import frc.robot.commands.intakeextension.IntakeExtensionManual;
 import frc.robot.commands.intakeextension.RetractIntake;
 import frc.robot.commands.shooter.ShooterTargetSpeed;
+import frc.robot.commands.shooter.ShooterTargetSpeedInPerpetuity;
 import frc.robot.commands.shooterindexer.ShooterIndexerStartDefaultSpeed;
 import frc.robot.commands.shooterindexer.ShooterIndexerStartEjectSpeed;
 import frc.robot.commands.shooterindexer.ShooterIndexerStartFullSpeed;
@@ -224,7 +225,8 @@ public class RobotContainer
             .andThen(new AimToAngle(75.0))
             .withName("Stow"); // must stay a supplier
         
-        shoot = new AimToAngle(()->Util.calculateShootPitch(drivetrain).in(Degrees))
+        shoot = 
+            new AimToAngle(()->Util.calculateShootPitch(drivetrain).in(Degrees))
             .andThen(new ShooterTargetSpeed(()->Util.calculateShootVelocity(drivetrain)))
             .andThen(new WaitUntilCommand(() -> Shooter.getInstance().readyToShoot() && Hood.getInstance().readyToShoot()))
             .andThen(new IndexerStartFullSpeed())
@@ -306,7 +308,8 @@ public class RobotContainer
         NamedCommands.registerCommand("ExtendIntake", Commands.runEnd(
             ()->IntakeExtension.getInstance().setVoltage(Volts.of(Constants.IntakeExtension.EXTENDING_VOLTAGE)),
             ()->IntakeExtension.getInstance().setVoltage(Volts.of(Constants.IntakeExtension.HOLDING_EXTEND_VOLTAGE))));
-        NamedCommands.registerCommand("RetractIntake", new RetractIntake().alongWith(new StartRunIntake()));
+        NamedCommands.registerCommand("RetractIntake", new RetractIntake().alongWith(new StartRunIntake())
+            .andThen(new StartDefaultIntake()));
         NamedCommands.registerCommand("StartRunIntake", new StartRunIntake());
         NamedCommands.registerCommand("StartDefaultIntake", new StartDefaultIntake());
         NamedCommands.registerCommand("EjectIntake (with timeout)", 
@@ -325,18 +328,15 @@ public class RobotContainer
             .andThen(new RetractIntake().withTimeout(2.0)));
 
         NamedCommands.registerCommand("Shoot", 
-            // track(new IndependentCommand(track(new AimToAngle(()->Util.calculateShootPitch(drivetrain).in(Degrees))))
-            // .alongWith(new IndependentCommand(track(new ShooterTargetSpeed(()->Util.calculateShootVelocity(drivetrain)))))
-            new AimToAngle(70.9/*71.5*/)
-            .andThen(new ShooterTargetSpeed(/*20.0*/21.0))
+            new AimToAngle(()->Util.calculateShootPitch(drivetrain).in(Degrees))
+            .andThen(new ShooterTargetSpeed(()->Util.calculateShootVelocity(drivetrain)))
             //.andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot() && Hood.getInstance().readyToShoot()))
             .andThen(new ShooterIndexerStartFullSpeed())
             .andThen(new IndexerStartFullSpeed()) // load to shoot
             .andThen(Commands.run(()->{}))
-            .finallyDo(()->{
-                CommandScheduler.getInstance().schedule(stow.get());
-            })
         .withName("Shoot"));
+
+        NamedCommands.registerCommand("Stow", stow.get());
         
         autonChooser = AutoBuilder.buildAutoChooser();
         
@@ -344,7 +344,6 @@ public class RobotContainer
 
         // ----------------------- DEFAULT BINDINGS HERE -------------------------
 
-        IntakeExtension.getInstance().setDefaultCommand(new IntakeExtensionManual());
         Hood.getInstance().setDefaultCommand(new HoodManual());
 
         // -------------------- CHANGE BINDING SETTINGS HERE ---------------------
@@ -402,6 +401,7 @@ public class RobotContainer
         driver.povUp().onTrue(
             new ShooterTargetSpeed(Constants.HARDCODE_VELOCITY)
             .andThen(new AimToAngle(Constants.HARDCODE_HOOD_PITCH.in(Degrees)))
+            .andThen(new WaitCommand(2.0))
             // .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot() && Hood.getInstance().readyToShoot()))
             .andThen(new ShooterIndexerStartFullSpeed())
             .andThen(new IndexerStartFullSpeed())
@@ -423,12 +423,12 @@ public class RobotContainer
         driver.leftTrigger().whileTrue(new StartEndCommand(()->isSlow = true, ()->isSlow = false).withName("ToggleSlow"));
 
         driver.rightTrigger().and(()->!mostRecentAim).onTrue(
-            // shoot
-            new AimToAngle(()->Telemetry.getInstance().getHoodAngle())
-            .andThen(new ShooterTargetSpeed(()->Telemetry.getInstance().getShooterSpeed()))
-            .andThen(new WaitCommand(2.0))
-            .andThen(new ShooterIndexerStartFullSpeed())
-            .andThen(new IndexerStartFullSpeed())
+            shoot
+            // new AimToAngle(()->Telemetry.getInstance().getHoodAngle())
+            // .andThen(new ShooterTargetSpeed(()->Telemetry.getInstance().getShooterSpeed()))
+            // .andThen(new WaitCommand(2.0))
+            // .andThen(new ShooterIndexerStartFullSpeed())
+            // .andThen(new IndexerStartFullSpeed())
             );
 
         driver.rightTrigger().and(()->mostRecentAim).onTrue(pass);

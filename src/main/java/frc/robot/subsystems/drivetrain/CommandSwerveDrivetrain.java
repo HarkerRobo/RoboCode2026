@@ -312,7 +312,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                                 || bestEstimate.pose.getX() < 0.0
                                 || bestEstimate.pose.getX() > Constants.Vision.kTagLayout.getFieldLength()
                                 || bestEstimate.pose.getY() < 0.0
-                                || bestEstimate.pose.getY() > Constants.Vision.kTagLayout.getFieldWidth();
+                                || bestEstimate.pose.getY() > Constants.Vision.kTagLayout.getFieldWidth()
+                                || bestEstimate.pose.getTranslation().getDistance(getState().Pose.getTranslation()) > Constants.Vision.MAX_DISTANCE;
                 if (!rejectPose)
                 {
                     addVisionMeasurement(bestEstimate.pose, bestEstimate.timestampSeconds);

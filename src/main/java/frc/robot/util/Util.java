@@ -82,7 +82,7 @@ public class Util
 
         // 2026-03-28 DATA POINTS
         addData(1.425, 7.4, 75.0);
-        addData(1.864, 7.7, 71.5);
+        addData(1.864, 7.7, 71.5); // undershot with one motor running
         addData(2.062, 8.0, 71.5);
         addData(2.320, 8.3, 71.5);
         addData(2.614, 8.4, 71.0);
@@ -346,13 +346,13 @@ public class Util
     
     public static Angle calculatePassPitch(CommandSwerveDrivetrain drivetrain)
     {
-        return Degrees.of(68.0);
+        return Degrees.of(65.0);
         //return Util.calculatePitch(getShootStartingPoint(drivetrain), getPassEndingPoint(drivetrain), calculatePassVelocity(drivetrain));
     }
     
     public static double calculatePassVelocity(CommandSwerveDrivetrain drivetrain)
     {
-        return 30.0;
+        return 12.7;
         //return Util.calculateVelocity(getShootStartingPoint(drivetrain), getPassEndingPoint(drivetrain));
     }
 

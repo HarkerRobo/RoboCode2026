@@ -73,7 +73,9 @@ public class Constants
         public static final double odometryUpdateFrequency = 100.0; // 100.0 Hz for CAN 2.0, which the Roborio runs on
         public static final Matrix<N3, N1> kTagStdDevs = VecBuilder.fill(0.5, 0.5, 99999);
         public static final Matrix<N3, N1> stateStdDevs = VecBuilder.fill(0.05, 0.05, 0.1);
-        public static final double maxAmbiguity = 0.5;
+        public static final double maxAmbiguity = 0.3;
+
+        public static final double MAX_DISTANCE = 2.0;
 
         // The layout of the AprilTags on the field
         public static final AprilTagFieldLayout kTagLayout = AprilTagFieldLayout
@@ -111,7 +113,7 @@ public class Constants
         public static final double KA = 0.013044;
 		
         public static final double DEFAULT_VELOCITY = 0.0; // TODO meters per second (nonzero to decrease startup time)
-        public static final double SOFT_PASS_VELOCITY = 15.0; // TODO meters per second
+        public static final double SOFT_PASS_VELOCITY = 6.5; // TODO meters per second
 
         public static final double INCREASE_VELOCITY = 0.5; // TODO
         public static final double MAX_VELOCITY = 14.0; // TODO
@@ -133,7 +135,6 @@ public class Constants
         public static final double SUPPLY_CURRENT_LIMIT = 40.0;
 
         public static final double INTAKE_VELOCITY = -30.0; // rot/s // not a bug
-        public static final double INTAKE_VELOCITY_AUTON = -50.0; // rot/s
         public static final double REDUCED_INTAKE_VELOCITY = -20.0;
         public static final double DEFAULT_INTAKE_VELOCITY = 0.0;
         public static final double EJECT_VELOCITY = 25.0; // rot/s
@@ -331,7 +332,7 @@ public class Constants
         public static final double MM_JERK = 0.0;
         */
 
-        public static final double MAIN_MAX_VOLTAGE = 3.5; // TODO volts
+        public static final double MAIN_MAX_VOLTAGE = 4.5;//3.5; // TODO volts
         public static final double MAIN_DEFAULT_VOLTAGE = 0.0; // TODO volts
         public static final double MAIN_EJECT_VOLTAGE = -3.5; // TODO volts
 
@@ -349,7 +350,7 @@ public class Constants
         public static final double SUPPLY_CURRENT_LIMIT = 40.0;
 
         public static final double DEFAULT_VOLTAGE = 0.0;
-        public static final double INTAKE_VOLTAGE = 6.0;
+        public static final double INTAKE_VOLTAGE = 8.0;//6.0;
 
         public static final double INTAKE_VELOCITY = 25.0; // rot/s
         public static final double EJECT_VELOCITY = -25.0; // rot/s
@@ -543,8 +544,8 @@ public class Constants
     public static final Translation3d PASS_LEFT_TARGET_POSITION = new Translation3d(2.010664, 2.010664, 0.0);
     public static final Translation3d PASS_RIGHT_TARGET_POSITION = new Translation3d(2.010664, Simulation.FIELD_HEIGHT - 2.010664, 0.0);
 
-    public static final Angle HARDCODE_HOOD_PITCH = Degrees.of(72.25);
-    public static final double HARDCODE_VELOCITY = 19.75;
+    public static final Angle HARDCODE_HOOD_PITCH = Degrees.of(71.5);
+    public static final double HARDCODE_VELOCITY = 8.1;
 
     public static final double PITCH_OFFSET_UNIT = 5.0; // TODO
     public static final double FLYWHEEL_OFFSET_UNIT = 0.5; // TODO
