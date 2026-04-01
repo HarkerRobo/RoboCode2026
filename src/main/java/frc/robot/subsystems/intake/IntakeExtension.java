@@ -28,8 +28,8 @@ public class IntakeExtension extends SubsystemBase
     private TalonFX motor;
 
     private ElevatorSim sim = new ElevatorSim(
-        LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60(1), 0.001, Constants.IntakeExtension.GEAR_RATIO),
-            DCMotor.getKrakenX60(1), Constants.IntakeExtension.MIN_HEIGHT, Constants.IntakeExtension.MAX_HEIGHT, false, Constants.IntakeExtension.MIN_HEIGHT);
+        LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60(1), 0.001, Constants.IntakeExtension.GEAR_RATIO.in(Value)),
+            DCMotor.getKrakenX60(1), Constants.IntakeExtension.MIN_HEIGHT.in(Meters), Constants.IntakeExtension.MAX_HEIGHT.in(Meters), false, Constants.IntakeExtension.MIN_HEIGHT.in(Meters));
 
     private Debouncer stallingDebouncer;
     
@@ -48,7 +48,7 @@ public class IntakeExtension extends SubsystemBase
             motor.getSimState().setMotorType(TalonFXSimState.MotorType.KrakenX60);
         }
 
-        stallingDebouncer = new Debouncer(Constants.IntakeExtension.STALLING_DEBOUNCE_TIME);
+        stallingDebouncer = new Debouncer(Constants.IntakeExtension.STALLING_DEBOUNCE_TIME.in(Seconds));
     }
 
     /**
@@ -60,16 +60,16 @@ public class IntakeExtension extends SubsystemBase
         motor.clearStickyFaults();
         TalonFXConfiguration extensionConfig = new TalonFXConfiguration();
 
-        extensionConfig.Feedback.SensorToMechanismRatio = Constants.IntakeExtension.GEAR_RATIO;
+        extensionConfig.Feedback.SensorToMechanismRatio = Constants.IntakeExtension.GEAR_RATIO.in(Value);
 
         extensionConfig.MotorOutput.Inverted = Constants.IntakeExtension.INVERTED;
         extensionConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
-        extensionConfig.Voltage.PeakForwardVoltage = Constants.MAX_VOLTAGE;
-        extensionConfig.Voltage.PeakReverseVoltage = -Constants.MAX_VOLTAGE;
+        extensionConfig.Voltage.PeakForwardVoltage = Constants.MAX_VOLTAGE.in(Volts);
+        extensionConfig.Voltage.PeakReverseVoltage = -Constants.MAX_VOLTAGE.in(Volts);
 
-        extensionConfig.CurrentLimits.StatorCurrentLimit = Constants.IntakeExtension.STATOR_CURRENT_LIMIT;
-        extensionConfig.CurrentLimits.StatorCurrentLimit = Constants.IntakeExtension.SUPPLY_CURRENT_LIMIT;
+        extensionConfig.CurrentLimits.StatorCurrentLimit = Constants.IntakeExtension.STATOR_CURRENT_LIMIT.in(Amps);
+        extensionConfig.CurrentLimits.StatorCurrentLimit = Constants.IntakeExtension.SUPPLY_CURRENT_LIMIT.in(Amps);
 
         motor.getConfigurator().apply(extensionConfig);
     }
@@ -123,11 +123,11 @@ public class IntakeExtension extends SubsystemBase
     {
         if (getVoltage().in(Volts) > 0)
         {
-            return stallingDebouncer.calculate(motor.getStatorCurrent().getValueAsDouble() >= Constants.IntakeExtension.STALLING_CURRENT_EXTEND);
+            return stallingDebouncer.calculate(motor.getStatorCurrent().getValueAsDouble() >= Constants.IntakeExtension.STALLING_CURRENT_EXTEND.in(Amps));
         }
         else
         {
-            return stallingDebouncer.calculate(motor.getStatorCurrent().getValueAsDouble() >= Constants.IntakeExtension.STALLING_CURRENT_RETRACT);
+            return stallingDebouncer.calculate(motor.getStatorCurrent().getValueAsDouble() >= Constants.IntakeExtension.STALLING_CURRENT_RETRACT.in(Amps));
         }
     }
 
@@ -151,8 +151,8 @@ public class IntakeExtension extends SubsystemBase
             // apply the new rotor position and velocity to the TalonFX;
             // note that this is rotor position/velocity (before gear ratio), but
             // DCMotorSim returns mechanism position/velocity (after gear ratio)
-            simState.setRawRotorPosition(sim.getPositionMeters() * Constants.IntakeExtension.GEAR_RATIO);
-            simState.setRotorVelocity(sim.getVelocityMetersPerSecond() * Constants.IntakeExtension.GEAR_RATIO);
+            simState.setRawRotorPosition(sim.getPositionMeters() * Constants.IntakeExtension.GEAR_RATIO.in(Value));
+            simState.setRotorVelocity(sim.getVelocityMetersPerSecond() * Constants.IntakeExtension.GEAR_RATIO.in(Value));
         }
     }
     

@@ -41,11 +41,11 @@ public class HoodManual extends Command
     {
         if (Robot.instance.robotContainer.operator.y().getAsBoolean() && !stallingUp)
         {
-            Hood.getInstance().setVoltage(Volts.of(Constants.Hood.MANUAL_UP_VOLTAGE));
+            Hood.getInstance().setVoltage(Constants.Hood.MANUAL_UP_VOLTAGE);
         }
         else if (Robot.instance.robotContainer.operator.a().getAsBoolean() && !stallingDown)
         {
-            Hood.getInstance().setVoltage(Volts.of(Constants.Hood.MANUAL_DOWN_VOLTAGE));
+            Hood.getInstance().setVoltage(Constants.Hood.MANUAL_DOWN_VOLTAGE);
         }
         else
         {

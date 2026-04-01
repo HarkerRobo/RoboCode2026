@@ -1,17 +1,18 @@
 package frc.robot.simulation;
 
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
+
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import frc.robot.Constants;
 
-
 /**
  * Modified FRC 868 Code
  */
 public final class BallPhysics {
-    public static final double GRAVITY = 9.81;
     
     public record ShotSolution(
             double launchPitchRad,
@@ -105,14 +106,14 @@ public final class BallPhysics {
 
         s.velocity = s.velocity.plus(accel.times(dt));
         
-        if (s.pose.getZ() > 0.5 * Constants.Simulation.FUEL_DIAMETER || s.velocity.getZ() > 0)
+        if (s.pose.getZ() > 0.5 * Constants.Simulation.FUEL_DIAMETER.in(Meters) || s.velocity.getZ() > 0)
         {
             s.pose = new Pose3d(s.pose.getTranslation().plus(s.velocity.times(dt)),
                 integrateRotation(s.pose.getRotation(), s.omega, dt));
         }
         else
         {
-            s.pose = new Pose3d(s.pose.getX(), s.pose.getY(), 0.5 * Constants.Simulation.FUEL_DIAMETER, s.pose.getRotation());
+            s.pose = new Pose3d(s.pose.getX(), s.pose.getY(), 0.5 * Constants.Simulation.FUEL_DIAMETER.in(Meters), s.pose.getRotation());
         }
     }
 
@@ -145,10 +146,10 @@ public final class BallPhysics {
                     "No physical solution: dz - d*tan(thetaT) must be > 0");
         }
 
-        double T = Math.sqrt(2.0 * rhs / GRAVITY);
+        double T = Math.sqrt(2.0 * rhs / Constants.G.in(MetersPerSecondPerSecond));
 
         double vHoriz = d / T;
-        double vZ0 = vHoriz * tanThetaT + GRAVITY * T;
+        double vZ0 = vHoriz * tanThetaT + Constants.G.in(MetersPerSecondPerSecond) * T;
 
         double launchSpeed = Math.hypot(vHoriz, vZ0);
         double launchPitch = Math.atan2(vZ0, vHoriz);
@@ -178,7 +179,7 @@ public final class BallPhysics {
         }
 
         double v2 = launchSpeed * launchSpeed;
-        double g = GRAVITY;
+        double g = Constants.G.in(MetersPerSecondPerSecond);
 
         double discriminant = v2 * v2 - g * (g * d * d + 2.0 * dz * v2);
         if (discriminant < 0) {
@@ -214,6 +215,6 @@ public final class BallPhysics {
         double d = Math.hypot(dx, dy);
 
         return Math.sqrt(
-                GRAVITY * (Math.hypot(d, dz) + dz));
+            Constants.G.in(MetersPerSecondPerSecond) * (Math.hypot(d, dz) + dz));
     }
 }

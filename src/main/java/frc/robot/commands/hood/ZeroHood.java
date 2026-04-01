@@ -28,7 +28,7 @@ public class ZeroHood extends Command
     public void initialize()
     {
         timer.reset();
-        Hood.getInstance().setVoltage(Volts.of(Constants.Hood.ZEROING_VOLTAGE));
+        Hood.getInstance().setVoltage(Constants.Hood.ZEROING_VOLTAGE);
     }
 
     /**
@@ -50,7 +50,7 @@ public class ZeroHood extends Command
     {
         if (!interrupted)
         {
-            Hood.getInstance().setPosition(Degrees.of(Constants.Hood.ZEROING_POSITION));
+            Hood.getInstance().setPosition(Constants.Hood.ZEROING_POSITION);
         }
         Hood.getInstance().setVoltage(Volts.of(0.0));
     }

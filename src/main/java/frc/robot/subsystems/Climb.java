@@ -30,12 +30,12 @@ public class Climb extends SubsystemBase
 
     // this doesn't work anymore since its not an elevator and idk how you would sim it
     private DCMotorSim spoolSim = new DCMotorSim(
-        LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60(1), 0.001, Constants.Climb.SPOOLING_GEAR_RATIO),
+        LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60(1), 0.001, Constants.Climb.SPOOLING_GEAR_RATIO.in(Value)),
             DCMotor.getKrakenX60(1));
 
 
     private DCMotorSim climbWheelsSim = new DCMotorSim(
-        LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60(1),0.001, Constants.Climb.CLIMBWHEELS_GEAR_RATIO),
+        LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60(1),0.001, Constants.Climb.CLIMBWHEELS_GEAR_RATIO.in(Value)),
         DCMotor.getKrakenX60(1));
 
     /**
@@ -75,12 +75,12 @@ public class Climb extends SubsystemBase
 
         climbWheelsConfig.MotorOutput.Inverted = Constants.Climb.CLIMBWHEELS_INVERTED;
 
-        climbWheelsConfig.Feedback.SensorToMechanismRatio = Constants.Climb.CLIMBWHEELS_GEAR_RATIO;
+        climbWheelsConfig.Feedback.SensorToMechanismRatio = Constants.Climb.CLIMBWHEELS_GEAR_RATIO.in(Value);
         
-        climbWheelsConfig.CurrentLimits.StatorCurrentLimit = Constants.Climb.CLIMBWHEELS_STATOR_CURRENT_LIMIT;
+        climbWheelsConfig.CurrentLimits.StatorCurrentLimit = Constants.Climb.CLIMBWHEELS_STATOR_CURRENT_LIMIT.in(Amps);
         climbWheelsConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
-        climbWheelsConfig.CurrentLimits.SupplyCurrentLimit = Constants.Climb.CLIMBWHEELS_SUPPLY_CURRENT_LIMIT;
+        climbWheelsConfig.CurrentLimits.SupplyCurrentLimit = Constants.Climb.CLIMBWHEELS_SUPPLY_CURRENT_LIMIT.in(Amps);
         climbWheelsConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         
         climbWheelsConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -95,12 +95,12 @@ public class Climb extends SubsystemBase
 
         spoolingConfig.MotorOutput.Inverted = Constants.Climb.SPOOLING_INVERTED;
 
-        spoolingConfig.Feedback.SensorToMechanismRatio = Constants.Climb.SPOOLING_GEAR_RATIO;
+        spoolingConfig.Feedback.SensorToMechanismRatio = Constants.Climb.SPOOLING_GEAR_RATIO.in(Value);
         
-        spoolingConfig.CurrentLimits.StatorCurrentLimit = Constants.Climb.SPOOLING_STATOR_CURRENT_LIMIT;
+        spoolingConfig.CurrentLimits.StatorCurrentLimit = Constants.Climb.SPOOLING_STATOR_CURRENT_LIMIT.in(Amps);
         spoolingConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
-        spoolingConfig.CurrentLimits.SupplyCurrentLimit = Constants.Climb.SPOOLING_SUPPLY_CURRENT_LIMIT;
+        spoolingConfig.CurrentLimits.SupplyCurrentLimit = Constants.Climb.SPOOLING_SUPPLY_CURRENT_LIMIT.in(Amps);
         spoolingConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         
         spoolingConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -114,7 +114,7 @@ public class Climb extends SubsystemBase
 
     /**
      * Directly drives the elevator motor with a raw duty cycle percentage.
-     * Disabled when the subsystem is marked “Disabled”.
+     * Disabled when the subsystem is marked "Disabled".
     */
     public void setElevatorDutyCycle(double velocity) 
     {
@@ -170,7 +170,7 @@ public class Climb extends SubsystemBase
      */
     public boolean isSpoolingStalling()
     {
-        return Math.abs(spooling.getStatorCurrent().getValueAsDouble()) >= Constants.Climb.SPOOLING_STALLING_CURRENT;
+        return Math.abs(spooling.getStatorCurrent().getValueAsDouble()) >= Constants.Climb.SPOOLING_STALLING_CURRENT.in(Amps);
     }
 
     /**
@@ -228,9 +228,9 @@ public class Climb extends SubsystemBase
             // apply the new rotor position and velocity to the TalonFX;
             // note that this is rotor position/velocity (before gear ratio), but
             // DCMotorSim returns mechanism position/velocity (after gear ratio)
-            climbWheelsSimState.setRawRotorPosition(climbWheelsSim.getAngularPositionRotations() * Constants.Climb.CLIMBWHEELS_GEAR_RATIO);
+            climbWheelsSimState.setRawRotorPosition(climbWheelsSim.getAngularPositionRotations() * Constants.Climb.CLIMBWHEELS_GEAR_RATIO.in(Value));
             climbWheelsSimState
-                    .setRotorVelocity(climbWheelsSim.getAngularVelocity().in(RotationsPerSecond) * Constants.Climb.CLIMBWHEELS_GEAR_RATIO);
+                    .setRotorVelocity(climbWheelsSim.getAngularVelocity().in(RotationsPerSecond) * Constants.Climb.CLIMBWHEELS_GEAR_RATIO.in(Value));
 
 
             TalonFXSimState spoolingSimState = spooling.getSimState();
@@ -250,9 +250,9 @@ public class Climb extends SubsystemBase
             // note that this is rotor position/velocity (before gear ratio), but
             // DCMotorSim returns mechanism position/velocity (after gear ratio)
             spoolingSimState.setRawRotorPosition(
-                    spoolSim.getAngularPosition().in(Rotations) * Constants.Climb.SPOOLING_GEAR_RATIO);
+                    spoolSim.getAngularPosition().in(Rotations) * Constants.Climb.SPOOLING_GEAR_RATIO.in(Value));
             spoolingSimState.setRotorVelocity(
-                    spoolSim.getAngularVelocity().in(Rotations.per(Second)) * Constants.Climb.SPOOLING_GEAR_RATIO);
+                    spoolSim.getAngularVelocity().in(Rotations.per(Second)) * Constants.Climb.SPOOLING_GEAR_RATIO.in(Value));
         }
     }
 

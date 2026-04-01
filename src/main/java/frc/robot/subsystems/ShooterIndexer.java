@@ -30,7 +30,7 @@ public class ShooterIndexer extends SubsystemBase
     private static TalonFX motor;
     
     private DCMotorSim sim = new DCMotorSim(
-        LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 0.001, Constants.ShooterIndexer.GEAR_RATIO),
+        LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 0.001, Constants.ShooterIndexer.GEAR_RATIO.in(Value)),
         DCMotor.getKrakenX60Foc(1));
 
     /**
@@ -64,19 +64,19 @@ public class ShooterIndexer extends SubsystemBase
         config.Slot0.kI = Constants.ShooterIndexer.KI;
         config.Slot0.kD = Constants.ShooterIndexer.KD;
 
-        config.CurrentLimits.StatorCurrentLimit = Constants.ShooterIndexer.STATOR_CURRENT_LIMIT;
+        config.CurrentLimits.StatorCurrentLimit = Constants.ShooterIndexer.STATOR_CURRENT_LIMIT.in(Amps);
         config.CurrentLimits.StatorCurrentLimitEnable = true;
         
-        config.CurrentLimits.SupplyCurrentLimit = Constants.ShooterIndexer.SUPPLY_CURRENT_LIMIT;
+        config.CurrentLimits.SupplyCurrentLimit = Constants.ShooterIndexer.SUPPLY_CURRENT_LIMIT.in(Amps);
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
 
         config.MotorOutput.Inverted = Constants.ShooterIndexer.INVERTED;
         config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
-        config.Voltage.PeakForwardVoltage = Constants.MAX_VOLTAGE;
-        config.Voltage.PeakReverseVoltage = -Constants.MAX_VOLTAGE;
+        config.Voltage.PeakForwardVoltage = Constants.MAX_VOLTAGE.in(Volts);
+        config.Voltage.PeakReverseVoltage = -Constants.MAX_VOLTAGE.in(Volts);
 
-        config.Feedback.SensorToMechanismRatio = Constants.ShooterIndexer.GEAR_RATIO;
+        config.Feedback.SensorToMechanismRatio = Constants.ShooterIndexer.GEAR_RATIO.in(Value);
 
         motor.getConfigurator().apply(config);
     }

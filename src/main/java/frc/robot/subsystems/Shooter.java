@@ -39,10 +39,10 @@ public class Shooter extends SubsystemBase
     private TalonFX follower;
     
     private DCMotorSim sim = new DCMotorSim(
-        LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60(1), 0.001, Constants.Shooter.GEAR_RATIO),
+        LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60(1), 0.001, Constants.Shooter.GEAR_RATIO.in(Value)),
         DCMotor.getKrakenX60(2));
     
-    private double targetVelocity = 0.0;
+    private AngularVelocity targetVelocity = RotationsPerSecond.of(0.0);
 
     /**
      * Creates the Shooter subsystem and configures the master and follower motors.
@@ -78,19 +78,19 @@ public class Shooter extends SubsystemBase
 
         if (isSimulated())
         {
-            config.CurrentLimits.StatorCurrentLimit = Constants.Shooter.STATOR_CURRENT_LIMIT;
+            config.CurrentLimits.StatorCurrentLimit = Constants.Shooter.STATOR_CURRENT_LIMIT.in(Amps);
             config.CurrentLimits.StatorCurrentLimitEnable = true;
             
-            config.CurrentLimits.SupplyCurrentLimit = Constants.Shooter.SUPPLY_CURRENT_LIMIT;
+            config.CurrentLimits.SupplyCurrentLimit = Constants.Shooter.SUPPLY_CURRENT_LIMIT.in(Amps);
             config.CurrentLimits.SupplyCurrentLimitEnable = true;
         }
 
-        config.Feedback.SensorToMechanismRatio = Constants.Shooter.GEAR_RATIO;
+        config.Feedback.SensorToMechanismRatio = Constants.Shooter.GEAR_RATIO.in(Value);
 
         config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
-        config.Voltage.PeakForwardVoltage = Constants.MAX_VOLTAGE;
-        config.Voltage.PeakReverseVoltage = -Constants.MAX_VOLTAGE;
+        config.Voltage.PeakForwardVoltage = Constants.MAX_VOLTAGE.in(Volts);
+        config.Voltage.PeakReverseVoltage = -Constants.MAX_VOLTAGE.in(Volts);
         
         config.Slot0.kP = Constants.Shooter.KP;
         config.Slot0.kI = Constants.Shooter.KI;
@@ -126,7 +126,7 @@ public class Shooter extends SubsystemBase
      */
     public LinearVelocity getEffectiveVelocity()
     {
-        return MetersPerSecond.of(getVelocity().in(RotationsPerSecond) * Constants.Shooter.FLYWHEEL_CIRCUMFERANCE);
+        return MetersPerSecond.of(getVelocity().in(RotationsPerSecond) * Constants.Shooter.FLYWHEEL_CIRCUMFERENCE.in(Meters));
     }
 
     /**
@@ -134,7 +134,7 @@ public class Shooter extends SubsystemBase
      */
     public LinearVelocity getTargetEffectiveVelocity()
     {
-        return MetersPerSecond.of(targetVelocity * Constants.Shooter.FLYWHEEL_CIRCUMFERANCE);
+        return MetersPerSecond.of(targetVelocity.in(RotationsPerSecond) * Constants.Shooter.FLYWHEEL_CIRCUMFERENCE.in(Meters)); //technically there should be a /1 Rotation in there
     }
     
     /**
@@ -142,7 +142,7 @@ public class Shooter extends SubsystemBase
      */
     public AngularVelocity getTargetVelocity()
     {
-        return RotationsPerSecond.of(targetVelocity);
+        return targetVelocity;
     }
 
     /**
@@ -157,7 +157,7 @@ public class Shooter extends SubsystemBase
             return;
         }
         master.setControl(new VelocityVoltage(velocity));
-        targetVelocity = velocity.in(RotationsPerSecond);
+        targetVelocity = velocity;
     }
         
     /**
@@ -166,7 +166,7 @@ public class Shooter extends SubsystemBase
      */
     public void setEffectiveVelocity(LinearVelocity velocity)
     {
-        setVelocity(RotationsPerSecond.of(velocity.in(MetersPerSecond) / Constants.Shooter.FLYWHEEL_CIRCUMFERANCE));
+        setVelocity(RotationsPerSecond.of(velocity.in(MetersPerSecond) / Constants.Shooter.FLYWHEEL_CIRCUMFERENCE.in(Meters)));
     }
 
     /**
@@ -242,7 +242,7 @@ public class Shooter extends SubsystemBase
      */
     public boolean readyToShoot()
     {
-        return Math.abs(master.getVelocity().getValue().in(Rotations.per(Second)) - targetVelocity) < Constants.Shooter.MAX_ERROR;
+        return Math.abs(master.getVelocity().getValue().in(Rotations.per(Second)) - targetVelocity.in(RotationsPerSecond)) < Constants.Shooter.MAX_ERROR;
     }
     
     /**

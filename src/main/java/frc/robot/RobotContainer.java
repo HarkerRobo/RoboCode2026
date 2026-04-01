@@ -281,7 +281,7 @@ public class RobotContainer
         testCommandChooser.addOption("Intake/AgitateIntake", new AgitateIntake());
         testCommandChooser.addOption("IntakeExtension/ExtendIntake", new ExtendIntake());
         testCommandChooser.addOption("IntakeExtension/RetractIntake", new RetractIntake());
-        testCommandChooser.addOption("Shooter/ShooterTargetSpeed[10]", new ShooterTargetSpeed(10.0));
+        testCommandChooser.addOption("Shooter/ShooterTargetSpeed[10]", new ShooterTargetSpeed(MetersPerSecond.of(10.0)));
         testCommandChooser.addOption("Shooter/ShooterTargetSpeed[" + Constants.HARDCODE_VELOCITY + "]", new ShooterTargetSpeed(Constants.HARDCODE_VELOCITY));
         testCommandChooser.addOption("Shooter/ShooterTargetSpeed[" + Constants.Shooter.DEFAULT_VELOCITY + "]", new ShooterTargetSpeed(Constants.Shooter.DEFAULT_VELOCITY));
         testCommandChooser.addOption("ShooterIndexer/ShooterIndexerStartDefaultSpeed", new ShooterIndexerStartDefaultSpeed());
@@ -306,8 +306,8 @@ public class RobotContainer
         SmartDashboard.putData(CommandScheduler.getInstance());
 
         NamedCommands.registerCommand("ExtendIntake", Commands.runEnd(
-            ()->IntakeExtension.getInstance().setVoltage(Volts.of(Constants.IntakeExtension.EXTENDING_VOLTAGE)),
-            ()->IntakeExtension.getInstance().setVoltage(Volts.of(Constants.IntakeExtension.HOLDING_EXTEND_VOLTAGE))));
+            ()->IntakeExtension.getInstance().setVoltage(Constants.IntakeExtension.EXTENDING_VOLTAGE),
+            ()->IntakeExtension.getInstance().setVoltage(Constants.IntakeExtension.HOLDING_EXTEND_VOLTAGE)));
         NamedCommands.registerCommand("RetractIntake", new RetractIntake().alongWith(new StartRunIntake())
             .andThen(new StartDefaultIntake()));
         NamedCommands.registerCommand("StartRunIntake", new StartRunIntake());
@@ -383,8 +383,8 @@ public class RobotContainer
                 // Drivetrain will execute this command periodically
                 drivetrain.applyRequest(() -> 
                         drive.withVelocityX(-driver.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-                        .withVelocityY(-driver.getLeftX() * MaxSpeed * (isSlow ? Constants.TRANSLATION_SLOW_MULTIPLIER : 1.0)) // Drive left with negative X (left)
-                        .withRotationalRate(-driver.getRightX() * MaxAngularRate * (isSlow ? Constants.ROTATION_SLOW_MULTIPLIER : 1.0)) // Drive counterclockwise with negative X (left)
+                        .withVelocityY(-driver.getLeftX() * MaxSpeed * (isSlow ? Constants.TRANSLATION_SLOW_MULTIPLIER.in(Value) : 1.0)) // Drive left with negative X (left)
+                        .withRotationalRate(-driver.getRightX() * MaxAngularRate * (isSlow ? Constants.ROTATION_SLOW_MULTIPLIER.in(Value) : 1.0)) // Drive counterclockwise with negative X (left)
                     ).withName("SwerveManual"));}
     
 
@@ -413,9 +413,9 @@ public class RobotContainer
         drivetrain.setDefaultCommand(
                 // Drivetrain will execute this command periodically
                 drivetrain.applyRequest(() -> 
-                        drive.withVelocityX(/*accelerationLimiter.calculate(*/-driver.getLeftY() * MaxSpeed * (isSlow ? Constants.TRANSLATION_SLOW_MULTIPLIER : 1.0)/*)*/) // Drive forward with negative Y (forward)
-                        .withVelocityY(/*accelerationLimiter.calculate(*/-driver.getLeftX() * MaxSpeed * (isSlow ? Constants.TRANSLATION_SLOW_MULTIPLIER : 1.0)/*)*/) // Drive left with negative X (left)
-                        .withRotationalRate(-driver.getRightX() * MaxAngularRate * (isSlow ? Constants.ROTATION_SLOW_MULTIPLIER : 1.0)) // Drive counterclockwise with negative X (left)
+                        drive.withVelocityX(/*accelerationLimiter.calculate(*/-driver.getLeftY() * MaxSpeed * (isSlow ? Constants.TRANSLATION_SLOW_MULTIPLIER.in(Value) : 1.0)/*)*/) // Drive forward with negative Y (forward)
+                        .withVelocityY(/*accelerationLimiter.calculate(*/-driver.getLeftX() * MaxSpeed * (isSlow ? Constants.TRANSLATION_SLOW_MULTIPLIER.in(Value) : 1.0)/*)*/) // Drive left with negative X (left)
+                        .withRotationalRate(-driver.getRightX() * MaxAngularRate * (isSlow ? Constants.ROTATION_SLOW_MULTIPLIER.in(Value) : 1.0)) // Drive counterclockwise with negative X (left)
                     ).withName("SwerveManual"));
 
         // tested
@@ -537,7 +537,7 @@ public class RobotContainer
         // }));
 
         operator.x().onTrue(Intake.getInstance().runOnce(()->Intake.getInstance().setVelocity(
-                RotationsPerSecond.of(Constants.Intake.REDUCED_INTAKE_VELOCITY)))
+                Constants.Intake.REDUCED_INTAKE_VELOCITY))
             .andThen(Commands.runOnce(()->intakeTriggered = true))
             .andThen(new RetractIntake())
             .andThen(new StartDefaultIntake())

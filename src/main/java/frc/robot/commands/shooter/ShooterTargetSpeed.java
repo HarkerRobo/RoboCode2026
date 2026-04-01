@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.Shooter;
@@ -12,7 +13,7 @@ import frc.robot.util.Util;
 public class ShooterTargetSpeed extends Command
 {
     DoubleSupplier targetSpeedSupplier;
-    double targetSpeed;
+    LinearVelocity targetSpeed;
     
     /**
      * Claims the Shooter subsystem and stores the supplied target speed source.
@@ -28,9 +29,9 @@ public class ShooterTargetSpeed extends Command
      * Claims the Shooter subsystem
      * Stores the supplied target speed source.
      */
-    public ShooterTargetSpeed(double leftTargetSpeed)
+    public ShooterTargetSpeed(LinearVelocity targetSpeed)
     {
-        this(()->leftTargetSpeed);
+        this(()->targetSpeed.in(MetersPerSecond));
     }
     
     /**
@@ -39,8 +40,8 @@ public class ShooterTargetSpeed extends Command
     @Override
     public void initialize()
     {
-        targetSpeed = targetSpeedSupplier.getAsDouble();
-        Shooter.getInstance().setEffectiveVelocity(MetersPerSecond.of(targetSpeed));
+        targetSpeed = MetersPerSecond.of(targetSpeedSupplier.getAsDouble());
+        Shooter.getInstance().setEffectiveVelocity(targetSpeed);
     }
 
     /**

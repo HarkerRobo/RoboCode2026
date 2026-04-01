@@ -28,7 +28,7 @@ public class StartEjectIntake extends Command
     {
         Robot.instance.robotContainer.driver.setRumble(RumbleType.kBothRumble, 0.0);
         // Intake.getInstance().setVoltage(Volts.of(-2.5));
-        Intake.getInstance().setVelocity(RotationsPerSecond.of(Constants.Intake.EJECT_VELOCITY));
+        Intake.getInstance().setVelocity(Constants.Intake.EJECT_VELOCITY);
     }
 
     /**

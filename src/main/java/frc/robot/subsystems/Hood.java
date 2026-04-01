@@ -36,10 +36,10 @@ public class Hood extends SubsystemBase
     private double desiredPosition; // degrees
     
     private final DCMotorSim sim = new DCMotorSim(
-        LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX44(1), 0.001, Constants.Hood.GEAR_RATIO),
+        LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX44(1), 0.001, Constants.Hood.GEAR_RATIO.in(Value)),
         DCMotor.getKrakenX44(1));
 
-    private Debouncer debouncer = new Debouncer(Constants.Hood.DEBOUNCE_TIME);
+    private Debouncer debouncer = new Debouncer(Constants.Hood.DEBOUNCE_TIME.in(Seconds));
 
     /**
      * Initializes the master/follower TalonFX motors and applies configuration.
@@ -71,14 +71,14 @@ public class Hood extends SubsystemBase
 
         if (!isSimulated())
         {
-            config.CurrentLimits.StatorCurrentLimit = Constants.Hood.STATOR_CURRENT_LIMIT;
+            config.CurrentLimits.StatorCurrentLimit = Constants.Hood.STATOR_CURRENT_LIMIT.in(Amps);
             config.CurrentLimits.StatorCurrentLimitEnable = true;
             
-            config.CurrentLimits.SupplyCurrentLimit = Constants.Hood.SUPPLY_CURRENT_LIMIT;
+            config.CurrentLimits.SupplyCurrentLimit = Constants.Hood.SUPPLY_CURRENT_LIMIT.in(Amps);
             config.CurrentLimits.SupplyCurrentLimitEnable = true;
         }
 
-        config.Feedback.SensorToMechanismRatio = Constants.Hood.GEAR_RATIO;
+        config.Feedback.SensorToMechanismRatio = Constants.Hood.GEAR_RATIO.in(Value);
 
         config.MotorOutput.Inverted = Constants.Hood.INVERTED;
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -92,8 +92,8 @@ public class Hood extends SubsystemBase
         config.Slot0.kA = Constants.Hood.KA;
         config.Slot0.kG = Constants.Hood.KG;
 
-        config.Voltage.PeakForwardVoltage = Constants.MAX_VOLTAGE;
-        config.Voltage.PeakReverseVoltage = -Constants.MAX_VOLTAGE;
+        config.Voltage.PeakForwardVoltage = Constants.MAX_VOLTAGE.in(Volts);
+        config.Voltage.PeakReverseVoltage = -Constants.MAX_VOLTAGE.in(Volts);
 
         motor.getConfigurator().apply(config);
     }
@@ -179,7 +179,7 @@ public class Hood extends SubsystemBase
     public boolean isStalling()
     {
 
-        return debouncer.calculate(Math.abs(motor.getStatorCurrent().getValueAsDouble()) >= Constants.Hood.STALLING_CURRENT);
+        return debouncer.calculate(Math.abs(motor.getStatorCurrent().getValueAsDouble()) >= Constants.Hood.STALLING_CURRENT.in(Amps));
     }
 
     /**

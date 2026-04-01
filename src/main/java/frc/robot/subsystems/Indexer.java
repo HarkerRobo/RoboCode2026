@@ -26,7 +26,7 @@ public class Indexer extends SubsystemBase
     private static TalonFX main;
     
     private DCMotorSim mainSim = new DCMotorSim(
-        LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 0.001, Constants.Indexer.MAIN_GEAR_RATIO),
+        LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 0.001, Constants.Indexer.MAIN_GEAR_RATIO.in(Value)),
         DCMotor.getKrakenX60Foc(1));
     
     /**
@@ -57,19 +57,19 @@ public class Indexer extends SubsystemBase
         mainConfigs.Slot0.kI = Constants.Indexer.MAIN_KI;
         mainConfigs.Slot0.kD = Constants.Indexer.MAIN_KD;
 
-        mainConfigs.CurrentLimits.StatorCurrentLimit = Constants.Indexer.MAIN_STATOR_CURRENT_LIMIT;
+        mainConfigs.CurrentLimits.StatorCurrentLimit = Constants.Indexer.MAIN_STATOR_CURRENT_LIMIT.in(Amps);
         mainConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
         
-        mainConfigs.CurrentLimits.SupplyCurrentLimit = Constants.Indexer.MAIN_SUPPLY_CURRENT_LIMIT;
+        mainConfigs.CurrentLimits.SupplyCurrentLimit = Constants.Indexer.MAIN_SUPPLY_CURRENT_LIMIT.in(Amps);
         mainConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
 
         mainConfigs.MotorOutput.Inverted = Constants.Indexer.MAIN_INVERTED;
         mainConfigs.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
-        mainConfigs.Voltage.PeakForwardVoltage = Constants.MAX_VOLTAGE;
-        mainConfigs.Voltage.PeakReverseVoltage = -Constants.MAX_VOLTAGE;
+        mainConfigs.Voltage.PeakForwardVoltage = Constants.MAX_VOLTAGE.in(Volts);
+        mainConfigs.Voltage.PeakReverseVoltage = -Constants.MAX_VOLTAGE.in(Volts);
 
-        mainConfigs.Feedback.SensorToMechanismRatio = Constants.Indexer.MAIN_GEAR_RATIO;
+        mainConfigs.Feedback.SensorToMechanismRatio = Constants.Indexer.MAIN_GEAR_RATIO.in(Value);
 
         main.getConfigurator().apply(mainConfigs);
     }

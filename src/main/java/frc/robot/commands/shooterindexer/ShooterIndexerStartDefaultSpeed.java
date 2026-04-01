@@ -22,7 +22,7 @@ public class ShooterIndexerStartDefaultSpeed extends Command
     @Override
     public void initialize()
     {
-        ShooterIndexer.getInstance().setVoltage(Volts.of(Constants.ShooterIndexer.DEFAULT_VOLTAGE));
+        ShooterIndexer.getInstance().setVoltage(Constants.ShooterIndexer.DEFAULT_VOLTAGE);
     }
 
     /**
