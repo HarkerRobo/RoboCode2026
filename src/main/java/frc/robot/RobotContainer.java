@@ -395,7 +395,6 @@ public class RobotContainer
     private void configureDriverBindings() 
     {
         driver.a().whileTrue(new RotateToAngle(drivetrain, () -> AlignConstants.HUB, false)
-            .andThen(new RetractIntake().withTimeout(2.0))
             .withName("ShootAlign"));
         
         driver.povUp().onTrue(
@@ -423,12 +422,12 @@ public class RobotContainer
         driver.leftTrigger().whileTrue(new StartEndCommand(()->isSlow = true, ()->isSlow = false).withName("ToggleSlow"));
 
         driver.rightTrigger().and(()->!mostRecentAim).onTrue(
-            shoot
-            // new AimToAngle(()->Telemetry.getInstance().getHoodAngle())
-            // .andThen(new ShooterTargetSpeed(()->Telemetry.getInstance().getShooterSpeed()))
-            // .andThen(new WaitCommand(2.0))
-            // .andThen(new ShooterIndexerStartFullSpeed())
-            // .andThen(new IndexerStartFullSpeed())
+            // shoot
+            new AimToAngle(()->Telemetry.getInstance().getHoodAngle())
+            .andThen(new ShooterTargetSpeed(()->Telemetry.getInstance().getShooterSpeed()))
+            .andThen(new WaitCommand(2.0))
+            .andThen(new ShooterIndexerStartFullSpeed())
+            .andThen(new IndexerStartFullSpeed())
             );
 
         driver.rightTrigger().and(()->mostRecentAim).onTrue(pass);
@@ -526,16 +525,16 @@ public class RobotContainer
             .withName("SoftPass"));
         operator.rightTrigger().onFalse(stow.get());
 
-        operator.leftBumper().onTrue(Commands.runOnce(()->
-        {
-            if (direction == PassDirection.Right) direction = PassDirection.Automatic;
-            else direction = PassDirection.Right;
-        }));
-        operator.rightBumper().onTrue(Commands.runOnce(()->
-        {
-            if (direction == PassDirection.Left) direction = PassDirection.Automatic;
-            else direction = PassDirection.Left;
-        }));
+        // operator.leftBumper().onTrue(Commands.runOnce(()->
+        // {
+        //     if (direction == PassDirection.Right) direction = PassDirection.Automatic;
+        //     else direction = PassDirection.Right;
+        // }));
+        // operator.rightBumper().onTrue(Commands.runOnce(()->
+        // {
+        //     if (direction == PassDirection.Left) direction = PassDirection.Automatic;
+        //     else direction = PassDirection.Left;
+        // }));
 
         operator.x().onTrue(Intake.getInstance().runOnce(()->Intake.getInstance().setVelocity(
                 RotationsPerSecond.of(Constants.Intake.REDUCED_INTAKE_VELOCITY)))

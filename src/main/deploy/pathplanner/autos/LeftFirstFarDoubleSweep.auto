@@ -33,7 +33,31 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 1.5
+                        "waitTime": 0.9
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "RetractIntake"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "RetractIntake"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "RetractIntake"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "RetractIntake"
                       }
                     },
                     {
@@ -83,7 +107,31 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 1.5
+                        "waitTime": 0.0
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "RetractIntake"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "RetractIntake"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "RetractIntake"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "RetractIntake"
                       }
                     },
                     {

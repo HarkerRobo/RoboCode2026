@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.util.RumbleManager;
 
 /**
  * is still used but applies a zero voltage
@@ -27,7 +28,7 @@ public class StartDefaultIntake extends Command
     @Override
     public void initialize()
     {
-        Robot.instance.robotContainer.driver.setRumble(RumbleType.kBothRumble, 0.0);
+        RumbleManager.getInstance().setDriverRumble(0.0);
         Intake.getInstance().setVoltage(Volts.zero());
         // Intake.getInstance().setVelocity(RotationsPerSecond.zero());
     }

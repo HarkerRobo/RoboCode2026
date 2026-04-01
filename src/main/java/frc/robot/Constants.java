@@ -544,8 +544,8 @@ public class Constants
     public static final Translation3d PASS_LEFT_TARGET_POSITION = new Translation3d(2.010664, 2.010664, 0.0);
     public static final Translation3d PASS_RIGHT_TARGET_POSITION = new Translation3d(2.010664, Simulation.FIELD_HEIGHT - 2.010664, 0.0);
 
-    public static final Angle HARDCODE_HOOD_PITCH = Degrees.of(71.5);
-    public static final double HARDCODE_VELOCITY = 8.1;
+    public static final Angle HARDCODE_HOOD_PITCH = Degrees.of(70.3);
+    public static final double HARDCODE_VELOCITY = 9.0;
 
     public static final double PITCH_OFFSET_UNIT = 5.0; // TODO
     public static final double FLYWHEEL_OFFSET_UNIT = 0.5; // TODO

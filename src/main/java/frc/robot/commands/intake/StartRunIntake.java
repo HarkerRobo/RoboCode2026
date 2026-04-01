@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.util.RumbleManager;
 
 public class StartRunIntake extends Command 
 {
@@ -27,7 +28,7 @@ public class StartRunIntake extends Command
     @Override
     public void initialize()
     {
-        Robot.instance.robotContainer.driver.setRumble(RumbleType.kBothRumble, 0.5);
+        RumbleManager.getInstance().setDriverRumble(0.5);
         // Intake.getInstance().setVoltage(Volts.of(5.5));
         // if (DriverStation.isAutonomous())
         // {

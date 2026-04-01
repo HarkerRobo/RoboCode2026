@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.hood.ZeroHood;
 import frc.robot.simulation.SimulationState;
+import frc.robot.util.RumbleManager;
 import frc.robot.util.Util;
 
 /**
@@ -141,6 +142,7 @@ public class Robot extends TimedRobot
    @Override
    public void teleopInit() 
    {
+
       CommandScheduler.getInstance().schedule(new ZeroHood());
       if (autonomousCommand != null) 
       {
@@ -152,7 +154,10 @@ public class Robot extends TimedRobot
     * No logic is required
     */
    @Override
-   public void teleopPeriodic() {}
+   public void teleopPeriodic() 
+   {
+      RumbleManager.getInstance().periodic();
+   }
    /**
     * Called when exiting teleoperated mode
     * No actions are required

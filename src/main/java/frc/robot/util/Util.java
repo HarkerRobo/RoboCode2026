@@ -87,12 +87,15 @@ public class Util
         addData(2.320, 8.3, 71.5);
         addData(2.614, 8.4, 71.0);
         addData(2.919, 8.5, 70.8);
-        addData(3.207, 8.8, 70.6);
         addData(3.574, 8.8, 70.3);
         addData(3.952, 9.26, 70.1);
         addData(4.312, 9.35, 69.9); // should be tested with both motors running
         addData(4.646, 9.7, 69.7); // "
         addData(5.697, 10.2, 64.9); // "; farthest point
+        
+        addData(3.207, 8.35, 70.6);
+        addData(4.0, 9.25, 70.0);
+        addData(3.40, 9.0, 70.3);
     }
 
     /**
