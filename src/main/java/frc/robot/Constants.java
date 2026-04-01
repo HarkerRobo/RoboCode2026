@@ -166,7 +166,7 @@ public class Constants
         public static final double STATOR_CURRENT_LIMIT = 60.0;
         public static final double SUPPLY_CURRENT_LIMIT = 40.0;
 
-        public static final double EXTENDING_VOLTAGE = 3.5;
+        public static final double EXTENDING_VOLTAGE = 5.0;
         public static final double RETRACTING_VOLTAGE = -3.5;
         public static final double HOLDING_EXTEND_VOLTAGE = 0.25;
         public static final double HOLDING_RETRACT_VOLTAGE = -0.25;
@@ -177,8 +177,8 @@ public class Constants
         
         public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
 
-        public static final double STALLING_CURRENT_EXTEND = 20;
-        public static final double STALLING_CURRENT_RETRACT = 20; // might need to be lower
+        public static final double STALLING_CURRENT_EXTEND = 19;
+        public static final double STALLING_CURRENT_RETRACT = 19; // might need to be lower
 
         public static final double MIN_HEIGHT = 0.0;
         public static final double MAX_HEIGHT = 1.0;
@@ -212,7 +212,7 @@ public class Constants
 
         public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
 
-        public static final double MAX_ERROR = 1.0;//0.25;
+        public static final double MAX_ERROR = 0.5;//0.25;
     
         public static final double STALLING_CURRENT = 10.0; // TODO
 
@@ -526,7 +526,7 @@ public class Constants
         public static final int kBackRightDriveMotorId = 8;
         public static final int kBackRightSteerMotorId = 7;
         public static final int kBackRightEncoderId = 16;
-        public static final Angle kBackRightEncoderOffset = Rotations.of(-0.011963);
+        public static final Angle kBackRightEncoderOffset = Rotations.of(-0.129395);
         public static final boolean kBackRightSteerMotorInverted = false;
         public static final boolean kBackRightEncoderInverted = false;
 
@@ -544,8 +544,8 @@ public class Constants
     public static final Translation3d PASS_LEFT_TARGET_POSITION = new Translation3d(2.010664, 2.010664, 0.0);
     public static final Translation3d PASS_RIGHT_TARGET_POSITION = new Translation3d(2.010664, Simulation.FIELD_HEIGHT - 2.010664, 0.0);
 
-    public static final Angle HARDCODE_HOOD_PITCH = Degrees.of(70.3);
-    public static final double HARDCODE_VELOCITY = 9.0;
+    public static final Angle HARDCODE_HOOD_PITCH = Degrees.of(70.5);
+    public static final double HARDCODE_VELOCITY = 9.1;
 
     public static final double PITCH_OFFSET_UNIT = 5.0; // TODO
     public static final double FLYWHEEL_OFFSET_UNIT = 0.5; // TODO
@@ -556,4 +556,7 @@ public class Constants
     public static final boolean INTERPOLATE_VALUES = true;
 
     public static final double ACCELERATION_LIMIT = 3.0;
+
+    public static final double AUTO_SHOOT_1_VELOCITY = 8.9;
+    public static final double AUTO_SHOOT_1_ANGLE = 70.1;
 }

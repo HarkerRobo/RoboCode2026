@@ -23,7 +23,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Shoot"
+                  "name": "Shoot1"
                 }
               },
               {
@@ -33,7 +33,7 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 0.67
+                        "waitTime": 0.9
                       }
                     },
                     {
@@ -97,7 +97,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Shoot"
+                  "name": "Shoot1"
                 }
               },
               {

@@ -336,6 +336,14 @@ public class RobotContainer
             .andThen(Commands.run(()->{}))
         .withName("Shoot"));
 
+        NamedCommands.registerCommand("Shoot1",
+            new AimToAngle(Constants.AUTO_SHOOT_1_ANGLE)
+            .andThen(new ShooterTargetSpeed(Constants.AUTO_SHOOT_1_VELOCITY))
+            //.andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot() && Hood.getInstance().readyToShoot()))
+            .andThen(new ShooterIndexerStartFullSpeed())
+            .andThen(new IndexerStartFullSpeed()) // load to shoot
+            .andThen(Commands.run(()->{})));
+
         NamedCommands.registerCommand("Stow", stow.get());
         
         autonChooser = AutoBuilder.buildAutoChooser();
@@ -400,7 +408,7 @@ public class RobotContainer
         driver.povUp().onTrue(
             new ShooterTargetSpeed(Constants.HARDCODE_VELOCITY)
             .andThen(new AimToAngle(Constants.HARDCODE_HOOD_PITCH.in(Degrees)))
-            .andThen(new WaitCommand(2.0))
+            //.andThen(new WaitCommand(2.0))
             // .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot() && Hood.getInstance().readyToShoot()))
             .andThen(new ShooterIndexerStartFullSpeed())
             .andThen(new IndexerStartFullSpeed())
@@ -448,7 +456,7 @@ public class RobotContainer
                         new StartDefaultIntake()
                         .withName("DeactivateIntake"));
                 }
-                else if (intakeExtended)
+                else if (true)
                 {
                     intakeTriggered = true;
                     CommandScheduler.getInstance().schedule(

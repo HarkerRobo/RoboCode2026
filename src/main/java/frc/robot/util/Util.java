@@ -8,6 +8,8 @@ import static edu.wpi.first.units.Units.Rotations;
 
 import java.nio.file.WatchEvent;
 
+import javax.naming.event.NamingListener;
+
 import com.pathplanner.lib.util.FlippingUtil;
 
 import edu.wpi.first.math.Pair;
@@ -81,21 +83,26 @@ public class Util
         // 2.722, 70, 19.5
 
         // 2026-03-28 DATA POINTS
-        addData(1.425, 7.4, 75.0);
-        addData(1.864, 7.7, 71.5); // undershot with one motor running
-        addData(2.062, 8.0, 71.5);
-        addData(2.320, 8.3, 71.5);
-        addData(2.614, 8.4, 71.0);
-        addData(2.919, 8.5, 70.8);
-        addData(3.574, 8.8, 70.3);
-        addData(3.952, 9.26, 70.1);
-        addData(4.312, 9.35, 69.9); // should be tested with both motors running
-        addData(4.646, 9.7, 69.7); // "
-        addData(5.697, 10.2, 64.9); // "; farthest point
+
+        double angleOffset = -1.5;
+        addData(1.425, 7.4, 75.0 + angleOffset);
+        addData(1.864, 7.7, 71.5 + angleOffset); // undershot with one motor running
+        addData(2.062, 8.0, 71.5 + angleOffset);
+        addData(2.320, 8.3, 71.5 + angleOffset);
+        addData(2.614, 8.4, 71.0 + angleOffset);
+        addData(2.919, 8.5, 70.8 + angleOffset);
+        addData(3.574, 8.8, 70.3 + angleOffset);
+        addData(3.952, 9.26, 70.1 + angleOffset);
+        addData(4.312, 9.35, 69.9 + angleOffset); // should be tested with both motors running
+        // addData(4.646, 9.7, 69.7 + angleOffset); // "
+        // addData(5.697, 10.2, 64.9 + angleOffset); // "; farthest point
         
-        addData(3.207, 8.35, 70.6);
-        addData(4.0, 9.25, 70.0);
-        addData(3.40, 9.0, 70.3);
+        addData(3.207, 8.35, 70.6 + angleOffset);
+        addData(4.0, 9.25, 70.0 + angleOffset);
+        addData(3.40, 9.0, 70.3 + angleOffset);
+        addData(3.80, 9.2, 70.1 + angleOffset);
+
+        addData(5.20, 9.5, 67.5 + angleOffset);
     }
 
     /**
@@ -314,14 +321,17 @@ public class Util
             if (value != null)
             {
                 Angle output = value.getSecond();
-                // System.out.printf("Calculated angle with interpolation: %f degrees\n", output.in(Degrees));
-                return output;
+                if (output != null)
+                {
+                    System.out.printf("Calculated angle with interpolation: %f degrees\n", output.in(Degrees));
+                    return output;
+                }
             }
             // System.out.println("Interpolation failed - no value found. Reverting to math");
         }
-        Angle output = Util.calculatePitch(getShootStartingPoint(drivetrain), getShootEndingPoint(), calculateShootVelocity(drivetrain));
+        // Angle output = Util.calculatePitch(getShootStartingPoint(drivetrain), getShootEndingPoint(), calculateShootVelocity(drivetrain));
         // System.out.printf("Calculated angle: %f degrees\n", output.in(Degrees));
-        return output;
+        return Degrees.zero();
     }
 
     /**
@@ -336,15 +346,20 @@ public class Util
             Pair<LinearVelocity, Angle> value = interpolatingTreeMap.get(calculateShootDistance(drivetrain));
             if (value != null)
             {
-                double output = value.getFirst().in(MetersPerSecond);
-                // System.out.printf("Calculated velocity with interpolation: %f\n", output);
-                return output;
+                LinearVelocity first = value.getFirst();
+                if (first != null)
+                {
+                    double output = first.in(MetersPerSecond);
+                    System.out.printf("Calculated velocity with interpolation: %f\n", output);
+                    return output;
+                }
             }
-            // System.out.println("Interpolation failed - no value found. Reverting to math");
+            System.out.println("Interpolation failed - no value found. Reverting to math");
         }
-        double output = Util.calculateVelocity(getShootStartingPoint(drivetrain), getShootEndingPoint());
+        return 0.0;
+        // double output = Util.calculateVelocity(getShootStartingPoint(drivetrain), getShootEndingPoint());
         // System.out.printf("Calculated velocity: %f\n", output);
-        return output;
+        // return output;
     }
     
     public static Angle calculatePassPitch(CommandSwerveDrivetrain drivetrain)
