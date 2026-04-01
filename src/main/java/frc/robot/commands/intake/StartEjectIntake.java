@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.subsystems.intake.Intake;
-import frc.robot.util.RumbleManager;
 
 public class StartEjectIntake extends Command 
 {
@@ -27,7 +26,7 @@ public class StartEjectIntake extends Command
     @Override
     public void initialize()
     {
-        RumbleManager.getInstance().setDriverRumble(0.0);
+        Robot.instance.robotContainer.driver.setRumble(RumbleType.kBothRumble, 0.0);
         // Intake.getInstance().setVoltage(Volts.of(-2.5));
         Intake.getInstance().setVelocity(RotationsPerSecond.of(Constants.Intake.EJECT_VELOCITY));
     }
