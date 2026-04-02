@@ -88,8 +88,9 @@ public class Util
         addData(1.425, 7.4, 75.0 + angleOffset);
         addData(1.864, 7.7, 71.5 + angleOffset); // undershot with one motor running
         addData(2.062, 8.0, 71.5 + angleOffset);
-        addData(2.320, 8.3, 71.5 + angleOffset);
-        addData(2.614, 8.4, 71.0 + angleOffset);
+        // addData(2.320, 8.3, 71.5 + angleOffset);
+        // addData(2.614, 8.4, 71.0 + angleOffset);
+        addData(2.567, 8.38, 72.1 + angleOffset);
         addData(2.919, 8.5, 70.8 + angleOffset);
         addData(3.574, 8.8, 70.3 + angleOffset);
         addData(3.952, 9.26, 70.1 + angleOffset);
