@@ -402,7 +402,7 @@ public class RobotContainer
      */
     private void configureDriverBindings() 
     {
-        driver.a().whileTrue(new RotateToAngle(drivetrain, () -> AlignConstants.HUB, false)
+        driver.a().whileTrue(new RotateToAngle(drivetrain, () -> Constants.Drivetrain.HUB, false)
             .withName("ShootAlign"));
         
         driver.povUp().onTrue(
