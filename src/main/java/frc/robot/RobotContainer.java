@@ -423,7 +423,18 @@ public class RobotContainer
             .andThen(new IndexerStartFullSpeed())
             .withName("HardShoot"));
 
-        driver.povUp().onFalse(stow.get());
+        driver.y().onFalse(stow.get());
+        
+        driver.x().onTrue(
+            new ShooterTargetSpeed(Constants.HARDCODE_VELOCITY_2)
+            .andThen(new AimToAngle(Constants.HARDCODE_HOOD_PITCH_2.in(Degrees)))
+            //.andThen(new WaitCommand(2.0))
+            // .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot() && Hood.getInstance().readyToShoot()))
+            .andThen(new ShooterIndexerStartFullSpeed())
+            .andThen(new IndexerStartFullSpeed())
+            .withName("HardShoot2"));
+
+        driver.x().onFalse(stow.get());
 
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
@@ -475,7 +486,7 @@ public class RobotContainer
         }));
         
         // tested in sim
-        driver.button(7) // home button/left paddle
+        driver.b() // home button/left paddle
             .onTrue(revPass);
         
         // tested in sim

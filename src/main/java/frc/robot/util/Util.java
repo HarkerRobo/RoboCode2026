@@ -85,13 +85,13 @@ public class Util
         // 2026-03-28 DATA POINTS
 
         double angleOffset = 0.0;
-        double velocityOffset = 0.4;//0.4;
+        double velocityOffset = 0.5;//0.4;
         addData(1.425, 7.4, 75.0 + angleOffset);
         addData(1.864, 7.7, 71.5 + angleOffset); // undershot with one motor running
         addData(2.062, 8.0, 71.5 + angleOffset);
         addData(2.320, 8.3, 71.5 + angleOffset); //2.x67 (auton place) 8.38, true angle: 70.6 (no offset)
-        addData(2.614, 8.4 + velocityOffset, 71.0 + angleOffset);
-        addData(2.919, 8.5 + velocityOffset, 70.8 + angleOffset);
+        addData(2.614, 8.4 + velocityOffset - 0.1, 71.0 + angleOffset);
+        addData(2.919, 8.5 + velocityOffset - 0.1, 70.8 + angleOffset);
         addData(3.574, 8.8 + velocityOffset, 70.3 + angleOffset);
         addData(3.952, 9.26 + velocityOffset, 70.1 + angleOffset);
         addData(4.312, 9.35 + velocityOffset, 69.9 + angleOffset); // should be tested with both motors running

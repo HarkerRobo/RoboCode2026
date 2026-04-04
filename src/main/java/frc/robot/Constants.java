@@ -544,8 +544,11 @@ public class Constants
     public static final Translation3d PASS_LEFT_TARGET_POSITION = new Translation3d(2.010664, 2.010664, 0.0);
     public static final Translation3d PASS_RIGHT_TARGET_POSITION = new Translation3d(2.010664, Simulation.FIELD_HEIGHT - 2.010664, 0.0);
 
-    public static final Angle HARDCODE_HOOD_PITCH = Degrees.of(69.5);
-    public static final double HARDCODE_VELOCITY = 9.4 - 0.25;
+    public static final Angle HARDCODE_HOOD_PITCH = Degrees.of(70.5);
+    public static final double HARDCODE_VELOCITY = 9.1;
+    
+    public static final Angle HARDCODE_HOOD_PITCH_2 = Degrees.of(71.5);
+    public static final double HARDCODE_VELOCITY_2 = 7.7;
 
     public static final double PITCH_OFFSET_UNIT = 5.0; // TODO
     public static final double FLYWHEEL_OFFSET_UNIT = 0.5; // TODO
@@ -557,7 +560,7 @@ public class Constants
 
     public static final double ACCELERATION_LIMIT = 3.0;
 
-    public static final double AUTO_SHOOT_1_VELOCITY = 8.9 + 0.4;
+    public static final double AUTO_SHOOT_1_VELOCITY = 8.9 + 0.4 + 0.3;
     public static final double AUTO_SHOOT_1_ANGLE = 70.1;
     
     public static final double AUTO_SHOOT_2_VELOCITY = 8.8 + 0.25;
