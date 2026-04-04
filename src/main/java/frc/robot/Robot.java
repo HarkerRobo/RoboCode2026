@@ -40,8 +40,8 @@ public class Robot extends TimedRobot
       // automatically saves log data for telemetry, driver station controls, and joystick presses
       if (isReal() || logSimulation)
       {
-         DataLogManager.start();
-         DriverStation.startDataLog(DataLogManager.getLog());
+         // DataLogManager.start();
+         // DriverStation.startDataLog(DataLogManager.getLog());
       }
    }
    /**
@@ -85,7 +85,7 @@ public class Robot extends TimedRobot
       robotContainer.driver.setRumble(RumbleType.kBothRumble, 0.0);
       if(isReal())
       {
-         SignalLogger.stop();
+         // SignalLogger.stop();
       }
    }
    /**
@@ -104,7 +104,7 @@ public class Robot extends TimedRobot
    {
       if (isReal())
       {
-         SignalLogger.start();
+         // SignalLogger.start();
       }
    }
    /**

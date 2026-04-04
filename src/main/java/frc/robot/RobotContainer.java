@@ -220,7 +220,7 @@ public class RobotContainer
         stow = ()->
             new IndexerStartDefaultSpeed()
             .andThen(new StartDefaultIntake())
-            .andThen(new ShooterTargetSpeed(Constants.Shooter.DEFAULT_VELOCITY))
+            .andThen(Shooter.getInstance().runOnce(()->Shooter.getInstance().setVoltage(Volts.of(0.0))))
             .andThen(new ShooterIndexerStartDefaultSpeed())
             .andThen(new AimToAngle(75.0))
             .withName("Stow"); // must stay a supplier
@@ -233,15 +233,16 @@ public class RobotContainer
             .andThen(new ShooterIndexerStartFullSpeed())
             .withName("Shoot");
         
-        pass = new RotateToAngle(drivetrain,
-            () -> onLeftSide() ? Constants.PASS_LEFT_TARGET_POSITION.toTranslation2d()
-                               : Constants.PASS_RIGHT_TARGET_POSITION.toTranslation2d(), true)
-            .alongWith(
+        pass = 
+        // lucas wanted to remove the auto-aligning (4/3/26, at contra costa) 
+        // new RotateToAngle(drivetrain,
+        //     () -> onLeftSide() ? Constants.PASS_LEFT_TARGET_POSITION.toTranslation2d()
+        //                        : Constants.PASS_RIGHT_TARGET_POSITION.toTranslation2d(), true)
                 new AimToAngle(() -> Util.calculatePassPitch(drivetrain).in(Degrees) + pitchOffset)
                 .andThen(new ShooterTargetSpeed(()->Util.calculatePassVelocity(drivetrain) + flywheelOffset))
                 .andThen(new WaitUntilCommand(() -> Shooter.getInstance().readyToShoot() && Hood.getInstance().readyToShoot()))
                 .andThen(new IndexerStartFullSpeed())
-                .andThen(new ShooterIndexerStartFullSpeed()))
+                .andThen(new ShooterIndexerStartFullSpeed())
             .withName("Pass");
         
 
@@ -283,7 +284,7 @@ public class RobotContainer
         testCommandChooser.addOption("IntakeExtension/RetractIntake", new RetractIntake());
         testCommandChooser.addOption("Shooter/ShooterTargetSpeed[10]", new ShooterTargetSpeed(10.0));
         testCommandChooser.addOption("Shooter/ShooterTargetSpeed[" + Constants.HARDCODE_VELOCITY + "]", new ShooterTargetSpeed(Constants.HARDCODE_VELOCITY));
-        testCommandChooser.addOption("Shooter/ShooterTargetSpeed[" + Constants.Shooter.DEFAULT_VELOCITY + "]", new ShooterTargetSpeed(Constants.Shooter.DEFAULT_VELOCITY));
+        testCommandChooser.addOption("Shooter/ShooterTargetSpeed[" + 0 + "]", Shooter.getInstance().runOnce(()->Shooter.getInstance().setVoltage(Volts.of(0.0))));
         testCommandChooser.addOption("ShooterIndexer/ShooterIndexerStartDefaultSpeed", new ShooterIndexerStartDefaultSpeed());
         testCommandChooser.addOption("ShooterIndexer/ShooterIndexerStartFullSpeed", new ShooterIndexerStartFullSpeed());
         testCommandChooser.addOption("ZeroDrivetrain", 
@@ -336,6 +337,14 @@ public class RobotContainer
             .andThen(Commands.run(()->{}))
         .withName("Shoot"));
 
+        NamedCommands.registerCommand("Shoot2",
+            new AimToAngle(Constants.AUTO_SHOOT_2_ANGLE)
+            .andThen(new ShooterTargetSpeed(Constants.AUTO_SHOOT_2_VELOCITY))
+            //.andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot() && Hood.getInstance().readyToShoot()))
+            .andThen(new ShooterIndexerStartFullSpeed())
+            .andThen(new IndexerStartFullSpeed()) // load to shoot
+            .andThen(Commands.run(()->{})));
+
         NamedCommands.registerCommand("Shoot1",
             new AimToAngle(Constants.AUTO_SHOOT_1_ANGLE)
             .andThen(new ShooterTargetSpeed(Constants.AUTO_SHOOT_1_VELOCITY))
@@ -374,10 +383,10 @@ public class RobotContainer
      */
     private void configureDebugBindings()
     {
-        // driver.a().whileTrue(Hood.getInstance().sysIdQuasistatic(Direction.kForward));
-        // driver.b().whileTrue(Hood.getInstance().sysIdQuasistatic(Direction.kReverse));
-        // driver.x().whileTrue(Hood.getInstance().sysIdDynamic(Direction.kForward));
-        // driver.y().whileTrue(Hood.getInstance().sysIdDynamic(Direction.kReverse));
+        // driver.a().whileTrue(Shooter.getInstance().sysIdQuasistatic(Direction.kForward));
+        // driver.b().whileTrue(Shooter.getInstance().sysIdQuasistatic(Direction.kReverse));
+        // driver.x().whileTrue(Shooter.getInstance().sysIdDynamic(Direction.kForward));
+        // driver.y().whileTrue(Shooter.getInstance().sysIdDynamic(Direction.kReverse));
 
         // driver.x().whileTrue(new Spool());
         // driver.y().whileTrue(new ClimbUp());
@@ -430,12 +439,12 @@ public class RobotContainer
         driver.leftTrigger().whileTrue(new StartEndCommand(()->isSlow = true, ()->isSlow = false).withName("ToggleSlow"));
 
         driver.rightTrigger().and(()->!mostRecentAim).onTrue(
-            // shoot
-            new AimToAngle(()->Telemetry.getInstance().getHoodAngle())
-            .andThen(new ShooterTargetSpeed(()->Telemetry.getInstance().getShooterSpeed()))
-            .andThen(new WaitCommand(2.0))
-            .andThen(new ShooterIndexerStartFullSpeed())
-            .andThen(new IndexerStartFullSpeed())
+            shoot
+            // new AimToAngle(()->Telemetry.getInstance().getHoodAngle())
+            // .andThen(new ShooterTargetSpeed(()->Telemetry.getInstance().getShooterSpeed()))
+            // .andThen(new WaitCommand(2.0))
+            // .andThen(new ShooterIndexerStartFullSpeed())
+            // .andThen(new IndexerStartFullSpeed())
             );
 
         driver.rightTrigger().and(()->mostRecentAim).onTrue(pass);
