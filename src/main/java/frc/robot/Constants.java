@@ -62,16 +62,16 @@ public class Constants
         public static final String kCamera1Name = "limelight";
         public static final Transform3d kRobotToCam1 = new Transform3d(
                 new Translation3d(Units.inchesToMeters(-10.5238), Units.inchesToMeters(-9.5396), Units.inchesToMeters(9.2734)),
-                new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(112.7732 - 90.0), Units.degreesToRadians(90.0 + 31.0351)));
+                 new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(22.7732), Units.degreesToRadians(90.0 + 37.8094))); // 31.0351)));
 
         
         public static final String kCamera2Name = "limelight-right";
         public static final Transform3d kRobotToCam2 = new Transform3d(
                 new Translation3d(Units.inchesToMeters(-11.743), Units.inchesToMeters(10.009), Units.inchesToMeters(9.0552)),
-                new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(12.567), Units.degreesToRadians(180.0 + 7.566))); // TODO bc this is copied from 2025 code
+                new Rotation3d(Units.degreesToRadians(1.615693), Units.degreesToRadians(12.567), Units.degreesToRadians(180.0 + 7.383715))); // TODO bc this is copied from 2025 code
 
         public static final double odometryUpdateFrequency = 100.0; // 100.0 Hz for CAN 2.0, which the Roborio runs on
-        public static final Matrix<N3, N1> kTagStdDevs = VecBuilder.fill(0.5, 0.5, 99999);
+        public static final Matrix<N3, N1> kTagStdDevs = VecBuilder.fill(0.25, 0.25, 99999);
         public static final Matrix<N3, N1> stateStdDevs = VecBuilder.fill(0.05, 0.05, 0.1);
         public static final double maxAmbiguity = 0.3;
 
@@ -105,12 +105,12 @@ public class Constants
         
         public static final double GEAR_RATIO = 20.0/12.0;
 
-		public static final double KP = 0.1;
+		public static final double KP = 0.7;//0.1;
 		public static final double KI = 0.0;
         public static final double KD = 0.0;
-        public static final double KS = 0.1382;
-        public static final double KV = 0.19241;
-        public static final double KA = 0.013044;
+        public static final double KS = 0.14443; //0.13:
+        public static final double KV = 0.19085; //0.19241;
+        public static final double KA = 0.015006; //0.013044;
 		
         public static final double DEFAULT_VELOCITY = 0.0; // TODO meters per second (nonzero to decrease startup time)
         public static final double SOFT_PASS_VELOCITY = 6.5; // TODO meters per second
@@ -546,6 +546,9 @@ public class Constants
 
     public static final Angle HARDCODE_HOOD_PITCH = Degrees.of(70.5);
     public static final double HARDCODE_VELOCITY = 9.1;
+    
+    public static final Angle HARDCODE_HOOD_PITCH_2 = Degrees.of(71.5);
+    public static final double HARDCODE_VELOCITY_2 = 7.7;
 
     public static final double PITCH_OFFSET_UNIT = 5.0; // TODO
     public static final double FLYWHEEL_OFFSET_UNIT = 0.5; // TODO
@@ -557,6 +560,9 @@ public class Constants
 
     public static final double ACCELERATION_LIMIT = 3.0;
 
-    public static final double AUTO_SHOOT_1_VELOCITY = 8.9;
+    public static final double AUTO_SHOOT_1_VELOCITY = 8.9 + 0.4 + 0.3;
     public static final double AUTO_SHOOT_1_ANGLE = 70.1;
+    
+    public static final double AUTO_SHOOT_2_VELOCITY = 8.8 + 0.25;
+    public static final double AUTO_SHOOT_2_ANGLE = 71.0;
 }
