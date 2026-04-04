@@ -414,7 +414,7 @@ public class RobotContainer
         driver.a().whileTrue(new RotateToAngle(drivetrain, () -> AlignConstants.HUB, false)
             .withName("ShootAlign"));
         
-        driver.povUp().onTrue(
+        driver.y().onTrue(
             new ShooterTargetSpeed(Constants.HARDCODE_VELOCITY)
             .andThen(new AimToAngle(Constants.HARDCODE_HOOD_PITCH.in(Degrees)))
             //.andThen(new WaitCommand(2.0))
@@ -483,8 +483,8 @@ public class RobotContainer
             .onTrue(revShoot);
 
         // THIS ALL NEEDS TO BE CHANGED BASED ON WHAT DRIVE TEAM WANTS
-        driver.y().whileTrue(new Spool());
-        driver.b().whileTrue(new ClimbUp());
+        // driver.y().whileTrue(new Spool());
+        // driver.b().whileTrue(new ClimbUp());
 
         // driver.a().onTrue(track(new Unspool().andThen(stow.get()).withName("Drop")));
         
