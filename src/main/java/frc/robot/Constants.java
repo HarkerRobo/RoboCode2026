@@ -42,7 +42,7 @@ import frc.robot.simulation.BallConstants;
 public class Constants 
 {
    
-    public static final double MAX_VOLTAGE = 12.0; //volts
+    public static final double MAX_VOLTAGE = 12.0; // volts
     
     public static final double ROBOT_HEIGHT = 0.89535; // y direction when bot is faced in the positive x direction; that is, parallel to the intake face
     public static final double ROBOT_WIDTH = 0.84455;
@@ -105,15 +105,15 @@ public class Constants
         
         public static final double GEAR_RATIO = 20.0/12.0;
 
-		public static final double KP = 0.7;//0.1;
+		public static final double KP = 0.7; // 0.1;
 		public static final double KI = 0.0;
         public static final double KD = 0.0;
-        public static final double KS = 0.14443; //0.13:
-        public static final double KV = 0.19085; //0.19241;
-        public static final double KA = 0.015006; //0.013044;
+        public static final double KS = 0.14443; // 0.13:
+        public static final double KV = 0.19085; // 0.19241;
+        public static final double KA = 0.015006; // 0.013044;
 		
-        public static final double DEFAULT_VELOCITY = 0.0; // TODO meters per second (nonzero to decrease startup time)
-        public static final double SOFT_PASS_VELOCITY = 6.5; // TODO meters per second
+        public static final double DEFAULT_VELOCITY = 0.0; // meters per second
+        public static final double SOFT_PASS_VELOCITY = 6.5; // meters per second
 
         public static final double INCREASE_VELOCITY = 0.5; // TODO
         public static final double MAX_VELOCITY = 14.0; // TODO
@@ -201,25 +201,25 @@ public class Constants
         
         public static final double GEAR_RATIO = 136.67; // sensor to hood angle
 
-		public static final double KP = 350.0; // TODO
-		public static final double KI = 50.0; // TODO
-		public static final double KD = 0.0; // TODO
+		public static final double KP = 350.0;
+		public static final double KI = 50.0;
+		public static final double KD = 0.0;
 		
-        public static final double KS = 0.26106;//0.10056; //0.44797; // TODO
-        public static final double KV = 0.63103;//0.010435; // TODO
-        public static final double KA = 3.1495;//0.00053474; // TODO
-		public static final double KG = 0.0; //0.06144; // TODO
+        public static final double KS = 0.26106;//0.10056; //0.44797;
+        public static final double KV = 0.63103;//0.010435;
+        public static final double KA = 3.1495;//0.00053474;
+		public static final double KG = 0.0; //0.06144;
 
         public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
 
         public static final double MAX_ERROR = 0.5;//0.25;
     
-        public static final double STALLING_CURRENT = 10.0; // TODO
+        public static final double STALLING_CURRENT = 10.0;
 
-        public static final double MANUAL_UP_VOLTAGE = -0.5; // TODO
-        public static final double MANUAL_DOWN_VOLTAGE = 0.5; // TODO
+        public static final double MANUAL_UP_VOLTAGE = -0.5;
+        public static final double MANUAL_DOWN_VOLTAGE = 0.5;
         
-        public static final double ZEROING_VOLTAGE = 1.0; // TODO
+        public static final double ZEROING_VOLTAGE = 1.0;
         public static final double ZEROING_POSITION = 75.5; 
         // because the hood current zeroes too high up for some reason and we don't
         // want the hood to stall when it goes to 75 degrees (its max angle)
@@ -273,8 +273,8 @@ public class Constants
         public static final int CLIMBWHEELS_ID = 61;
         public static final int SPOOLING_ID = 62;
 
-        public static final InvertedValue CLIMBWHEELS_INVERTED = InvertedValue.CounterClockwise_Positive; // TODO
-        public static final InvertedValue SPOOLING_INVERTED = InvertedValue.CounterClockwise_Positive; // TODO
+        public static final InvertedValue CLIMBWHEELS_INVERTED = InvertedValue.CounterClockwise_Positive;
+        public static final InvertedValue SPOOLING_INVERTED = InvertedValue.CounterClockwise_Positive;
 
         public static final ChassisReference CLIMBWHEELS_MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
         public static final ChassisReference SPOOLING_MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
@@ -314,16 +314,16 @@ public class Constants
         public static final int MAIN_ID = 31;
 
         public static final InvertedValue MAIN_INVERTED = InvertedValue.CounterClockwise_Positive;
-        public static final double MAIN_STATOR_CURRENT_LIMIT = 60.0;//amps
-        public static final double MAIN_SUPPLY_CURRENT_LIMIT = 60.0;//amps
+        public static final double MAIN_STATOR_CURRENT_LIMIT = 60.0; // amps
+        public static final double MAIN_SUPPLY_CURRENT_LIMIT = 60.0; // amps
 
-        public static final double MAIN_KS = 0.0048438; //TODO
-        public static final double MAIN_KV = 0.12361; //TODO
-        public static final double MAIN_KA = 0.0089587; //TODO
+        public static final double MAIN_KS = 0.0048438;
+        public static final double MAIN_KV = 0.12361;
+        public static final double MAIN_KA = 0.0089587;
         
-        public static final double MAIN_KP = 0.093687; //TODO
-        public static final double MAIN_KI = 0.0; //TODO
-        public static final double MAIN_KD = 0.0; //TODO
+        public static final double MAIN_KP = 0.093687;
+        public static final double MAIN_KI = 0.0;
+        public static final double MAIN_KD = 0.0;
 
         
         /*
@@ -332,11 +332,11 @@ public class Constants
         public static final double MM_JERK = 0.0;
         */
 
-        public static final double MAIN_MAX_VOLTAGE = 4.5;//3.5; // TODO volts
-        public static final double MAIN_DEFAULT_VOLTAGE = 0.0; // TODO volts
-        public static final double MAIN_EJECT_VOLTAGE = -3.5; // TODO volts
+        public static final double MAIN_MAX_VOLTAGE = 4.5;//3.5; // volts
+        public static final double MAIN_DEFAULT_VOLTAGE = 0.0; // volts
+        public static final double MAIN_EJECT_VOLTAGE = -3.5; // volts
 
-        public static final double MAIN_GEAR_RATIO = 16.0/12.0; // TODO
+        public static final double MAIN_GEAR_RATIO = 16.0/12.0;
 
         public static final ChassisReference MAIN_MECHANICAL_ORIENTATION = ChassisReference.Clockwise_Positive;
     }
@@ -550,8 +550,8 @@ public class Constants
     public static final Angle HARDCODE_HOOD_PITCH_2 = Degrees.of(71.5);
     public static final double HARDCODE_VELOCITY_2 = 7.7;
 
-    public static final double PITCH_OFFSET_UNIT = 5.0; // TODO
-    public static final double FLYWHEEL_OFFSET_UNIT = 0.5; // TODO
+    public static final double PITCH_OFFSET_UNIT = 5.0;
+    public static final double FLYWHEEL_OFFSET_UNIT = 0.5;
 
     public static final double DISTANCE_SHOOTVELO_RATIO = 0.7400067;
     public static final LinearVelocity SPEED_OFFSET = MetersPerSecond.of(0.275);

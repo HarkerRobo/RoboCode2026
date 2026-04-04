@@ -26,6 +26,9 @@ public class Robot extends TimedRobot
    public RobotContainer robotContainer;
    public static Robot instance;
 
+   public boolean logSimulation = false;
+   public boolean logReal = false;
+   public boolean logCTRE = false;
 
 
    public Robot() 
@@ -35,13 +38,12 @@ public class Robot extends TimedRobot
       robotContainer = new RobotContainer();
       
 
-      boolean logSimulation = false;
 
       // automatically saves log data for telemetry, driver station controls, and joystick presses
-      if (isReal() || logSimulation)
+      if ((isReal() && logReal) || logSimulation)
       {
-         // DataLogManager.start();
-         // DriverStation.startDataLog(DataLogManager.getLog());
+         DataLogManager.start();
+         DriverStation.startDataLog(DataLogManager.getLog());
       }
    }
    /**
@@ -83,9 +85,10 @@ public class Robot extends TimedRobot
    public void disabledInit() 
    {
       robotContainer.driver.setRumble(RumbleType.kBothRumble, 0.0);
-      if(isReal())
+
+      if(isReal() && logCTRE)
       {
-         // SignalLogger.stop();
+         SignalLogger.stop();
       }
    }
    /**
@@ -102,9 +105,9 @@ public class Robot extends TimedRobot
    @Override
    public void disabledExit() 
    {
-      if (isReal())
+      if (isReal() && logCTRE)
       {
-         // SignalLogger.start();
+         SignalLogger.start();
       }
    }
    /**
@@ -134,6 +137,7 @@ public class Robot extends TimedRobot
     */
    @Override
    public void autonomousExit() {}
+
    /**
     * Called when entering teleoperated mode
     * If an autonomous command is still running, it is canceled
@@ -148,6 +152,7 @@ public class Robot extends TimedRobot
          autonomousCommand.cancel();
       }
    }
+
    /**
     * Called periodically during teleoperated mode
     * No logic is required
@@ -156,12 +161,14 @@ public class Robot extends TimedRobot
    public void teleopPeriodic() 
    {
    }
+
    /**
     * Called when exiting teleoperated mode
     * No actions are required
     */
    @Override
    public void teleopExit() {}
+
    /**
     * Called when entering test mode
     * All running commands are canceled
@@ -171,12 +178,14 @@ public class Robot extends TimedRobot
    {
       CommandScheduler.getInstance().cancelAll();
    }
+
    /**
     * Called periodically during test mode
     * No logic is required
     */
    @Override
    public void testPeriodic() {}
+
    /**
     * Called when exiting test mode
     * All running commands are canceled
@@ -186,6 +195,7 @@ public class Robot extends TimedRobot
    {
       CommandScheduler.getInstance().cancelAll();
    }
+
    /**
     * Called when entering simulation mode
     * No simulation initialization is required here
@@ -194,6 +204,7 @@ public class Robot extends TimedRobot
    public void simulationInit() 
    {
    }
+
    /**
     * Called periodically during simulation mode
     * Updates the simulation state each loop

@@ -178,7 +178,6 @@ public class Hood extends SubsystemBase
     */
     public boolean isStalling()
     {
-
         return debouncer.calculate(Math.abs(motor.getStatorCurrent().getValueAsDouble()) >= Constants.Hood.STALLING_CURRENT);
     }
 

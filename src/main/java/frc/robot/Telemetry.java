@@ -58,7 +58,6 @@ public class Telemetry
     private BooleanPublisher intakeTriggered = table.getBooleanTopic("intake triggered").publish();
     private BooleanPublisher intakeExtended = table.getBooleanTopic("intake extended").publish();
     public BooleanPublisher aligned = table.getBooleanTopic("aligned").publish();
-    public DoubleArrayPublisher currents = table.getDoubleArrayTopic("currents").publish();
 
     private NetworkTable intake = table.getSubTable("Intake");
     private StringPublisher intakeCommand = intake.getStringTopic("main command").publish();
@@ -192,7 +191,6 @@ public class Telemetry
     {
         hoodAngle.getTopic().publish().set(75.0);
         shooterSpeed.getTopic().publish().set(10.0);
-        //turretYawRaw.setPersistent(true);
     }
 
     public void update ()
@@ -202,7 +200,6 @@ public class Telemetry
         flywheelOffset.set(Robot.instance.robotContainer.flywheelOffset);
         intakeTriggered.set(Robot.instance.robotContainer.intakeTriggered);
         intakeExtended.set(Robot.instance.robotContainer.intakeExtended);
-        // currents.set(Robot.instance.robotContainer.powerDistributionTracker.getAllCurrents());
 
         Command intakeCommand = Intake.getInstance().getCurrentCommand();
         this.intakeCommand.set(intakeCommand == null ? "" : intakeCommand.getName());
@@ -245,9 +242,6 @@ public class Telemetry
         climbSpoolingVoltage.set(Climb.getInstance().getSpoolingVoltage().in(Volts));
         climbSpoolingPosition.set(Climb.getInstance().getSpoolingPosition().in(Rotations));
 
-
-        //turretYawRawPublisher.set(Turret.getInstance().getPosition().in(Rotations));
-
         fuels.set(SimulationState.getInstance().fuelPositionsRaw);
 
         fuelsInRobot.set(SimulationState.getInstance().fuelsInRobot);
@@ -265,49 +259,6 @@ public class Telemetry
         this.shooterIndexerCommand.set(shooterIndexerCommand == null ? "" : shooterIndexerCommand.getName());
         shooterIndexerVelocity.set(ShooterIndexer.getInstance().getVelocity().in(RotationsPerSecond));
         shooterIndexerVoltage.set(ShooterIndexer.getInstance().getVoltage().in(Volts));
-
-
-        /*
-        test.set(new Translation3d[] 
-        {
-            new Translation3d(Constants.Simulation.HUB_CONTENTS.getCenter().getX() - 0.5 * Constants.Simulation.HUB_CONTENTS.getXWidth(), 
-                              Constants.Simulation.HUB_CONTENTS.getCenter().getY() - 0.5 * Constants.Simulation.HUB_CONTENTS.getYWidth(), 0.0),
-            new Translation3d(Constants.Simulation.HUB_CONTENTS.getCenter().getX() + 0.5 * Constants.Simulation.HUB_CONTENTS.getXWidth(), 
-                              Constants.Simulation.HUB_CONTENTS.getCenter().getY() + 0.5 * Constants.Simulation.HUB_CONTENTS.getYWidth(), 0.0),
-            new Translation3d(Constants.Simulation.HUB_CONTENTS.getCenter().getX() - 0.5 * Constants.Simulation.HUB_CONTENTS.getXWidth(), 
-                              Constants.Simulation.HUB_CONTENTS.getCenter().getY() + 0.5 * Constants.Simulation.HUB_CONTENTS.getYWidth(), 0.0),
-            new Translation3d(Constants.Simulation.HUB_CONTENTS.getCenter().getX() + 0.5 * Constants.Simulation.HUB_CONTENTS.getXWidth(), 
-                              Constants.Simulation.HUB_CONTENTS.getCenter().getY() - 0.5 * Constants.Simulation.HUB_CONTENTS.getYWidth(), 0.0)
-        }
-                              */
-        /*
-        double posX = Robot.instance.robotContainer.drivetrain.getState().Pose.getX();
-        double posY = Robot.instance.robotContainer.drivetrain.getState().Pose.getY();
-        double rot = Robot.instance.robotContainer.drivetrain.getState().Pose.getRotation().getRadians();
-        double endX = posX + Constants.ROBOT_DIAMETER*Math.sqrt(2)/2*Math.cos(rot+Math.PI/4);
-        double endY = posY + Constants.ROBOT_DIAMETER*Math.sqrt(2)/2*Math.sin(rot+Math.PI/4);
-        double startX = posX + Constants.ROBOT_DIAMETER*Math.sqrt(2)/2*Math.cos(rot-Math.PI/4);
-        double startY = posY + Constants.ROBOT_DIAMETER*Math.sqrt(2)/2*Math.sin(rot-Math.PI/4);
-
-        double midPointX = posX + Constants.ROBOT_DIAMETER/2*Math.cos(rot);
-        double midPointY = posY + Constants.ROBOT_DIAMETER/2*Math.sin(rot);
-
-        test.set(new Translation3d[] 
-        {
-            new Translation3d(-0.84, 0.331, 0.075),
-            new Translation3d(-0.0708, 1.008, 0.075),
-            new Translation3d(posX, posY, 0),
-            new Translation3d(endX, endY, 0),
-            new Translation3d(startX, startY, 0),
-            new Translation3d(midPointX, midPointY, 0)
-        }
-            */;
-        test.set(new Translation3d[]
-        {
-            //Util.Robot.instance.robotContainer.drivetrain.getState().Pose.getTranslation()
-        }
-     
-        );
     }
     /** 
      * Accept the swerve drive state and telemeterize it to SmartDashboard and SignalLogger. 

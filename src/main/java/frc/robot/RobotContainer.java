@@ -417,8 +417,6 @@ public class RobotContainer
         driver.y().onTrue(
             new ShooterTargetSpeed(Constants.HARDCODE_VELOCITY)
             .andThen(new AimToAngle(Constants.HARDCODE_HOOD_PITCH.in(Degrees)))
-            //.andThen(new WaitCommand(2.0))
-            // .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot() && Hood.getInstance().readyToShoot()))
             .andThen(new ShooterIndexerStartFullSpeed())
             .andThen(new IndexerStartFullSpeed())
             .withName("HardShoot"));
@@ -428,8 +426,6 @@ public class RobotContainer
         driver.x().onTrue(
             new ShooterTargetSpeed(Constants.HARDCODE_VELOCITY_2)
             .andThen(new AimToAngle(Constants.HARDCODE_HOOD_PITCH_2.in(Degrees)))
-            //.andThen(new WaitCommand(2.0))
-            // .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot() && Hood.getInstance().readyToShoot()))
             .andThen(new ShooterIndexerStartFullSpeed())
             .andThen(new IndexerStartFullSpeed())
             .withName("HardShoot2"));

@@ -81,29 +81,28 @@ public class Util
         // addData(4.45, 19.0, 66.5);
         // addData(5.386, 21.0, 66.0);
         // 2.722, 70, 19.5
+        
+        // addData(4.646, 9.7, 69.7 + angleOffset); // "
+        // addData(5.697, 10.2, 64.9 + angleOffset); // "; farthest point
 
         // 2026-03-28 DATA POINTS
 
         double angleOffset = 0.0;
         double velocityOffset = 0.5;//0.4;
         addData(1.425, 7.4, 75.0 + angleOffset);
-        addData(1.864, 7.7, 71.5 + angleOffset); // undershot with one motor running
+        addData(1.864, 7.7, 71.5 + angleOffset);
         addData(2.062, 8.0, 71.5 + angleOffset);
-        addData(2.320, 8.3, 71.5 + angleOffset); //2.x67 (auton place) 8.38, true angle: 70.6 (no offset)
+        addData(2.320, 8.3, 71.5 + angleOffset);
         addData(2.614, 8.4 + velocityOffset - 0.1, 71.0 + angleOffset);
         addData(2.919, 8.5 + velocityOffset - 0.1, 70.8 + angleOffset);
+        addData(3.207, 8.35 + velocityOffset, 70.6 + angleOffset);
+        addData(3.40, 9.0 + velocityOffset, 70.3 + angleOffset);
         addData(3.574, 8.8 + velocityOffset, 70.3 + angleOffset);
+        addData(3.80, 9.2 + velocityOffset, 70.1 + angleOffset);
         addData(3.952, 9.26 + velocityOffset, 70.1 + angleOffset);
-        addData(4.312, 9.35 + velocityOffset, 69.9 + angleOffset); // should be tested with both motors running
-        // addData(4.646, 9.7, 69.7 + angleOffset); // "
-        // addData(5.697, 10.2, 64.9 + angleOffset); // "; farthest point
-        
-        addData(3.207, 8.35+ velocityOffset, 70.6 + angleOffset);
-        addData(4.0, 9.25+ velocityOffset, 70.0 + angleOffset);
-        addData(3.40, 9.0+ velocityOffset, 70.3 + angleOffset);
-        addData(3.80, 9.2+ velocityOffset, 70.1 + angleOffset);
-
-        addData(5.20, 9.5+ velocityOffset, 67.5 + angleOffset);
+        addData(4.0, 9.25 + velocityOffset, 70.0 + angleOffset);
+        addData(4.312, 9.35 + velocityOffset, 69.9 + angleOffset);
+        addData(5.20, 9.5 + velocityOffset, 67.5 + angleOffset);
     }
 
     /**
