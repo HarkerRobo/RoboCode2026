@@ -237,8 +237,7 @@ public class Shooter extends SubsystemBase
     );
     
     /**
-     * Creates a quasistatic SysId test for the left flywheel.
-     * Used to characterize feedforward constants.
+     * Returns whether the shooter is at the target velocity within an acceptable error margin.
      */
     public boolean readyToShoot()
     {

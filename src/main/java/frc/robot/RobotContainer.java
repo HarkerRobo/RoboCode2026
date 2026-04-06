@@ -331,7 +331,7 @@ public class RobotContainer
         NamedCommands.registerCommand("Shoot", 
             new AimToAngle(()->Util.calculateShootPitch(drivetrain).in(Degrees))
             .andThen(new ShooterTargetSpeed(()->Util.calculateShootVelocity(drivetrain)))
-            //.andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot() && Hood.getInstance().readyToShoot()))
+            .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot() && Hood.getInstance().readyToShoot()))
             .andThen(new ShooterIndexerStartFullSpeed())
             .andThen(new IndexerStartFullSpeed()) // load to shoot
             .andThen(Commands.run(()->{}))
@@ -340,7 +340,7 @@ public class RobotContainer
         NamedCommands.registerCommand("Shoot2",
             new AimToAngle(Constants.AUTO_SHOOT_2_ANGLE)
             .andThen(new ShooterTargetSpeed(Constants.AUTO_SHOOT_2_VELOCITY))
-            //.andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot() && Hood.getInstance().readyToShoot()))
+            .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot() && Hood.getInstance().readyToShoot()))
             .andThen(new ShooterIndexerStartFullSpeed())
             .andThen(new IndexerStartFullSpeed()) // load to shoot
             .andThen(Commands.run(()->{})));
@@ -348,7 +348,7 @@ public class RobotContainer
         NamedCommands.registerCommand("Shoot1",
             new AimToAngle(Constants.AUTO_SHOOT_1_ANGLE)
             .andThen(new ShooterTargetSpeed(Constants.AUTO_SHOOT_1_VELOCITY))
-            //.andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot() && Hood.getInstance().readyToShoot()))
+            .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot() && Hood.getInstance().readyToShoot()))
             .andThen(new ShooterIndexerStartFullSpeed())
             .andThen(new IndexerStartFullSpeed()) // load to shoot
             .andThen(Commands.run(()->{})));
