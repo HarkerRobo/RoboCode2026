@@ -3,25 +3,41 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.445677531048983,
-        "y": 0.436008776869269
+        "x": 3.5646332737030413,
+        "y": 4.04243870125224
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.416030674978719,
-        "y": 0.5061720026539
+        "x": 2.688461538461538,
+        "y": 1.67352993559928
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 7.848,
-        "y": 1.235326
+        "x": 3.8080143112701252,
+        "y": 0.651329577817532
       },
       "prevControl": {
-        "x": 6.974080945475847,
-        "y": 1.0457563341251903
+        "x": 3.3699284436493735,
+        "y": 0.700005785330948
+      },
+      "nextControl": {
+        "x": 5.194510532160326,
+        "y": 0.497274442163069
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 8.238,
+        "y": 0.911326
+      },
+      "prevControl": {
+        "x": 6.589448390235779,
+        "y": 1.0037029246266
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,13 +58,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 90.0
+    "rotation": 0
   },
   "reversed": false,
-  "folder": "RightSingleSweepExit",
+  "folder": "MirroredSteal",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 90.0
+    "rotation": 0
   },
   "useDefaultConstraints": true
 }

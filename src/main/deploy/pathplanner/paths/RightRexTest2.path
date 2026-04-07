@@ -1,0 +1,134 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 8.238,
+        "y": 0.911326
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 9.238,
+        "y": 0.911326
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 10.290136363636364,
+        "y": 1.63283736363636
+      },
+      "prevControl": {
+        "x": 10.23824324081126,
+        "y": 0.854440521259775
+      },
+      "nextControl": {
+        "x": 10.331363636363635,
+        "y": 2.25124645454545
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 10.290136363636364,
+        "y": 3.72512145454545
+      },
+      "prevControl": {
+        "x": 10.360116547243038,
+        "y": 2.53545833323198
+      },
+      "nextControl": {
+        "x": 10.238602272727274,
+        "y": 4.601201
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 9.517125,
+        "y": 2.97272372727273
+      },
+      "prevControl": {
+        "x": 9.702647727272728,
+        "y": 3.84880327272727
+      },
+      "nextControl": {
+        "x": 9.362500602463129,
+        "y": 2.24255296112639
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 8.238,
+        "y": 0.911326
+      },
+      "prevControl": {
+        "x": 8.92868742939918,
+        "y": 1.71540987303188
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.9182389937106917,
+      "rotationDegrees": 41.447
+    },
+    {
+      "waypointRelativePos": 2.0377358490566038,
+      "rotationDegrees": 41.447
+    }
+  ],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "ExtendIntake",
+      "waypointRelativePos": 0.0,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "ExtendIntake"
+        }
+      }
+    },
+    {
+      "name": "RetractIntake",
+      "waypointRelativePos": 2.5996409335727124,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "RetractIntake"
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0
+  },
+  "reversed": false,
+  "folder": "MirroredSteal",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 0
+  },
+  "useDefaultConstraints": true
+}

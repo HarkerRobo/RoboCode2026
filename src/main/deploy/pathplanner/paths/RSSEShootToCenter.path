@@ -9,7 +9,7 @@
       "prevControl": null,
       "nextControl": {
         "x": 1.8467615658362995,
-        "y": 0.36006146856465
+        "y": 0.36006146856465016
       },
       "isLocked": false,
       "linkedName": null
@@ -37,7 +37,7 @@
       },
       "prevControl": {
         "x": 7.172562277580072,
-        "y": 0.768910816132858
+        "y": 0.7689108161328579
       },
       "nextControl": null,
       "isLocked": false,
@@ -47,7 +47,7 @@
   "rotationTargets": [
     {
       "waypointRelativePos": 0.420079820019724,
-      "rotationDegrees": 0
+      "rotationDegrees": 0.0
     }
   ],
   "constraintZones": [
@@ -89,7 +89,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0
+    "rotation": 0.0
   },
   "reversed": false,
   "folder": "RightSingleSweepExit",

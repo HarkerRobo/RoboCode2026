@@ -45,10 +45,10 @@
     "rotation": -91.5774637594084
   },
   "reversed": false,
-  "folder": "LeftFerry",
+  "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -90
+    "rotation": -90.0
   },
   "useDefaultConstraints": true
 }
