@@ -362,18 +362,6 @@ public class Util
         // return output;
     }
     
-    public static Angle calculatePassPitch(CommandSwerveDrivetrain drivetrain)
-    {
-        return Degrees.of(65.0);
-        //return Util.calculatePitch(getShootStartingPoint(drivetrain), getPassEndingPoint(drivetrain), calculatePassVelocity(drivetrain));
-    }
-    
-    public static double calculatePassVelocity(CommandSwerveDrivetrain drivetrain)
-    {
-        return 12.7;
-        //return Util.calculateVelocity(getShootStartingPoint(drivetrain), getPassEndingPoint(drivetrain));
-    }
-
     public static double bound(double value, double min, double max)
     {
         if (value < min) return min;

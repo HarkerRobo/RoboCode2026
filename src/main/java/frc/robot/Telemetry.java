@@ -53,8 +53,6 @@ public class Telemetry
     private NetworkTable table = tableInstance.getTable("1072");
 
     private StringPublisher mostRecentAim = table.getStringTopic("most recent aim").publish();
-    private DoublePublisher hoodOffset = table.getDoubleTopic("hood offset").publish();
-    private DoublePublisher flywheelOffset = table.getDoubleTopic("flywheel offset").publish();
     private BooleanPublisher intakeTriggered = table.getBooleanTopic("intake triggered").publish();
     private BooleanPublisher intakeExtended = table.getBooleanTopic("intake extended").publish();
     public BooleanPublisher aligned = table.getBooleanTopic("aligned").publish();
@@ -196,8 +194,6 @@ public class Telemetry
     public void update ()
     {
         mostRecentAim.set(Robot.instance.robotContainer.mostRecentAim ? "Pass" : "Shoot");
-        hoodOffset.set(Robot.instance.robotContainer.pitchOffset);
-        flywheelOffset.set(Robot.instance.robotContainer.flywheelOffset);
         intakeTriggered.set(Robot.instance.robotContainer.intakeTriggered);
         intakeExtended.set(Robot.instance.robotContainer.intakeExtended);
 

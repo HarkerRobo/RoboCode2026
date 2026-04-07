@@ -121,8 +121,6 @@ public class RobotContainer
     public boolean mostRecentAim = false; // false = shoot; true = pass
     public boolean intakeTriggered = false; // true if intake has been enabled
     public boolean intakeExtended = true; //true if intake and hopper have been extended // TODO reverse
-    public double pitchOffset = 0.0;
-    public double flywheelOffset = 0.0;
   
     private List<Command> commands = new ArrayList<>(40);
   
@@ -132,7 +130,8 @@ public class RobotContainer
         
     private Supplier<Command> stow;
     private Command shoot;
-    private Command pass;
+    private Command midPass;
+    private Command hardPass;
     private Command hardShoot;
     private Command revShoot;
     private Command revPass;
@@ -233,17 +232,29 @@ public class RobotContainer
             .andThen(new ShooterIndexerStartFullSpeed())
             .withName("Shoot");
         
-        pass = 
+        midPass = 
         // lucas wanted to remove the auto-aligning (4/3/26, at contra costa) 
         // new RotateToAngle(drivetrain,
         //     () -> onLeftSide() ? Constants.PASS_LEFT_TARGET_POSITION.toTranslation2d()
         //                        : Constants.PASS_RIGHT_TARGET_POSITION.toTranslation2d(), true)
-                new AimToAngle(() -> Util.calculatePassPitch(drivetrain).in(Degrees) + pitchOffset)
-                .andThen(new ShooterTargetSpeed(()->Util.calculatePassVelocity(drivetrain) + flywheelOffset))
+                new AimToAngle(Constants.MID_PASS_ANGLE)
+                .andThen(new ShooterTargetSpeed(Constants.MID_PASS_VELOCITY))
                 .andThen(new WaitUntilCommand(() -> Shooter.getInstance().readyToShoot() && Hood.getInstance().readyToShoot()))
                 .andThen(new IndexerStartFullSpeed())
                 .andThen(new ShooterIndexerStartFullSpeed())
-            .withName("Pass");
+            .withName("MidPass");
+        
+        hardPass = 
+        // lucas wanted to remove the auto-aligning (4/3/26, at contra costa) 
+        // new RotateToAngle(drivetrain,
+        //     () -> onLeftSide() ? Constants.PASS_LEFT_TARGET_POSITION.toTranslation2d()
+        //                        : Constants.PASS_RIGHT_TARGET_POSITION.toTranslation2d(), true)
+                new AimToAngle(Constants.HARD_PASS_ANGLE)
+                .andThen(new ShooterTargetSpeed(Constants.HARD_PASS_VELOCITY))
+                .andThen(new WaitUntilCommand(() -> Shooter.getInstance().readyToShoot() && Hood.getInstance().readyToShoot()))
+                .andThen(new IndexerStartFullSpeed())
+                .andThen(new ShooterIndexerStartFullSpeed())
+            .withName("HardPass");
         
 
         revShoot = 
@@ -258,7 +269,7 @@ public class RobotContainer
         revPass = 
             Commands.runOnce(()->mostRecentAim = true)
             .andThen(new ShooterIndexerStartDefaultSpeed())
-            .andThen(new ShooterTargetSpeed(()->Util.calculatePassVelocity(drivetrain) + flywheelOffset))
+            .andThen(new ShooterTargetSpeed(Constants.MID_PASS_VELOCITY))
             .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot()))
             //.andThen(
             //     Commands.runOnce(()->driver.setRumble(RumbleType.kBothRumble, 1.0)))
@@ -319,7 +330,7 @@ public class RobotContainer
             .andThen(new StartDefaultIntake()));
         NamedCommands.registerCommand("HardShoot", hardShoot);
         NamedCommands.registerCommand("RevShoot",
-            new ShooterTargetSpeed(()->Util.calculateShootVelocity(drivetrain) + flywheelOffset));
+            new ShooterTargetSpeed(()->Util.calculateShootVelocity(drivetrain)));
         NamedCommands.registerCommand("LinearAgitateIntake",
             new StartRunIntake()
             .andThen(new RetractIntake().withTimeout(2.0))
@@ -414,13 +425,16 @@ public class RobotContainer
         driver.a().whileTrue(new RotateToAngle(drivetrain, () -> AlignConstants.HUB, false)
             .withName("ShootAlign"));
         
-        driver.y().onTrue(
-            new ShooterTargetSpeed(Constants.HARDCODE_VELOCITY)
-            .andThen(new AimToAngle(Constants.HARDCODE_HOOD_PITCH.in(Degrees)))
-            .andThen(new ShooterIndexerStartFullSpeed())
-            .andThen(new IndexerStartFullSpeed())
-            .withName("HardShoot"));
+        // driver.y().onTrue(
+        //     new ShooterTargetSpeed(Constants.HARDCODE_VELOCITY)
+        //     .andThen(new AimToAngle(Constants.HARDCODE_HOOD_PITCH.in(Degrees)))
+        //     .andThen(new ShooterIndexerStartFullSpeed())
+        //     .andThen(new IndexerStartFullSpeed())
+        //     .withName("HardShoot"));
 
+        // driver.y().onFalse(stow.get());
+
+        driver.y().onTrue(hardPass);
         driver.y().onFalse(stow.get());
         
         driver.x().onTrue(
@@ -454,7 +468,7 @@ public class RobotContainer
             // .andThen(new IndexerStartFullSpeed())
             );
 
-        driver.rightTrigger().and(()->mostRecentAim).onTrue(pass);
+        driver.rightTrigger().and(()->mostRecentAim).onTrue(midPass);
 
         driver.rightTrigger().onFalse(stow.get());
 
@@ -488,22 +502,6 @@ public class RobotContainer
         // tested in sim
         driver.button(8) // menu button/right paddle
             .onTrue(revShoot);
-
-        // THIS ALL NEEDS TO BE CHANGED BASED ON WHAT DRIVE TEAM WANTS
-        // driver.y().whileTrue(new Spool());
-        // driver.b().whileTrue(new ClimbUp());
-
-        // driver.a().onTrue(track(new Unspool().andThen(stow.get()).withName("Drop")));
-        
-        // tested in sim
-        // driver.povUp().onTrue(Commands.runOnce(()->pitchOffset += Constants.PITCH_OFFSET_UNIT));
-        // driver.povDown().onTrue(Commands.runOnce(()->pitchOffset -= Constants.PITCH_OFFSET_UNIT));
-
-        // tested in sim
-        // driver.povLeft().onTrue(Commands.runOnce(()->{
-        //     flywheelOffset -= Constants.FLYWHEEL_OFFSET_UNIT;}));
-        // driver.povRight().onTrue(Commands.runOnce(()->{
-        //     flywheelOffset += Constants.FLYWHEEL_OFFSET_UNIT;}));
 
         // Idle while the robot is disabled. This ensures the configured
         // neutral mode is applied to the drive motors while disabled.

@@ -565,4 +565,10 @@ public class Constants
     
     public static final double AUTO_SHOOT_2_VELOCITY = 8.8 + 0.25;
     public static final double AUTO_SHOOT_2_ANGLE = 71.0;
+
+    public static final double MID_PASS_VELOCITY = 12.7;
+    public static final double MID_PASS_ANGLE = 65.0;
+    
+    public static final double HARD_PASS_VELOCITY = 18.0;
+    public static final double HARD_PASS_ANGLE = 60.0;
 }
