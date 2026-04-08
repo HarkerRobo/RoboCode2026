@@ -69,7 +69,7 @@
       },
       "prevControl": {
         "x": 8.92868742939918,
-        "y": 1.71540987303188
+        "y": 1.7154098730318803
       },
       "nextControl": null,
       "isLocked": false,
@@ -105,9 +105,34 @@
       "waypointRelativePos": 2.5996409335727124,
       "endWaypointRelativePos": null,
       "command": {
-        "type": "named",
+        "type": "sequential",
         "data": {
-          "name": "RetractIntake"
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "RetractIntake"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "RetractIntake"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "RetractIntake"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "RetractIntake"
+              }
+            }
+          ]
         }
       }
     }
@@ -122,13 +147,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0
+    "rotation": 0.0
   },
   "reversed": false,
-  "folder": "MirroredSteal",
+  "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0
+    "rotation": 0.0
   },
   "useDefaultConstraints": true
 }

@@ -257,23 +257,13 @@ public class RobotContainer
             .withName("HardPass");
         
 
-        revShoot = 
-            Commands.runOnce(()->mostRecentAim = false)
+        revShoot = Commands.none()
             .andThen(new ShooterIndexerStartDefaultSpeed())
             .andThen(new ShooterTargetSpeed(()->Util.calculateShootVelocity(drivetrain)))
             .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot()))
             //.andThen(
             //     Commands.runOnce(()->driver.setRumble(RumbleType.kBothRumble, 1.0)))
             .withName("RevShoot");
-
-        revPass = 
-            Commands.runOnce(()->mostRecentAim = true)
-            .andThen(new ShooterIndexerStartDefaultSpeed())
-            .andThen(new ShooterTargetSpeed(Constants.MID_PASS_VELOCITY))
-            .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot()))
-            //.andThen(
-            //     Commands.runOnce(()->driver.setRumble(RumbleType.kBothRumble, 1.0)))
-            .withName("RevPass");
 
 
         testCommandChooser.setDefaultOption("None", Commands.none());
@@ -437,6 +427,9 @@ public class RobotContainer
         driver.y().onTrue(hardPass);
         driver.y().onFalse(stow.get());
         
+        driver.b().onTrue(midPass);
+        driver.b().onFalse(stow.get());
+        
         driver.x().onTrue(
             new ShooterTargetSpeed(Constants.HARDCODE_VELOCITY_2)
             .andThen(new AimToAngle(Constants.HARDCODE_HOOD_PITCH_2.in(Degrees)))
@@ -459,7 +452,7 @@ public class RobotContainer
         // tested
         driver.leftTrigger().whileTrue(new StartEndCommand(()->isSlow = true, ()->isSlow = false).withName("ToggleSlow"));
 
-        driver.rightTrigger().and(()->!mostRecentAim).onTrue(
+        driver.rightTrigger().onTrue(
             shoot
             // new AimToAngle(()->Telemetry.getInstance().getHoodAngle())
             // .andThen(new ShooterTargetSpeed(()->Telemetry.getInstance().getShooterSpeed()))
@@ -468,14 +461,10 @@ public class RobotContainer
             // .andThen(new IndexerStartFullSpeed())
             );
 
-        driver.rightTrigger().and(()->mostRecentAim).onTrue(midPass);
-
         driver.rightTrigger().onFalse(stow.get());
 
-        // tested in sim
         driver.leftBumper().onTrue(stow.get().andThen(Commands.print("Stowing")).withName("Stow"));
 
-        // tested in sim
         //changed from retract/extand hopper and intake
         driver.rightBumper().onTrue(
             Commands.runOnce(()->{
@@ -495,11 +484,7 @@ public class RobotContainer
                 }
         }));
         
-        // tested in sim
-        driver.b() // home button/left paddle
-            .onTrue(revPass);
         
-        // tested in sim
         driver.button(8) // menu button/right paddle
             .onTrue(revShoot);
 

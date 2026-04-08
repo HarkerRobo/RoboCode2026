@@ -5,27 +5,9 @@
     "data": {
       "commands": [
         {
-          "type": "path",
-          "data": {
-            "pathName": "RightRexTest1"
-          }
-        },
-        {
           "type": "wait",
           "data": {
             "waitTime": 1.26
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "RightRexTest2"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 1.54
           }
         },
         {
