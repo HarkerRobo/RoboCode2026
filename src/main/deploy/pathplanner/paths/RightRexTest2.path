@@ -16,32 +16,32 @@
     },
     {
       "anchor": {
-        "x": 10.290136363636364,
-        "y": 1.63283736363636
+        "x": 10.476654740608229,
+        "y": 1.64107913059034
       },
       "prevControl": {
-        "x": 10.23824324081126,
-        "y": 0.854440521259775
+        "x": 10.424761617783124,
+        "y": 0.862682288213753
       },
       "nextControl": {
-        "x": 10.331363636363635,
-        "y": 2.25124645454545
+        "x": 10.5178820133355,
+        "y": 2.25948822149943
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 10.290136363636364,
-        "y": 3.72512145454545
+        "x": 10.476654740608229,
+        "y": 3.81528306618963
       },
       "prevControl": {
-        "x": 10.360116547243038,
-        "y": 2.53545833323198
+        "x": 10.546634924214903,
+        "y": 2.62561994487615
       },
       "nextControl": {
-        "x": 10.238602272727274,
-        "y": 4.601201
+        "x": 10.425120649699139,
+        "y": 4.69136261164417
       },
       "isLocked": false,
       "linkedName": null
@@ -69,7 +69,7 @@
       },
       "prevControl": {
         "x": 8.92868742939918,
-        "y": 1.7154098730318803
+        "y": 1.71540987303188
       },
       "nextControl": null,
       "isLocked": false,
@@ -131,6 +131,30 @@
               "data": {
                 "name": "RetractIntake"
               }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "RetractIntake"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "RetractIntake"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "RetractIntake"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "RetractIntake"
+              }
             }
           ]
         }
@@ -147,13 +171,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 0
   },
   "reversed": false,
-  "folder": null,
+  "folder": "MirroredSteal",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 0
   },
   "useDefaultConstraints": true
 }

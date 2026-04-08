@@ -16,32 +16,32 @@
     },
     {
       "anchor": {
-        "x": 10.290136363636364,
-        "y": 6.436488636363637
+        "x": 10.476654740608229,
+        "y": 6.4282468694096595
       },
       "prevControl": {
-        "x": 10.23824324081126,
-        "y": 7.214885478740225
+        "x": 10.424761617783124,
+        "y": 7.206643711786247
       },
       "nextControl": {
-        "x": 10.331363636363635,
-        "y": 5.8180795454545455
+        "x": 10.5178820133355,
+        "y": 5.809837778500568
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 10.290136363636364,
-        "y": 4.344204545454546
+        "x": 10.476654740608229,
+        "y": 4.254042933810375
       },
       "prevControl": {
-        "x": 10.360116547243038,
-        "y": 5.533867666768025
+        "x": 10.546634924214903,
+        "y": 5.443706055123854
       },
       "nextControl": {
-        "x": 10.238602272727274,
-        "y": 3.4681250000000006
+        "x": 10.425120649699139,
+        "y": 3.3779633883558295
       },
       "isLocked": false,
       "linkedName": null
@@ -105,9 +105,58 @@
       "waypointRelativePos": 2.5996409335727124,
       "endWaypointRelativePos": null,
       "command": {
-        "type": "named",
+        "type": "sequential",
         "data": {
-          "name": "RetractIntake"
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "RetractIntake"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "RetractIntake"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "RetractIntake"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "RetractIntake"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "RetractIntake"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "RetractIntake"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "RetractIntake"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "RetractIntake"
+              }
+            }
+          ]
         }
       }
     }
