@@ -535,8 +535,9 @@ public class Constants
 
     }
 
-    public static final Translation3d HUB_TARGET_POSITION = new Translation3d(Simulation.HUB_CONTENTS.getCenter().getTranslation().getX(),
-        Simulation.HUB_CONTENTS.getCenter().getTranslation().getX(),
+    public static final Translation3d HUB_TARGET_POSITION = new Translation3d(
+        AlignConstants.HUB.getX(),
+        AlignConstants.HUB.getY(),
         Simulation.HUB_INTAKE_HEIGHT);
 
     public static final Transform3d ROBOT_TO_HOOD = new Transform3d(0.3, 0.0, 0.34, Rotation3d.kZero); // TODO

@@ -6,15 +6,16 @@
     "DepotClimbLeft",
     "LeftFirstFarDoubleSweep",
     "LeftFirstFarDoubleSweep2",
+    "LeftRexTest",
     "LeftSingleSweepExit",
     "LeftTrenchNeutralClimbLeft",
     "MiddleShoot",
+    "RightRexTest",
     "OutpostClimbRight",
     "RightFerry",
     "RightFirstFarDoubleSweep",
     "RightSingleSweepExit",
-    "RightTrenchNeutralClimbRight",
-    "RexTest"
+    "RightTrenchNeutralClimbRight"
   ],
   "autoFolders": [],
   "defaultMaxVel": 3.0,

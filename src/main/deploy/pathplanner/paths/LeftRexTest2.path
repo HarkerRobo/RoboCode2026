@@ -125,7 +125,7 @@
     "rotation": 0.0
   },
   "reversed": false,
-  "folder": "RexTest",
+  "folder": "LeftRexTest",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0
