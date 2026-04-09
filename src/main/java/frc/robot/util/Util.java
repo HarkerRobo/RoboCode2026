@@ -87,22 +87,36 @@ public class Util
 
         // 2026-03-28 DATA POINTS
 
-        double angleOffset = 0.0;
-        double velocityOffset = 0.5;//0.4;
-        addData(1.425, 7.4, 75.0 + angleOffset);
-        addData(1.864, 7.7, 71.5 + angleOffset);
-        addData(2.062, 8.0, 71.5 + angleOffset);
-        addData(2.320, 8.3, 71.5 + angleOffset);
-        addData(2.614, 8.4 + velocityOffset - 0.1, 71.0 + angleOffset);
-        addData(2.919, 8.5 + velocityOffset - 0.1, 70.8 + angleOffset);
-        addData(3.207, 8.35 + velocityOffset, 70.6 + angleOffset);
-        addData(3.40, 9.0 + velocityOffset, 70.3 + angleOffset);
-        addData(3.574, 8.8 + velocityOffset, 70.3 + angleOffset);
-        addData(3.80, 9.2 + velocityOffset, 70.1 + angleOffset);
-        addData(3.952, 9.26 + velocityOffset, 70.1 + angleOffset);
-        addData(4.0, 9.25 + velocityOffset, 70.0 + angleOffset);
-        addData(4.312, 9.35 + velocityOffset, 69.9 + angleOffset);
-        addData(5.20, 9.5 + velocityOffset, 67.5 + angleOffset);
+        // double angleOffset = 0.0;
+        // double velocityOffset = 0.5;//0.4;
+        // addData(1.425, 7.4, 75.0 + angleOffset);
+        // addData(1.864, 7.7, 71.5 + angleOffset);
+        // addData(2.062, 8.0, 71.5 + angleOffset);
+        // addData(2.320, 8.3, 71.5 + angleOffset);
+        // addData(2.614, 8.4 + velocityOffset - 0.1, 71.0 + angleOffset);
+        // addData(2.919, 8.5 + velocityOffset - 0.1, 70.8 + angleOffset);
+        // addData(3.207, 8.35 + velocityOffset, 70.6 + angleOffset);
+        // addData(3.40, 9.0 + velocityOffset, 70.3 + angleOffset);
+        // addData(3.574, 8.8 + velocityOffset, 70.3 + angleOffset);
+        // addData(3.80, 9.2 + velocityOffset, 70.1 + angleOffset);
+        // addData(3.952, 9.26 + velocityOffset, 70.1 + angleOffset);
+        // addData(4.0, 9.25 + velocityOffset, 70.0 + angleOffset);
+        // addData(4.312, 9.35 + velocityOffset, 69.9 + angleOffset);
+        // addData(5.20, 9.5 + velocityOffset, 67.5 + angleOffset);
+
+        // NEW DATA POINTS FROM 4/8/26
+        addData(1.366, 6.8, 75.0);
+        addData(1.454, 6.9, 75.0);
+        addData(1.574, 7.0, 74.0);
+        addData(1.736, 7.2, 73.0);
+        addData(1.909, 7.4, 72.0);
+        addData(2.027, 7.45, 71.5);
+        addData(2.182, 7.5, 70.5);
+        addData(2.389, 7.5, 69.5);
+        addData(2.577, 7.6, 68.5);
+        addData(2.798, 7.8, 67.5);
+        addData(3.064,8.0,66.0);
+
     }
 
     /**

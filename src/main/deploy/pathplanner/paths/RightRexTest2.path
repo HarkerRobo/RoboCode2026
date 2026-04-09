@@ -16,32 +16,32 @@
     },
     {
       "anchor": {
-        "x": 10.476654740608229,
-        "y": 1.64107913059034
+        "x": 10.443357058125743,
+        "y": 1.66192386476868
       },
       "prevControl": {
-        "x": 10.424761617783124,
-        "y": 0.862682288213753
+        "x": 10.443357058125743,
+        "y": 0.881799169339558
       },
       "nextControl": {
-        "x": 10.5178820133355,
-        "y": 2.25948822149943
+        "x": 10.443357058125743,
+        "y": 2.64101046026097
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 10.476654740608229,
-        "y": 3.81528306618963
+        "x": 10.443357058125743,
+        "y": 3.65237463582444
       },
       "prevControl": {
-        "x": 10.546634924214903,
-        "y": 2.62561994487615
+        "x": 10.475634638196919,
+        "y": 2.72708400711744
       },
       "nextControl": {
-        "x": 10.425120649699139,
-        "y": 4.69136261164417
+        "x": 10.412761925405446,
+        "y": 4.52943510713956
       },
       "isLocked": false,
       "linkedName": null
@@ -105,58 +105,9 @@
       "waypointRelativePos": 2.5996409335727124,
       "endWaypointRelativePos": null,
       "command": {
-        "type": "sequential",
+        "type": "named",
         "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "RetractIntake"
-              }
-            },
-            {
-              "type": "named",
-              "data": {
-                "name": "RetractIntake"
-              }
-            },
-            {
-              "type": "named",
-              "data": {
-                "name": "RetractIntake"
-              }
-            },
-            {
-              "type": "named",
-              "data": {
-                "name": "RetractIntake"
-              }
-            },
-            {
-              "type": "named",
-              "data": {
-                "name": "RetractIntake"
-              }
-            },
-            {
-              "type": "named",
-              "data": {
-                "name": "RetractIntake"
-              }
-            },
-            {
-              "type": "named",
-              "data": {
-                "name": "RetractIntake"
-              }
-            },
-            {
-              "type": "named",
-              "data": {
-                "name": "RetractIntake"
-              }
-            }
-          ]
+          "name": "RetractIntake"
         }
       }
     }
@@ -174,7 +125,7 @@
     "rotation": 0
   },
   "reversed": false,
-  "folder": "MirroredSteal",
+  "folder": "LexTest",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0

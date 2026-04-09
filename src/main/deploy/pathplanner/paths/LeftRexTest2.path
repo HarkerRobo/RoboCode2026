@@ -16,32 +16,32 @@
     },
     {
       "anchor": {
-        "x": 10.476654740608229,
-        "y": 6.4282468694096595
+        "x": 10.443357058125743,
+        "y": 6.407402135231316
       },
       "prevControl": {
-        "x": 10.424761617783124,
-        "y": 7.206643711786247
+        "x": 10.443357058125743,
+        "y": 7.187526830660442
       },
       "nextControl": {
-        "x": 10.5178820133355,
-        "y": 5.809837778500568
+        "x": 10.443357058125743,
+        "y": 5.428315539739027
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 10.476654740608229,
-        "y": 4.254042933810375
+        "x": 10.443357058125743,
+        "y": 4.4169513641755636
       },
       "prevControl": {
-        "x": 10.546634924214903,
-        "y": 5.443706055123854
+        "x": 10.475634638196919,
+        "y": 5.3422419928825615
       },
       "nextControl": {
-        "x": 10.425120649699139,
-        "y": 3.3779633883558295
+        "x": 10.412761925405446,
+        "y": 3.5398908928604436
       },
       "isLocked": false,
       "linkedName": null
@@ -105,58 +105,9 @@
       "waypointRelativePos": 2.5996409335727124,
       "endWaypointRelativePos": null,
       "command": {
-        "type": "sequential",
+        "type": "named",
         "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "RetractIntake"
-              }
-            },
-            {
-              "type": "named",
-              "data": {
-                "name": "RetractIntake"
-              }
-            },
-            {
-              "type": "named",
-              "data": {
-                "name": "RetractIntake"
-              }
-            },
-            {
-              "type": "named",
-              "data": {
-                "name": "RetractIntake"
-              }
-            },
-            {
-              "type": "named",
-              "data": {
-                "name": "RetractIntake"
-              }
-            },
-            {
-              "type": "named",
-              "data": {
-                "name": "RetractIntake"
-              }
-            },
-            {
-              "type": "named",
-              "data": {
-                "name": "RetractIntake"
-              }
-            },
-            {
-              "type": "named",
-              "data": {
-                "name": "RetractIntake"
-              }
-            }
-          ]
+          "name": "RetractIntake"
         }
       }
     }
@@ -174,7 +125,7 @@
     "rotation": 0.0
   },
   "reversed": false,
-  "folder": "Steal",
+  "folder": "RexTest",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0

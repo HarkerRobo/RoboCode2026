@@ -415,15 +415,6 @@ public class RobotContainer
         driver.a().whileTrue(new RotateToAngle(drivetrain, () -> AlignConstants.HUB, false)
             .withName("ShootAlign"));
         
-        // driver.y().onTrue(
-        //     new ShooterTargetSpeed(Constants.HARDCODE_VELOCITY)
-        //     .andThen(new AimToAngle(Constants.HARDCODE_HOOD_PITCH.in(Degrees)))
-        //     .andThen(new ShooterIndexerStartFullSpeed())
-        //     .andThen(new IndexerStartFullSpeed())
-        //     .withName("HardShoot"));
-
-        // driver.y().onFalse(stow.get());
-
         driver.y().onTrue(hardPass);
         driver.y().onFalse(stow.get());
         

@@ -9,13 +9,12 @@
     "LeftSingleSweepExit",
     "LeftTrenchNeutralClimbLeft",
     "MiddleShoot",
-    "New Folder",
-    "Steal",
     "OutpostClimbRight",
     "RightFerry",
     "RightFirstFarDoubleSweep",
     "RightSingleSweepExit",
-    "RightTrenchNeutralClimbRight"
+    "RightTrenchNeutralClimbRight",
+    "RexTest"
   ],
   "autoFolders": [],
   "defaultMaxVel": 3.0,
