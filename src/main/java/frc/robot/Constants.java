@@ -548,8 +548,8 @@ public class Constants
     public static final Angle HARDCODE_HOOD_PITCH = Degrees.of(70.5);
     public static final double HARDCODE_VELOCITY = 9.1;
     
-    public static final Angle HARDCODE_HOOD_PITCH_2 = Degrees.of(71.5);
-    public static final double HARDCODE_VELOCITY_2 = 7.7;
+    public static final Angle HARDCODE_HOOD_PITCH_2 = Degrees.of(72.0);
+    public static final double HARDCODE_VELOCITY_2 = 7.35;
 
     public static final double PITCH_OFFSET_UNIT = 5.0;
     public static final double FLYWHEEL_OFFSET_UNIT = 0.5;

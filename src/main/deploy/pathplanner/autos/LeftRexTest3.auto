@@ -7,81 +7,31 @@
         {
           "type": "path",
           "data": {
-            "pathName": "RFFDS1"
+            "pathName": "LeftRexTest1"
           }
         },
         {
-          "type": "deadline",
+          "type": "wait",
           "data": {
-            "commands": [
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 3.5
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Shoot"
-                }
-              },
-              {
-                "type": "sequential",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 0.9
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "RetractIntake"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "RetractIntake"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "RetractIntake"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "RetractIntake"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "RetractIntake"
-                      }
-                    }
-                  ]
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Stow"
+            "waitTime": 1.26
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "RFFDS2"
+            "pathName": "LeftRexTest22"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.54
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "LeftRexTest3"
           }
         },
         {
@@ -91,7 +41,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 3.5
+                  "waitTime": 10.0
                 }
               },
               {
@@ -105,9 +55,9 @@
                 "data": {
                   "commands": [
                     {
-                      "type": "wait",
+                      "type": "named",
                       "data": {
-                        "waitTime": 0.0
+                        "name": "RetractIntake"
                       }
                     },
                     {
