@@ -166,7 +166,7 @@ public class Constants
         public static final double STATOR_CURRENT_LIMIT = 60.0;
         public static final double SUPPLY_CURRENT_LIMIT = 40.0;
 
-        public static final double EXTENDING_VOLTAGE = 5.0;
+        public static final double EXTENDING_VOLTAGE = 5.5;//5.0;
         public static final double RETRACTING_VOLTAGE = -3.5;
         public static final double HOLDING_EXTEND_VOLTAGE = 0.25;
         public static final double HOLDING_RETRACT_VOLTAGE = -0.25;

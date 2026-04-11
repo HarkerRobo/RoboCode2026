@@ -109,6 +109,7 @@ public class Robot extends TimedRobot
       {
          SignalLogger.start();
       }
+      // CommandScheduler.getInstance().schedule(new ZeroHood());
    }
    /**
     * Called when entering autonomous mode
@@ -121,7 +122,8 @@ public class Robot extends TimedRobot
 
       if (autonomousCommand != null) 
       {
-         CommandScheduler.getInstance().schedule(autonomousCommand);
+         CommandScheduler.getInstance().schedule(
+            new ZeroHood().andThen(autonomousCommand));
       }
    }
    /**
@@ -145,8 +147,8 @@ public class Robot extends TimedRobot
    @Override
    public void teleopInit() 
    {
-
       CommandScheduler.getInstance().schedule(new ZeroHood());
+
       if (autonomousCommand != null) 
       {
          autonomousCommand.cancel();
