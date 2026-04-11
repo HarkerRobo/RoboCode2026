@@ -79,11 +79,11 @@
   "rotationTargets": [
     {
       "waypointRelativePos": 0.9182389937106917,
-      "rotationDegrees": -41.447
+      "rotationDegrees": -80.0
     },
     {
       "waypointRelativePos": 2.0377358490566038,
-      "rotationDegrees": -41.447
+      "rotationDegrees": -80.0
     }
   ],
   "constraintZones": [],
@@ -101,13 +101,30 @@
       }
     },
     {
-      "name": "RetractIntake",
-      "waypointRelativePos": 2.5996409335727124,
+      "name": "StartRunIntake",
+      "waypointRelativePos": 0.845894263217101,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
         "data": {
-          "name": "RetractIntake"
+          "name": "StartRunIntake"
+        }
+      }
+    },
+    {
+      "name": "RetractIntake",
+      "waypointRelativePos": 2.5996409335727124,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "StartDefaultIntake",
+      "waypointRelativePos": 4.0,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "StartDefaultIntake"
         }
       }
     }

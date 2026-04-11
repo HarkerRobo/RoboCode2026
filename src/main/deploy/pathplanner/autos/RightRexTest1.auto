@@ -25,7 +25,7 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 1.54
+            "waitTime": 0.0
           }
         },
         {
@@ -54,6 +54,12 @@
                 "type": "sequential",
                 "data": {
                   "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.5
+                      }
+                    },
                     {
                       "type": "named",
                       "data": {

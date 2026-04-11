@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "LeftRexTest1"
+            "pathName": "RightRexTest1"
           }
         },
         {
@@ -19,19 +19,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "LeftRexTest2"
+            "pathName": "RightRexTest22"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.0
+            "waitTime": 1.54
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "LeftRexTest3"
+            "pathName": "RightRexTest3"
           }
         },
         {
@@ -54,12 +54,6 @@
                 "type": "sequential",
                 "data": {
                   "commands": [
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 0.5
-                      }
-                    },
                     {
                       "type": "named",
                       "data": {

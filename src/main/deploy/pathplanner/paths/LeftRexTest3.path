@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 3.6543060498220648,
-        "y": 7.429525504151838
+        "x": 3.117,
+        "y": 7.386488730723606
       },
       "prevControl": {
-        "x": 4.481801577550152,
-        "y": 7.559328724187616
+        "x": 3.9444955277280864,
+        "y": 7.516291950759384
       },
       "nextControl": {
-        "x": 2.933660514803591,
-        "y": 7.316483067286196
+        "x": 2.3963544649815263,
+        "y": 7.273446293857964
       },
       "isLocked": false,
       "linkedName": null
@@ -61,7 +61,19 @@
     }
   ],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "RevShoot",
+      "waypointRelativePos": 1.3864894795127332,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "RevShoot"
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
