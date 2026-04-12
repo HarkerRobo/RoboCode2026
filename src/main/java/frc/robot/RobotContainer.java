@@ -7,7 +7,6 @@ package frc.robot;
 import static edu.wpi.first.units.Units.*;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -17,35 +16,25 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.util.FlippingUtil;
 
-import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.PowerDistribution;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
-import edu.wpi.first.wpilibj2.command.Subsystem;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.Constants.TunerConstants;
-import frc.robot.RobotContainer.PassDirection;
+import frc.robot.Constants.Swerve;
 import frc.robot.commands.climb.ClimbDown;
 import frc.robot.commands.climb.ClimbUp;
 import frc.robot.commands.climb.Unspool;
 import frc.robot.commands.climb.Spool;
-import frc.robot.commands.drive.DriveToPose;
 import frc.robot.commands.drive.RotateToAngle;
 import frc.robot.commands.hood.AimToAngle;
-import frc.robot.commands.hood.AimToAngleInPerpetuity;
 import frc.robot.commands.hood.HoodManual;
 import frc.robot.commands.hood.ZeroHood;
 import frc.robot.commands.indexer.IndexerStartDefaultSpeed;
@@ -58,7 +47,6 @@ import frc.robot.commands.intake.StartRunIntake;
 import frc.robot.commands.intakeextension.ExtendIntake;
 import frc.robot.commands.intakeextension.RetractIntake;
 import frc.robot.commands.shooter.ShooterTargetSpeed;
-import frc.robot.commands.shooter.ShooterTargetSpeedInPerpetuity;
 import frc.robot.commands.shooterindexer.ShooterIndexerStartDefaultSpeed;
 import frc.robot.commands.shooterindexer.ShooterIndexerStartEjectSpeed;
 import frc.robot.commands.shooterindexer.ShooterIndexerStartFullSpeed;
@@ -69,8 +57,6 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeExtension;
 import frc.robot.util.Util;
 
-
-
 public class RobotContainer 
 {
     public enum AlignDirection
@@ -79,7 +65,7 @@ public class RobotContainer
         Left
     }
     
-    public double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
+    public double MaxSpeed = 1.0 * Swerve.SPEED_AT_12_VOLTS.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
     private AlignDirection alignDirection = AlignDirection.Left;
     /* Setting up bindings for necessary control of the swerve drive platform */
@@ -96,7 +82,6 @@ public class RobotContainer
     public ArrayList<SendableChooser<SubsystemStatus>> modeChoosers = new ArrayList<>();
 
     Function<RobotContainer.AlignDirection, Command> setDirectionFactory = ((AlignDirection direction) ->
-        
         new Command() {
             public void execute () {System.out.println(direction); Robot.instance.robotContainer.setAlignDirection(direction);}
             public boolean isFinished () {return true;}});
@@ -122,8 +107,6 @@ public class RobotContainer
     public boolean intakeTriggered = false; // true if intake has been enabled
     public boolean intakeExtended = true; //true if intake and hopper have been extended // TODO reverse
   
-    private List<Command> commands = new ArrayList<>(40);
-  
     public static enum PassDirection {Left, Right, Automatic};
 
     private PassDirection direction = PassDirection.Automatic; // Default
@@ -134,20 +117,18 @@ public class RobotContainer
     private Command hardPass;
     private Command hardShoot;
     private Command revShoot;
-    private Command revPass;
-
-    private SlewRateLimiter accelerationLimiter = new SlewRateLimiter(Constants.ACCELERATION_LIMIT);
-    public PowerDistribution powerDistributionTracker = new PowerDistribution();
 
     /**
      * Sets the desired pass direction mode
      * @param newDirection  New pass direction mode
      */
-    public void setPassDirection(PassDirection newDirection) {
+    public void setPassDirection(PassDirection newDirection) 
+    {
         direction = newDirection;
     }
 
-    public PassDirection getPassDirection() {
+    public PassDirection getPassDirection() 
+    {
         return direction;
     }
 
@@ -271,9 +252,9 @@ public class RobotContainer
         testCommandChooser.addOption("Climb/ClimbDown", new ClimbDown());
         testCommandChooser.addOption("Climb/SpoolUntilStall", new Spool());
         testCommandChooser.addOption("Climb/Unspool", new Unspool());
-        testCommandChooser.addOption("Hood/AimToAngle[75°]", new AimToAngle(75.0));
         testCommandChooser.addOption("Hood/AimToAngle[60°]", new AimToAngle(60.0));
         testCommandChooser.addOption("Hood/AimToAngle[70°]", new AimToAngle(70.0));
+        testCommandChooser.addOption("Hood/AimToAngle[75°]", new AimToAngle(75.0));
         testCommandChooser.addOption("Hood/ZeroHood", new ZeroHood());
         testCommandChooser.addOption("Indexer/IndexerStartDefaultSpeed", new IndexerStartDefaultSpeed());
         testCommandChooser.addOption("Indexer/IndexerStartFullSpeed", new IndexerStartFullSpeed());
@@ -384,19 +365,6 @@ public class RobotContainer
      */
     private void configureDebugBindings()
     {
-        // driver.a().whileTrue(Shooter.getInstance().sysIdQuasistatic(Direction.kForward));
-        // driver.b().whileTrue(Shooter.getInstance().sysIdQuasistatic(Direction.kReverse));
-        // driver.x().whileTrue(Shooter.getInstance().sysIdDynamic(Direction.kForward));
-        // driver.y().whileTrue(Shooter.getInstance().sysIdDynamic(Direction.kReverse));
-
-        // driver.x().whileTrue(new Spool());
-        // driver.y().whileTrue(new ClimbUp());
-        // driver.a().whileTrue(new ClimbDown());
-        // driver.b().whileTrue(new Unspool());
-
-        //driver.button(1).onTrue(alignLeft.andThen(new DriveToPose(drivetrain)));
-        //driver.button(2).onTrue(alignRight.andThen(new DriveToPose(drivetrain)));
-
         drivetrain.setDefaultCommand(
                 // Drivetrain will execute this command periodically
                 drivetrain.applyRequest(() -> 
@@ -444,13 +412,12 @@ public class RobotContainer
         driver.leftTrigger().whileTrue(new StartEndCommand(()->isSlow = true, ()->isSlow = false).withName("ToggleSlow"));
 
         driver.rightTrigger().onTrue(
-            shoot
-            // new AimToAngle(()->Telemetry.getInstance().getHoodAngle())
-            // .andThen(new ShooterTargetSpeed(()->Telemetry.getInstance().getShooterSpeed()))
-            // .andThen(new WaitCommand(2.0))
-            // .andThen(new ShooterIndexerStartFullSpeed())
-            // .andThen(new IndexerStartFullSpeed())
-            );
+            Constants.DATA_COLLECTION_MODE ? shoot :
+            new AimToAngle(()->Telemetry.getInstance().getHoodAngle())
+            .andThen(new ShooterTargetSpeed(()->Telemetry.getInstance().getShooterSpeed()))
+            .andThen(new WaitCommand(2.0))
+            .andThen(new ShooterIndexerStartFullSpeed())
+            .andThen(new IndexerStartFullSpeed()));
 
         driver.rightTrigger().onFalse(stow.get());
 

@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import java.nio.ByteBuffer;
+
 import com.ctre.phoenix6.SignalLogger;
 
 import edu.wpi.first.math.util.Units;
@@ -26,11 +28,6 @@ public class Robot extends TimedRobot
    public RobotContainer robotContainer;
    public static Robot instance;
 
-   public boolean logSimulation = false;
-   public boolean logReal = false;
-   public boolean logCTRE = false;
-
-
    public Robot() 
    {
       instance = this;
@@ -40,7 +37,7 @@ public class Robot extends TimedRobot
 
 
       // automatically saves log data for telemetry, driver station controls, and joystick presses
-      if ((isReal() && logReal) || logSimulation)
+      if ((isReal() && Constants.LOG_REAL) || Constants.LOG_SIMULATION)
       {
          DataLogManager.start();
          DriverStation.startDataLog(DataLogManager.getLog());
@@ -57,14 +54,14 @@ public class Robot extends TimedRobot
       Util.init();
 
 
-      LimelightHelpers.setCameraPose_RobotSpace(Constants.Vision.kCamera1Name, 
-      Constants.Vision.kRobotToCam1.getX(), Constants.Vision.kRobotToCam1.getY(), Constants.Vision.kRobotToCam1.getZ(),
-      Units.radiansToDegrees(Constants.Vision.kRobotToCam1.getRotation().getX()), Units.radiansToDegrees(Constants.Vision.kRobotToCam1.getRotation().getY()), Units.radiansToDegrees(Constants.Vision.kRobotToCam1.getRotation().getZ()));
+      LimelightHelpers.setCameraPose_RobotSpace(Constants.Vision.CAMERA_1_NAME, 
+      Constants.Vision.ROBOT_TO_CAMERA_1.getX(), Constants.Vision.ROBOT_TO_CAMERA_1.getY(), Constants.Vision.ROBOT_TO_CAMERA_1.getZ(),
+      Units.radiansToDegrees(Constants.Vision.ROBOT_TO_CAMERA_1.getRotation().getX()), Units.radiansToDegrees(Constants.Vision.ROBOT_TO_CAMERA_1.getRotation().getY()), Units.radiansToDegrees(Constants.Vision.ROBOT_TO_CAMERA_1.getRotation().getZ()));
    
 
-      LimelightHelpers.setCameraPose_RobotSpace(Constants.Vision.kCamera2Name, 
-      Constants.Vision.kRobotToCam2.getX(), Constants.Vision.kRobotToCam2.getY(), Constants.Vision.kRobotToCam2.getZ(),
-      Units.radiansToDegrees(Constants.Vision.kRobotToCam2.getRotation().getX()), Units.radiansToDegrees(Constants.Vision.kRobotToCam2.getRotation().getY()), Units.radiansToDegrees(Constants.Vision.kRobotToCam2.getRotation().getZ()));
+      LimelightHelpers.setCameraPose_RobotSpace(Constants.Vision.CAMERA_2_NAME, 
+      Constants.Vision.ROBOT_TO_CAMERA_2.getX(), Constants.Vision.ROBOT_TO_CAMERA_2.getY(), Constants.Vision.ROBOT_TO_CAMERA_2.getZ(),
+      Units.radiansToDegrees(Constants.Vision.ROBOT_TO_CAMERA_2.getRotation().getX()), Units.radiansToDegrees(Constants.Vision.ROBOT_TO_CAMERA_2.getRotation().getY()), Units.radiansToDegrees(Constants.Vision.ROBOT_TO_CAMERA_2.getRotation().getZ()));
    }
       
 
@@ -77,6 +74,7 @@ public class Robot extends TimedRobot
 
       Telemetry.getInstance().update();
    }
+
    /**
     * Called when entering disabled mode
     * Stops SignalLogger if on real hardware
@@ -86,7 +84,7 @@ public class Robot extends TimedRobot
    {
       robotContainer.driver.setRumble(RumbleType.kBothRumble, 0.0);
 
-      if(isReal() && logCTRE)
+      if(isReal() && Constants.LOG_CTRE)
       {
          SignalLogger.stop();
       }
@@ -105,11 +103,10 @@ public class Robot extends TimedRobot
    @Override
    public void disabledExit() 
    {
-      if (isReal() && logCTRE)
+      if (isReal() && Constants.LOG_CTRE)
       {
          SignalLogger.start();
       }
-      // CommandScheduler.getInstance().schedule(new ZeroHood());
    }
    /**
     * Called when entering autonomous mode
@@ -147,8 +144,8 @@ public class Robot extends TimedRobot
    @Override
    public void teleopInit() 
    {
-      CommandScheduler.getInstance().schedule(new ZeroHood());
 
+      CommandScheduler.getInstance().schedule(new ZeroHood());
       if (autonomousCommand != null) 
       {
          autonomousCommand.cancel();

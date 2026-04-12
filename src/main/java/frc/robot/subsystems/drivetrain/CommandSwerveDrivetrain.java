@@ -292,8 +292,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         // );
        
         // MegaTag 1
-        LimelightHelpers.PoseEstimate limelight1Estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.Vision.kCamera1Name);
-        LimelightHelpers.PoseEstimate limelight2Estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.Vision.kCamera2Name);
+        LimelightHelpers.PoseEstimate limelight1Estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.Vision.CAMERA_1_NAME);
+        LimelightHelpers.PoseEstimate limelight2Estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.Vision.CAMERA_2_NAME);
 
        // Only run vision updates if we see a tag
         if ((limelight1Estimate != null && limelight1Estimate.tagCount > 0) ||
@@ -307,12 +307,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             SmartDashboard.putNumber("Drive/bestEstimateYaw", bestEstimate.pose.getRotation().getDegrees());
             if (bestEstimate != null && bestEstimate.tagCount > 0)
             {
-                boolean rejectPose = (bestEstimate.tagCount == 1 && bestEstimate.rawFiducials[0].ambiguity > Constants.Vision.maxAmbiguity) // Cannot be high ambiguity 
+                boolean rejectPose = (bestEstimate.tagCount == 1 && bestEstimate.rawFiducials[0].ambiguity > Constants.Vision.MAX_AMBIGUITY) // Cannot be high ambiguity 
                                 // Must be within the field boundaries
                                 || bestEstimate.pose.getX() < 0.0
-                                || bestEstimate.pose.getX() > Constants.Vision.kTagLayout.getFieldLength()
+                                || bestEstimate.pose.getX() > Constants.Vision.TAG_LAYOUT.getFieldLength()
                                 || bestEstimate.pose.getY() < 0.0
-                                || bestEstimate.pose.getY() > Constants.Vision.kTagLayout.getFieldWidth()
+                                || bestEstimate.pose.getY() > Constants.Vision.TAG_LAYOUT.getFieldWidth()
                                 || bestEstimate.pose.getTranslation().getDistance(getState().Pose.getTranslation()) > Constants.Vision.MAX_DISTANCE;
                 if (!rejectPose)
                 {
@@ -434,9 +434,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                                     .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesYNewtons())),
                     new PPHolonomicDriveController(
                             // PID constants for translation
-                            new PIDConstants(Constants.Drive.autoalignDriveKP, Constants.Drive.autoalignDriveKI, Constants.Drive.autoalignDriveKD),
+                            new PIDConstants(Constants.Swerve.AUTOALIGN_DRIVE_KP, Constants.Swerve.AUTOALIGN_DRIVE_KI, Constants.Swerve.AUTOALIGN_DRIVE_KD),
                             // PID constants for rotation
-                            new PIDConstants(Constants.Drive.autoalignSteerKP, Constants.Drive.autoalignSteerKI, Constants.Drive.autoalignSteerKD)),
+                            new PIDConstants(Constants.Swerve.AUTOALIGN_STEER_KP, Constants.Swerve.AUTOALIGN_STEER_KP, Constants.Swerve.AUTOALIGN_STEER_KD)),
                     config,
                     // Assume the path needs to be flipped for Red vs Blue, this is normally the
                     // case

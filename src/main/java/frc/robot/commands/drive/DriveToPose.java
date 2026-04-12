@@ -107,7 +107,7 @@ public class DriveToPose extends Command{
             }
 
             PathPlannerPath generatedPath = new PathPlannerPath(waypoints, 
-            Constants.Vision.constraints, null, 
+            Constants.Vision.CONSTRAINTS, null, 
             new GoalEndState(0, targetPose.getRotation()));
             generatedPath.preventFlipping = true;
             pathCommand = AutoBuilder.followPath(generatedPath);

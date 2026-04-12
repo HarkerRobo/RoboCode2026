@@ -264,24 +264,6 @@ public class Util
                 translation2dTo3d(FlippingUtil.flipFieldPosition(translation3d.toTranslation2d()), translation3d.getZ());
     }
 
-    public static Translation3d getShootStartingPoint(CommandSwerveDrivetrain drivetrain)
-    {
-        Translation3d rawPose = translation2dTo3d(drivetrain.getState().Pose.getTranslation(), 0.0);
-        return new Pose3d(rawPose, Rotation3d.kZero).transformBy(Constants.ROBOT_TO_HOOD).getTranslation();
-    }
-
-    public static Translation3d getShootEndingPoint()
-    {
-        return applyAlliance(Constants.HUB_TARGET_POSITION);
-    }
-
-    public static Translation3d getPassEndingPoint(CommandSwerveDrivetrain drivetrain)
-    {
-        return onLeftSide(drivetrain) ?
-                applyAlliance(Constants.PASS_LEFT_TARGET_POSITION) : 
-                applyAlliance(Constants.PASS_RIGHT_TARGET_POSITION);
-    }
-
     public static double calculateShootDistance(CommandSwerveDrivetrain drivetrain)
     {
         Translation2d drivetrainPose = drivetrain.getState().Pose.getTranslation();
@@ -292,36 +274,6 @@ public class Util
         return drivetrainPose.getDistance(targetPose);
     }
     
-    public static Angle calculatePitch(Translation3d position, Translation3d target, double shootVelocity)
-    {
-        double dx = target.getX() - position.getX();
-        double dy = target.getY() - position.getY();
-        double db = Math.sqrt(dx * dx + dy * dy);
-        double dz = target.getZ() - position.getZ();
-        double s = shootVelocity;
-        double g = Constants.G;
-        //System.out.println("\n\tdb: " + db + "\tdz: " + dz + "\ts: " + s);
-        double idealAngle = Math.atan((Math.pow(s,2.0) + 
-            Math.sqrt(Math.pow(s,4.0)
-                - g * (g * Math.pow(db,2.0) + 2.0 * dz * Math.pow(s,2.0))))
-            / (g * db));
-        return Radians.of(idealAngle);
-    }
-
-    /**
-     * Calculates the launch velocity from a position to the target
-     * @param position  the start position
-     * @param target    the target position
-     * @return  the calculated launch velocity
-     */
-    public static double calculateVelocity(Translation3d position, Translation3d target)
-    {
-        double dx = target.getX() - position.getX();
-        double dy = target.getY() - position.getY();
-        double db = Math.sqrt(dx * dx + dy * dy);
-        return Constants.DISTANCE_SHOOTVELO_RATIO * (db - Constants.Simulation.HUB_CONTENTS.getXWidth() / 2.0 - 6.0) + 10.0 - Constants.SPEED_OFFSET.in(MetersPerSecond);
-    }
-
     /**
      * Calculates the shooting pitch angle based on the drivetrain pose and the hub target position
      * @param drivetrain    the drivetrain subsystem
@@ -329,22 +281,15 @@ public class Util
      */
     public static Angle calculateShootPitch(CommandSwerveDrivetrain drivetrain)
     {
-        if (Constants.INTERPOLATE_VALUES)
+        Pair<LinearVelocity, Angle> value = interpolatingTreeMap.get(calculateShootDistance(drivetrain));
+        if (value != null) 
         {
-            Pair<LinearVelocity, Angle> value = interpolatingTreeMap.get(calculateShootDistance(drivetrain));
-            if (value != null)
+            Angle output = value.getSecond();
+            if (output != null) 
             {
-                Angle output = value.getSecond();
-                if (output != null)
-                {
-                    System.out.printf("Calculated angle with interpolation: %f degrees\n", output.in(Degrees));
-                    return output;
-                }
+                return output;
             }
-            // System.out.println("Interpolation failed - no value found. Reverting to math");
         }
-        // Angle output = Util.calculatePitch(getShootStartingPoint(drivetrain), getShootEndingPoint(), calculateShootVelocity(drivetrain));
-        // System.out.printf("Calculated angle: %f degrees\n", output.in(Degrees));
         return Degrees.zero();
     }
 
@@ -355,25 +300,18 @@ public class Util
      */
     public static double calculateShootVelocity(CommandSwerveDrivetrain drivetrain)
     {
-        if (Constants.INTERPOLATE_VALUES)
+        Pair<LinearVelocity, Angle> value = interpolatingTreeMap.get(calculateShootDistance(drivetrain));
+        if (value != null) 
         {
-            Pair<LinearVelocity, Angle> value = interpolatingTreeMap.get(calculateShootDistance(drivetrain));
-            if (value != null)
+            LinearVelocity first = value.getFirst();
+            if (first != null) 
             {
-                LinearVelocity first = value.getFirst();
-                if (first != null)
-                {
-                    double output = first.in(MetersPerSecond);
-                    System.out.printf("Calculated velocity with interpolation: %f\n", output);
-                    return output;
-                }
+                double output = first.in(MetersPerSecond);
+                return output;
             }
-            System.out.println("Interpolation failed - no value found. Reverting to math");
         }
+
         return 0.0;
-        // double output = Util.calculateVelocity(getShootStartingPoint(drivetrain), getShootEndingPoint());
-        // System.out.printf("Calculated velocity: %f\n", output);
-        // return output;
     }
     
     public static double bound(double value, double min, double max)

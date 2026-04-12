@@ -39,6 +39,7 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.ShooterIndexer;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeExtension;
+import frc.robot.util.Util;
 import frc.robot.subsystems.Climb;
 
 /**
@@ -73,13 +74,23 @@ public class Telemetry
     private DoublePublisher intakeExtensionVoltage = intakeExtension.getDoubleTopic("voltage (V)").publish();
     private DoublePublisher intakeExtensionCurrent = intakeExtension.getDoubleTopic("current (A)").publish();
 
+    private NetworkTable indexer = table.getSubTable("Indexer");
+    private StringPublisher indexerCommand = indexer.getStringTopic("command").publish();
+    private DoublePublisher indexerMainVelocity = indexer.getDoubleTopic("main velocity (rps)").publish();
+    private DoublePublisher indexerMainVoltage = indexer.getDoubleTopic("main voltage (V)").publish();
+    
+    private NetworkTable shooterIndexer = table.getSubTable("ShooterIndexer");
+    private StringPublisher shooterIndexerCommand = shooterIndexer.getStringTopic("command").publish();
+    private DoublePublisher shooterIndexerVelocity = shooterIndexer.getDoubleTopic("velocity (rps)").publish();
+    private DoublePublisher shooterIndexerVoltage = shooterIndexer.getDoubleTopic("voltage (V)").publish();
+
     private NetworkTable hood = table.getSubTable("Hood");
     private StringPublisher hoodCommand = hood.getStringTopic("command").publish();
     private DoublePublisher hoodPosition = hood.getDoubleTopic("position (°)").publish();
     private DoublePublisher hoodTargetPosition = hood.getDoubleTopic("target position (°)").publish();
     private DoublePublisher hoodVoltage = hood.getDoubleTopic("voltage (V)").publish();
     private BooleanPublisher hoodReadyToShoot = hood.getBooleanTopic("ready to shoot?").publish();
-    private DoublePublisher hoodStatorCurrent = hood.getDoubleTopic("stator current (A)").publish();
+    private DoublePublisher hoodStatorCurrent = hood.getDoubleTopic("current (A)").publish();
     
     private NetworkTable shooter = table.getSubTable("Shooter");
     private StringPublisher shooterCommand = shooter.getStringTopic("command").publish();
@@ -116,16 +127,6 @@ public class Telemetry
     private StructArrayPublisher<Translation3d> test = simulation.getStructArrayTopic("TEST", Translation3d.struct).publish();
     public DoublePublisher test1 = simulation.getDoubleTopic("Current heading").publish();
     public DoublePublisher test2 = simulation.getDoubleTopic("Desired heading").publish();
-
-    private NetworkTable indexer = table.getSubTable("Indexer");
-    private StringPublisher indexerCommand = indexer.getStringTopic("command").publish();
-    private DoublePublisher indexerMainVelocity = indexer.getDoubleTopic("main velocity (rps)").publish();
-    private DoublePublisher indexerMainVoltage = indexer.getDoubleTopic("main voltage (V)").publish();
-    
-    private NetworkTable shooterIndexer = table.getSubTable("ShooterIndexer");
-    private StringPublisher shooterIndexerCommand = shooterIndexer.getStringTopic("command").publish();
-    private DoublePublisher shooterIndexerVelocity = shooterIndexer.getDoubleTopic("velocity (rps)").publish();
-    private DoublePublisher shooterIndexerVoltage = shooterIndexer.getDoubleTopic("voltage (V)").publish();
     
 
     /* Robot swerve drive state */
@@ -271,10 +272,7 @@ public class Telemetry
         driveTimestamp.set(state.Timestamp);
         driveOdometryFrequency.set(1.0 / state.OdometryPeriod);
         driveHeading.set(state.Pose.getRotation().getDegrees());
-        Translation2d targetPose = (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue) ? 
-                    Constants.HUB_TARGET_POSITION.toTranslation2d() : 
-                    FlippingUtil.flipFieldPosition(Constants.HUB_TARGET_POSITION.toTranslation2d());
-        distanceToShoot.set(state.Pose.getTranslation().getDistance(targetPose));
+        distanceToShoot.set(Util.calculateShootDistance(Robot.instance.robotContainer.drivetrain));
 
         /* Also write to log file */
         SignalLogger.writeStruct("DriveState/Pose", Pose2d.struct, state.Pose);
