@@ -3,19 +3,14 @@
   "robotLength": 0.89535,
   "holonomicMode": true,
   "pathFolders": [
-    "DepotClimbLeft",
     "LeftFirstFarDoubleSweep",
     "LeftFirstFarDoubleSweep2",
-    "LeftRexTest",
     "LeftSingleSweepExit",
-    "LeftTrenchNeutralClimbLeft",
+    "LeftSteal",
     "MiddleShoot",
-    "RightRexTest",
-    "OutpostClimbRight",
-    "RightFerry",
     "RightFirstFarDoubleSweep",
     "RightSingleSweepExit",
-    "RightTrenchNeutralClimbRight"
+    "RightSteal"
   ],
   "autoFolders": [],
   "defaultMaxVel": 3.0,

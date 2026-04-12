@@ -3,25 +3,41 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.5,
-        "y": 2.5
+        "x": 3.5646332737030413,
+        "y": 4.04243870125224
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.222882398062646,
-        "y": 3.1214790391228053
+        "x": 2.688461538461538,
+        "y": 1.67352993559928
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.591181818181818,
-        "y": 3.272295454545455
+        "x": 3.8080143112701252,
+        "y": 0.651329577817532
       },
       "prevControl": {
-        "x": 2.0570230947805985,
-        "y": 3.1632964526433924
+        "x": 3.3699284436493735,
+        "y": 0.700005785330948
+      },
+      "nextControl": {
+        "x": 5.194510532160326,
+        "y": 0.497274442163069
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 8.238,
+        "y": 0.911326
+      },
+      "prevControl": {
+        "x": 6.589448390235779,
+        "y": 1.0037029246266
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,13 +58,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 0
   },
   "reversed": false,
-  "folder": "OutpostClimbRight",
+  "folder": "RightSteal",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 36.25
+    "rotation": 0
   },
   "useDefaultConstraints": true
 }

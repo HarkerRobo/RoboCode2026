@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "RightRexTest1"
+            "pathName": "RightStealHubToMidline"
           }
         },
         {
@@ -19,7 +19,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "RightRexTest22"
+            "pathName": "RightStealSweep"
           }
         },
         {
@@ -31,7 +31,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "RightRexTest3"
+            "pathName": "RightStealMidlineToHub"
           }
         },
         {
@@ -54,6 +54,12 @@
                 "type": "sequential",
                 "data": {
                   "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.5
+                      }
+                    },
                     {
                       "type": "named",
                       "data": {

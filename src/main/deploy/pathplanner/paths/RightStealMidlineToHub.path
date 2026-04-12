@@ -4,12 +4,12 @@
     {
       "anchor": {
         "x": 8.238,
-        "y": 7.158
+        "y": 0.911326
       },
       "prevControl": null,
       "nextControl": {
         "x": 7.036869409660108,
-        "y": 7.336869409660108
+        "y": 0.732456590339893
       },
       "isLocked": false,
       "linkedName": null
@@ -17,15 +17,15 @@
     {
       "anchor": {
         "x": 3.117,
-        "y": 7.386488730723606
+        "y": 0.682837269276394
       },
       "prevControl": {
         "x": 3.9444955277280864,
-        "y": 7.516291950759384
+        "y": 0.553034049240616
       },
       "nextControl": {
         "x": 2.3963544649815263,
-        "y": 7.273446293857964
+        "y": 0.795879706142037
       },
       "isLocked": false,
       "linkedName": null
@@ -33,11 +33,11 @@
     {
       "anchor": {
         "x": 3.117,
-        "y": 4.025
+        "y": 4.044326
       },
       "prevControl": {
         "x": 2.859329545454545,
-        "y": 5.251511363636364
+        "y": 2.81781463636364
       },
       "nextControl": null,
       "isLocked": false,
@@ -84,13 +84,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 1.1934894239820397
+    "rotation": -1.19348942398204
   },
   "reversed": false,
-  "folder": "LeftRexTest",
+  "folder": "RightSteal",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 0
   },
   "useDefaultConstraints": true
 }

@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "RightRexTest1"
+            "pathName": "LeftStealHubToMidline"
           }
         },
         {
@@ -19,7 +19,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "RightRexTest22"
+            "pathName": "LeftStealSweepFar"
           }
         },
         {
@@ -31,7 +31,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "RightRexTest3"
+            "pathName": "LeftStealMidlineToHub"
           }
         },
         {
