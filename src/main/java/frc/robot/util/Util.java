@@ -1,6 +1,5 @@
 package frc.robot.util;
 
-
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Radians;
@@ -54,11 +53,21 @@ public class Util
     // angles, speeds are effective
     private static InterpolatingTreeMap<Double, Pair<LinearVelocity, Angle>> interpolatingTreeMap = new InterpolatingTreeMap<>(inverseInterpolator, interpolator);
 
+    /**
+     * Adds a data point to the interpolating tree map
+     * 
+     * @param distanceMeters          the distance in meters
+     * @param velocityMetersPerSecond the shooting velocity in meters per second
+     * @param angleDegrees            the shooting angle in degrees
+     */
     private static void addData(double distanceMeters, double velocityMetersPerSecond, double angleDegrees)
     {
         interpolatingTreeMap.put(distanceMeters, Pair.of(MetersPerSecond.of(velocityMetersPerSecond), Degrees.of(angleDegrees)));
     }
 
+    /**
+     * Adds the shooting data points into the interpolating tree map
+     */
     public static void init ()
     {
         // OLD DATA POINTS
@@ -176,6 +185,20 @@ public class Util
         return new Translation3d(x0 + (xN + 1) * dx, y0 + (yN + 1) * dy, z0 + zN * dz);
     }
 
+    /**
+     * Computes the position of the num-th ball packed inside a rotated rectangular footprint
+     * 
+     * @param x              the center x-coordinate of the footprint
+     * @param y              the center y-coordinate of the footprint
+     * @param bottomZ        the bottom Z coordinate of the first layer
+     * @param rad            the rotation angle of the footprint in radians
+     * @param xside          the size of the footprint in the x direction
+     * @param yside          the size of the footprint in the y direction
+     * @param sphereDiameter the diameter of each ball
+     * @param num            the index of the ball
+     * @return the position of the num-th ball packed inside the rotated rectangular
+     *         footprint
+     */
     public static Translation3d packElWithRot (double x, double y, double bottomZ, double rad, double xside, double yside, double sphereDiameter, int num)
     {
         double eX = 0.092; // Error Adjustment
@@ -228,11 +251,23 @@ public class Util
         return new Rectangle2d(new Pose2d(new Translation2d(Constants.Simulation.ROTATE_X.apply(r.getCenter().getX()), Constants.Simulation.ROTATE_Y.apply(r.getCenter().getY())), new Rotation2d()), r.getXWidth(), r.getYWidth());
     }
 
+    /**
+     * Turns a 2D translation to a 3D translation by adding a z-coordinate
+     * 
+     * @param translation2d the 2D translation
+     * @param z             the z-coordinate
+     * @return the 3D translation
+     */
     public static Translation3d translation2dTo3d(Translation2d translation2d, double z)
     {
         return new Translation3d(translation2d.getX(), translation2d.getY(), z);
     }
 
+    /**
+     * Applies the alliance-based field transformation to a 3D translation
+     * 
+     * @param translation3d the translation to transform
+     */
     public static Translation3d applyAlliance(Translation3d translation3d)
     {
         return (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue) ? 
@@ -240,17 +275,33 @@ public class Util
                 translation2dTo3d(FlippingUtil.flipFieldPosition(translation3d.toTranslation2d()), translation3d.getZ());
     }
 
+    /**
+     * Gets the shooting starting point while adjusting to work for the robot-to-hood transformation
+     * 
+     * @return the position of the shooting start point
+     */
     public static Translation3d getShootStartingPoint(CommandSwerveDrivetrain drivetrain)
     {
         Translation3d rawPose = translation2dTo3d(drivetrain.getState().Pose.getTranslation(), 0.0);
         return new Pose3d(rawPose, Rotation3d.kZero).transformBy(Constants.ROBOT_TO_HOOD).getTranslation();
     }
 
+    /**
+     * Gets the target position for shooting
+     * 
+     * @return the position of the shooting target
+     */
     public static Translation3d getShootEndingPoint()
     {
         return applyAlliance(Constants.HUB_TARGET_POSITION);
     }
 
+    /**
+     * Gets the target position for passing and adjusts it for the current alliance
+     * 
+     * @param drivetrain the drivetrain subsystem
+     * @return the position of the target
+     */
     public static Translation3d getPassEndingPoint(CommandSwerveDrivetrain drivetrain)
     {
         return onLeftSide(drivetrain) ?
@@ -258,6 +309,12 @@ public class Util
                 applyAlliance(Constants.PASS_RIGHT_TARGET_POSITION);
     }
 
+    /**
+     * calculates the distance from the robot to the target
+     * 
+     * @param drivetrain the drivetrain subsystem
+     * @return the distance in meters
+     */
     public static double calculateShootDistance(CommandSwerveDrivetrain drivetrain)
     {
         Translation2d drivetrainPose = drivetrain.getState().Pose.getTranslation();
@@ -268,6 +325,15 @@ public class Util
         return drivetrainPose.getDistance(targetPose);
     }
     
+    /**
+     * Calculates the pitch required to hit a target from a certain position and
+     * velocity
+     * 
+     * @param position      the starting position
+     * @param target        the target position
+     * @param shootVelocity the shooting velocity in meters per second
+     * @return the required pitch (in radians!)
+     */
     public static Angle calculatePitch(Translation3d position, Translation3d target, double shootVelocity)
     {
         double dx = target.getX() - position.getX();
@@ -344,18 +410,38 @@ public class Util
         return output;
     }
     
+    /**
+     * gets the pitch angle for a pass
+     * 
+     * @param drivetrain the drivetrain subsystem (not currently used)
+     * @return the angle in degrees
+     */
     public static Angle calculatePassPitch(CommandSwerveDrivetrain drivetrain)
     {
         return Degrees.of(68.0);
         //return Util.calculatePitch(getShootStartingPoint(drivetrain), getPassEndingPoint(drivetrain), calculatePassVelocity(drivetrain));
     }
     
+    /**
+     * gets the velocity for a pass
+     * 
+     * @param drivetrain the drivetrain subsystem (not currently used)
+     * @return the velocity
+     */
     public static double calculatePassVelocity(CommandSwerveDrivetrain drivetrain)
     {
         return 30.0;
         //return Util.calculateVelocity(getShootStartingPoint(drivetrain), getPassEndingPoint(drivetrain));
     }
 
+    /**
+     * clamps a value between a minimum and maximum
+     * 
+     * @param value the value to clamp
+     * @param min   the minimum
+     * @param max   the maximum
+     * @return the clamped value
+     */
     public static double bound(double value, double min, double max)
     {
         if (value < min) return min;
@@ -363,6 +449,12 @@ public class Util
         return value;
     }
 
+    /**
+     * checks if the robot is on the left side of the field
+     * 
+     * @param drivetrain the drivetrain subsystem
+     * @return true if the robot is on the left side; false otherwise
+     */
     public static boolean onLeftSide(CommandSwerveDrivetrain drivetrain)
     {
         if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red)

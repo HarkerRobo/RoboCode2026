@@ -44,8 +44,8 @@ public class Constants
    
     public static final double MAX_VOLTAGE = 12.0; //volts
     
-    public static final double ROBOT_HEIGHT = 0.89535; // y direction when bot is faced in the positive x direction; that is, parallel to the intake face
-    public static final double ROBOT_WIDTH = 0.84455;
+    public static final double ROBOT_HEIGHT = 0.89535; // meters; y direction when bot is faced in the positive x direction; that is, parallel to the intake face
+    public static final double ROBOT_WIDTH = 0.84455; // meters
 
     public static final Pose2d ZEROING_POSE = new Pose2d(3.581, 4.20288, new Rotation2d(Degrees.of(180)));
 
@@ -56,7 +56,7 @@ public class Constants
 
     public static final CANBus CAN_SUPERSTRUCTURE = new CANBus("Superstructure");
 
-    public static final double G = 9.81;
+    public static final double G = 9.81; // m/s²
 
     public class Vision {
         public static final String kCamera1Name = "limelight";
@@ -348,8 +348,8 @@ public class Constants
         public static final double STATOR_CURRENT_LIMIT = 60.0;
         public static final double SUPPLY_CURRENT_LIMIT = 40.0;
 
-        public static final double DEFAULT_VOLTAGE = 0.0;
-        public static final double INTAKE_VOLTAGE = 6.0;
+        public static final double DEFAULT_VOLTAGE = 0.0; // volts
+        public static final double INTAKE_VOLTAGE = 6.0; // volts
 
         public static final double INTAKE_VELOCITY = 25.0; // rot/s
         public static final double EJECT_VELOCITY = -25.0; // rot/s
@@ -369,7 +369,7 @@ public class Constants
 
     public class Drive
     {
-        public static final double autoalignSteerKP = 13.0;// 12.0;
+        public static final double autoalignSteerKP = 13.0; // 12.0;
         public static final double autoalignSteerKI = 0.0;
         public static final double autoalignSteerKD = 0.0;
         
@@ -496,8 +496,8 @@ public class Constants
         public static final boolean kFrontLeftSteerMotorInverted = false;
         public static final boolean kFrontLeftEncoderInverted = false;
 
-        public static final Distance kFrontLeftXPos = Inches.of(11.375);
-        public static final Distance kFrontLeftYPos = Inches.of(10.375);
+        public static final Distance kFrontLeftXPos = Inches.of(11.375); // inches
+        public static final Distance kFrontLeftYPos = Inches.of(10.375); // inches
 
         // Front Right
         public static final int kFrontRightDriveMotorId = 10;
@@ -507,8 +507,8 @@ public class Constants
         public static final boolean kFrontRightSteerMotorInverted = false;
         public static final boolean kFrontRightEncoderInverted = false;
 
-        public static final Distance kFrontRightXPos = Inches.of(11.375);
-        public static final Distance kFrontRightYPos = Inches.of(-10.375);
+        public static final Distance kFrontRightXPos = Inches.of(11.375); // inches
+        public static final Distance kFrontRightYPos = Inches.of(-10.375); // inches
 
         // Back Left
         public static final int kBackLeftDriveMotorId = 4;
@@ -518,8 +518,8 @@ public class Constants
         public static final boolean kBackLeftSteerMotorInverted = false;
         public static final boolean kBackLeftEncoderInverted = false;
 
-        public static final Distance kBackLeftXPos = Inches.of(-11.375);
-        public static final Distance kBackLeftYPos = Inches.of(10.375);
+        public static final Distance kBackLeftXPos = Inches.of(-11.375); // inches
+        public static final Distance kBackLeftYPos = Inches.of(10.375); // inches
 
         // Back Right
         public static final int kBackRightDriveMotorId = 8;
@@ -529,8 +529,8 @@ public class Constants
         public static final boolean kBackRightSteerMotorInverted = false;
         public static final boolean kBackRightEncoderInverted = false;
 
-        public static final Distance kBackRightXPos = Inches.of(-11.375);
-        public static final Distance kBackRightYPos = Inches.of(-10.375);
+        public static final Distance kBackRightXPos = Inches.of(-11.375); // inches
+        public static final Distance kBackRightYPos = Inches.of(-10.375); // inches
 
     }
 
@@ -543,8 +543,8 @@ public class Constants
     public static final Translation3d PASS_LEFT_TARGET_POSITION = new Translation3d(2.010664, 2.010664, 0.0);
     public static final Translation3d PASS_RIGHT_TARGET_POSITION = new Translation3d(2.010664, Simulation.FIELD_HEIGHT - 2.010664, 0.0);
 
-    public static final Angle HARDCODE_HOOD_PITCH = Degrees.of(72.25);
-    public static final double HARDCODE_VELOCITY = 19.75;
+    public static final Angle HARDCODE_HOOD_PITCH = Degrees.of(72.25); // degrees
+    public static final double HARDCODE_VELOCITY = 19.75; // meters per second
 
     public static final double PITCH_OFFSET_UNIT = 5.0; // TODO
     public static final double FLYWHEEL_OFFSET_UNIT = 0.5; // TODO

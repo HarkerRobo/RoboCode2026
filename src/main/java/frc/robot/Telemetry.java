@@ -354,11 +354,17 @@ public class Telemetry
         }
     }
 
+    /**
+     * Get hood angle
+     */
     public double getHoodAngle()
     {
         return hoodAngle.get();
     }
     
+    /**
+     * Get shooter speed
+     */
     public double getShooterSpeed()
     {
         return shooterSpeed.get();

@@ -167,6 +167,9 @@ public class RobotContainer
         return modeChoosers.get(subsystem).getSelected();
     }
 
+    /**
+     * Returns subsystem status and handles sim running
+     */
     private static String subsystemName(int subsystem)
     {
         return switch(subsystem) {
