@@ -148,6 +148,9 @@ public class RobotContainer
         return modeChoosers.get(subsystem).getSelected();
     }
 
+    /**
+     * Returns subsystem status and handles sim running
+     */
     private static String subsystemName(int subsystem)
     {
         return switch(subsystem) {
@@ -319,22 +322,6 @@ public class RobotContainer
             .andThen(Commands.run(()->{}))
         .withName("Shoot"));
 
-        NamedCommands.registerCommand("Shoot2",
-            new AimToAngle(Constants.AUTO_SHOOT_2_ANGLE)
-            .andThen(new ShooterTargetSpeed(Constants.AUTO_SHOOT_2_VELOCITY))
-            .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot() && Hood.getInstance().readyToShoot()))
-            .andThen(new ShooterIndexerStartFullSpeed())
-            .andThen(new IndexerStartFullSpeed()) // load to shoot
-            .andThen(Commands.run(()->{})));
-
-        NamedCommands.registerCommand("Shoot1",
-            new AimToAngle(Constants.AUTO_SHOOT_1_ANGLE)
-            .andThen(new ShooterTargetSpeed(Constants.AUTO_SHOOT_1_VELOCITY))
-            .andThen(new WaitUntilCommand(()->Shooter.getInstance().readyToShoot() && Hood.getInstance().readyToShoot()))
-            .andThen(new ShooterIndexerStartFullSpeed())
-            .andThen(new IndexerStartFullSpeed()) // load to shoot
-            .andThen(Commands.run(()->{})));
-
         NamedCommands.registerCommand("Stow", stow.get());
         
         autonChooser = AutoBuilder.buildAutoChooser();
@@ -390,11 +377,11 @@ public class RobotContainer
         driver.b().onFalse(stow.get());
         
         driver.x().onTrue(
-            new ShooterTargetSpeed(Constants.HARDCODE_VELOCITY_2)
-            .andThen(new AimToAngle(Constants.HARDCODE_HOOD_PITCH_2.in(Degrees)))
+            new ShooterTargetSpeed(Constants.HARDCODE_VELOCITY)
+            .andThen(new AimToAngle(Constants.HARDCODE_HOOD_PITCH.in(Degrees)))
             .andThen(new ShooterIndexerStartFullSpeed())
             .andThen(new IndexerStartFullSpeed())
-            .withName("HardShoot2"));
+            .withName("HardShoot"));
 
         driver.x().onFalse(stow.get());
 
@@ -417,7 +404,7 @@ public class RobotContainer
             .andThen(new ShooterTargetSpeed(()->Telemetry.getInstance().getShooterSpeed()))
             .andThen(new WaitCommand(2.0))
             .andThen(new ShooterIndexerStartFullSpeed())
-            .andThen(new IndexerStartFullSpeed()));
+            .andThen(new IndexerStartFullSpeed()).withName("Shoot"));
 
         driver.rightTrigger().onFalse(stow.get());
 

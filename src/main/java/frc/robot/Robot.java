@@ -43,6 +43,7 @@ public class Robot extends TimedRobot
          DriverStation.startDataLog(DataLogManager.getLog());
       }
    }
+   
    /**
     * Called when the robot starts
     * Initiailizes RobotContainer bindings and constructs a LimelightSimulation if in simulation
@@ -64,7 +65,9 @@ public class Robot extends TimedRobot
       Units.radiansToDegrees(Constants.Vision.ROBOT_TO_CAMERA_2.getRotation().getX()), Units.radiansToDegrees(Constants.Vision.ROBOT_TO_CAMERA_2.getRotation().getY()), Units.radiansToDegrees(Constants.Vision.ROBOT_TO_CAMERA_2.getRotation().getZ()));
    }
       
-
+   /**
+    * Runs every 20ms regardless of robot mode
+    */
    @Override
    public void robotPeriodic() 
    {
