@@ -1,6 +1,5 @@
 package frc.robot.util;
 
-
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Radians;
@@ -56,11 +55,21 @@ public class Util
     // angles, speeds are effective
     private static InterpolatingTreeMap<Double, Pair<LinearVelocity, Angle>> interpolatingTreeMap = new InterpolatingTreeMap<>(inverseInterpolator, interpolator);
 
+    /**
+     * Adds a data point to the interpolating tree map
+     * 
+     * @param distanceMeters          the distance in meters
+     * @param velocityMetersPerSecond the shooting velocity in meters per second
+     * @param angleDegrees            the shooting angle in degrees
+     */
     private static void addData(double distanceMeters, double velocityMetersPerSecond, double angleDegrees)
     {
         interpolatingTreeMap.put(distanceMeters, Pair.of(MetersPerSecond.of(velocityMetersPerSecond), Degrees.of(angleDegrees)));
     }
 
+    /**
+     * Adds the shooting data points into the interpolating tree map
+     */
     public static void init ()
     {
         // OLD DATA POINTS
@@ -200,6 +209,20 @@ public class Util
         return new Translation3d(x0 + (xN + 1) * dx, y0 + (yN + 1) * dy, z0 + zN * dz);
     }
 
+    /**
+     * Computes the position of the num-th ball packed inside a rotated rectangular footprint
+     * 
+     * @param x              the center x-coordinate of the footprint
+     * @param y              the center y-coordinate of the footprint
+     * @param bottomZ        the bottom Z coordinate of the first layer
+     * @param rad            the rotation angle of the footprint in radians
+     * @param xside          the size of the footprint in the x direction
+     * @param yside          the size of the footprint in the y direction
+     * @param sphereDiameter the diameter of each ball
+     * @param num            the index of the ball
+     * @return the position of the num-th ball packed inside the rotated rectangular
+     *         footprint
+     */
     public static Translation3d packElWithRot (double x, double y, double bottomZ, double rad, double xside, double yside, double sphereDiameter, int num)
     {
         double eX = 0.092; // Error Adjustment
@@ -252,11 +275,23 @@ public class Util
         return new Rectangle2d(new Pose2d(new Translation2d(Constants.Simulation.ROTATE_X.apply(r.getCenter().getX()), Constants.Simulation.ROTATE_Y.apply(r.getCenter().getY())), new Rotation2d()), r.getXWidth(), r.getYWidth());
     }
 
+    /**
+     * Turns a 2D translation to a 3D translation by adding a z-coordinate
+     * 
+     * @param translation2d the 2D translation
+     * @param z             the z-coordinate
+     * @return the 3D translation
+     */
     public static Translation3d translation2dTo3d(Translation2d translation2d, double z)
     {
         return new Translation3d(translation2d.getX(), translation2d.getY(), z);
     }
 
+    /**
+     * Applies the alliance-based field transformation to a 3D translation
+     * 
+     * @param translation3d the translation to transform
+     */
     public static Translation3d applyAlliance(Translation3d translation3d)
     {
         return (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue) ? 
@@ -314,6 +349,14 @@ public class Util
         return 0.0;
     }
     
+    /**
+     * clamps a value between a minimum and maximum
+     * 
+     * @param value the value to clamp
+     * @param min   the minimum
+     * @param max   the maximum
+     * @return the clamped value
+     */
     public static double bound(double value, double min, double max)
     {
         if (value < min) return min;
@@ -321,6 +364,12 @@ public class Util
         return value;
     }
 
+    /**
+     * checks if the robot is on the left side of the field
+     * 
+     * @param drivetrain the drivetrain subsystem
+     * @return true if the robot is on the left side; false otherwise
+     */
     public static boolean onLeftSide(CommandSwerveDrivetrain drivetrain)
     {
         if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red)
