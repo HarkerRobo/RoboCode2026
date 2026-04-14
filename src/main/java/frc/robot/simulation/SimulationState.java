@@ -65,58 +65,6 @@ public class SimulationState
             this.location = location;
             state = new BallState(new Pose3d(new Translation3d(xPositionMeters, yPositionMeters, zPositionMeters), new Rotation3d()), Translation3d.kZero, Translation3d.kZero);
         }
-
-        /*
-        public static class FuelPositionStruct implements Struct<FuelPosition>
-        {
-            public FuelPositionStruct () {}
-
-            @Override
-            public Class<FuelPosition> getTypeClass() 
-            {
-                return FuelPosition.class;
-            }
-
-            @Override
-            public String getTypeName() 
-            {
-                return "FuelPosition";
-            }
-
-            @Override
-            public int getSize() 
-            {
-                return Translation3d.struct.getSize() + 4;
-            }
-
-            @Override
-            public String getSchema() 
-            {
-                return "Translation3d t;FieldLocation l";
-            }
-
-            @Override
-            public FuelPosition unpack(ByteBuffer bb) 
-            {
-                Translation3d t = Translation3d.struct.unpack(bb);
-                FieldLocation l =  FieldLocation.values()[bb.getInt()];
-                return new FuelPosition(l, t.getX(), t.getY(), t.getZ());
-            }
-
-            @Override
-            public void pack(ByteBuffer bb, FuelPosition value)
-            {
-                Translation3d.struct.pack(bb, value.position);
-                bb.putInt(value.location.ordinal());
-            }
-
-            @Override
-            public boolean isImmutable() 
-            {
-                return false;
-            }
-        }
-        */
     }
     
     public long lastTime = 0;
@@ -281,7 +229,6 @@ public class SimulationState
                     BallPhysics.step(fuelPositions[i].state, BALL_CONSTANTS, dt);
                 }
 
-
                 if (Math.abs(fuelPositions[i].state.pose.getZ() - HUB_INTAKE_HEIGHT) <= FUEL_DIAMETER && Util.within(HUB_CONTENTS, fuelPositions[i].state.pose.getTranslation()))
                 {
                     fuelPositions[i].location = FieldLocation.BlueHub;
@@ -295,9 +242,6 @@ public class SimulationState
                 {
                     fuelPositions[i].location = FieldLocation.Robot;
                 }
-
-
-
 
                 break;
             default: break;

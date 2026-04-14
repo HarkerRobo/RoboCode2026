@@ -358,7 +358,8 @@ public class RobotContainer
                         drive.withVelocityX(-driver.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
                         .withVelocityY(-driver.getLeftX() * MaxSpeed * (isSlow ? Constants.TRANSLATION_SLOW_MULTIPLIER : 1.0)) // Drive left with negative X (left)
                         .withRotationalRate(-driver.getRightX() * MaxAngularRate * (isSlow ? Constants.ROTATION_SLOW_MULTIPLIER : 1.0)) // Drive counterclockwise with negative X (left)
-                    ).withName("SwerveManual"));}
+                    ).withName("SwerveManual"));
+    }
     
 
     /**
@@ -477,16 +478,18 @@ public class RobotContainer
             .withName("SoftPass"));
         operator.rightTrigger().onFalse(stow.get());
 
-        // operator.leftBumper().onTrue(Commands.runOnce(()->
-        // {
-        //     if (direction == PassDirection.Right) direction = PassDirection.Automatic;
-        //     else direction = PassDirection.Right;
-        // }));
-        // operator.rightBumper().onTrue(Commands.runOnce(()->
-        // {
-        //     if (direction == PassDirection.Left) direction = PassDirection.Automatic;
-        //     else direction = PassDirection.Left;
-        // }));
+        /*
+        operator.leftBumper().onTrue(Commands.runOnce(()->
+        {
+            if (direction == PassDirection.Right) direction = PassDirection.Automatic;
+            else direction = PassDirection.Right;
+        }));
+        operator.rightBumper().onTrue(Commands.runOnce(()->
+        {
+            if (direction == PassDirection.Left) direction = PassDirection.Automatic;
+            else direction = PassDirection.Left;
+        }));
+        */
 
         operator.x().onTrue(Intake.getInstance().runOnce(()->Intake.getInstance().setVelocity(
                 RotationsPerSecond.of(Constants.Intake.REDUCED_INTAKE_VELOCITY)))
