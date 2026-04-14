@@ -33,7 +33,8 @@ public class Indexer extends SubsystemBase
      * Creates the Indexer subsystem and configures the main TalonFX motor.
      * Initializes simulation settings.
      */
-    private Indexer() { 
+    private Indexer() 
+    { 
         main = new TalonFX(Constants.Indexer.MAIN_ID, Constants.CAN_SUPERSTRUCTURE);
         config();
         
@@ -48,7 +49,8 @@ public class Indexer extends SubsystemBase
      * Applies all TalonFX settings: PID values, current limits, inversion, voltage limits, and sensor ratio.
      * Ensures the indexer motor starts with the correct behavior before anything commands it.
      */
-    private void config() {
+    private void config() 
+    {
         main.clearStickyFaults();
 
         TalonFXConfiguration mainConfigs = new TalonFXConfiguration();
@@ -164,7 +166,8 @@ public class Indexer extends SubsystemBase
     /**
      * Returns the Indexer subsystem instance.
      */
-    public static Indexer getInstance() {
+    public static Indexer getInstance() 
+    {
         if (instance == null) instance = new Indexer();
         return instance;
     }

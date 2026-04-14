@@ -23,7 +23,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Shoot1"
+                  "name": "Shoot"
                 }
               },
               {
@@ -97,7 +97,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Shoot1"
+                  "name": "Shoot"
                 }
               },
               {

@@ -7,7 +7,7 @@ import java.util.function.Supplier;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.TunerConstants;
+import frc.robot.Constants.Swerve;
 import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
 import frc.robot.Robot;
 import frc.robot.Telemetry;
@@ -23,7 +23,7 @@ public class RotateToAngle extends Command
 {
     CommandSwerveDrivetrain dt;
 
-    private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
+    private double MaxSpeed = 1.0 * Swerve.SPEED_AT_12_VOLTS.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
     private Supplier<Translation2d> targetSupplier;
     private Translation2d target;
@@ -88,8 +88,8 @@ public class RotateToAngle extends Command
         if (continueDrive)
         {
             dt.setControl(drive
-                    .withHeadingPID(Constants.Drive.autoalignSteerKP, Constants.Drive.autoalignSteerKI,
-                            Constants.Drive.autoalignSteerKD)
+                    .withHeadingPID(Constants.Swerve.AUTOALIGN_STEER_KP, Constants.Swerve.AUTOALIGN_STEER_KP,
+                            Constants.Swerve.AUTOALIGN_STEER_KD)
                     .withTargetDirection(calcAngle())
                     .withMaxAbsRotationalRate(MaxAngularRate)
                     .withVelocityX(xSpeed) // Drive forward with negative Y (forward)
@@ -99,8 +99,8 @@ public class RotateToAngle extends Command
         else
         {
             dt.setControl(drive
-                    .withHeadingPID(Constants.Drive.autoalignSteerKP, Constants.Drive.autoalignSteerKI,
-                            Constants.Drive.autoalignSteerKD)
+                    .withHeadingPID(Constants.Swerve.AUTOALIGN_STEER_KP, Constants.Swerve.AUTOALIGN_STEER_KP,
+                            Constants.Swerve.AUTOALIGN_STEER_KD)
                     .withTargetDirection(calcAngle())
                     .withMaxAbsRotationalRate(MaxAngularRate)
                     .withVelocityX(0.0)

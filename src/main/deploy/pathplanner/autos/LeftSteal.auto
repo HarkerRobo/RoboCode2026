@@ -7,7 +7,31 @@
         {
           "type": "path",
           "data": {
-            "pathName": "RSSEBeforeShoot4"
+            "pathName": "LeftStealHubToMidline"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.26
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "LeftStealSweep"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.0
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "LeftStealMidlineToHub"
           }
         },
         {
@@ -17,7 +41,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 6.0
+                  "waitTime": 10.0
                 }
               },
               {
@@ -33,19 +57,7 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 3.0
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "RetractIntake"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "RetractIntake"
+                        "waitTime": 0.5
                       }
                     },
                     {
@@ -94,12 +106,6 @@
           "type": "named",
           "data": {
             "name": "Stow"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "RSSEShootToCenter"
           }
         }
       ]

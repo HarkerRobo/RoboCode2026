@@ -7,7 +7,31 @@
         {
           "type": "path",
           "data": {
-            "pathName": "RSSEBeforeShoot4"
+            "pathName": "RightStealHubToMidline"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.26
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RightStealSweepFar"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RightStealMidlineToHub"
           }
         },
         {
@@ -17,7 +41,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 6.0
+                  "waitTime": 10.0
                 }
               },
               {
@@ -30,24 +54,6 @@
                 "type": "sequential",
                 "data": {
                   "commands": [
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 3.0
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "RetractIntake"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "RetractIntake"
-                      }
-                    },
                     {
                       "type": "named",
                       "data": {
@@ -94,12 +100,6 @@
           "type": "named",
           "data": {
             "name": "Stow"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "RSSEShootToCenter"
           }
         }
       ]

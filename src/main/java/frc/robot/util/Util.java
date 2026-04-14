@@ -1,6 +1,5 @@
 package frc.robot.util;
 
-
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Radians;
@@ -56,11 +55,21 @@ public class Util
     // angles, speeds are effective
     private static InterpolatingTreeMap<Double, Pair<LinearVelocity, Angle>> interpolatingTreeMap = new InterpolatingTreeMap<>(inverseInterpolator, interpolator);
 
+    /**
+     * Adds a data point to the interpolating tree map
+     * 
+     * @param distanceMeters          the distance in meters
+     * @param velocityMetersPerSecond the shooting velocity in meters per second
+     * @param angleDegrees            the shooting angle in degrees
+     */
     private static void addData(double distanceMeters, double velocityMetersPerSecond, double angleDegrees)
     {
         interpolatingTreeMap.put(distanceMeters, Pair.of(MetersPerSecond.of(velocityMetersPerSecond), Degrees.of(angleDegrees)));
     }
 
+    /**
+     * Adds the shooting data points into the interpolating tree map
+     */
     public static void init ()
     {
         // OLD DATA POINTS
@@ -81,29 +90,42 @@ public class Util
         // addData(4.45, 19.0, 66.5);
         // addData(5.386, 21.0, 66.0);
         // 2.722, 70, 19.5
+        
+        // addData(4.646, 9.7, 69.7 + angleOffset); // "
+        // addData(5.697, 10.2, 64.9 + angleOffset); // "; farthest point
 
         // 2026-03-28 DATA POINTS
 
-        double angleOffset = -1.5;
-        addData(1.425, 7.4, 75.0 + angleOffset);
-        addData(1.864, 7.7, 71.5 + angleOffset); // undershot with one motor running
-        addData(2.062, 8.0, 71.5 + angleOffset);
+        // double angleOffset = 0.0;
+        // double velocityOffset = 0.5;//0.4;
+        // addData(1.425, 7.4, 75.0 + angleOffset);
+        // addData(1.864, 7.7, 71.5 + angleOffset);
+        // addData(2.062, 8.0, 71.5 + angleOffset);
         // addData(2.320, 8.3, 71.5 + angleOffset);
-        // addData(2.614, 8.4, 71.0 + angleOffset);
-        addData(2.567, 8.38, 72.1 + angleOffset);
-        addData(2.919, 8.5, 70.8 + angleOffset);
-        addData(3.574, 8.8, 70.3 + angleOffset);
-        addData(3.952, 9.26, 70.1 + angleOffset);
-        addData(4.312, 9.35, 69.9 + angleOffset); // should be tested with both motors running
-        // addData(4.646, 9.7, 69.7 + angleOffset); // "
-        // addData(5.697, 10.2, 64.9 + angleOffset); // "; farthest point
-        
-        addData(3.207, 8.35, 70.6 + angleOffset);
-        addData(4.0, 9.25, 70.0 + angleOffset);
-        addData(3.40, 9.0, 70.3 + angleOffset);
-        addData(3.80, 9.2, 70.1 + angleOffset);
+        // addData(2.614, 8.4 + velocityOffset - 0.1, 71.0 + angleOffset);
+        // addData(2.919, 8.5 + velocityOffset - 0.1, 70.8 + angleOffset);
+        // addData(3.207, 8.35 + velocityOffset, 70.6 + angleOffset);
+        // addData(3.40, 9.0 + velocityOffset, 70.3 + angleOffset);
+        // addData(3.574, 8.8 + velocityOffset, 70.3 + angleOffset);
+        // addData(3.80, 9.2 + velocityOffset, 70.1 + angleOffset);
+        // addData(3.952, 9.26 + velocityOffset, 70.1 + angleOffset);
+        // addData(4.0, 9.25 + velocityOffset, 70.0 + angleOffset);
+        // addData(4.312, 9.35 + velocityOffset, 69.9 + angleOffset);
+        // addData(5.20, 9.5 + velocityOffset, 67.5 + angleOffset);
 
-        addData(5.20, 9.5, 67.5 + angleOffset);
+        // NEW DATA POINTS FROM 4/8/26
+        addData(1.265, 6.8, 75.0); // 1.366
+        addData(1.360, 6.9, 75.0); // 1.454
+        addData(1.574, 7.0, 74.0); // 1.574
+        addData(1.487, 7.2, 73.0); // 1.736
+        addData(1.838, 7.4, 72.0); // 1.909
+        addData(1.961, 7.45, 71.5); // 2.027
+        addData(2.120, 7.5, 70.5); // 2.182
+        addData(2.333, 7.5, 69.5); // 2.389
+        addData(2.525, 7.6, 68.5); // 2.577
+        addData(2.750, 7.8, 67.5); // 2.798
+        addData(3.020,8.0,66.0); // 3.064
+
     }
 
     /**
@@ -187,6 +209,20 @@ public class Util
         return new Translation3d(x0 + (xN + 1) * dx, y0 + (yN + 1) * dy, z0 + zN * dz);
     }
 
+    /**
+     * Computes the position of the num-th ball packed inside a rotated rectangular footprint
+     * 
+     * @param x              the center x-coordinate of the footprint
+     * @param y              the center y-coordinate of the footprint
+     * @param bottomZ        the bottom Z coordinate of the first layer
+     * @param rad            the rotation angle of the footprint in radians
+     * @param xside          the size of the footprint in the x direction
+     * @param yside          the size of the footprint in the y direction
+     * @param sphereDiameter the diameter of each ball
+     * @param num            the index of the ball
+     * @return the position of the num-th ball packed inside the rotated rectangular
+     *         footprint
+     */
     public static Translation3d packElWithRot (double x, double y, double bottomZ, double rad, double xside, double yside, double sphereDiameter, int num)
     {
         double eX = 0.092; // Error Adjustment
@@ -239,11 +275,23 @@ public class Util
         return new Rectangle2d(new Pose2d(new Translation2d(Constants.Simulation.ROTATE_X.apply(r.getCenter().getX()), Constants.Simulation.ROTATE_Y.apply(r.getCenter().getY())), new Rotation2d()), r.getXWidth(), r.getYWidth());
     }
 
+    /**
+     * Turns a 2D translation to a 3D translation by adding a z-coordinate
+     * 
+     * @param translation2d the 2D translation
+     * @param z             the z-coordinate
+     * @return the 3D translation
+     */
     public static Translation3d translation2dTo3d(Translation2d translation2d, double z)
     {
         return new Translation3d(translation2d.getX(), translation2d.getY(), z);
     }
 
+    /**
+     * Applies the alliance-based field transformation to a 3D translation
+     * 
+     * @param translation3d the translation to transform
+     */
     public static Translation3d applyAlliance(Translation3d translation3d)
     {
         return (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue) ? 
@@ -251,64 +299,16 @@ public class Util
                 translation2dTo3d(FlippingUtil.flipFieldPosition(translation3d.toTranslation2d()), translation3d.getZ());
     }
 
-    public static Translation3d getShootStartingPoint(CommandSwerveDrivetrain drivetrain)
-    {
-        Translation3d rawPose = translation2dTo3d(drivetrain.getState().Pose.getTranslation(), 0.0);
-        return new Pose3d(rawPose, Rotation3d.kZero).transformBy(Constants.ROBOT_TO_HOOD).getTranslation();
-    }
-
-    public static Translation3d getShootEndingPoint()
-    {
-        return applyAlliance(Constants.HUB_TARGET_POSITION);
-    }
-
-    public static Translation3d getPassEndingPoint(CommandSwerveDrivetrain drivetrain)
-    {
-        return onLeftSide(drivetrain) ?
-                applyAlliance(Constants.PASS_LEFT_TARGET_POSITION) : 
-                applyAlliance(Constants.PASS_RIGHT_TARGET_POSITION);
-    }
-
     public static double calculateShootDistance(CommandSwerveDrivetrain drivetrain)
     {
         Translation2d drivetrainPose = drivetrain.getState().Pose.getTranslation();
         
         Translation2d targetPose = (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue) ? 
-                    Constants.HUB_TARGET_POSITION.toTranslation2d() : 
-                    FlippingUtil.flipFieldPosition(Constants.HUB_TARGET_POSITION.toTranslation2d());
+                    Constants.AlignConstants.HUB : 
+                    FlippingUtil.flipFieldPosition(Constants.AlignConstants.HUB);
         return drivetrainPose.getDistance(targetPose);
     }
     
-    public static Angle calculatePitch(Translation3d position, Translation3d target, double shootVelocity)
-    {
-        double dx = target.getX() - position.getX();
-        double dy = target.getY() - position.getY();
-        double db = Math.sqrt(dx * dx + dy * dy);
-        double dz = target.getZ() - position.getZ();
-        double s = shootVelocity;
-        double g = Constants.G;
-        //System.out.println("\n\tdb: " + db + "\tdz: " + dz + "\ts: " + s);
-        double idealAngle = Math.atan((Math.pow(s,2.0) + 
-            Math.sqrt(Math.pow(s,4.0)
-                - g * (g * Math.pow(db,2.0) + 2.0 * dz * Math.pow(s,2.0))))
-            / (g * db));
-        return Radians.of(idealAngle);
-    }
-
-    /**
-     * Calculates the launch velocity from a position to the target
-     * @param position  the start position
-     * @param target    the target position
-     * @return  the calculated launch velocity
-     */
-    public static double calculateVelocity(Translation3d position, Translation3d target)
-    {
-        double dx = target.getX() - position.getX();
-        double dy = target.getY() - position.getY();
-        double db = Math.sqrt(dx * dx + dy * dy);
-        return Constants.DISTANCE_SHOOTVELO_RATIO * (db - Constants.Simulation.HUB_CONTENTS.getXWidth() / 2.0 - 6.0) + 10.0 - Constants.SPEED_OFFSET.in(MetersPerSecond);
-    }
-
     /**
      * Calculates the shooting pitch angle based on the drivetrain pose and the hub target position
      * @param drivetrain    the drivetrain subsystem
@@ -316,22 +316,15 @@ public class Util
      */
     public static Angle calculateShootPitch(CommandSwerveDrivetrain drivetrain)
     {
-        if (Constants.INTERPOLATE_VALUES)
+        Pair<LinearVelocity, Angle> value = interpolatingTreeMap.get(calculateShootDistance(drivetrain));
+        if (value != null) 
         {
-            Pair<LinearVelocity, Angle> value = interpolatingTreeMap.get(calculateShootDistance(drivetrain));
-            if (value != null)
+            Angle output = value.getSecond();
+            if (output != null) 
             {
-                Angle output = value.getSecond();
-                if (output != null)
-                {
-                    System.out.printf("Calculated angle with interpolation: %f degrees\n", output.in(Degrees));
-                    return output;
-                }
+                return output;
             }
-            // System.out.println("Interpolation failed - no value found. Reverting to math");
         }
-        // Angle output = Util.calculatePitch(getShootStartingPoint(drivetrain), getShootEndingPoint(), calculateShootVelocity(drivetrain));
-        // System.out.printf("Calculated angle: %f degrees\n", output.in(Degrees));
         return Degrees.zero();
     }
 
@@ -342,39 +335,28 @@ public class Util
      */
     public static double calculateShootVelocity(CommandSwerveDrivetrain drivetrain)
     {
-        if (Constants.INTERPOLATE_VALUES)
+        Pair<LinearVelocity, Angle> value = interpolatingTreeMap.get(calculateShootDistance(drivetrain));
+        if (value != null) 
         {
-            Pair<LinearVelocity, Angle> value = interpolatingTreeMap.get(calculateShootDistance(drivetrain));
-            if (value != null)
+            LinearVelocity first = value.getFirst();
+            if (first != null) 
             {
-                LinearVelocity first = value.getFirst();
-                if (first != null)
-                {
-                    double output = first.in(MetersPerSecond);
-                    System.out.printf("Calculated velocity with interpolation: %f\n", output);
-                    return output;
-                }
+                double output = first.in(MetersPerSecond);
+                return output;
             }
-            System.out.println("Interpolation failed - no value found. Reverting to math");
         }
-        return 0.0;
-        // double output = Util.calculateVelocity(getShootStartingPoint(drivetrain), getShootEndingPoint());
-        // System.out.printf("Calculated velocity: %f\n", output);
-        // return output;
-    }
-    
-    public static Angle calculatePassPitch(CommandSwerveDrivetrain drivetrain)
-    {
-        return Degrees.of(65.0);
-        //return Util.calculatePitch(getShootStartingPoint(drivetrain), getPassEndingPoint(drivetrain), calculatePassVelocity(drivetrain));
-    }
-    
-    public static double calculatePassVelocity(CommandSwerveDrivetrain drivetrain)
-    {
-        return 12.7;
-        //return Util.calculateVelocity(getShootStartingPoint(drivetrain), getPassEndingPoint(drivetrain));
-    }
 
+        return 0.0;
+    }
+    
+    /**
+     * clamps a value between a minimum and maximum
+     * 
+     * @param value the value to clamp
+     * @param min   the minimum
+     * @param max   the maximum
+     * @return the clamped value
+     */
     public static double bound(double value, double min, double max)
     {
         if (value < min) return min;
@@ -382,6 +364,12 @@ public class Util
         return value;
     }
 
+    /**
+     * checks if the robot is on the left side of the field
+     * 
+     * @param drivetrain the drivetrain subsystem
+     * @return true if the robot is on the left side; false otherwise
+     */
     public static boolean onLeftSide(CommandSwerveDrivetrain drivetrain)
     {
         if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red)

@@ -5,9 +5,15 @@
     "data": {
       "commands": [
         {
+          "type": "wait",
+          "data": {
+            "waitTime": 4.0
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "RSSEBeforeShoot4"
+            "pathName": "LSSEBeforeShoot4"
           }
         },
         {
@@ -99,7 +105,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "RSSEShootToCenter"
+            "pathName": "LSSEShootToCenter"
           }
         }
       ]

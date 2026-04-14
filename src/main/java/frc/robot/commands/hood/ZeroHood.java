@@ -31,6 +31,12 @@ public class ZeroHood extends Command
         Hood.getInstance().setVoltage(Volts.of(Constants.Hood.ZEROING_VOLTAGE));
     }
 
+    @Override
+    public void execute()
+    {
+        System.out.println("Zeroing hood");
+    }
+
     /**
      * Finishes when the hood stalls or reaches the target.
      * Either condition indicates the hood is at its mechanical zero.

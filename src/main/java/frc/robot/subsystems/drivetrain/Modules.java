@@ -13,42 +13,42 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import frc.robot.Constants;
 
-import static frc.robot.Constants.TunerConstants.*;
+import static frc.robot.Constants.Swerve.*;
 
 public class Modules
 {
-    public static final SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration> FrontLeft = ConstantCreator
+    public static final SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration> FrontLeft = CONSTANT_CREATOR
         .createModuleConstants(
-                kFrontLeftSteerMotorId,
-                kFrontLeftDriveMotorId,
-                kFrontLeftEncoderId,
-                kFrontLeftEncoderOffset,
-                kFrontLeftXPos, kFrontLeftYPos, kInvertLeftSide, kFrontLeftSteerMotorInverted,
-                kFrontLeftEncoderInverted);
-    public static final SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration> FrontRight = ConstantCreator
+                FRONT_LEFT_STEER_MOTOR_ID,
+                FRONT_LEFT_DRIVE_MOTOR_ID,
+                FRONT_LEFT_ENCODER_ID,
+                FRONT_LEFT_ENCODER_OFFSET,
+                FRONT_LEFT_X_POS, FRONT_LEFT_Y_POS, INVERT_LEFT_SIDE, FRONT_LEFT_STEER_MOTOR_INVERTED,
+                FRONT_LEFT_ENCODER_INVERTED);
+    public static final SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration> FrontRight = CONSTANT_CREATOR
         .createModuleConstants(
-                kFrontRightSteerMotorId,
-                kFrontRightDriveMotorId,
-                kFrontRightEncoderId,
-                kFrontRightEncoderOffset,
-                kFrontRightXPos, kFrontRightYPos, kInvertRightSide, kFrontRightSteerMotorInverted,
-                kFrontRightEncoderInverted);
-    public static final SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration> BackLeft = ConstantCreator
+                FRONT_RIGHT_STEER_MOTOR_ID,
+                FRONT_RIGHT_DRIVE_MOTOR_ID,
+                FRONT_RIGHT_ENCODER_ID,
+                FRONT_RIGHT_ENCODER_OFFSET,
+                FRONT_RIGHT_X_POS, FRONT_RIGHT_Y_POS, INVERT_RIGHT_SIDE, FRONT_RIGHT_STEER_MOTOR_INVERTED,
+                FRONT_RIGHT_ENCODER_INVERTED);
+    public static final SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration> BackLeft = CONSTANT_CREATOR
         .createModuleConstants(
-                kBackLeftSteerMotorId,
-                kBackLeftDriveMotorId,
-                kBackLeftEncoderId,
-                kBackLeftEncoderOffset,
-                kBackLeftXPos, kBackLeftYPos, kInvertLeftSide, kBackLeftSteerMotorInverted,
-                kBackLeftEncoderInverted);
-    public static final SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration> BackRight = ConstantCreator
+                BACK_LEFT_STEER_MOTOR_ID,
+                BACK_LEFT_DRIVE_MOTOR_ID,
+                BACK_LEFT_ENCODER_ID,
+                BACK_LEFT_ENCODER_OFFSET,
+                BACK_LEFT_X_POS, BACK_LEFT_Y_POS, INVERT_LEFT_SIDE, BACK_LEFT_STEER_MOTOR_INVERTED,
+                BACK_LEFT_ENCODER_INVERTED);
+    public static final SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration> BackRight = CONSTANT_CREATOR
         .createModuleConstants(
-                kBackRightSteerMotorId,
-                kBackRightDriveMotorId,
-                kBackRightEncoderId,
-                kBackRightEncoderOffset,
-                kBackRightXPos, kBackRightYPos, kInvertRightSide, kBackRightSteerMotorInverted,
-                kBackRightEncoderInverted);
+                BACK_RIGHT_STEER_MOTOR_ID,
+                BACK_RIGHT_DRIVE_MOTOR_ID,
+                BACK_RIGHT_ENCODER_ID,
+                BACK_RIGHT_ENCODER_OFFSET,
+                BACK_RIGHT_X_POS, BACK_RIGHT_Y_POS, INVERT_RIGHT_SIDE, BACK_RIGHT_STEER_MOTOR_INVERTED,
+                BACK_RIGHT_ENCODER_INVERTED);
 
     /**
      * Creates a CommandSwerveDrivetrain instance.
@@ -56,10 +56,10 @@ public class Modules
      */
     public static CommandSwerveDrivetrain createDrivetrain() {
         return new CommandSwerveDrivetrain(
-                DrivetrainConstants,
-                Constants.Vision.odometryUpdateFrequency, 
-                Constants.Vision.stateStdDevs, 
-                Constants.Vision.kTagStdDevs, 
+                DRIVETRAIN_CONSTANTS,
+                Constants.Vision.ODOMETRY_UPDATE_FREQUENCY, 
+                Constants.Vision.STATE_STANDARD_DEVIATIONS, 
+                Constants.Vision.TAG_STANDARD_DEVIATIONS, 
                 FrontLeft, FrontRight, BackLeft, BackRight);
     }
 
