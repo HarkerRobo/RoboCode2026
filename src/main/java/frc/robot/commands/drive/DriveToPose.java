@@ -12,7 +12,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.AlignConstants;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
 import frc.robot.Robot;
@@ -133,8 +132,8 @@ public class DriveToPose extends Command{
     private Pose2d getTargetPose() {
 
         return switch (Robot.instance.robotContainer.getAlignDirection()) {
-            case Right -> AlignConstants.CLIMB_RIGHT;
-            case Left -> AlignConstants.CLIMB_LEFT;
+            case Right -> Constants.AlignConstants.CLIMB_RIGHT;
+            case Left -> Constants.AlignConstants.CLIMB_LEFT;
             default -> drivetrain.getState().Pose;
         };
     }

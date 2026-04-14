@@ -304,8 +304,8 @@ public class Util
         Translation2d drivetrainPose = drivetrain.getState().Pose.getTranslation();
         
         Translation2d targetPose = (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue) ? 
-                    Constants.HUB_TARGET_POSITION.toTranslation2d() : 
-                    FlippingUtil.flipFieldPosition(Constants.HUB_TARGET_POSITION.toTranslation2d());
+                    Constants.AlignConstants.HUB : 
+                    FlippingUtil.flipFieldPosition(Constants.AlignConstants.HUB);
         return drivetrainPose.getDistance(targetPose);
     }
     

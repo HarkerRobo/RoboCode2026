@@ -368,7 +368,7 @@ public class RobotContainer
      */
     private void configureDriverBindings() 
     {
-        driver.a().whileTrue(new RotateToAngle(drivetrain, () -> AlignConstants.HUB, false)
+        driver.a().whileTrue(new RotateToAngle(drivetrain, () -> Constants.AlignConstants.HUB, false)
             .withName("ShootAlign"));
         
         driver.y().onTrue(hardPass);
