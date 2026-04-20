@@ -1,5 +1,6 @@
 package frc.robot.commands.intake;
 
+import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.wpilibj.Timer;
@@ -37,9 +38,9 @@ public class AgitateIntake extends Command
     {
         System.out.printf("Time: %f\n", timer.get());
         Intake.getInstance().setVoltage(Volts.of(
-            (Math.sin(2 * Math.PI / Constants.IntakeExtension.AGITATE_PERIOD_SECONDS * timer.get()) + 1.0)
-            * (Constants.IntakeExtension.AGITATE_MAX_VOLTAGE - Constants.IntakeExtension.AGITATE_MIN_VOLTAGE) / 2.0 + 
-            Constants.IntakeExtension.AGITATE_MIN_VOLTAGE));
+            (Math.sin(2 * Math.PI / Constants.IntakeExtension.AGITATE_PERIOD_SECONDS.in(Seconds) * timer.get()) + 1.0)
+            * (Constants.IntakeExtension.AGITATE_MAX_VOLTAGE.minus(Constants.IntakeExtension.AGITATE_MIN_VOLTAGE).in(Volts)) / 2.0 + 
+            Constants.IntakeExtension.AGITATE_MIN_VOLTAGE.in(Volts)));
     }
 
     /**

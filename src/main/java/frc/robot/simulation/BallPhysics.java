@@ -1,5 +1,7 @@
 package frc.robot.simulation;
 
+import static edu.wpi.first.units.Units.Meters;
+
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -105,14 +107,14 @@ public final class BallPhysics {
 
         s.velocity = s.velocity.plus(accel.times(dt));
         
-        if (s.pose.getZ() > 0.5 * Constants.Simulation.FUEL_DIAMETER || s.velocity.getZ() > 0)
+        if (s.pose.getZ() > 0.5 * Constants.Simulation.FUEL_DIAMETER.in(Meters) || s.velocity.getZ() > 0)
         {
             s.pose = new Pose3d(s.pose.getTranslation().plus(s.velocity.times(dt)),
                 integrateRotation(s.pose.getRotation(), s.omega, dt));
         }
         else
         {
-            s.pose = new Pose3d(s.pose.getX(), s.pose.getY(), 0.5 * Constants.Simulation.FUEL_DIAMETER, s.pose.getRotation());
+            s.pose = new Pose3d(s.pose.getX(), s.pose.getY(), 0.5 * Constants.Simulation.FUEL_DIAMETER.in(Meters), s.pose.getRotation());
         }
     }
 

@@ -30,7 +30,7 @@ public class Intake extends SubsystemBase
     private static Intake instance;
     private TalonFX left;
     private TalonFX right;
-    private double targetVelocity;
+    private AngularVelocity targetVelocity = RotationsPerSecond.of(0);
 
     private DCMotorSim motorSim = new DCMotorSim(
         LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 0.001, Constants.Intake.LEFT_GEAR_RATIO),
@@ -81,12 +81,12 @@ public class Intake extends SubsystemBase
 
         motorConfig.Slot0.kV = Constants.Intake.KV;
 
-        motorConfig.Voltage.PeakForwardVoltage = Constants.MAX_VOLTAGE;
-        motorConfig.Voltage.PeakReverseVoltage = -Constants.MAX_VOLTAGE;
+        motorConfig.Voltage.PeakForwardVoltage = Constants.MAX_VOLTAGE.in(Volts);
+        motorConfig.Voltage.PeakReverseVoltage = -Constants.MAX_VOLTAGE.in(Volts);
 
-        motorConfig.CurrentLimits.StatorCurrentLimit = Constants.Intake.STATOR_CURRENT_LIMIT;
+        motorConfig.CurrentLimits.StatorCurrentLimit = Constants.Intake.STATOR_CURRENT_LIMIT.in(Amps);
         motorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-        motorConfig.CurrentLimits.SupplyCurrentLimit = Constants.Intake.SUPPLY_CURRENT_LIMIT;
+        motorConfig.CurrentLimits.SupplyCurrentLimit = Constants.Intake.SUPPLY_CURRENT_LIMIT.in(Amps);
         motorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
         //left.getConfigurator().apply(motorConfig);
@@ -100,7 +100,7 @@ public class Intake extends SubsystemBase
     */
     public AngularVelocity getTargetVelocity()
     {
-        return RotationsPerSecond.of(targetVelocity);
+        return (targetVelocity);
     }
    
     /**
@@ -158,8 +158,8 @@ public class Intake extends SubsystemBase
     
     public boolean isStalling()
     {
-        return Math.abs(left.getStatorCurrent().getValueAsDouble()) >= Constants.Intake.STALLING_CURRENT ||
-            Math.abs(right.getStatorCurrent().getValueAsDouble()) >= Constants.Intake.STALLING_CURRENT;
+        return Math.abs(left.getStatorCurrent().getValueAsDouble()) >= Constants.Intake.STALLING_CURRENT.in(Amps) ||
+            Math.abs(right.getStatorCurrent().getValueAsDouble()) >= Constants.Intake.STALLING_CURRENT.in(Amps);
     }
     
     /**
@@ -182,7 +182,7 @@ public class Intake extends SubsystemBase
     */
     public void setVelocity (AngularVelocity velocity)
     {
-        targetVelocity = velocity.in(RotationsPerSecond);
+        targetVelocity = velocity;
         if (isDisabled())
         {
             System.out.println("Quashing input to Intake");

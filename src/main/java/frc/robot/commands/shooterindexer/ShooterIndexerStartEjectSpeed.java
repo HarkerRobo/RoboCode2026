@@ -23,7 +23,7 @@ public class ShooterIndexerStartEjectSpeed extends Command
     @Override
     public void initialize()
     {
-        ShooterIndexer.getInstance().setVelocity(RotationsPerSecond.of(Constants.ShooterIndexer.EJECT_VELOCITY));
+        ShooterIndexer.getInstance().setVelocity(Constants.ShooterIndexer.EJECT_VELOCITY);
     }
 
     /**

@@ -35,7 +35,7 @@ public class StartRunIntake extends Command
         // }
         // else
         // {
-            Intake.getInstance().setVelocity(RotationsPerSecond.of(Constants.Intake.INTAKE_VELOCITY));
+            Intake.getInstance().setVelocity(Constants.Intake.INTAKE_VELOCITY);
         // }
     }
 

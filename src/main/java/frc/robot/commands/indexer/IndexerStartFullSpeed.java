@@ -22,7 +22,7 @@ public class IndexerStartFullSpeed extends Command
     @Override
     public void initialize() 
     {
-        Indexer.getInstance().setMainVoltage(Volts.of(Constants.Indexer.MAIN_MAX_VOLTAGE));
+        Indexer.getInstance().setMainVoltage(Constants.Indexer.MAIN_MAX_VOLTAGE);
     }
 
     /**

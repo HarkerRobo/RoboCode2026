@@ -1,6 +1,7 @@
 package frc.robot.util;
 
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Rotations;
@@ -375,11 +376,11 @@ public class Util
         if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red)
         {
             
-            return drivetrain.getState().Pose.getY() > Constants.Simulation.FIELD_HEIGHT / 2.0;
+            return drivetrain.getState().Pose.getY() > Constants.Simulation.FIELD_HEIGHT.in(Meters) / 2.0;
         }
         else
         {
-            return drivetrain.getState().Pose.getY() < Constants.Simulation.FIELD_HEIGHT / 2.0;
+            return drivetrain.getState().Pose.getY() < Constants.Simulation.FIELD_HEIGHT.in(Meters) / 2.0;
         }
     }
 

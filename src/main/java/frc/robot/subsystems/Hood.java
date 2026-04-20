@@ -33,13 +33,13 @@ public class Hood extends SubsystemBase
 
     private static TalonFX motor;
 
-    private double desiredPosition; // degrees
+    private Angle desiredPosition = Degrees.of(65); // degrees
     
     private final DCMotorSim sim = new DCMotorSim(
         LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX44(1), 0.001, Constants.Hood.GEAR_RATIO),
         DCMotor.getKrakenX44(1));
 
-    private Debouncer debouncer = new Debouncer(Constants.Hood.DEBOUNCE_TIME);
+    private Debouncer debouncer = new Debouncer(Constants.Hood.DEBOUNCE_TIME.in(Seconds));
 
     /**
      * Initializes the master/follower TalonFX motors and applies configuration.
@@ -71,10 +71,10 @@ public class Hood extends SubsystemBase
 
         if (!isSimulated())
         {
-            config.CurrentLimits.StatorCurrentLimit = Constants.Hood.STATOR_CURRENT_LIMIT;
+            config.CurrentLimits.StatorCurrentLimit = Constants.Hood.STATOR_CURRENT_LIMIT.in(Amps);
             config.CurrentLimits.StatorCurrentLimitEnable = true;
             
-            config.CurrentLimits.SupplyCurrentLimit = Constants.Hood.SUPPLY_CURRENT_LIMIT;
+            config.CurrentLimits.SupplyCurrentLimit = Constants.Hood.SUPPLY_CURRENT_LIMIT.in(Amps);
             config.CurrentLimits.SupplyCurrentLimitEnable = true;
         }
 
@@ -92,8 +92,8 @@ public class Hood extends SubsystemBase
         config.Slot0.kA = Constants.Hood.KA;
         config.Slot0.kG = Constants.Hood.KG;
 
-        config.Voltage.PeakForwardVoltage = Constants.MAX_VOLTAGE;
-        config.Voltage.PeakReverseVoltage = -Constants.MAX_VOLTAGE;
+        config.Voltage.PeakForwardVoltage = Constants.MAX_VOLTAGE.in(Volts);
+        config.Voltage.PeakReverseVoltage = -Constants.MAX_VOLTAGE.in(Volts);
 
         motor.getConfigurator().apply(config);
     }
@@ -104,7 +104,7 @@ public class Hood extends SubsystemBase
     */
     public void moveToPosition(Angle desiredPosition)
     {
-        this.desiredPosition = desiredPosition.in(Rotations);
+        this.desiredPosition = desiredPosition;
         motor.setControl(new PositionVoltage(desiredPosition));
     }
     
@@ -160,7 +160,7 @@ public class Hood extends SubsystemBase
     */
     public boolean readyToShoot ()
     {
-        return Math.abs(motor.getPosition().getValue().in(Rotations) - desiredPosition) < Degrees.of(Constants.Hood.MAX_ERROR).in(Rotations);
+        return Math.abs(motor.getPosition().getValue().minus(desiredPosition).in(Rotations)) < (Constants.Hood.MAX_ERROR).in(Rotations);
     }
     
     /**
@@ -169,7 +169,7 @@ public class Hood extends SubsystemBase
     */
     public Angle getDesiredPosition()
     {
-        return Rotations.of(desiredPosition);
+        return desiredPosition;
     }
     
     /**
@@ -178,15 +178,15 @@ public class Hood extends SubsystemBase
     */
     public boolean isStalling()
     {
-        return debouncer.calculate(Math.abs(motor.getStatorCurrent().getValueAsDouble()) >= Constants.Hood.STALLING_CURRENT);
+        return debouncer.calculate(Math.abs(motor.getStatorCurrent().getValueAsDouble()) >= Constants.Hood.STALLING_CURRENT.in(Amps));
     }
 
     /**
      * Returns the stator current drawn by the hood motor.
      */
-    public double getStatorCurrent()
+    public Current getStatorCurrent()
     {
-        return motor.getStatorCurrent().getValueAsDouble();
+        return Amps.of(motor.getStatorCurrent().getValueAsDouble());
     }
 
     /**

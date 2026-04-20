@@ -77,10 +77,10 @@ public class Climb extends SubsystemBase
 
         climbWheelsConfig.Feedback.SensorToMechanismRatio = Constants.Climb.CLIMBWHEELS_GEAR_RATIO;
         
-        climbWheelsConfig.CurrentLimits.StatorCurrentLimit = Constants.Climb.CLIMBWHEELS_STATOR_CURRENT_LIMIT;
+        climbWheelsConfig.CurrentLimits.StatorCurrentLimit = Constants.Climb.CLIMBWHEELS_STATOR_CURRENT_LIMIT.in(Amps);
         climbWheelsConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
-        climbWheelsConfig.CurrentLimits.SupplyCurrentLimit = Constants.Climb.CLIMBWHEELS_SUPPLY_CURRENT_LIMIT;
+        climbWheelsConfig.CurrentLimits.SupplyCurrentLimit = Constants.Climb.CLIMBWHEELS_SUPPLY_CURRENT_LIMIT.in(Amps);
         climbWheelsConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         
         climbWheelsConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -97,10 +97,10 @@ public class Climb extends SubsystemBase
 
         spoolingConfig.Feedback.SensorToMechanismRatio = Constants.Climb.SPOOLING_GEAR_RATIO;
         
-        spoolingConfig.CurrentLimits.StatorCurrentLimit = Constants.Climb.SPOOLING_STATOR_CURRENT_LIMIT;
+        spoolingConfig.CurrentLimits.StatorCurrentLimit = Constants.Climb.SPOOLING_STATOR_CURRENT_LIMIT.in(Amps);
         spoolingConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
-        spoolingConfig.CurrentLimits.SupplyCurrentLimit = Constants.Climb.SPOOLING_SUPPLY_CURRENT_LIMIT;
+        spoolingConfig.CurrentLimits.SupplyCurrentLimit = Constants.Climb.SPOOLING_SUPPLY_CURRENT_LIMIT.in(Amps);
         spoolingConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         
         spoolingConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -170,7 +170,7 @@ public class Climb extends SubsystemBase
      */
     public boolean isSpoolingStalling()
     {
-        return Math.abs(spooling.getStatorCurrent().getValueAsDouble()) >= Constants.Climb.SPOOLING_STALLING_CURRENT;
+        return Math.abs(spooling.getStatorCurrent().getValueAsDouble()) >= Constants.Climb.SPOOLING_STALLING_CURRENT.in(Amps);
     }
 
     /**

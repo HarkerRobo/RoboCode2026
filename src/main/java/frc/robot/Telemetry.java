@@ -26,6 +26,8 @@ import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.DoubleTopic;
 import edu.wpi.first.networktables.StructPublisher;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.networktables.IntegerPublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -220,7 +222,7 @@ public class Telemetry
         hoodTargetPosition.set(Hood.getInstance().getDesiredPosition().in(Degrees));
         hoodVoltage.set(Hood.getInstance().getVoltage().in(Volts));
         hoodReadyToShoot.set(Hood.getInstance().readyToShoot());
-        hoodStatorCurrent.set(Hood.getInstance().getStatorCurrent());
+        hoodStatorCurrent.set(Hood.getInstance().getStatorCurrent().in(Amps));
 
         Command shooterCommand = Shooter.getInstance().getCurrentCommand();
         this.shooterCommand.set(shooterCommand == null ? "" : shooterCommand.getName());
@@ -295,24 +297,24 @@ public class Telemetry
         {
             m_moduleSpeeds[i].setAngle(state.ModuleStates[i].angle);
             m_moduleDirections[i].setAngle(state.ModuleStates[i].angle);
-            m_moduleSpeeds[i].setLength(state.ModuleStates[i].speedMetersPerSecond / (2 * Robot.instance.robotContainer.MaxSpeed));
+            m_moduleSpeeds[i].setLength(state.ModuleStates[i].speedMetersPerSecond / (2 * Robot.instance.robotContainer.MaxSpeed.in(MetersPerSecond)));
         }
     }
 
     /**
      * Get hood angle
      */
-    public double getHoodAngle()
+    public Angle getHoodAngle()
     {
-        return hoodAngle.get();
+        return Degrees.of(hoodAngle.get());
     }
     
     /**
      * Get shooter speed
      */
-    public double getShooterSpeed()
+    public LinearVelocity getShooterSpeed()
     {
-        return shooterSpeed.get();
+        return MetersPerSecond.of(shooterSpeed.get());
     }
 
     /**

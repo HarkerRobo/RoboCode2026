@@ -48,7 +48,7 @@ public class IntakeExtension extends SubsystemBase
             motor.getSimState().setMotorType(TalonFXSimState.MotorType.KrakenX60);
         }
 
-        stallingDebouncer = new Debouncer(Constants.IntakeExtension.STALLING_DEBOUNCE_TIME);
+        stallingDebouncer = new Debouncer(Constants.IntakeExtension.STALLING_DEBOUNCE_TIME.in(Seconds));
     }
 
     /**
@@ -65,11 +65,11 @@ public class IntakeExtension extends SubsystemBase
         extensionConfig.MotorOutput.Inverted = Constants.IntakeExtension.INVERTED;
         extensionConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
-        extensionConfig.Voltage.PeakForwardVoltage = Constants.MAX_VOLTAGE;
-        extensionConfig.Voltage.PeakReverseVoltage = -Constants.MAX_VOLTAGE;
+        extensionConfig.Voltage.PeakForwardVoltage = Constants.MAX_VOLTAGE.in(Volts);
+        extensionConfig.Voltage.PeakReverseVoltage = -Constants.MAX_VOLTAGE.in(Volts);
 
-        extensionConfig.CurrentLimits.StatorCurrentLimit = Constants.IntakeExtension.STATOR_CURRENT_LIMIT;
-        extensionConfig.CurrentLimits.StatorCurrentLimit = Constants.IntakeExtension.SUPPLY_CURRENT_LIMIT;
+        extensionConfig.CurrentLimits.StatorCurrentLimit = Constants.IntakeExtension.STATOR_CURRENT_LIMIT.in(Amps);
+        extensionConfig.CurrentLimits.StatorCurrentLimit = Constants.IntakeExtension.SUPPLY_CURRENT_LIMIT.in(Amps);
 
         motor.getConfigurator().apply(extensionConfig);
     }
@@ -123,11 +123,11 @@ public class IntakeExtension extends SubsystemBase
     {
         if (getVoltage().in(Volts) > 0)
         {
-            return stallingDebouncer.calculate(motor.getStatorCurrent().getValueAsDouble() >= Constants.IntakeExtension.STALLING_CURRENT_EXTEND);
+            return stallingDebouncer.calculate(motor.getStatorCurrent().getValueAsDouble() >= Constants.IntakeExtension.STALLING_CURRENT_EXTEND.in(Amps));
         }
         else
         {
-            return stallingDebouncer.calculate(motor.getStatorCurrent().getValueAsDouble() >= Constants.IntakeExtension.STALLING_CURRENT_RETRACT);
+            return stallingDebouncer.calculate(motor.getStatorCurrent().getValueAsDouble() >= Constants.IntakeExtension.STALLING_CURRENT_RETRACT.in(Amps));
         }
     }
 

@@ -23,7 +23,7 @@ public class ShooterIndexerStartFullSpeed extends Command
     @Override
     public void initialize()
     {
-        ShooterIndexer.getInstance().setVelocity(RotationsPerSecond.of(Constants.ShooterIndexer.INTAKE_VELOCITY));
+        ShooterIndexer.getInstance().setVelocity(Constants.ShooterIndexer.INTAKE_VELOCITY);
     }
 
     /**
