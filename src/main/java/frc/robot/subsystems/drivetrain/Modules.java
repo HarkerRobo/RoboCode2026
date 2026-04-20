@@ -13,6 +13,7 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import frc.robot.Constants;
 
+import static edu.wpi.first.units.Units.Hertz;
 import static frc.robot.Constants.Swerve.*;
 
 public class Modules
@@ -57,7 +58,7 @@ public class Modules
     public static CommandSwerveDrivetrain createDrivetrain() {
         return new CommandSwerveDrivetrain(
                 DRIVETRAIN_CONSTANTS,
-                Constants.Vision.ODOMETRY_UPDATE_FREQUENCY, 
+                Constants.Vision.ODOMETRY_UPDATE_FREQUENCY.in(Hertz), 
                 Constants.Vision.STATE_STANDARD_DEVIATIONS, 
                 Constants.Vision.TAG_STANDARD_DEVIATIONS, 
                 FrontLeft, FrontRight, BackLeft, BackRight);

@@ -42,7 +42,7 @@ import frc.robot.simulation.BallConstants;
 public class Constants 
 {
    
-    public static final double MAX_VOLTAGE = 12.0; // volts
+    public static final Voltage MAX_VOLTAGE = Volts.of(12.0); // volts
     
     public static final double ROBOT_HEIGHT = 0.89535; // y direction when bot is faced in the positive x direction; that is, parallel to the intake face
     public static final double ROBOT_WIDTH = 0.84455;
@@ -56,7 +56,7 @@ public class Constants
 
     public static final CANBus CAN_SUPERSTRUCTURE = new CANBus("Superstructure");
 
-    public static final double G = 9.81;
+    public static final LinearAcceleration G = MetersPerSecondPerSecond.of(9.81);
 
     public class Vision 
     {
@@ -71,7 +71,7 @@ public class Constants
                 new Translation3d(Units.inchesToMeters(-11.743), Units.inchesToMeters(10.009), Units.inchesToMeters(9.0552)),
                 new Rotation3d(Units.degreesToRadians(1.615693), Units.degreesToRadians(12.567), Units.degreesToRadians(180.0 + 7.383715))); // TODO bc this is copied from 2025 code
 
-        public static final double ODOMETRY_UPDATE_FREQUENCY = 100.0; // 100.0 Hz for CAN 2.0, which the Roborio runs on
+        public static final Frequency ODOMETRY_UPDATE_FREQUENCY = Hertz.of(100.0); // 100.0 Hz for CAN 2.0, which the Roborio runs on
         public static final Matrix<N3, N1> TAG_STANDARD_DEVIATIONS = VecBuilder.fill(0.25, 0.25, 99999);
         public static final Matrix<N3, N1> STATE_STANDARD_DEVIATIONS = VecBuilder.fill(0.05, 0.05, 0.1);
         public static final double MAX_AMBIGUITY = 0.3;
@@ -266,13 +266,13 @@ public class Constants
         public static int LEFT_ID = 23;
         public static int RIGHT_ID = 33;
 
-        public static final double STATOR_CURRENT_LIMIT = 60.0;
-        public static final double SUPPLY_CURRENT_LIMIT = 40.0;
+        public static final Current STATOR_CURRENT_LIMIT = Amps.of(60.0);
+        public static final Current SUPPLY_CURRENT_LIMIT = Amps.of(40.0);
 
-        public static final double INTAKE_VELOCITY = -30.0; // rot/s // not a bug
-        public static final double REDUCED_INTAKE_VELOCITY = -20.0;
-        public static final double DEFAULT_INTAKE_VELOCITY = 0.0;
-        public static final double EJECT_VELOCITY = 25.0; // rot/s
+        public static final AngularVelocity INTAKE_VELOCITY = RotationsPerSecond.of(-30.0); // rot/s // not a bug
+        public static final AngularVelocity REDUCED_INTAKE_VELOCITY = RotationsPerSecond.of(-20.0);
+        public static final AngularVelocity DEFAULT_INTAKE_VELOCITY = RotationsPerSecond.of(0.0);
+        public static final AngularVelocity EJECT_VELOCITY = RotationsPerSecond.of(25.0); // rot/s
 
         public static final double KP = 0.3;
 		public static final double KI = 0.0;
@@ -288,7 +288,7 @@ public class Constants
         public static final double LEFT_GEAR_RATIO = 16.0/12.0;
         public static final double RIGHT_GEAR_RATIO = 16.0/12.0;
 
-        public static final double STALLING_CURRENT = 30.0;
+        public static final Current STALLING_CURRENT = Amps.of(30.0);
         
         public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
 
@@ -298,13 +298,13 @@ public class Constants
     {
         public static int ID = 24;
 
-        public static final double STATOR_CURRENT_LIMIT = 60.0;
-        public static final double SUPPLY_CURRENT_LIMIT = 40.0;
+        public static final Current STATOR_CURRENT_LIMIT = Amps.of(60.0);
+        public static final Current SUPPLY_CURRENT_LIMIT = Amps.of(40.0);
 
-        public static final double EXTENDING_VOLTAGE = 5.5;//5.0;
-        public static final double RETRACTING_VOLTAGE = -3.5;
-        public static final double HOLDING_EXTEND_VOLTAGE = 0.25;
-        public static final double HOLDING_RETRACT_VOLTAGE = -0.25;
+        public static final Voltage EXTENDING_VOLTAGE = Volts.of(5.5);//5.0;
+        public static final Voltage RETRACTING_VOLTAGE = Volts.of(-3.5);
+        public static final Voltage HOLDING_EXTEND_VOLTAGE = Volts.of(0.25);
+        public static final Voltage HOLDING_RETRACT_VOLTAGE = Volts.of(-0.25);
 
         public static final InvertedValue INVERTED = InvertedValue.CounterClockwise_Positive;
         
@@ -312,17 +312,17 @@ public class Constants
         
         public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
 
-        public static final double STALLING_CURRENT_EXTEND = 14.0; //15.0;//19;
-        public static final double STALLING_CURRENT_RETRACT = 14.0; //16.5;//19; // might need to be lower
+        public static final Current STALLING_CURRENT_EXTEND = Amps.of(14.0); //15.0;//19;
+        public static final Current STALLING_CURRENT_RETRACT = Amps.of(14.0); //16.5;//19; // might need to be lower
 
         public static final double MIN_HEIGHT = 0.0;
         public static final double MAX_HEIGHT = 1.0;
         
-        public static final double STALLING_DEBOUNCE_TIME = 0.4; // 0.1
+        public static final Time STALLING_DEBOUNCE_TIME = Seconds.of(0.4); // 0.1
 
-        public static final double AGITATE_MIN_VOLTAGE = -1.0; // TODO
-        public static final double AGITATE_MAX_VOLTAGE = 1.0; // TODO
-        public static final double AGITATE_PERIOD_SECONDS = 1.0; // TODO
+        public static final Voltage AGITATE_MIN_VOLTAGE = Volts.of(-1.0); // TODO
+        public static final Voltage AGITATE_MAX_VOLTAGE = Volts.of(1.0); // TODO
+        public static final Time AGITATE_PERIOD_SECONDS = Seconds.of(1.0); // TODO
     }
 
     public class Indexer 
@@ -330,8 +330,8 @@ public class Constants
         public static final int MAIN_ID = 31;
 
         public static final InvertedValue MAIN_INVERTED = InvertedValue.CounterClockwise_Positive;
-        public static final double MAIN_STATOR_CURRENT_LIMIT = 60.0; // amps
-        public static final double MAIN_SUPPLY_CURRENT_LIMIT = 60.0; // amps
+        public static final Current MAIN_STATOR_CURRENT_LIMIT = Amps.of(60.0); // amps
+        public static final Current MAIN_SUPPLY_CURRENT_LIMIT = Amps.of(60.0); // amps
 
         public static final double MAIN_KS = 0.0048438;
         public static final double MAIN_KV = 0.12361;
@@ -348,9 +348,9 @@ public class Constants
         public static final double MM_JERK = 0.0;
         */
 
-        public static final double MAIN_MAX_VOLTAGE = 4.5;//3.5; // volts
-        public static final double MAIN_DEFAULT_VOLTAGE = 0.0; // volts
-        public static final double MAIN_EJECT_VOLTAGE = -3.5; // volts
+        public static final Voltage MAIN_MAX_VOLTAGE = Volts.of(4.5);//3.5; // volts
+        public static final Voltage MAIN_DEFAULT_VOLTAGE = Volts.of(0.0); // volts
+        public static final Voltage MAIN_EJECT_VOLTAGE = Volts.of(-3.5); // volts
 
         public static final double MAIN_GEAR_RATIO = 16.0/12.0;
 
@@ -362,14 +362,14 @@ public class Constants
         public static final int ID = 32;
 
         public static final InvertedValue INVERTED = InvertedValue.CounterClockwise_Positive;
-        public static final double STATOR_CURRENT_LIMIT = 60.0;
-        public static final double SUPPLY_CURRENT_LIMIT = 40.0;
+        public static final Current STATOR_CURRENT_LIMIT = Amps.of(60.0);
+        public static final Current SUPPLY_CURRENT_LIMIT = Amps.of(40.0);
 
-        public static final double DEFAULT_VOLTAGE = 0.0;
-        public static final double INTAKE_VOLTAGE = 8.0;//6.0;
+        public static final Voltage DEFAULT_VOLTAGE = Volts.of(0.0);
+        public static final Voltage INTAKE_VOLTAGE = Volts.of(8.0);//6.0;
 
-        public static final double INTAKE_VELOCITY = 25.0; // rot/s
-        public static final double EJECT_VELOCITY = -25.0; // rot/s
+        public static final AngularVelocity INTAKE_VELOCITY = RotationsPerSecond.of(25.0); // rot/s
+        public static final AngularVelocity EJECT_VELOCITY = RotationsPerSecond.of(-25.0); // rot/s
         
         public static final double KS = 0;
         public static final double KV = 0;
@@ -388,8 +388,8 @@ public class Constants
     {
         public static final int ID = 26;
         
-        public static final double STATOR_CURRENT_LIMIT = 60.0;
-        public static final double SUPPLY_CURRENT_LIMIT = 40.0;
+        public static final Current STATOR_CURRENT_LIMIT = Amps.of(60.0);
+        public static final Current SUPPLY_CURRENT_LIMIT = Amps.of(40.0);
 
 		public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive;
         
@@ -406,19 +406,19 @@ public class Constants
 
         public static final ChassisReference MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
 
-        public static final double MAX_ERROR = 0.5;//0.25;
+        public static final Angle MAX_ERROR = Degrees.of(0.5);//0.25;
     
-        public static final double STALLING_CURRENT = 10.0;
+        public static final Current STALLING_CURRENT = Amps.of(10.0);
 
-        public static final double MANUAL_UP_VOLTAGE = -0.5;
-        public static final double MANUAL_DOWN_VOLTAGE = 0.5;
+        public static final Voltage MANUAL_UP_VOLTAGE = Volts.of(-0.5);
+        public static final Voltage MANUAL_DOWN_VOLTAGE = Volts.of(0.5);
         
-        public static final double ZEROING_VOLTAGE = 1.0;
-        public static final double ZEROING_POSITION = 75.5; 
+        public static final Voltage ZEROING_VOLTAGE = Volts.of(1.0);
+        public static final Angle ZEROING_POSITION = Degrees.of(75.5); 
         // because the hood current zeroes too high up for some reason and we don't
         // want the hood to stall when it goes to 75 degrees (its max angle)
 
-        public static final double DEBOUNCE_TIME = 0.1;
+        public static final Time DEBOUNCE_TIME = Seconds.of(0.1);
     }
     
     public class Shooter
@@ -426,8 +426,8 @@ public class Constants
         public static final int MASTER_ID = 21;
         public static final int FOLLOWER_ID = 19;
         
-        public static final double STATOR_CURRENT_LIMIT = 60.0;
-        public static final double SUPPLY_CURRENT_LIMIT = 40.0;
+        public static final Current STATOR_CURRENT_LIMIT = Amps.of(60.0);
+        public static final Current SUPPLY_CURRENT_LIMIT = Amps.of(40.0);
 
 		public static final InvertedValue INVERTED = InvertedValue.Clockwise_Positive;
         public static final MotorAlignmentValue MOTOR_ALIGNMENT = MotorAlignmentValue.Opposed;
@@ -441,15 +441,15 @@ public class Constants
         public static final double KV = 0.19085; // 0.19241;
         public static final double KA = 0.015006; // 0.013044;
 		
-        public static final double DEFAULT_VELOCITY = 0.0; // meters per second
-        public static final double SOFT_PASS_VELOCITY = 6.5; // meters per second
+        public static final LinearVelocity DEFAULT_VELOCITY = MetersPerSecond.of(0.0); // meters per second
+        public static final LinearVelocity SOFT_PASS_VELOCITY = MetersPerSecond.of(6.5); // meters per second
 
         public static final ChassisReference MASTER_MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
         public static final ChassisReference FOLLOWER_MECHANICAL_ORIENTATION = ChassisReference.CounterClockwise_Positive;
 
-        public static final double FLYWHEEL_CIRCUMFERANCE = Inches.of(4.0).times(Math.PI).in(Meters); // radius of 2 inches
+        public static final Distance FLYWHEEL_CIRCUMFERENCE = Inches.of(4.0).times(Math.PI); // radius of 2 inches
         
-        public static final double MAX_ERROR = 0.2;
+        public static final AngularVelocity MAX_ERROR = RotationsPerSecond.of(0.2);
     }
 
     public static final class Climb 
@@ -473,12 +473,12 @@ public class Constants
         public static final double KD_CLIMBWHEELS = 0.0; //TODO
         public static final double KD_SPOOLING = 0.037935; // TODO
 
-        public static final double CLIMBWHEELS_STATOR_CURRENT_LIMIT = 90.0;
-        public static final double CLIMBWHEELS_SUPPLY_CURRENT_LIMIT = 40.0;
-        public static final double SPOOLING_STATOR_CURRENT_LIMIT = 90.0;
-        public static final double SPOOLING_SUPPLY_CURRENT_LIMIT = 40.0;
+        public static final Current CLIMBWHEELS_STATOR_CURRENT_LIMIT = Amps.of(90.0);
+        public static final Current CLIMBWHEELS_SUPPLY_CURRENT_LIMIT = Amps.of(40.0);
+        public static final Current SPOOLING_STATOR_CURRENT_LIMIT = Amps.of(90.0);
+        public static final Current SPOOLING_SUPPLY_CURRENT_LIMIT = Amps.of(40.0);
 
-        public static final double SPOOLING_STALLING_CURRENT = 20;
+        public static final Current SPOOLING_STALLING_CURRENT = Amps.of(20);
 		
         public static final Angle MAX_ERROR = Rotations.of(0.1);
 
@@ -490,7 +490,7 @@ public class Constants
         public static final Voltage SPOOL_VOLTAGE = Volts.of(2.4); // TODO
         public static final Voltage UNSPOOL_VOLTAGE = Volts.of(-2.4); // TODO
 
-        public static final double UNSPOOL_TIME = 2.0; // seconds
+        public static final Time UNSPOOL_TIME = Seconds.of(2.0); // seconds
 
 
         
@@ -500,15 +500,15 @@ public class Constants
 
     public class Simulation
     {
-        public static final double FIELD_HEIGHT = 8.069326;//meters
-        public static final double FIELD_WIDTH = 16.540988;//meters
+        public static final Distance FIELD_HEIGHT = Meters.of(8.069326);//meters
+        public static final Distance FIELD_WIDTH = Meters.of(16.540988);//meters
 
         // excluding steel barrier
         public static final Rectangle2d DEPOT = new Rectangle2d(
-            new Translation2d(0.0, FIELD_HEIGHT - 1.570736 - 0.0762),
-            new Translation2d(0.6858 - 0.0762, FIELD_HEIGHT - 1.570736 - 1.0668 + 0.0762));
+            new Translation2d(0.0, FIELD_HEIGHT.in(Meters) - 1.570736 - 0.0762),
+            new Translation2d(0.6858 - 0.0762, FIELD_HEIGHT.in(Meters) - 1.570736 - 1.0668 + 0.0762));
         
-        public static final Translation2d FIELD_CENTER = new Translation2d(FIELD_WIDTH / 2.0, FIELD_HEIGHT / 2.0);
+        public static final Translation2d FIELD_CENTER = new Translation2d(FIELD_WIDTH.in(Meters) / 2.0, FIELD_HEIGHT.in(Meters) / 2.0);
 
         public static final Function<Double, Double> ROTATE_X = (Double x) -> x + 2 * (FIELD_CENTER.getX() - x);
         public static final Function<Double, Double> ROTATE_Y = (Double y) -> y + 2 * (FIELD_CENTER.getY() - y);
@@ -516,9 +516,9 @@ public class Constants
         public static final Translation2d CENTER_UPPER_REFERENCE = new Translation2d(FIELD_CENTER.getX(), FIELD_CENTER.getY() + 0.0254);
         public static final Translation2d CENTER_LOWER_REFERENCE = new Translation2d(FIELD_CENTER.getX(), FIELD_CENTER.getY() - 0.0254);
 
-        public static final double FUEL_DIAMETER = 0.15;//meters
-        public static final double MIN_FUEL_MASS = 0.203;//kg
-        public static final double MAX_FUEL_MASS = 0.227;//kg
+        public static final Distance FUEL_DIAMETER = Meters.of(0.15);//meters
+        public static final Mass MIN_FUEL_MASS = Kilograms.of(0.203);//kg
+        public static final Mass MAX_FUEL_MASS = Kilograms.of(0.227);//kg
 
         public static final int TOTAL_FUEL = 504;
         public static final int FUELS_TAKEN_BY_OTHER_ROBOTS = 0;
@@ -526,40 +526,40 @@ public class Constants
         public static final Rectangle2d HUB_CONTENTS = new Rectangle2d(new Pose2d(new Translation2d(4.574794, 4.059936), new Rotation2d()), 1.1938, 1.1938);
 
         public static final Rectangle2d OUTPOST = new Rectangle2d(
-            new Translation2d(-0.84 - 0.5 * FUEL_DIAMETER, 0.331 - 0.5 * FUEL_DIAMETER), 
-            new Translation2d(-0.0708 + 0.5 * FUEL_DIAMETER, 1.008 + 0.5 * FUEL_DIAMETER));
+            new Translation2d(-0.84 - 0.5 * FUEL_DIAMETER.in(Meters), 0.331 - 0.5 * FUEL_DIAMETER.in(Meters)), 
+            new Translation2d(-0.0708 + 0.5 * FUEL_DIAMETER.in(Meters), 1.008 + 0.5 * FUEL_DIAMETER.in(Meters)));
 
-        public static final Translation3d OUTPOST_SPAWN_LOCATION_LOWER = new Translation3d(0.5 * FUEL_DIAMETER, 0.2655, 0.714);
-        public static final Translation3d OUTPOST_SPAWN_LOCATION_UPPER = new Translation3d(0.5 * FUEL_DIAMETER, 1.0735, 0.714);
+        public static final Translation3d OUTPOST_SPAWN_LOCATION_LOWER = new Translation3d(0.5 * FUEL_DIAMETER.in(Meters), 0.2655, 0.714);
+        public static final Translation3d OUTPOST_SPAWN_LOCATION_UPPER = new Translation3d(0.5 * FUEL_DIAMETER.in(Meters), 1.0735, 0.714);
 
         public static final BallConstants BALL_CONSTANTS = new BallConstants(
-            (MAX_FUEL_MASS + MIN_FUEL_MASS) / 2.0,
-            FUEL_DIAMETER / 2.0, 1.2, 0.30, 1.2, 0.35, 9.81, 20);
+            (MAX_FUEL_MASS.plus(MIN_FUEL_MASS).in(Kilograms)) / 2.0,
+            FUEL_DIAMETER.in(Meters) / 2.0, 1.2, 0.30, 1.2, 0.35, 9.81, 20);
 
-        public static final double HUB_INTAKE_HEIGHT = 1.8288;//meters
+        public static final Distance HUB_INTAKE_HEIGHT = Meters.of(1.8288);//meters
     }
 
     public static final Transform3d ROBOT_TO_HOOD = new Transform3d(0.3, 0.0, 0.34, Rotation3d.kZero); // TODO
 
     public static final Translation3d PASS_LEFT_TARGET_POSITION = new Translation3d(2.010664, 2.010664, 0.0);
-    public static final Translation3d PASS_RIGHT_TARGET_POSITION = new Translation3d(2.010664, Simulation.FIELD_HEIGHT - 2.010664, 0.0);
+    public static final Translation3d PASS_RIGHT_TARGET_POSITION = new Translation3d(2.010664, Simulation.FIELD_HEIGHT.in(Meters) - 2.010664, 0.0);
     
     public static final Angle HARDCODE_HOOD_PITCH = Degrees.of(72.0);
-    public static final double HARDCODE_VELOCITY = 7.35;
+    public static final LinearVelocity HARDCODE_VELOCITY = MetersPerSecond.of(7.35);
 
-    public static final double PITCH_OFFSET_UNIT = 5.0;
+    public static final Angle PITCH_OFFSET_UNIT = Degrees.of(5.0);
     public static final double FLYWHEEL_OFFSET_UNIT = 0.5;
 
     public static final double DISTANCE_SHOOTVELO_RATIO = 0.7400067;
     public static final LinearVelocity SPEED_OFFSET = MetersPerSecond.of(0.275);
 
-    public static final double ACCELERATION_LIMIT = 3.0;
+    public static final LinearAcceleration ACCELERATION_LIMIT = MetersPerSecondPerSecond.of(3.0);
 
-    public static final double MID_PASS_VELOCITY = 12.7;
-    public static final double MID_PASS_ANGLE = 65.0;
+    public static final LinearVelocity MID_PASS_VELOCITY = MetersPerSecond.of(12.7);
+    public static final Angle MID_PASS_ANGLE = Degrees.of(65.0);
     
-    public static final double HARD_PASS_VELOCITY = 18.0;
-    public static final double HARD_PASS_ANGLE = 60.0;
+    public static final LinearVelocity HARD_PASS_VELOCITY = MetersPerSecond.of(18.0);
+    public static final Angle HARD_PASS_ANGLE = Degrees.of(60.0);
 
     public static final boolean LOG_SIMULATION = false;
     public static final boolean LOG_REAL = false;
