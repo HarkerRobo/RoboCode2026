@@ -43,8 +43,8 @@ import frc.robot.util.Util;
 import frc.robot.subsystems.Climb;
 
 /**
- * Central telemtry publisher for subsystems and drivetrain state
- * Publishes robot data to NetWorkTables
+ * Central telemetry publisher for subsystems and drivetrain state.
+ * Publishes robot data to NetworkTables.
  */
 public class Telemetry 
 {
@@ -192,6 +192,9 @@ public class Telemetry
         shooterSpeed.getTopic().publish().set(10.0);
     }
 
+    /**
+     * publishes intake, intake extension, hood, shooter, climb, indexer, and åshooter-indexer
+     */
     public void update ()
     {
         mostRecentAim.set(Robot.instance.robotContainer.mostRecentAim ? "Pass" : "Shoot");
@@ -259,6 +262,8 @@ public class Telemetry
     }
     /** 
      * Accept the swerve drive state and telemeterize it to SmartDashboard and SignalLogger. 
+     * Writes pose, chassis speeds, module states, targets, positions, and odometry periods
+     * Updates the field2d robot pose
      * @param state Current drivetrain state
      */
     public void telemeterize(SwerveDriveState state) 

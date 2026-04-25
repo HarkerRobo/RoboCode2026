@@ -508,17 +508,28 @@ public class RobotContainer
             )).withName("ExtendIntake"));
     }
 
+    /**
+     * Returns the current reef-alignment side
+     */
     public AlignDirection getAlignDirection ()
     {
         return alignDirection;
     }
 
+    /**
+     * Sets the reef-alignment side
+     * Called by the align-direction commands bound to driver buttons.
+     */
     public void setAlignDirection (AlignDirection direction)
     {
         this.alignDirection = direction;
-    } 
+    }
 
-    public Command getAutonomousCommand() 
+    /**
+     * Returns the autonomous command selected.
+     * Called at the start of autonomous.
+     */
+    public Command getAutonomousCommand()
     {
         return autonChooser.getSelected();
     }
