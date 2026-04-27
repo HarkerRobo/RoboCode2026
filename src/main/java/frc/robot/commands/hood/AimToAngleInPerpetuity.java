@@ -54,8 +54,7 @@ public class AimToAngleInPerpetuity extends Command
     }
 
     /**
-     * Finishes when the hood reports that it is within tolerance of the target.
-     * Uses the subsystem’s readyToShoot() check.
+     * Never finishes by itself
      */
     @Override
     public boolean isFinished()

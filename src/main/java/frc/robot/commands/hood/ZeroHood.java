@@ -38,8 +38,7 @@ public class ZeroHood extends Command
     }
 
     /**
-     * Finishes when the hood stalls or reaches the target.
-     * Either condition indicates the hood is at its mechanical zero.
+     * Finishes when the hood stalls
      */
     @Override
     public boolean isFinished()

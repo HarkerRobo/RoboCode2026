@@ -54,8 +54,7 @@ public class AimToAngle extends Command
     }
 
     /**
-     * Finishes when the hood reports that it is within tolerance of the target.
-     * Uses the subsystem’s readyToShoot() check.
+     * Finishes immedietaly
      */
     @Override
     public boolean isFinished()
