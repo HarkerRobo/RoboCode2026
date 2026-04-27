@@ -70,8 +70,7 @@ public class HoodManual extends Command
     }
 
     /**
-     * Command doesn't finish
-     * Innteruppt externally.
+     * Command doesn't finish unless stopped
      */
     @Override
     public boolean isFinished()

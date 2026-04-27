@@ -129,14 +129,16 @@ public class RobotContainer
         direction = newDirection;
     }
 
+    /**
+    * Returns the current pass direction of the robot.
+    */
     public PassDirection getPassDirection() 
     {
         return direction;
     }
 
     /**
-     * Determines if the robot treats itself as on the left side
-     * @return  True if the robot treats itself as on the left side; false otherwise
+     * True if the direction is left, false otherwise
      */
     public boolean onLeftSide()
     {
@@ -145,6 +147,9 @@ public class RobotContainer
       return (Util.onLeftSide(drivetrain));
     }
 
+    /**
+     * Returns Subsystem status for the given subsys index
+     */
     public SubsystemStatus getStatus(int subsystem)
     {
         return modeChoosers.get(subsystem).getSelected();
@@ -363,10 +368,8 @@ public class RobotContainer
                     ).withName("SwerveManual"));
     }
     
-
     /**
-     * Configures default driver binding
-     * Allow basic driving even when main bindings are unavailable
+     * Configures all driver controller bindings for driving, shooting, passing, and intake control.
      */
     private void configureDriverBindings() 
     {
@@ -443,6 +446,9 @@ public class RobotContainer
                 drivetrain.applyRequest(() -> idle).ignoringDisable(true).withName("Drivetrain Set Idle"));
     }
 
+    /**
+     * Configures all operator controller bindings for zeroing, ejecting, passing, and intake positioning.
+     */
     public void configureOperatorBindings()
     {
         operator.start().onTrue(

@@ -34,6 +34,10 @@ import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
 public class Util 
 {
 
+    /**
+     * Linearly interpolates between two velocity-angle pairs using the formula (1-t)*start + t*end.
+     * A t value of 0 returns the start, 1 returns the end, and values between blend the two.
+     */
     private static Interpolator<Pair<LinearVelocity, Angle>> interpolator = new Interpolator<>() {
         @Override
         public Pair<LinearVelocity, Angle> interpolate(Pair<LinearVelocity, Angle> startValue, 
@@ -267,9 +271,8 @@ public class Util
     }
 
     /**
-     * Rotates a rectangle's center
-     * @param r the rectangle
-     * @return  the new transformed rectangle
+     * Rotates a rectangle's center position to the mirrored location on the other side of the field.
+     * Applies field coordinate transforms to both X and Y to flip the position.
      */
     public static Rectangle2d rotate(Rectangle2d r)
     {
@@ -300,6 +303,10 @@ public class Util
                 translation2dTo3d(FlippingUtil.flipFieldPosition(translation3d.toTranslation2d()), translation3d.getZ());
     }
 
+   /**
+   * Calculates the distance in meters from the drivetrain to the scoring hub.
+   * Flips the hub position based on alliance color to always target the correct goal.
+   */
     public static double calculateShootDistance(CommandSwerveDrivetrain drivetrain)
     {
         Translation2d drivetrainPose = drivetrain.getState().Pose.getTranslation();
