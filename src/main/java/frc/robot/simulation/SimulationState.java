@@ -337,7 +337,7 @@ public class SimulationState
     private static SimulationState instance;
     /**
      * Returns the singleton instance of the simulation state
-     * @return  the SimmulationState singleton
+     * @return the SimulationState singleton
      */
     public static SimulationState getInstance()
     {

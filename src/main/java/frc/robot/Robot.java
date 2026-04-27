@@ -46,7 +46,7 @@ public class Robot extends TimedRobot
    
    /**
     * Called when the robot starts
-    * Initiailizes RobotContainer bindings and constructs a LimelightSimulation if in simulation
+    * Initializes RobotContainer bindings and constructs a LimelightSimulation if in simulation
     */
    @Override
    public void robotInit() 
