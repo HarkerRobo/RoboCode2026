@@ -193,7 +193,7 @@ public class Telemetry
     }
 
     /**
-     * publishes intake, intake extension, hood, shooter, climb, indexer, and åshooter-indexer
+     * publishes intake, intake extension, hood, shooter, climb, indexer, and shooter-indexer
      */
     public void update ()
     {

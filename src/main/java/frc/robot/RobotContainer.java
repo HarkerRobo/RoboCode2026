@@ -509,7 +509,7 @@ public class RobotContainer
     }
 
     /**
-     * Returns the current reef-alignment side
+     * Returns the current tower auto alignment side
      */
     public AlignDirection getAlignDirection ()
     {
@@ -517,7 +517,7 @@ public class RobotContainer
     }
 
     /**
-     * Sets the reef-alignment side
+     * Sets the tower alignment side
      * Called by the align-direction commands bound to driver buttons.
      */
     public void setAlignDirection (AlignDirection direction)
