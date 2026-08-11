@@ -63,7 +63,7 @@ public class Constants
         public static final String CAMERA_1_NAME = "limelight";
         public static final Transform3d ROBOT_TO_CAMERA_1 = new Transform3d(
                 new Translation3d(Units.inchesToMeters(-10.5238), Units.inchesToMeters(-9.5396), Units.inchesToMeters(9.2734)),
-                 new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(22.7732), Units.degreesToRadians(90.0 + 37.8094))); // 31.0351)));
+                 new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(22.7732), Units.degreesToRadians(121.0351))); // 31.0351)));
 
         
         public static final String CAMERA_2_NAME = "limelight-right";
@@ -74,7 +74,7 @@ public class Constants
         public static final Frequency ODOMETRY_UPDATE_FREQUENCY = Hertz.of(100.0); // 100.0 Hz for CAN 2.0, which the Roborio runs on
         public static final Matrix<N3, N1> TAG_STANDARD_DEVIATIONS = VecBuilder.fill(0.25, 0.25, 99999);
         public static final Matrix<N3, N1> STATE_STANDARD_DEVIATIONS = VecBuilder.fill(0.05, 0.05, 0.1);
-        public static final double MAX_AMBIGUITY = 0.3;
+        public static final double MAX_AMBIGUITY = 10.0;
 
         public static final double MAX_DISTANCE = 3.0;
 

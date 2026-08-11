@@ -277,23 +277,24 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             });
         }
 
-        // UNUSED: for MT2
-        // double redAllianceYaw = this.getPigeon2().getRotation2d().getDegrees();
         
-        // LimelightHelpers.SetRobotOrientation(
-        //     Constants.Vision.kCamera1Name,
-        //     redAllianceYaw,
-        //     0, 0, 0, 0, 0
-        // );
-        // LimelightHelpers.SetRobotOrientation(
-        //     Constants.Vision.kCamera2Name,
-        //     redAllianceYaw,
-        //     0, 0, 0, 0, 0
-        // );
+        double redAllianceYaw = this.getState().Pose.getRotation().getDegrees();
+        
+        LimelightHelpers.SetRobotOrientation(
+            Constants.Vision.CAMERA_1_NAME,
+            redAllianceYaw,
+            0, 0, 0, 0, 0
+        );
+        
+        LimelightHelpers.SetRobotOrientation(
+            Constants.Vision.CAMERA_2_NAME,
+            redAllianceYaw,
+            0, 0, 0, 0, 0
+        );
        
-        // MegaTag 1
-        LimelightHelpers.PoseEstimate limelight1Estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.Vision.CAMERA_1_NAME);
-        LimelightHelpers.PoseEstimate limelight2Estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.Vision.CAMERA_2_NAME);
+        // MegaTag 2
+        LimelightHelpers.PoseEstimate limelight1Estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(Constants.Vision.CAMERA_1_NAME);
+        LimelightHelpers.PoseEstimate limelight2Estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(Constants.Vision.CAMERA_2_NAME);
 
        // Only run vision updates if we see a tag
         if ((limelight1Estimate != null && limelight1Estimate.tagCount > 0) ||
@@ -310,10 +311,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 boolean rejectPose = (bestEstimate.tagCount == 1 && bestEstimate.rawFiducials[0].ambiguity > Constants.Vision.MAX_AMBIGUITY) // Cannot be high ambiguity 
                                 // Must be within the field boundaries
                                 || bestEstimate.pose.getX() < 0.0
-                                || bestEstimate.pose.getX() > Constants.Vision.TAG_LAYOUT.getFieldLength()
+                                || bestEstimate.pose.getX() > Constants.Simulation.FIELD_WIDTH.in(Meters)
                                 || bestEstimate.pose.getY() < 0.0
-                                || bestEstimate.pose.getY() > Constants.Vision.TAG_LAYOUT.getFieldWidth()
-                                || bestEstimate.pose.getTranslation().getDistance(getState().Pose.getTranslation()) > Constants.Vision.MAX_DISTANCE;
+                                || bestEstimate.pose.getY() > Constants.Simulation.FIELD_HEIGHT.in(Meters);
+                                //|| bestEstimate.pose.getTranslation().getDistance(getState().Pose.getTranslation()) > Constants.Vision.MAX_DISTANCE;
                 if (!rejectPose)
                 {
                     addVisionMeasurement(bestEstimate.pose, bestEstimate.timestampSeconds);
